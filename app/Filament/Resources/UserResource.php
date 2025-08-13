@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Dom\Text;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -39,7 +40,14 @@ class UserResource extends Resource
                     ->label('Password')
                     ->password()
                     ->required()
-                    ->maxLength(255)
+                    ->maxLength(255),
+                    Select::make('role')
+                    ->label('Role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'user' => 'User',
+                        'vendor' => 'Vendor',
+                    ])
             ]);
     }
 
@@ -77,7 +85,6 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
         ];
     }
 
