@@ -2,16 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\VendorResource\Pages;
-use App\Filament\Resources\VendorResource\RelationManagers;
-use App\Models\Vendor;
+use Dom\Text;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Vendor;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\VendorResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\VendorResource\RelationManagers;
 
 class VendorResource extends Resource
 {
@@ -31,7 +33,18 @@ class VendorResource extends Resource
     {
         return $table
             ->columns([
-                //
+               TextColumn::make('name')
+                    ->label('Vendor Name')
+                    ->searchable()
+               ->sortable(),
+               TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+               ->sortable(),
+               TextColumn::make('phone')
+                    ->label('Phone')
+                    ->searchable()
+               ->sortable(), 
             ])
             ->filters([
                 //
