@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\User;
+use App\Models\Vendor;
+use App\Models\Product;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +19,16 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        Artisan::call('make:filament-user',
+    [
+        '--name' => 'Edward',
+        '--email' => 'edward@rockymountainweb.design',
+        '--password' => 'password',
+    ]);
+
+        Vendor::factory()->count(10)->create();
+        Category::factory()->count(5)->create();
+        Product::factory()->count(50)->create();
+
     }
 }

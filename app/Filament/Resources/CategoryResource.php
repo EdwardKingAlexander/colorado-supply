@@ -64,6 +64,10 @@ class CategoryResource extends Resource
                     ->label('Description')
                     ->searchable()
                     ->limit(50),
+                TextColumn::make('parent.name')
+                    ->label('Parent Category')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 //

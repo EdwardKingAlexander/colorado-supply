@@ -3,15 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
+
 
 class ProductResource extends Resource
 {
@@ -23,7 +24,10 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->label('Product Name')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -31,7 +35,31 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')
+                    ->label('Product Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('sku')
+                    ->label('SKU')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('price')
+                    ->label('Price')
+                    ->money('usd', true)
+                    ->sortable(),
+                TextColumn::make('stock')
+                    ->label('Stock')
+                    ->sortable(),
+                IconColumn::make('is_active')
+                    ->label('Active')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle'),
+                TextColumn::make('vendor.name')
+                    ->label('Vendor')
+                    ->searchable()
+                    ->sortable(),
+                
             ])
             ->filters([
                 //
