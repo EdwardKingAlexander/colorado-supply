@@ -1,7 +1,7 @@
 <script setup>
 import Navigation from '@/Components/Navigation.vue'
 import Header from '@/Components/FrontEnd/Header.vue'
-import Hero from '@/Components/FrontEnd/Hero.Vue'
+import Hero from '@/Components/FrontEnd/Hero.vue'
 import About from '@/Components/FrontEnd/About.vue'
 import Capabilities from '@/Components/FrontEnd/Capabilities.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
