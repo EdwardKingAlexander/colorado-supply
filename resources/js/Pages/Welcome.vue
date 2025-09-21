@@ -17,7 +17,7 @@ defineProps({
 
 <template>
   <AppLayout :appName="appName" >
-    
+     <Head title="Colorado Supply & Procurement LLC" />
     <Hero />
     <About />
     <Capabilities />

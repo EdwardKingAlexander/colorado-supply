@@ -74,6 +74,11 @@
         <p class="text-xs text-gray-500 dark:text-gray-500">
           © {{ new Date().getFullYear() }} Colorado Supply & Procurement LLC. All rights reserved.
         </p>
+        
+          <span class="text-xs text-blue-300">Website by</span> 
+          <a href="https://www.rockymountainweb.design" class="text-xs hover:underline text-blue-500 dark:text-blue-500">
+            Rocky Mountain Web Design LLC
+          </a>
       </div>
     </div>
   </footer>
