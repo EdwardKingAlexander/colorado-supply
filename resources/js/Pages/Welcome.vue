@@ -14,7 +14,7 @@ defineProps({
     <!-- Hero / Welcome Content -->
     <div class="flex flex-col items-center justify-center h-[80vh] text-center">
       <h1 class="text-5xl font-bold text-gray-900 mb-6">
-        Welcome to hell {{ appName }}
+        Welcome to {{ appName }}
       </h1>
       <p class="text-lg text-gray-600 mb-8 max-w-xl">
         Your modern Laravel + Inertia + Vue + Filament application is ready.

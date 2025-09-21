@@ -22,21 +22,21 @@ import { Link } from '@inertiajs/vue3'
       <div class="space-x-4">
         <Link
           v-if="!$page.props.auth?.user"
-          href="/login"
+          :href="route('login')"
           class="text-gray-700 hover:text-blue-600"
         >
           Log in
         </Link>
         <Link
           v-if="!$page.props.auth?.user"
-          href="/register"
+          :href="route('register')"
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           Register
         </Link>
         <Link
           v-else
-          href="/dashboard"
+          :href="route('dashboard')"
           class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900"
         >
           Dashboard
