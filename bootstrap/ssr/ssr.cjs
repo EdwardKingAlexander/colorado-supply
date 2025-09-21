@@ -1,8 +1,10 @@
-const createServer = require('@inertiajs/server')
-const { createInertiaApp } = require('@inertiajs/vue3')
-const { renderToString } = require('@vue/server-renderer')
-const { resolvePageComponent } = require('laravel-vite-plugin/inertia-helpers')
-const { createSSRApp, h } = require('vue')
+import { createInertiaApp } from '@inertiajs/vue3'
+import { renderToString } from '@vue/server-renderer'
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
+import { createSSRApp, h } from 'vue'
+
+// Use top-level await to grab the default export
+const { default: createServer } = await import('@inertiajs/server')
 
 createServer((page) =>
   createInertiaApp({
