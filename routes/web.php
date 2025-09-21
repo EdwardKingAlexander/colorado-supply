@@ -2,10 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use Inertia\Inertia;
+
+
 
 Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+    return Inertia::render('Welcome', [
+        'appName' => config('app.name'),
+    ]);
+});
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
