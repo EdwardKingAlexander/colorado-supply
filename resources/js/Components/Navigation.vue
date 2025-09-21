@@ -7,7 +7,7 @@ import { Link } from '@inertiajs/vue3'
     <div class="container mx-auto flex justify-between items-center px-6 py-4">
       <!-- Logo -->
       <Link href="/" class="text-xl font-bold text-blue-600">
-        {{ $page.props.appName }}
+        {{ appName || 'Colorado Supply & Procurement' }}
       </Link>
 
       <!-- Links -->

@@ -4,7 +4,7 @@ import Navigation from '@/Components/Navigation.vue'
 
 <template>
   <div>
-    <Navigation />
+    <Navigation :appName="$page.props.appName" />
     <main class="p-6">
       <slot />
     </main>
