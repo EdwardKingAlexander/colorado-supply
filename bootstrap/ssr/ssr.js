@@ -4,6 +4,8 @@ import { renderToString } from '@vue/server-renderer'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createSSRApp, h } from 'vue'
 
+const { createServer } = pkg
+
 createServer((page) =>
   createInertiaApp({
     page,
