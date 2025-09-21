@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use Dom\Text;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -14,8 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserResource extends Resource
 {
@@ -31,23 +27,24 @@ class UserResource extends Resource
                     ->label('Name')
                     ->required()
                     ->maxLength(255),
-                    TextInput::make('email')
+                TextInput::make('email')
                     ->label('Email')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                    TextInput::make('password')
+                TextInput::make('password')
                     ->label('Password')
                     ->password()
                     ->required()
                     ->maxLength(255),
-                    Select::make('role')
+                Select::make('role')
                     ->label('Role')
                     ->options([
-                        'admin' => 'Admin',
-                        'user' => 'User',
+                        'admin'  => 'Admin',
+                        'user'   => 'User',
                         'vendor' => 'Vendor',
                     ])
+                    ->required(),
             ]);
     }
 
@@ -58,42 +55,46 @@ class UserResource extends Resource
                 TextColumn::make('name')
                     ->label('Full Name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->color('secondary'), // uses secondary (gray)
                 TextColumn::make('email')
                     ->label('Email Address')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->color('primary'), // highlight emails in brand blue
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->color('secondary'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->color('primary'), // edit button in brand blue
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->color('danger'), // delete button in brand red
                 ]),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
+            'index'  => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'edit'   => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

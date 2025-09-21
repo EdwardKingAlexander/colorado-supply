@@ -5,9 +5,11 @@
         "build": "vite build",
         "dev": "vite",
         "ssr-build": "vite build --ssr resources/js/ssr.js",
-        "ssr": "node bootstrap/ssr/ssr.mjs"
+        "ssr": "node bootstrap/ssr/ssr.js"
     },
     "dependencies": {
+        "@headlessui/vue": "^1.7.23",
+        "@heroicons/vue": "^2.2.0",
         "@inertiajs/server": "^0.1.0",
         "@tailwindcss/vite": "^4.1.11",
         "autoprefixer": "^10.4.20",

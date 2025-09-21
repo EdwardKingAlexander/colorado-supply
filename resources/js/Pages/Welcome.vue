@@ -1,5 +1,14 @@
 <script setup>
 import Navigation from '@/Components/Navigation.vue'
+import Header from '@/Components/FrontEnd/Header.vue'
+import Hero from '@/Components/FrontEnd/Hero.Vue'
+import About from '@/Components/FrontEnd/About.vue'
+import Capabilities from '@/Components/FrontEnd/Capabilities.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import Contact from '@/Components/FrontEnd/Contact.vue'
+import Compliance from '@/Components/FrontEnd/Compliance.vue'
+import IndustriesServed from '@/Components/FrontEnd/IndustriesServed.vue'
+import Footer from '@/Components/FrontEnd/Footer.vue'
 
 defineProps({
   appName: String,
@@ -7,32 +16,15 @@ defineProps({
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <!-- Navbar -->
-    <Navigation />
+  <AppLayout :appName="appName" >
+    
+    <Hero />
+    <About />
+    <Capabilities />
+    <Contact />
+    <Compliance />
+    <IndustriesServed />
+    <Footer />
+  </AppLayout>
 
-    <!-- Hero / Welcome Content -->
-    <div class="flex flex-col items-center justify-center h-[80vh] text-center">
-      <h1 class="text-5xl font-bold text-gray-900 mb-6">
-        Welcome to {{ appName }}
-      </h1>
-      <p class="text-lg text-gray-600 mb-8 max-w-xl">
-        Your modern Laravel + Inertia + Vue + Filament application is ready.
-      </p>
-      <div class="space-x-4">
-        <a
-          href="/products"
-          class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Explore Products
-        </a>
-        <a
-          href="/services"
-          class="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900"
-        >
-          Our Services
-        </a>
-      </div>
-    </div>
-  </div>
 </template>
