@@ -3,8 +3,7 @@ import { renderToString } from '@vue/server-renderer'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createSSRApp, h } from 'vue'
 
-// IMPORTANT: @inertiajs/server is CommonJS.
-// On Node 22 ESM, grab the default export via top-level await.
+// Correct way to import @inertiajs/server in Node 22 (ESM mode)
 const { default: createServer } = await import('@inertiajs/server')
 
 createServer((page) =>
