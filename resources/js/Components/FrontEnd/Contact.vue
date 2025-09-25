@@ -32,7 +32,7 @@
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Registrations</dt>
               <dd>
-                SAM.gov Active | CAGE Code: XXXX | EIN: XX-XXXXXXX
+                SAM.gov Active | CAGE Code: 15NL2 | EIN: 39-3537490
               </dd>
             </div>
           </dl>

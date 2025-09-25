@@ -81,7 +81,7 @@ import {
 const cards = [
   {
     name: 'CAGE Code',
-    description: '[Pending Assignment]',
+    description: '15NL2',
     icon: ShieldCheckIcon,
   },
   {
