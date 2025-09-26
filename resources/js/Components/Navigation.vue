@@ -57,7 +57,7 @@ const mobileMenuOpen = ref(false)
         class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 dark:bg-gray-900 dark:sm:ring-gray-100/10"
       >
         <div class="flex items-center justify-between">
-          <a href="#home" class="-m-1.5 p-1.5">
+          <a href="#home" class="-m-1.5 p-1.5" @click="mobileMenuOpen = false">
             <span class="sr-only">Colorado Supply & Procurement LLC</span>
             <img class="h-12 w-auto dark:hidden" :src="logo" alt="Logo" />
             <img class="h-12 w-auto hidden dark:block" :src="logo" alt="Logo" />
@@ -74,15 +74,30 @@ const mobileMenuOpen = ref(false)
 
         <div class="mt-6 flow-root">
           <div class="-my-6 divide-y divide-gray-500/10 dark:divide-gray-500/25">
+            <!-- Mobile Nav Links -->
             <div class="space-y-2 py-6">
-              <a href="#home" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Home</a>
-              <a href="#about" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">About</a>
-              <a href="#capabilities" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Capabilities</a>
-              <a href="#contact" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Contact</a>
+              <a href="#home" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
+                Home
+              </a>
+              <a href="#about" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
+                About
+              </a>
+              <a href="#capabilities" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
+                Capabilities
+              </a>
+              <a href="#contact" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
+                Contact
+              </a>
             </div>
+
+            <!-- Mobile Auth Links -->
             <div class="py-6 space-y-2">
-              <a :href="route('login')" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Log in</a>
-              <a :href="route('register')" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-blue-700 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-white/5">Register</a>
+              <a :href="route('login')" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
+                Log in
+              </a>
+              <a :href="route('register')" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-blue-700 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-white/5">
+                Register
+              </a>
             </div>
           </div>
         </div>
