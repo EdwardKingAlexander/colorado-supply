@@ -6,7 +6,7 @@
         <div class="relative h-80 lg:-ml-8 lg:h-auto lg:w-full lg:grow xl:ml-0">
           <img
             class="absolute inset-0 size-full bg-gray-50 object-cover dark:bg-gray-800"
-            src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2560&q=80"
+            src="/img/grinding.jpg"
             alt="Industrial supplies warehouse"
           />
         </div>

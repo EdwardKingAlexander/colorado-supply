@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
+import logo from '/public/img/logo-cleansed.svg'
 
 const mobileMenuOpen = ref(false)
 </script>
@@ -15,13 +16,13 @@ const mobileMenuOpen = ref(false)
         <a href="#home" class="-m-1.5 p-1.5">
           <span class="sr-only">Colorado Supply & Procurement LLC</span>
           <img
-            class="h-8 w-auto dark:hidden"
-            src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=blue&shade=600"
+            class="h-28 w-auto dark:hidden"
+            :src="logo"
             alt="Logo"
           />
           <img
-            class="h-8 w-auto not-dark:hidden"
-            src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=blue&shade=500"
+            class="h-28 w-auto not-dark:hidden"
+            :src="logo "
             alt="Logo"
           />
         </a>
@@ -68,13 +69,13 @@ const mobileMenuOpen = ref(false)
           <a href="#home" class="-m-1.5 p-1.5">
             <span class="sr-only">Colorado Supply & Procurement LLC</span>
             <img
-              class="h-8 w-auto dark:hidden"
-              src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=blue&shade=600"
+              class="h-20 w-20 dark:hidden"
+              :src="logo"
               alt="Logo"
             />
             <img
-              class="h-8 w-auto not-dark:hidden"
-              src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=blue&shade=500"
+              class="h-20 w-20 not-dark:hidden"
+              :src="logo"
               alt="Logo"
             />
           </a>
