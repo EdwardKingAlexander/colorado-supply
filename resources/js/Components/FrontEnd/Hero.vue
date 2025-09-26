@@ -12,7 +12,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="relative isolate overflow-hidden min-h-screen flex items-center pt-24">
+  <div class="relative isolate overflow-hidden min-h-[100dvh] flex items-center pt-24 safe-top">
     <!-- Dark mode background -->
     <div class="absolute inset-0 -z-10 hidden dark:block">
       <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url(${darkImage})` }"></div>
