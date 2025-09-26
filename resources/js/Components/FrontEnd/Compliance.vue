@@ -91,7 +91,7 @@ const cards = [
   },
   {
     name: 'EIN',
-    description: '92-XXXXXXXX',
+    description: '39-3537490',
     icon: IdentificationIcon,
   },
   {

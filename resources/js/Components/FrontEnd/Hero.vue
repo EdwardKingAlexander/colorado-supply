@@ -41,7 +41,7 @@ const props = defineProps({
     <!-- Content -->
     <div class="mx-auto max-w-7xl px-6 lg:px-8 w-full">
       <div class="mx-auto max-w-2xl text-center">
-        <p class="text-sm font-medium text-primary-700 dark:text-primary-400 mb-4">
+        <p class="text-md font-extrabold text-primary-700 dark:text-primary-400 mb-4">
           Colorado-Based • SAM Registered • CAGE & DUNS Verified
         </p>
 

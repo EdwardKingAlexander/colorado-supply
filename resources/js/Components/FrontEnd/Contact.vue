@@ -19,11 +19,11 @@
           <dl class="mt-6 space-y-4 text-lg text-gray-600 dark:text-gray-300">
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Phone</dt>
-              <dd>(719) 555-1234</dd>
+              <dd>(719) 425-9634</dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Email</dt>
-              <dd>info@coloradosupply.com</dd>
+              <dd>Edward@coloradosupply.com</dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Location</dt>
