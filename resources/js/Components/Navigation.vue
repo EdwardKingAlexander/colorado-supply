@@ -9,7 +9,7 @@ const mobileMenuOpen = ref(false)
 
 <template>
   <header class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm">
-    <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <nav class="flex items-center justify-between p-2 lg:px-8" aria-label="Global">
       <!-- Logo -->
       <div class="flex lg:flex-1">
         <a href="#home" class="-m-1.5 p-1.5">
