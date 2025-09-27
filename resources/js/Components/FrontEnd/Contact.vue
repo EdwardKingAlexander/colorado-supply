@@ -23,7 +23,7 @@
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Email</dt>
-              <dd>Edward@coloradosupply.com</dd>
+              <dd>Edward@cogovsupply.com</dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Location</dt>
@@ -41,7 +41,9 @@
         <!-- Contact Form -->
         <div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Send a Message</h3>
+
           <form @submit.prevent="submitForm" class="mt-6 space-y-6">
+            <!-- Name -->
             <div>
               <label for="name" class="block text-sm font-semibold text-gray-900 dark:text-white">Name</label>
               <input
@@ -51,7 +53,10 @@
                 required
                 class="mt-2 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3.5 py-2 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-amber-600 sm:text-sm"
               />
+              <p v-if="errors.name" class="text-red-600 text-sm mt-1">{{ errors.name[0] }}</p>
             </div>
+
+            <!-- Email -->
             <div>
               <label for="email" class="block text-sm font-semibold text-gray-900 dark:text-white">Email</label>
               <input
@@ -61,7 +66,22 @@
                 required
                 class="mt-2 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3.5 py-2 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-amber-600 sm:text-sm"
               />
+              <p v-if="errors.email" class="text-red-600 text-sm mt-1">{{ errors.email[0] }}</p>
             </div>
+
+            <!-- Phone (optional) -->
+            <div>
+              <label for="phone" class="block text-sm font-semibold text-gray-900 dark:text-white">Phone (optional)</label>
+              <input
+                id="phone"
+                type="text"
+                v-model="form.phone"
+                class="mt-2 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3.5 py-2 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-amber-600 sm:text-sm"
+              />
+              <p v-if="errors.phone" class="text-red-600 text-sm mt-1">{{ errors.phone[0] }}</p>
+            </div>
+
+            <!-- Message -->
             <div>
               <label for="message" class="block text-sm font-semibold text-gray-900 dark:text-white">Message</label>
               <textarea
@@ -71,7 +91,10 @@
                 required
                 class="mt-2 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3.5 py-2 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-amber-600 sm:text-sm"
               ></textarea>
+              <p v-if="errors.message" class="text-red-600 text-sm mt-1">{{ errors.message[0] }}</p>
             </div>
+
+            <!-- Submit -->
             <div>
               <button
                 type="submit"
@@ -81,6 +104,9 @@
               </button>
             </div>
           </form>
+
+          <!-- success message -->
+          <p v-if="successMessage" class="mt-4 text-green-600">{{ successMessage }}</p>
         </div>
       </div>
     </div>
@@ -89,17 +115,31 @@
 
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
 
 const form = ref({
   name: '',
   email: '',
+  phone: '',
   message: '',
 })
 
-function submitForm() {
-  // TODO: connect to Laravel backend (e.g., route to Mail or DB)
-  console.log('Form submitted:', form.value)
-  alert('Thank you for your message! We will get back to you shortly.')
-  form.value = { name: '', email: '', message: '' }
+const successMessage = ref('')
+const errors = ref({})
+
+const submitForm = async () => {
+  successMessage.value = ''
+  errors.value = {}
+
+  try {
+    const response = await axios.post('/contact', form.value)
+
+    successMessage.value = response.data.message
+    form.value = { name: '', email: '', phone: '', message: '' }
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      errors.value = error.response.data.errors
+    }
+  }
 }
 </script>
