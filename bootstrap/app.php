@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Console\Commands\EnsureEdwardAdminUser;
 use App\Http\Middleware\HandleInertiaRequests;
