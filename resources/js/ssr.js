@@ -5,9 +5,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createSSRApp, h } from 'vue'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
+const appName = import.meta.env.VITE_APP_NAME || 'Colorado Supply & Procurement LLC'
 
-// unwrap the nested export
 const createServer = serverModule.default?.default ?? serverModule.default
 
 createServer((page) =>
@@ -15,10 +14,7 @@ createServer((page) =>
     page,
     render: renderToString,
     resolve: (name) =>
-      resolvePageComponent(
-        `./resources/js/Pages/${name}.vue`,
-        import.meta.glob('./resources/js/Pages/**/*.vue')
-      ),
+      resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup: ({ App, props, plugin }) =>
       createSSRApp({ render: () => h(App, props) })
         .use(plugin)
