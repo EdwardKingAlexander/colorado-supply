@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section id="contact" class="bg-white dark:bg-gray-900 py-24 sm:py-32 scroll-mt-20">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl text-center">
@@ -27,7 +27,7 @@
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Location</dt>
-              <dd>Colorado Springs, CO — Serving Nationwide</dd>
+              <dd>Colorado Springs, CO �?" Serving Nationwide</dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Registrations</dt>
@@ -94,6 +94,18 @@
               <p v-if="errors.message" class="text-red-600 text-sm mt-1">{{ errors.message[0] }}</p>
             </div>
 
+            <!-- Honeypot field to catch bots -->
+            <div class="hidden" aria-hidden="true">
+              <label for="company">Company</label>
+              <input
+                id="company"
+                type="text"
+                v-model="form.company"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </div>
+
             <!-- Submit -->
             <div>
               <button
@@ -122,6 +134,7 @@ const form = ref({
   email: '',
   phone: '',
   message: '',
+  company: '',
 })
 
 const successMessage = ref('')
@@ -135,7 +148,7 @@ const submitForm = async () => {
     const response = await axios.post('/contact', form.value)
 
     successMessage.value = response.data.message
-    form.value = { name: '', email: '', phone: '', message: '' }
+    form.value = { name: '', email: '', phone: '', message: '', company: '' }
   } catch (error) {
     if (error.response && error.response.data.errors) {
       errors.value = error.response.data.errors

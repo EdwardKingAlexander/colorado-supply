@@ -3,23 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductAttribute extends Model
 {
-    protected $fillable = [
-        'name',
-        'type',
-    ];
+    protected $guarded = [];
 
-    public function products(): BelongsToMany
+    public function product(): BelongsTo
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsTo(Product::class, 'product_id');
     }
-
-    public function values(): BelongsToMany
-    {
-        return $this->belongsToMany(ProductAttributeValue::class, 'product_attribute_product_attribute_values', 'product_attribute_id', 'product_attribute_value_id');
-    }
-
 }

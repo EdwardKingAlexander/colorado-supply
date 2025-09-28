@@ -6,23 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('product_attributes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->enum('type',
-            ['string', 'integer', 'boolean', 'float', 'select']);
             $table->timestamps();
+
+            // Product FK (indexed automatically by FK)
+            $table->foreignId('product_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            // Attribute fields
+            $table->string('name', 120);
+            $table->enum('type', ['string', 'integer', 'float', 'boolean', 'select'])
+                ->default('string')
+                ->index();
+            $table->string('value', 255)->nullable();
+
+            // Prevent duplicate names per product
+            $table->unique(['product_id', 'name']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('product_attributes');

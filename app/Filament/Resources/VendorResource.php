@@ -25,7 +25,23 @@ class VendorResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->label('Vendor Name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->label('Email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('phone')
+                    ->label('Phone')
+                    ->tel()
+                    ->maxLength(20),
+                Forms\Components\Textarea::make('address')
+                    ->label('Address')
+                    ->rows(3)
+                    ->maxLength(500),
             ]);
     }
 

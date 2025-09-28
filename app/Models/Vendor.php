@@ -33,9 +33,9 @@ class Vendor extends Model
     /**
      * Get the products for the vendor.
      */
-    public function products() : HasMany
+    public function product() : HasMany
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, 'product_id');
     }
 
 
