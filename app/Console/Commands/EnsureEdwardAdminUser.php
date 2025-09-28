@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Actions\EnsureEdwardAdminUser;
+use App\Actions\EnsureEdwardAdminUser as EnsureEdwardAdminUserAction;
 use Illuminate\Console\Command;
 
 class EnsureEdwardAdminUser extends Command
@@ -13,7 +13,7 @@ class EnsureEdwardAdminUser extends Command
 
     public function handle(): int
     {
-        $wasCreated = (new EnsureEdwardAdminUser())();
+        $wasCreated = (new EnsureEdwardAdminUserAction())();
 
         if ($wasCreated) {
             $this->info('Created Edward Filament admin user.');
