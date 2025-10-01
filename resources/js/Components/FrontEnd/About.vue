@@ -6,7 +6,7 @@
         <div class="relative h-80 lg:-ml-8 lg:h-auto lg:w-full lg:grow xl:ml-0">
           <img
             class="absolute inset-0 size-full bg-gray-50 object-cover dark:bg-gray-800"
-            src="/img/grinding.jpg"
+            :src="aboutImageUrl"
             alt="Industrial supplies warehouse"
           />
         </div>
@@ -84,4 +84,6 @@
 
 <script setup>
 import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/vue/20/solid'
+import aboutImageUrl from '@images/grinding.jpg'
 </script>
+

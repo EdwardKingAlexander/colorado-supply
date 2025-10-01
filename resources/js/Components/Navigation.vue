@@ -3,8 +3,7 @@ import { ref, computed } from 'vue'
 import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { usePage } from '@inertiajs/vue3'
-
-const logo = `${import.meta.env.BASE_URL}img/logo-cleansed.svg`
+import logo from '@images/logo-cleansed.svg'
 
 const mobileMenuOpen = ref(false)
 const page = usePage()
@@ -144,4 +143,7 @@ const adminDashboardHref = computed(() => {
     </Dialog>
   </header>
 </template>
+
+
+
 

@@ -1,12 +1,13 @@
 <script setup>
+import pipelineImageUrl from '@images/pipeline.jpg'
 const props = defineProps({
   lightImage: {
     type: String,
-    default: '/img/pipeline.jpg',
+    default: pipelineImageUrl,
   },
   darkImage: {
     type: String,
-    default: '/img/pipeline.jpg',
+    default: pipelineImageUrl,
   },
 })
 </script>
@@ -70,3 +71,4 @@ const props = defineProps({
     </div>
   </div>
 </template>
+
