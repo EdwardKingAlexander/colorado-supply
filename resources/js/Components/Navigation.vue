@@ -1,10 +1,26 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
-import logo from '/public/img/logo-cleansed.svg'
+import { usePage } from '@inertiajs/vue3'
+
+const logo = `${import.meta.env.BASE_URL}img/logo-cleansed.svg`
 
 const mobileMenuOpen = ref(false)
+const page = usePage()
+
+const isAdminAuthenticated = computed(() => page.props?.auth?.guards?.admin ?? false)
+const adminDashboardHref = computed(() => {
+  if (!isAdminAuthenticated.value) {
+    return null
+  }
+
+  if (typeof route === 'function') {
+    return route('filament.admin.pages.dashboard')
+  }
+
+  return '/admin'
+})
 </script>
 
 <template>
@@ -14,8 +30,8 @@ const mobileMenuOpen = ref(false)
       <div class="flex lg:flex-1">
         <a href="#home" class="-m-1.5 p-1.5">
           <span class="sr-only">Colorado Supply & Procurement LLC</span>
-          <img class="h-20 w-auto dark:hidden" :src="logo" alt="Logo" />
-          <img class="h-20 w-auto hidden dark:block" :src="logo" alt="Logo" />
+          <img class="h-12 w-auto sm:h-14 lg:h-16 dark:hidden" :src="logo" alt="Colorado Supply & Procurement LLC" />
+          <img class="h-12 w-auto sm:h-14 lg:h-16 hidden dark:block" :src="logo" alt="Colorado Supply & Procurement LLC" />
         </a>
       </div>
 
@@ -41,12 +57,23 @@ const mobileMenuOpen = ref(false)
 
       <!-- Desktop auth links -->
       <div class="hidden lg:flex lg:flex-1 lg:justify-end gap-x-6">
-        <a :href="route('login')" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400">
-          Log in <span aria-hidden="true">&rarr;</span>
-        </a>
-        <a :href="route('register')" class="text-sm font-semibold text-blue-700 dark:text-blue-400 hover:underline">
-          Register
-        </a>
+        <template v-if="isAdminAuthenticated">
+          <a
+            v-if="adminDashboardHref"
+            :href="adminDashboardHref"
+            class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
+          >
+            Admin Dashboard
+          </a>
+        </template>
+        <template v-else>
+          <a :href="route('login')" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400">
+            Log in <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a :href="route('register')" class="text-sm font-semibold text-blue-700 dark:text-blue-400 hover:underline">
+            Register
+          </a>
+        </template>
       </div>
     </nav>
 
@@ -59,8 +86,8 @@ const mobileMenuOpen = ref(false)
         <div class="flex items-center justify-between">
           <a href="#home" class="-m-1.5 p-1.5" @click="mobileMenuOpen = false">
             <span class="sr-only">Colorado Supply & Procurement LLC</span>
-            <img class="h-12 w-auto dark:hidden" :src="logo" alt="Logo" />
-            <img class="h-12 w-auto hidden dark:block" :src="logo" alt="Logo" />
+            <img class="h-10 w-auto dark:hidden" :src="logo" alt="Colorado Supply & Procurement LLC" />
+            <img class="h-10 w-auto hidden dark:block" :src="logo" alt="Colorado Supply & Procurement LLC" />
           </a>
           <button
             type="button"
@@ -92,12 +119,24 @@ const mobileMenuOpen = ref(false)
 
             <!-- Mobile Auth Links -->
             <div class="py-6 space-y-2">
-              <a :href="route('login')" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
-                Log in
-              </a>
-              <a :href="route('register')" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-blue-700 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-white/5">
-                Register
-              </a>
+              <template v-if="isAdminAuthenticated">
+                <a
+                  v-if="adminDashboardHref"
+                  :href="adminDashboardHref"
+                  @click="mobileMenuOpen = false"
+                  class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
+                >
+                  Admin Dashboard
+                </a>
+              </template>
+              <template v-else>
+                <a :href="route('login')" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
+                  Log in
+                </a>
+                <a :href="route('register')" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2.5 text-base font-semibold text-blue-700 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-white/5">
+                  Register
+                </a>
+              </template>
             </div>
           </div>
         </div>
@@ -105,3 +144,4 @@ const mobileMenuOpen = ref(false)
     </Dialog>
   </header>
 </template>
+
