@@ -27,7 +27,7 @@
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Location</dt>
-              <dd>Colorado Springs, Colorado Serving Nationwide</dd>
+              <dd>Colorado Springs, Colorado</dd>
               <dd>Serving Nationwide</dd>
             </div>
             <div>
