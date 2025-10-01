@@ -23,6 +23,13 @@
             gtag('config', 'G-RZ06XS51X0');
         </script>
 
+        @if (config('services.google.recaptcha.site_key'))
+            <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.google.recaptcha.site_key') }}" async defer></script>
+            <script>
+                window.googleRecaptchaSiteKey = "{{ config('services.google.recaptcha.site_key') }}";
+            </script>
+        @endif
+
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])

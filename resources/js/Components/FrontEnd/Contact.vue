@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section id="contact" class="bg-white dark:bg-gray-900 py-24 sm:py-32 scroll-mt-20">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl text-center">
@@ -27,7 +27,7 @@
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Location</dt>
-              <dd>Colorado Springs, CO �?" Serving Nationwide</dd>
+              <dd>Colorado Springs, CO ??" Serving Nationwide</dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Registrations</dt>
@@ -110,10 +110,13 @@
             <div>
               <button
                 type="submit"
-                class="w-full rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
+                :disabled="isSubmitting"
+                class="w-full rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Send Message
+                <span v-if="isSubmitting">Sending...</span>
+                <span v-else>Send Message</span>
               </button>
+              <p v-if="errors.captcha_token" class="text-red-600 text-sm mt-2">{{ errors.captcha_token[0] }}</p>
             </div>
           </form>
 
@@ -139,20 +142,74 @@ const form = ref({
 
 const successMessage = ref('')
 const errors = ref({})
+const isSubmitting = ref(false)
+
+const recaptchaSiteKey = window.googleRecaptchaSiteKey || ''
+const recaptchaAction = 'contact_form'
+
+const getRecaptchaToken = () => new Promise((resolve, reject) => {
+  if (!recaptchaSiteKey) {
+    reject(new Error('Missing reCAPTCHA site key'))
+    return
+  }
+
+  let attempts = 0
+  const maxAttempts = 30
+
+  const attempt = () => {
+    const grecaptcha = window.grecaptcha
+    if (grecaptcha?.execute) {
+      grecaptcha.ready(() => {
+        grecaptcha.execute(recaptchaSiteKey, { action: recaptchaAction })
+          .then(resolve)
+          .catch(reject)
+      })
+      return
+    }
+
+    if (attempts >= maxAttempts) {
+      reject(new Error('reCAPTCHA unavailable'))
+      return
+    }
+
+    attempts += 1
+    setTimeout(attempt, 100)
+  }
+
+  attempt()
+})
 
 const submitForm = async () => {
   successMessage.value = ''
   errors.value = {}
+  isSubmitting.value = true
+
+  let captchaToken
 
   try {
-    const response = await axios.post('/contact', form.value)
+    captchaToken = await getRecaptchaToken()
+  } catch (error) {
+    errors.value = { captcha_token: ['reCAPTCHA failed to load. Please refresh the page and try again.'] }
+    isSubmitting.value = false
+    return
+  }
+
+  try {
+    const response = await axios.post('/contact', {
+      ...form.value,
+      captcha_token: captchaToken,
+    })
 
     successMessage.value = response.data.message
     form.value = { name: '', email: '', phone: '', message: '', company: '' }
   } catch (error) {
-    if (error.response && error.response.data.errors) {
+    if (error.response && error.response.data?.errors) {
       errors.value = error.response.data.errors
+    } else {
+      errors.value = { captcha_token: ['We could not submit your request. Please try again.'] }
     }
+  } finally {
+    isSubmitting.value = false
   }
 }
 </script>

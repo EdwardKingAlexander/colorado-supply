@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Mail\ContactAutoReply;
 use App\Mail\ContactFormSubmitted;
 use App\Models\ContactMessage;
+use App\Services\Google\RecaptchaService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 
 class ContactController extends Controller
 {
+    public function __construct(private RecaptchaService $recaptcha)
+    {
+    }
+
     public function store(Request $request)
     {
         if ($request->filled('company')) {
@@ -16,25 +23,29 @@ class ContactController extends Controller
         }
 
         $validated = $request->validate([
-            'name'    => ['required', 'string', 'max:120'],
-            'email'   => ['required', 'email', 'max:255'],
-            'phone'   => ['nullable', 'string', 'max:30'],
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
             'message' => ['required', 'string', 'max:2000'],
+            'captcha_token' => ['required', 'string'],
         ]);
 
-        //save to DB (with audit metadata)
-        $message = ContactMessage::create([
+        if (! $this->recaptcha->verify($validated['captcha_token'], $request->ip(), 'contact_form')) {
+            throw ValidationException::withMessages([
+                'captcha_token' => 'reCAPTCHA verification failed. Please try again.',
+            ]);
+        }
+
+        unset($validated['captcha_token']);
+
+        ContactMessage::create([
             ...$validated,
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
 
-        // STEP 2 will send the email using $validated.
-
         Mail::to('Edward@cogovsupply.com')->send(new ContactFormSubmitted($validated));
-
-        // Auto-reply to the user who submitted the form
-        Mail::to($validated['email'])->send(new \App\Mail\ContactAutoReply($validated));
+        Mail::to($validated['email'])->send(new ContactAutoReply($validated));
 
         return response()->json(['message' => 'Thanks! Your message was received.'], 201);
     }
