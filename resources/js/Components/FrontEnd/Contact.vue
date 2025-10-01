@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section id="contact" class="bg-white dark:bg-gray-900 py-24 sm:py-32 scroll-mt-20">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl text-center">
@@ -27,7 +27,8 @@
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Location</dt>
-              <dd>Colorado Springs, CO ??" Serving Nationwide</dd>
+              <dd>Colorado Springs, Colorado Serving Nationwide</dd>
+              <dd>Serving Nationwide</dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Registrations</dt>
