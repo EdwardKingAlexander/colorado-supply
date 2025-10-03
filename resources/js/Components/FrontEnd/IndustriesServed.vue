@@ -43,36 +43,44 @@
 </template>
 
 <script setup>
+
+import aerospaceImageUrl from '@images/industries/aerospace.jpg';
+import constructionImageUrl from '@images/industries/construction-site.jpg';
+import foodProcessingImageUrl from '@images/industries/food-processing.jpg';
+import manufacturingImageUrl from '@images/industries/manufacturing.jpg';
+import automotiveImageUrl from '@images/industries/automotive.jpg';
+import energyImageUrl from '@images/industries/energy.jpg';
+
 const industries = [
   {
     name: 'Aerospace & Defense',
     description: 'Supplying precision components, fasteners, and specialized materials for aerospace and defense projects.',
-    image: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: aerospaceImageUrl,
   },
   {
     name: 'Construction & Infrastructure',
     description: 'Providing tools, safety gear, and materials for government and commercial construction projects.',
-    image: 'https://images.unsplash.com/photo-1581092335525-7e3ef22c85f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: constructionImageUrl,
   },
   {
     name: 'Food Processing',
     description: 'Specialized equipment, MRO supplies, and safety products tailored for food production environments.',
-    image: 'https://images.unsplash.com/photo-1584270354949-1e35b71e78d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: foodProcessingImageUrl,
   },
   {
     name: 'Manufacturing & Industrial',
     description: 'Wide range of OEM and MRO solutions for diverse industrial manufacturing needs.',
-    image: 'https://images.unsplash.com/photo-1581091870622-3b5c9c8c8c4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: manufacturingImageUrl,
   },
   {
     name: 'Automotive & Repair',
     description: 'Fasteners, tools, and repair shop essentials for automotive and fleet maintenance operations.',
-    image: 'https://images.unsplash.com/photo-1615484477634-7a9b1d4d68f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: automotiveImageUrl,
   },
   {
     name: 'Energy & Utilities',
     description: 'Supplying fluid power, welding, and transmission solutions for energy and utility sectors.',
-    image: 'https://images.unsplash.com/photo-1509395176047-4a66953fd231?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: energyImageUrl,
   },
 ]
 </script>
