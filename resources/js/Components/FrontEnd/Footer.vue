@@ -55,7 +55,7 @@
           <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Compliance</h4>
           <ul role="list" class="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-400">
             <li><span class="font-semibold">CAGE Code:</span> 15NL2</li>
-            <li><span class="font-semibold">UEI:</span> Pending</li>
+            <li><span class="font-semibold">UEI:</span> DBGXU2BFS5N7</li>
             <li><span class="font-semibold">NAICS:</span> 423840, 423830, 423710, 423120, 423610, 423450</li>
           </ul>
           <div class="mt-6">
