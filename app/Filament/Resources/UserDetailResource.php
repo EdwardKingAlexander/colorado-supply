@@ -2,11 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\UserDetailResource\Pages\ListUserDetails;
+use App\Filament\Resources\UserDetailResource\Pages\CreateUserDetail;
+use App\Filament\Resources\UserDetailResource\Pages\EditUserDetail;
 use Dom\Text;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
-use Filament\Forms\Form;
 use App\Models\UserDetail;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -20,67 +30,67 @@ class UserDetailResource extends Resource
 {
     protected static ?string $model = UserDetail::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('user_id')
+        return $schema
+            ->components([
+                Select::make('user_id')
                     ->label('User')
                     ->relationship('user', 'name')
                     ->required()
                     ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id', 'email')->toArray())
                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
-                Forms\Components\TextInput::make('ship_to_address')
+                TextInput::make('ship_to_address')
                     ->label('Ship To Address'),
-                Forms\Components\TextInput::make('ship_to_city')
+                TextInput::make('ship_to_city')
                     ->label('Ship To City'),
-                Forms\Components\TextInput::make('ship_to_state')
+                TextInput::make('ship_to_state')
                     ->label('Ship To State'),
-                Forms\Components\TextInput::make('ship_to_zip')
+                TextInput::make('ship_to_zip')
                     ->label('Ship To Zip'),
-                Forms\Components\TextInput::make('billing_address')
+                TextInput::make('billing_address')
                     ->label('Billing Address'),
-                Forms\Components\TextInput::make('billing_city')
+                TextInput::make('billing_city')
                     ->label('Billing City'),
-                Forms\Components\TextInput::make('billing_state')
+                TextInput::make('billing_state')
                     ->label('Billing State'),
-                Forms\Components\TextInput::make('billing_zip')
+                TextInput::make('billing_zip')
                     ->label('Billing Zip'),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->label('Email'),
-                Forms\Components\TextInput::make('first_name')
+                TextInput::make('first_name')
                     ->label('First Name'),
-                Forms\Components\TextInput::make('last_name')
+                TextInput::make('last_name')
                     ->label('Last Name'),
-                Forms\Components\TextInput::make('company_name')
+                TextInput::make('company_name')
                     ->label('Company Name'),
-                Forms\Components\TextInput::make('country')
+                TextInput::make('country')
                     ->label('Country'),
-                Forms\Components\TextInput::make('state')
+                TextInput::make('state')
                     ->label('State'),
-                Forms\Components\TextInput::make('city')
+                TextInput::make('city')
                     ->label('City'),
-                Forms\Components\TextInput::make('zip_code')
+                TextInput::make('zip_code')
                     ->label('Zip Code'),
-                Forms\Components\TextInput::make('fax_number')
+                TextInput::make('fax_number')
                     ->label('Fax Number'),
-                Forms\Components\TextInput::make('address_line_1')
+                TextInput::make('address_line_1')
                     ->label('Address Line 1'),
-                Forms\Components\TextInput::make('address_line_2')
+                TextInput::make('address_line_2')
                     ->label('Address Line 2'),
-                Forms\Components\TextInput::make('phone_number')
+                TextInput::make('phone_number')
                     ->label('Phone Number'),
-                Forms\Components\TextInput::make('mobile_number')
+                TextInput::make('mobile_number')
                     ->label('Mobile Number'),
-                Forms\Components\TextInput::make('website')
+                TextInput::make('website')
                     ->label('Website'),
-                Forms\Components\TextInput::make('tax_id')
+                TextInput::make('tax_id')
                     ->label('Tax ID'),
-                Forms\Components\Textarea::make('notes')
+                Textarea::make('notes')
                     ->label('Notes'),
-                Forms\Components\DateTimePicker::make('last_interaction')
+                DateTimePicker::make('last_interaction')
                     ->label('Last Interaction'),
             ]);
     }
@@ -107,12 +117,12 @@ class UserDetailResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -127,9 +137,9 @@ class UserDetailResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUserDetails::route('/'),
-            'create' => Pages\CreateUserDetail::route('/create'),
-            'edit' => Pages\EditUserDetail::route('/{record}/edit'),
+            'index' => ListUserDetails::route('/'),
+            'create' => CreateUserDetail::route('/create'),
+            'edit' => EditUserDetail::route('/{record}/edit'),
         ];
     }
 }

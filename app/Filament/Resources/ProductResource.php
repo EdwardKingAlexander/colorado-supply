@@ -2,15 +2,32 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\ProductResource\RelationManagers\AttributesRelationManager;
+use App\Filament\Resources\ProductResource\Pages\ListProducts;
+use App\Filament\Resources\ProductResource\Pages\CreateProduct;
+use App\Filament\Resources\ProductResource\Pages\EditProduct;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\Vendor;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -24,16 +41,16 @@ use Throwable;
 
 class ProductResource extends Resource
 {
-    protected static ?string $model = \App\Models\Product::class;
+    protected static ?string $model = Product::class;
 
-    protected static ?string $navigationGroup = 'Catalog';
-    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static string | \UnitEnum | null $navigationGroup = 'Catalog';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cube';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
-            Forms\Components\Section::make('Identity')->columns(3)->schema([
-                Forms\Components\Select::make('vendor_id')
+        return $schema->components([
+            Section::make('Identity')->columns(3)->schema([
+                Select::make('vendor_id')
                     ->label('Vendor')
                     ->relationship('vendor', 'name')
                     ->searchable()
@@ -43,15 +60,15 @@ class ProductResource extends Resource
                         static::synchronizeProductSlug($set, $get);
                     }),
 
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('slug')
+                TextInput::make('slug')
                     ->required()
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('sku')
+                TextInput::make('sku')
                     ->label('SKU')
                     ->required()
                     ->maxLength(100)
@@ -60,24 +77,24 @@ class ProductResource extends Resource
                         static::synchronizeProductSlug($set, $get);
                     }),
 
-                Forms\Components\Select::make('category_id')
+                Select::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name')
                     ->searchable()
                     ->nullable(),
             ]),
 
-            Forms\Components\Section::make('Commerce')->columns(4)->schema([
-                Forms\Components\TextInput::make('price')->numeric()->prefix('$'),
-                Forms\Components\TextInput::make('list_price')->numeric()->prefix('$'),
-                Forms\Components\TextInput::make('cost')->numeric()->prefix('$'),
-                Forms\Components\TextInput::make('stock')->numeric()->minValue(0),
-                Forms\Components\Toggle::make('is_active')->default(true),
+            Section::make('Commerce')->columns(4)->schema([
+                TextInput::make('price')->numeric()->prefix('$'),
+                TextInput::make('list_price')->numeric()->prefix('$'),
+                TextInput::make('cost')->numeric()->prefix('$'),
+                TextInput::make('stock')->numeric()->minValue(0),
+                Toggle::make('is_active')->default(true),
             ]),
 
-            Forms\Components\Section::make('Details')->columns(2)->schema([
-                Forms\Components\FileUpload::make('image')->image()->directory('products')->imageEditor(),
-                Forms\Components\Textarea::make('description')->rows(6),
+            Section::make('Details')->columns(2)->schema([
+                FileUpload::make('image')->image()->directory('products')->imageEditor(),
+                Textarea::make('description')->rows(6),
             ]),
         ]);
     }
@@ -109,15 +126,15 @@ class ProductResource extends Resource
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->with(['vendor', 'category']))
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\Action::make('importProducts')
+                CreateAction::make(),
+                Action::make('importProducts')
                     ->label('Import Products')
                     ->icon('heroicon-m-arrow-up-tray')
                     ->color('primary')
                     ->modalHeading('Import Products from CSV')
                     ->modalDescription('Upload a CSV containing product columns (e.g. vendor, sku, name, price) and optional attribute columns prefixed with attribute:.')
-                    ->form([
-                        Forms\Components\FileUpload::make('file')
+                    ->schema([
+                        FileUpload::make('file')
                             ->label('CSV File')
                             ->acceptedFileTypes(['text/csv', 'text/plain', 'application/vnd.ms-excel'])
                             ->disk('local')
@@ -134,36 +151,36 @@ class ProductResource extends Resource
                     ->modalWidth('lg'),
             ])
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('sku')->label('SKU')->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('vendor.name')->label('Vendor')->sortable()->toggleable(),
-                Tables\Columns\TextColumn::make('category.name')->label('Category')->sortable()->toggleable(),
-                Tables\Columns\TextColumn::make('price')->money('usd')->sortable(),
-                Tables\Columns\IconColumn::make('is_active')->boolean()->label('Active')->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')->dateTime('M j, Y')->label('Updated')->sortable(),
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('sku')->label('SKU')->searchable()->toggleable(),
+                TextColumn::make('vendor.name')->label('Vendor')->sortable()->toggleable(),
+                TextColumn::make('category.name')->label('Category')->sortable()->toggleable(),
+                TextColumn::make('price')->money('usd')->sortable(),
+                IconColumn::make('is_active')->boolean()->label('Active')->sortable(),
+                TextColumn::make('updated_at')->dateTime('M j, Y')->label('Updated')->sortable(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\ProductResource\RelationManagers\AttributesRelationManager::class,
+            AttributesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'index' => ListProducts::route('/'),
+            'create' => CreateProduct::route('/create'),
+            'edit' => EditProduct::route('/{record}/edit'),
         ];
     }
 

@@ -2,8 +2,17 @@
 
 namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,21 +31,21 @@ class ProductsRelationManager extends RelationManager
             ->where('category_id', $this->getOwnerRecord()->getKey());
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
-            Forms\Components\Select::make('vendor_id')
+        return $schema->components([
+            Select::make('vendor_id')
                 ->label('Vendor')
                 ->relationship('vendor', 'name')
                 ->searchable()
                 ->required(),
 
-            Forms\Components\TextInput::make('name')->required()->maxLength(255),
-            Forms\Components\TextInput::make('slug')->maxLength(255),
-            Forms\Components\TextInput::make('sku')->maxLength(100)->required(),
-            Forms\Components\TextInput::make('price')->numeric()->prefix('$'),
-            Forms\Components\TextInput::make('stock')->numeric()->minValue(0)->default(0),
-            Forms\Components\Toggle::make('is_active')->default(true),
+            TextInput::make('name')->required()->maxLength(255),
+            TextInput::make('slug')->maxLength(255),
+            TextInput::make('sku')->maxLength(100)->required(),
+            TextInput::make('price')->numeric()->prefix('$'),
+            TextInput::make('stock')->numeric()->minValue(0)->default(0),
+            Toggle::make('is_active')->default(true),
         ]);
     }
 
@@ -44,22 +53,22 @@ class ProductsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('sku')->label('SKU')->toggleable(),
-                Tables\Columns\TextColumn::make('vendor.name')->label('Vendor')->sortable(),
-                Tables\Columns\TextColumn::make('price')->money('usd')->sortable(),
-                Tables\Columns\IconColumn::make('is_active')->boolean()->label('Active'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime('M j, Y')->sortable(),
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('sku')->label('SKU')->toggleable(),
+                TextColumn::make('vendor.name')->label('Vendor')->sortable(),
+                TextColumn::make('price')->money('usd')->sortable(),
+                IconColumn::make('is_active')->boolean()->label('Active'),
+                TextColumn::make('created_at')->dateTime('M j, Y')->sortable(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 

@@ -2,8 +2,16 @@
 
 namespace App\Filament\Resources\ProductResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,15 +23,15 @@ class AttributesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
-            Forms\Components\TextInput::make('name')
+        return $schema->components([
+            TextInput::make('name')
                 ->label('Attribute')
                 ->required()
                 ->maxLength(120),
 
-            Forms\Components\Select::make('type')
+            Select::make('type')
                 ->label('Type')
                 ->options([
                     'string'  => 'String',
@@ -37,13 +45,13 @@ class AttributesRelationManager extends RelationManager
                 ->native(false),
 
             // Plain display value (always allowed)
-            Forms\Components\TextInput::make('value')
+            TextInput::make('value')
                 ->label('Display Value')
                 ->maxLength(255)
                 ->helperText('e.g., "12 mm", "316 SS", "Yes"'),
 
             // Optional numeric helper (only shows for integer/float)
-            Forms\Components\TextInput::make('value_number')
+            TextInput::make('value_number')
                 ->numeric()
                 ->step('any')
                 ->label('Numeric Value (optional)')
@@ -51,7 +59,7 @@ class AttributesRelationManager extends RelationManager
                 ->visible(fn ($get) => in_array($get('type'), ['integer','float'])),
 
             // Optional boolean helper (only shows for boolean)
-            Forms\Components\Toggle::make('value_bool')
+            Toggle::make('value_bool')
                 ->label('Boolean Value')
                 ->visible(fn ($get) => $get('type') === 'boolean'),
         ]);
@@ -61,34 +69,34 @@ class AttributesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Attribute')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->badge()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('value')
+                TextColumn::make('value')
                     ->label('Value')
                     ->wrap()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label('Updated')
                     ->dateTime('M j, Y')
                     ->sortable(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 }

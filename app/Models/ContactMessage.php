@@ -20,7 +20,7 @@ class ContactMessage extends Model
 
     public function handledBy(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'handled_by');
+        return $this->belongsTo(User::class, 'handled_by');
     }
 
     public function getIsHandledAttribute(): bool

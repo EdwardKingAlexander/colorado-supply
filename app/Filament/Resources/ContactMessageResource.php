@@ -2,10 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\ContactMessageResource\Pages\ListContactMessages;
+use App\Filament\Resources\ContactMessageResource\Pages\ViewContactMessage;
 use App\Filament\Resources\ContactMessageResource\Pages;
 use App\Models\ContactMessage;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,23 +30,23 @@ class ContactMessageResource extends Resource
 {
     protected static ?string $model = ContactMessage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox';
-    protected static ?string $navigationGroup = 'CRM';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-inbox';
+    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
     protected static ?string $navigationLabel = 'Contact Messages';
     protected static ?int $navigationSort = 10;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
         // For View/Edit pages (we’ll keep fields read-only by default)
-        return $form->schema([
-            Forms\Components\TextInput::make('name')->disabled()->dehydrated(false),
-            Forms\Components\TextInput::make('email')->disabled()->dehydrated(false),
-            Forms\Components\TextInput::make('phone')->disabled()->dehydrated(false),
-            Forms\Components\Textarea::make('message')->rows(8)->disabled()->dehydrated(false),
-            Forms\Components\TextInput::make('ip')->label('IP')->disabled()->dehydrated(false),
-            Forms\Components\TextInput::make('user_agent')->label('User Agent')->disabled()->dehydrated(false),
-            Forms\Components\DateTimePicker::make('handled_at')->label('Handled At'),
-            Forms\Components\Select::make('handled_by')
+        return $schema->components([
+            TextInput::make('name')->disabled()->dehydrated(false),
+            TextInput::make('email')->disabled()->dehydrated(false),
+            TextInput::make('phone')->disabled()->dehydrated(false),
+            Textarea::make('message')->rows(8)->disabled()->dehydrated(false),
+            TextInput::make('ip')->label('IP')->disabled()->dehydrated(false),
+            TextInput::make('user_agent')->label('User Agent')->disabled()->dehydrated(false),
+            DateTimePicker::make('handled_at')->label('Handled At'),
+            Select::make('handled_by')
                 ->relationship('handledBy', 'name')
                 ->searchable()
                 ->preload(),
@@ -42,7 +57,7 @@ class ContactMessageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\IconColumn::make('is_handled')
+                IconColumn::make('is_handled')
                     ->label('Status')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
@@ -50,23 +65,23 @@ class ContactMessageResource extends Resource
                     ->getStateUsing(fn (ContactMessage $record) => $record->is_handled)
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('phone')->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('email')->searchable()->sortable(),
+                TextColumn::make('phone')->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('message')
+                TextColumn::make('message')
                     ->label('Message (preview)')
                     ->limit(80)
                     ->wrap()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Received')
                     ->dateTime('M j, Y H:i')
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('handled')
+                TernaryFilter::make('handled')
                     ->label('Handled')
                     ->placeholder('All')
                     ->trueLabel('Handled')
@@ -77,10 +92,10 @@ class ContactMessageResource extends Resource
                         blank: fn (Builder $q) => $q
                     ),
 
-                Tables\Filters\Filter::make('received_at')
-                    ->form([
-                        Forms\Components\DatePicker::make('from')->label('From'),
-                        Forms\Components\DatePicker::make('until')->label('Until'),
+                Filter::make('received_at')
+                    ->schema([
+                        DatePicker::make('from')->label('From'),
+                        DatePicker::make('until')->label('Until'),
                     ])
                     ->query(function (Builder $q, array $data) {
                         return $q
@@ -88,10 +103,10 @@ class ContactMessageResource extends Resource
                             ->when($data['until'] ?? null, fn ($qq, $d) => $qq->whereDate('created_at', '<=', $d));
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
 
-                Tables\Actions\Action::make('mark_handled')
+                Action::make('mark_handled')
                     ->label('Mark handled')
                     ->icon('heroicon-o-check')
                     ->visible(fn (ContactMessage $record) => is_null($record->handled_at))
@@ -102,7 +117,7 @@ class ContactMessageResource extends Resource
                         $record->save();
                     }),
 
-                Tables\Actions\Action::make('mark_unhandled')
+                Action::make('mark_unhandled')
                     ->label('Mark unhandled')
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->color('warning')
@@ -114,9 +129,9 @@ class ContactMessageResource extends Resource
                         $record->save();
                     }),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -124,8 +139,8 @@ class ContactMessageResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContactMessages::route('/'),
-            'view'  => Pages\ViewContactMessage::route('/{record}'),
+            'index' => ListContactMessages::route('/'),
+            'view'  => ViewContactMessage::route('/{record}'),
             // no create/edit pages for external submissions
         ];
     }
