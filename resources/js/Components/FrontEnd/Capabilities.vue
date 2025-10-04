@@ -82,7 +82,8 @@ import { WrenchScrewdriverIcon, TruckIcon, Cog6ToothIcon, CubeIcon, BuildingOffi
         </p>
         <div class="mt-8 flex justify-center gap-x-6">
           <a
-            href="/files/Colorado-Supply-Capabilities.pdf"
+            href="/docs/Colorado_Supply_Capabilities_Statement.pdf"
+            download
             class="rounded-md bg-amber-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
           >
             Download Capabilities Statement

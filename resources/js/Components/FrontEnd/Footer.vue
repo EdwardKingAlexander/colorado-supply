@@ -33,7 +33,7 @@
           <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Resources</h4>
           <ul role="list" class="mt-4 space-y-2">
             <li>
-              <a href="/files/Colorado-Supply-Capabilities.pdf" class="footer-link">
+              <a href="/docs/Colorado_Supply_Capabilities_Statement.pdf" download class="footer-link">
                 Capabilities Statement
               </a>
             </li>
@@ -60,7 +60,8 @@
           </ul>
           <div class="mt-6">
             <a
-              href="/files/Colorado-Supply-Capabilities.pdf"
+              href="/docs/Colorado_Supply_Capabilities_Statement.pdf"
+              download
               class="inline-flex items-center rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
             >
               Download Capabilities
@@ -71,14 +72,15 @@
 
       <!-- Bottom Bar -->
       <div class="mt-12 border-t border-gray-200 pt-6 dark:border-gray-700">
-        <p class="text-xs text-gray-500 dark:text-gray-500">
-          © {{ new Date().getFullYear() }} Colorado Supply & Procurement LLC. All rights reserved.
-        </p>
-        
-          <span class="text-xs text-blue-300">Website by</span> 
-          <a href="https://www.rockymountainweb.design" class="text-xs hover:underline text-blue-500 dark:text-blue-500">
-            Rocky Mountain Web Design LLC
-          </a>
+        <div class="text-xs text-gray-500 dark:text-gray-500">
+          <p>© {{ new Date().getFullYear() }} Colorado Supply & Procurement LLC. All rights reserved.</p>
+          <p class="mt-2">
+            <span class="text-blue-300">Website by</span>
+            <a href="https://www.rockymountainweb.design" class="hover:underline text-blue-500 dark:text-blue-500">
+              Rocky Mountain Web Design LLC
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   </footer>
