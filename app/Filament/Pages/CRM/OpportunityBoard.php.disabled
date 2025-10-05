@@ -1,0 +1,213 @@
+<?php
+
+namespace App\Filament\Pages\CRM;
+
+use App\Models\LostReason;
+use App\Models\Opportunity;
+use App\Models\Pipeline;
+use App\Models\Stage;
+use Filament\Forms;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Illuminate\Support\Collection;
+
+class OpportunityBoard extends Page implements HasForms
+{
+    use InteractsWithForms;
+
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-view-columns';
+
+    protected static string $view = 'filament.pages.crm.opportunity-board';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+
+    protected static ?int $navigationSort = 25;
+
+    protected static ?string $navigationLabel = 'Pipeline Board';
+
+    public $pipelineId;
+    public Collection $stages;
+    public Collection $opportunities;
+    public $metrics = [];
+    public $filters = [
+        'owner_id' => null,
+        'status' => 'open',
+    ];
+
+    public function mount(): void
+    {
+        $this->pipelineId = Pipeline::where('is_default', true)->first()?->id
+            ?? Pipeline::first()?->id;
+
+        $this->loadBoard();
+    }
+
+    public function loadBoard(): void
+    {
+        if (!$this->pipelineId) {
+            $this->stages = collect();
+            $this->opportunities = collect();
+            return;
+        }
+
+        $pipeline = Pipeline::with('stages')->find($this->pipelineId);
+        $this->stages = $pipeline->stages()->orderBy('position')->get();
+
+        $query = Opportunity::with(['customer', 'owner', 'stage'])
+            ->where('pipeline_id', $this->pipelineId);
+
+        // Apply filters
+        if ($this->filters['owner_id']) {
+            $query->where('owner_id', $this->filters['owner_id']);
+        }
+
+        if ($this->filters['status']) {
+            $query->where('status', $this->filters['status']);
+        }
+
+        $this->opportunities = $query->get()->groupBy('stage_id');
+
+        $this->calculateMetrics();
+    }
+
+    protected function calculateMetrics(): void
+    {
+        $allOpportunities = $this->opportunities->flatten();
+
+        $this->metrics = [
+            'total_pipeline' => $allOpportunities->sum('amount'),
+            'total_forecast' => $allOpportunities->sum(fn($opp) => $opp->forecast_amount),
+            'expected_close_this_month' => Opportunity::where('pipeline_id', $this->pipelineId)
+                ->where('status', 'open')
+                ->whereMonth('expected_close_date', now()->month)
+                ->whereYear('expected_close_date', now()->year)
+                ->sum('amount'),
+            'win_rate' => $this->calculateWinRate(),
+        ];
+    }
+
+    protected function calculateWinRate(): float
+    {
+        $closedLast90Days = Opportunity::where('pipeline_id', $this->pipelineId)
+            ->whereIn('status', ['won', 'lost'])
+            ->where('closed_at', '>=', now()->subDays(90))
+            ->get();
+
+        $wonCount = $closedLast90Days->where('status', 'won')->count();
+        $totalClosed = $closedLast90Days->count();
+
+        return $totalClosed > 0 ? round(($wonCount / $totalClosed) * 100, 1) : 0;
+    }
+
+    public function updatedPipelineId(): void
+    {
+        $this->loadBoard();
+    }
+
+    public function updatedFilters(): void
+    {
+        $this->loadBoard();
+    }
+
+    public function moveOpportunity($opportunityId, $newStageId): void
+    {
+        $opportunity = Opportunity::find($opportunityId);
+        $newStage = Stage::find($newStageId);
+
+        if (!$opportunity || !$newStage) {
+            Notification::make()
+                ->danger()
+                ->title('Error moving opportunity')
+                ->send();
+            return;
+        }
+
+        // Handle won stage
+        if ($newStage->is_won) {
+            $opportunity->update([
+                'stage_id' => $newStageId,
+                'status' => 'won',
+                'closed_at' => now(),
+                'updated_by' => auth()->id(),
+            ]);
+
+            Notification::make()
+                ->success()
+                ->title('Opportunity Won!')
+                ->body($opportunity->title . ' marked as won')
+                ->send();
+
+            $this->loadBoard();
+            return;
+        }
+
+        // Handle lost stage - show modal
+        if ($newStage->is_lost) {
+            $this->dispatch('open-lost-reason-modal', opportunityId: $opportunityId, stageId: $newStageId);
+            return;
+        }
+
+        // Normal stage move
+        $opportunity->update([
+            'stage_id' => $newStageId,
+            'updated_by' => auth()->id(),
+        ]);
+
+        Notification::make()
+            ->success()
+            ->title('Opportunity Moved')
+            ->send();
+
+        $this->loadBoard();
+    }
+
+    public function markAsLost($opportunityId, $lostReasonId): void
+    {
+        $opportunity = Opportunity::find($opportunityId);
+
+        if (!$opportunity) {
+            return;
+        }
+
+        $lostStage = Stage::where('pipeline_id', $opportunity->pipeline_id)
+            ->where('is_lost', true)
+            ->first();
+
+        $opportunity->update([
+            'stage_id' => $lostStage?->id ?? $opportunity->stage_id,
+            'status' => 'lost',
+            'lost_reason_id' => $lostReasonId,
+            'closed_at' => now(),
+            'updated_by' => auth()->id(),
+        ]);
+
+        Notification::make()
+            ->warning()
+            ->title('Opportunity Lost')
+            ->send();
+
+        $this->loadBoard();
+    }
+
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\Select::make('lost_reason_id')
+                ->label('Lost Reason')
+                ->options(LostReason::where('active', true)->pluck('label', 'id'))
+                ->required(),
+        ];
+    }
+
+    public function getPipelines(): Collection
+    {
+        return Pipeline::orderBy('position')->get();
+    }
+
+    public function getOwners(): Collection
+    {
+        return \App\Models\User::orderBy('name')->get();
+    }
+}

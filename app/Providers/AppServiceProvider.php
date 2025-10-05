@@ -32,6 +32,13 @@ class AppServiceProvider extends ServiceProvider
         'danger'    => '#dc2626', // same as accent
     ]);
 
-        
+        // Register CRM Observers
+        \App\Models\Opportunity::observe(\App\Observers\OpportunityObserver::class);
+
+        // Register CRM Policies
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Customer::class, \App\Policies\CustomerPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Pipeline::class, \App\Policies\PipelinePolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Stage::class, \App\Policies\StagePolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Opportunity::class, \App\Policies\OpportunityPolicy::class);
     }
 }

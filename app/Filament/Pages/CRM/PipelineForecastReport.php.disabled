@@ -1,0 +1,273 @@
+<?php
+
+namespace App\Filament\Pages\CRM;
+
+use App\Models\Opportunity;
+use App\Models\Pipeline;
+use App\Models\Stage;
+use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Illuminate\Support\Collection;
+
+class PipelineForecastReport extends Page implements HasForms
+{
+    use InteractsWithForms;
+
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-presentation-chart-line';
+
+    protected static string $view = 'filament.pages.crm.pipeline-forecast-report';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+
+    protected static ?int $navigationSort = 40;
+
+    protected static ?string $navigationLabel = 'Reports & Forecast';
+
+    public $filters = [
+        'pipeline_id' => null,
+        'owner_id' => null,
+        'start_date' => null,
+        'end_date' => null,
+    ];
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->filters['pipeline_id'] = Pipeline::where('is_default', true)->first()?->id;
+        $this->filters['start_date'] = now()->startOfYear()->format('Y-m-d');
+        $this->filters['end_date'] = now()->endOfYear()->format('Y-m-d');
+
+        $this->generateReport();
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('filters.pipeline_id')
+                    ->label('Pipeline')
+                    ->options(Pipeline::pluck('name', 'id'))
+                    ->placeholder('All Pipelines'),
+
+                Select::make('filters.owner_id')
+                    ->label('Owner')
+                    ->options(\App\Models\User::pluck('name', 'id'))
+                    ->placeholder('All Owners'),
+
+                DatePicker::make('filters.start_date')
+                    ->label('Start Date')
+                    ->native(false),
+
+                DatePicker::make('filters.end_date')
+                    ->label('End Date')
+                    ->native(false),
+            ])
+            ->columns(4)
+            ->statePath('filters');
+    }
+
+    public function updatedFilters(): void
+    {
+        $this->generateReport();
+    }
+
+    public function generateReport(): void
+    {
+        $this->data = [
+            'value_by_stage' => $this->getValueByStage(),
+            'forecast_by_month' => $this->getForecastByMonth(),
+            'conversion_rates' => $this->getConversionRates(),
+            'owner_leaderboard' => $this->getOwnerLeaderboard(),
+            'metrics' => $this->getMetrics(),
+        ];
+    }
+
+    protected function getValueByStage(): Collection
+    {
+        $query = Opportunity::where('status', 'open');
+
+        if ($this->filters['pipeline_id']) {
+            $query->where('pipeline_id', $this->filters['pipeline_id']);
+        }
+
+        if ($this->filters['owner_id']) {
+            $query->where('owner_id', $this->filters['owner_id']);
+        }
+
+        return $query->get()
+            ->groupBy('stage_id')
+            ->map(function ($opportunities, $stageId) {
+                $stage = Stage::find($stageId);
+                return [
+                    'stage_name' => $stage->name ?? 'Unknown',
+                    'count' => $opportunities->count(),
+                    'total_value' => $opportunities->sum('amount'),
+                    'forecast_value' => $opportunities->sum(fn($o) => $o->forecast_amount),
+                ];
+            })
+            ->values();
+    }
+
+    protected function getForecastByMonth(): Collection
+    {
+        $months = collect();
+        $start = Carbon::parse($this->filters['start_date']);
+        $end = Carbon::parse($this->filters['end_date']);
+
+        while ($start->lte($end)) {
+            $query = Opportunity::where('status', 'open')
+                ->whereYear('expected_close_date', $start->year)
+                ->whereMonth('expected_close_date', $start->month);
+
+            if ($this->filters['pipeline_id']) {
+                $query->where('pipeline_id', $this->filters['pipeline_id']);
+            }
+
+            if ($this->filters['owner_id']) {
+                $query->where('owner_id', $this->filters['owner_id']);
+            }
+
+            $opportunities = $query->get();
+
+            $months->push([
+                'month' => $start->format('M Y'),
+                'count' => $opportunities->count(),
+                'value' => $opportunities->sum('amount'),
+                'forecast' => $opportunities->sum(fn($o) => $o->forecast_amount),
+            ]);
+
+            $start->addMonth();
+        }
+
+        return $months;
+    }
+
+    protected function getConversionRates(): Collection
+    {
+        if (!$this->filters['pipeline_id']) {
+            return collect();
+        }
+
+        $stages = Stage::where('pipeline_id', $this->filters['pipeline_id'])
+            ->orderBy('position')
+            ->get();
+
+        return $stages->map(function ($stage, $index) use ($stages) {
+            if ($index === $stages->count() - 1) {
+                return null; // Skip last stage
+            }
+
+            $nextStage = $stages[$index + 1] ?? null;
+
+            if (!$nextStage) {
+                return null;
+            }
+
+            // Count opportunities that moved from this stage to next
+            $currentStageOpps = Opportunity::where('stage_id', $stage->id)->count();
+            $nextStageOpps = Opportunity::where('stage_id', $nextStage->id)->count();
+
+            $conversionRate = $currentStageOpps > 0
+                ? round(($nextStageOpps / $currentStageOpps) * 100, 1)
+                : 0;
+
+            return [
+                'from_stage' => $stage->name,
+                'to_stage' => $nextStage->name,
+                'conversion_rate' => $conversionRate,
+            ];
+        })->filter();
+    }
+
+    protected function getOwnerLeaderboard(): Collection
+    {
+        $query = Opportunity::with('owner');
+
+        if ($this->filters['pipeline_id']) {
+            $query->where('pipeline_id', $this->filters['pipeline_id']);
+        }
+
+        if ($this->filters['start_date'] && $this->filters['end_date']) {
+            $query->whereBetween('created_at', [
+                $this->filters['start_date'],
+                $this->filters['end_date'],
+            ]);
+        }
+
+        return $query->get()
+            ->groupBy('owner_id')
+            ->map(function ($opportunities, $ownerId) {
+                $owner = \App\Models\User::find($ownerId);
+                $won = $opportunities->where('status', 'won');
+                $lost = $opportunities->where('status', 'lost');
+                $open = $opportunities->where('status', 'open');
+
+                return [
+                    'owner_name' => $owner->name ?? 'Unknown',
+                    'total_opportunities' => $opportunities->count(),
+                    'won_count' => $won->count(),
+                    'won_value' => $won->sum('amount'),
+                    'open_count' => $open->count(),
+                    'open_value' => $open->sum('amount'),
+                    'win_rate' => $opportunities->whereIn('status', ['won', 'lost'])->count() > 0
+                        ? round(($won->count() / $opportunities->whereIn('status', ['won', 'lost'])->count()) * 100, 1)
+                        : 0,
+                ];
+            })
+            ->sortByDesc('won_value')
+            ->values();
+    }
+
+    protected function getMetrics(): array
+    {
+        $query = Opportunity::query();
+
+        if ($this->filters['pipeline_id']) {
+            $query->where('pipeline_id', $this->filters['pipeline_id']);
+        }
+
+        if ($this->filters['owner_id']) {
+            $query->where('owner_id', $this->filters['owner_id']);
+        }
+
+        if ($this->filters['start_date'] && $this->filters['end_date']) {
+            $query->whereBetween('created_at', [
+                $this->filters['start_date'],
+                $this->filters['end_date'],
+            ]);
+        }
+
+        $opportunities = $query->get();
+        $closed = $opportunities->whereIn('status', ['won', 'lost']);
+        $won = $opportunities->where('status', 'won');
+
+        $avgSalesCycle = $closed->filter(fn($o) => $o->closed_at)
+            ->map(fn($o) => Carbon::parse($o->created_at)->diffInDays($o->closed_at))
+            ->avg();
+
+        return [
+            'total_opportunities' => $opportunities->count(),
+            'total_value' => $opportunities->sum('amount'),
+            'won_count' => $won->count(),
+            'won_value' => $won->sum('amount'),
+            'win_rate' => $closed->count() > 0 ? round(($won->count() / $closed->count()) * 100, 1) : 0,
+            'avg_deal_size' => $opportunities->count() > 0 ? round($opportunities->sum('amount') / $opportunities->count(), 2) : 0,
+            'avg_sales_cycle' => round($avgSalesCycle ?? 0, 1),
+        ];
+    }
+
+    public function exportCsv(): void
+    {
+        // CSV export logic here
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'CSV export started'
+        ]);
+    }
+}

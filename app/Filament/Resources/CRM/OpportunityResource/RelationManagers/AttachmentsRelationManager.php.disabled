@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Filament\Resources\CRM\OpportunityResource\RelationManagers;
+
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
+
+class AttachmentsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'attachments';
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\FileUpload::make('path')
+                    ->label('File')
+                    ->required()
+                    ->disk('public')
+                    ->directory('opportunity-attachments')
+                    ->preserveFilenames()
+                    ->maxSize(10240)
+                    ->acceptedFileTypes(['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                    ->helperText('Max file size: 10MB. Accepted: PDF, Images, Word, Excel'),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('original_name')
+            ->columns([
+                Tables\Columns\TextColumn::make('original_name')
+                    ->label('File Name')
+                    ->searchable()
+                    ->weight('medium'),
+
+                Tables\Columns\TextColumn::make('size')
+                    ->formatStateUsing(fn($state) => number_format($state / 1024, 2) . ' KB')
+                    ->label('Size'),
+
+                Tables\Columns\TextColumn::make('mime')
+                    ->label('Type')
+                    ->badge(),
+
+                Tables\Columns\TextColumn::make('uploadedBy.name')
+                    ->label('Uploaded By'),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->since(),
+            ])
+            ->filters([
+                //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()
+                    ->mutateFormDataUsing(function (array $data): array {
+                        $filePath = $data['path'];
+                        $fileName = basename($filePath);
+
+                        return [
+                            'opportunity_id' => $this->getOwnerRecord()->id,
+                            'path' => $filePath,
+                            'original_name' => $fileName,
+                            'size' => Storage::disk('public')->size($filePath),
+                            'mime' => Storage::disk('public')->mimeType($filePath),
+                            'uploaded_by' => auth()->id(),
+                        ];
+                    }),
+            ])
+            ->actions([
+                Tables\Actions\Action::make('download')
+                    ->label('Download')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn($record) => Storage::disk('public')->url($record->path))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\DeleteAction::make()
+                    ->after(fn($record) => Storage::disk('public')->delete($record->path)),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->after(fn($records) => $records->each(fn($record) => Storage::disk('public')->delete($record->path))),
+                ]),
+            ])
+            ->defaultSort('created_at', 'desc');
+    }
+}
