@@ -47,7 +47,8 @@
       "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan vendor:publish --tag=\"permission-migrations\")",
       "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan vendor:publish --all)",
       "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan db:seed --class=RolesAndPermissionsSeeder)",
-      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan optimize:clear)"
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan optimize:clear)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan config:cache)"
     ],
     "deny": [],
     "ask": []

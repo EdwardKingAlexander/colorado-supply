@@ -3,26 +3,26 @@
 namespace App\Policies;
 
 use App\Models\Customer;
-use App\Models\User;
+use App\Models\Admin;
 
 class CustomerPolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(Admin $user): bool
     {
         return $user->can('crm.customers.viewAny');
     }
 
-    public function view(User $user, Customer $customer): bool
+    public function view(Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.view');
     }
 
-    public function create(User $user): bool
+    public function create(Admin $user): bool
     {
         return $user->can('crm.customers.create');
     }
 
-    public function update(User $user, Customer $customer): bool
+    public function update(Admin $user, Customer $customer): bool
     {
         // Check permission first
         if (!$user->can('crm.customers.update')) {
@@ -38,17 +38,17 @@ class CustomerPolicy
         return $customer->owner_id === $user->id;
     }
 
-    public function delete(User $user, Customer $customer): bool
+    public function delete(Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.delete');
     }
 
-    public function restore(User $user, Customer $customer): bool
+    public function restore(Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.delete');
     }
 
-    public function forceDelete(User $user, Customer $customer): bool
+    public function forceDelete(Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.delete');
     }

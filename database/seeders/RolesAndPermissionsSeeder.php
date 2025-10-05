@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Support\Facades\Cache;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -57,22 +57,22 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create all permissions for 'web' guard
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission, 'guard_name' => 'web']);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
         // Create roles and assign permissions
 
         // Super Admin - All permissions
-        $superAdmin = Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
-        $superAdmin->givePermissionTo(Permission::all());
+        $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+        $superAdmin->syncPermissions(Permission::all());
 
         // Admin - All permissions except users.assignPermissions (optional restriction)
-        $admin = Role::create(['name' => 'admin', 'guard_name' => 'web']);
-        $admin->givePermissionTo(Permission::all()); // Or exclude 'users.assignPermissions' if you want stricter control
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $admin->syncPermissions(Permission::all()); // Or exclude 'users.assignPermissions' if you want stricter control
 
         // Sales Manager - All CRM + reports + limited user management
-        $salesManager = Role::create(['name' => 'sales_manager', 'guard_name' => 'web']);
-        $salesManager->givePermissionTo([
+        $salesManager = Role::firstOrCreate(['name' => 'sales_manager', 'guard_name' => 'web']);
+        $salesManager->syncPermissions([
             // CRM Full Access
             'crm.customers.viewAny',
             'crm.customers.view',
@@ -97,8 +97,8 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         // Sales Rep - CRUD owned opportunities, view others, manage activities/attachments
-        $salesRep = Role::create(['name' => 'sales_rep', 'guard_name' => 'web']);
-        $salesRep->givePermissionTo([
+        $salesRep = Role::firstOrCreate(['name' => 'sales_rep', 'guard_name' => 'web']);
+        $salesRep->syncPermissions([
             // Customers
             'crm.customers.viewAny',
             'crm.customers.view',
@@ -118,8 +118,8 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         // Viewer - Read-only CRM access
-        $viewer = Role::create(['name' => 'viewer', 'guard_name' => 'web']);
-        $viewer->givePermissionTo([
+        $viewer = Role::firstOrCreate(['name' => 'viewer', 'guard_name' => 'web']);
+        $viewer->syncPermissions([
             'crm.customers.viewAny',
             'crm.customers.view',
             'crm.opportunities.viewAny',
@@ -127,13 +127,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'crm.reports.view',
         ]);
 
-        // Assign super_admin role to first user if exists
-        $firstUser = User::first();
-        if ($firstUser) {
-            $firstUser->assignRole('super_admin');
-            $this->command->info("Assigned super_admin role to user: {$firstUser->email}");
+        // Assign super_admin role to first admin if exists
+        $firstAdmin = Admin::first();
+        if ($firstAdmin) {
+            $firstAdmin->assignRole('super_admin');
+            $this->command->info("Assigned super_admin role to admin: {$firstAdmin->email}");
         } else {
-            $this->command->warn('No users found. Super admin role not assigned.');
+            $this->command->warn('No admins found. Super admin role not assigned.');
         }
 
         $this->command->info('Roles and permissions seeded successfully!');

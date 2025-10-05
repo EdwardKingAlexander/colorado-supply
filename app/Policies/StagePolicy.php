@@ -3,41 +3,41 @@
 namespace App\Policies;
 
 use App\Models\Stage;
-use App\Models\User;
+use App\Models\Admin;
 
 class StagePolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(Admin $user): bool
     {
         return $user->can('crm.stages.manage') || $user->can('crm.opportunities.viewAny');
     }
 
-    public function view(User $user, Stage $stage): bool
+    public function view(Admin $user, Stage $stage): bool
     {
         return $user->can('crm.stages.manage') || $user->can('crm.opportunities.view');
     }
 
-    public function create(User $user): bool
+    public function create(Admin $user): bool
     {
         return $user->can('crm.stages.manage');
     }
 
-    public function update(User $user, Stage $stage): bool
+    public function update(Admin $user, Stage $stage): bool
     {
         return $user->can('crm.stages.manage');
     }
 
-    public function delete(User $user, Stage $stage): bool
+    public function delete(Admin $user, Stage $stage): bool
     {
         return $user->can('crm.stages.manage');
     }
 
-    public function restore(User $user, Stage $stage): bool
+    public function restore(Admin $user, Stage $stage): bool
     {
         return $user->can('crm.stages.manage');
     }
 
-    public function forceDelete(User $user, Stage $stage): bool
+    public function forceDelete(Admin $user, Stage $stage): bool
     {
         return $user->can('crm.stages.manage');
     }
