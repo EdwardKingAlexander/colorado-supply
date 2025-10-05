@@ -2,37 +2,33 @@
 
 namespace App\Policies;
 
+use App\Models\Admin;
 use App\Models\User;
 
 class UserPolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(Admin $admin): bool
     {
-        return $user->can('users.viewAny');
+        return $admin->can('users.viewAny');
     }
 
-    public function view(User $user, User $model): bool
+    public function view(Admin $admin, User $model): bool
     {
-        return $user->can('users.view');
+        return $admin->can('users.view');
     }
 
-    public function create(User $user): bool
+    public function create(Admin $admin): bool
     {
-        return $user->can('users.create');
+        return $admin->can('users.create');
     }
 
-    public function update(User $user, User $model): bool
+    public function update(Admin $admin, User $model): bool
     {
-        return $user->can('users.update');
+        return $admin->can('users.update');
     }
 
-    public function delete(User $user, User $model): bool
+    public function delete(Admin $admin, User $model): bool
     {
-        // Prevent deleting yourself
-        if ($user->id === $model->id) {
-            return false;
-        }
-
         // Prevent deleting the last super_admin
         if ($model->hasRole('super_admin')) {
             $superAdminCount = User::role('super_admin')->count();
@@ -41,26 +37,26 @@ class UserPolicy
             }
         }
 
-        return $user->can('users.delete');
+        return $admin->can('users.delete');
     }
 
-    public function restore(User $user, User $model): bool
+    public function restore(Admin $admin, User $model): bool
     {
-        return $user->can('users.delete');
+        return $admin->can('users.delete');
     }
 
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(Admin $admin, User $model): bool
     {
-        return $user->can('users.delete');
+        return $admin->can('users.delete');
     }
 
-    public function assignRoles(User $user): bool
+    public function assignRoles(Admin $admin): bool
     {
-        return $user->can('users.assignRoles');
+        return $admin->can('users.assignRoles');
     }
 
-    public function assignPermissions(User $user): bool
+    public function assignPermissions(Admin $admin): bool
     {
-        return $user->can('users.assignPermissions');
+        return $admin->can('users.assignPermissions');
     }
 }
