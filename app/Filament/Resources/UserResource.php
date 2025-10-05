@@ -3,7 +3,10 @@
 namespace App\Filament\Resources;
 
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
@@ -11,46 +14,74 @@ use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \UnitEnum | null $navigationGroup = 'Admin';
+
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shield-check';
+
+    protected static ?int $navigationSort = 10;
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('password')
-                    ->label('Password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
-                Select::make('role')
-                    ->label('Role')
-                    ->options([
-                        'admin'  => 'Admin',
-                        'user'   => 'User',
-                        'vendor' => 'Vendor',
+                Section::make('User Information')
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true),
+
+                        TextInput::make('password')
+                            ->password()
+                            ->required(fn($context) => $context === 'create')
+                            ->dehydrateStateUsing(fn($state) => filled($state) ? Hash::make($state) : null)
+                            ->dehydrated(fn($state) => filled($state))
+                            ->maxLength(255)
+                            ->revealable()
+                            ->helperText(fn($context) => $context === 'edit' ? 'Leave blank to keep current password' : null),
                     ])
-                    ->required(),
+                    ->columns(2),
+
+                Section::make('Roles & Permissions')
+                    ->schema([
+                        Select::make('roles')
+                            ->label('Roles')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->visible(fn() => auth()->user()?->can('users.assignRoles'))
+                            ->helperText('Assign one or more roles to this user'),
+
+                        Select::make('permissions')
+                            ->label('Direct Permissions')
+                            ->relationship('permissions', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->visible(fn() => auth()->user()?->can('users.assignPermissions'))
+                            ->helperText('Assign direct permissions (in addition to role permissions)'),
+                    ])
+                    ->columns(2)
+                    ->collapsed(),
             ]);
     }
 
@@ -59,35 +90,58 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Full Name')
                     ->searchable()
                     ->sortable()
-                    ->color('secondary'), // uses secondary (gray)
+                    ->weight('medium'),
+
                 TextColumn::make('email')
-                    ->label('Email Address')
                     ->searchable()
                     ->sortable()
-                    ->color('primary'), // highlight emails in brand blue
+                    ->copyable(),
+
+                TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge()
+                    ->color(fn($state) => match($state) {
+                        'super_admin' => 'danger',
+                        'admin' => 'warning',
+                        'sales_manager' => 'success',
+                        'sales_rep' => 'info',
+                        'viewer' => 'gray',
+                        default => 'primary',
+                    })
+                    ->searchable(),
+
                 TextColumn::make('created_at')
-                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
                     ->toggleable()
-                    ->color('secondary'),
+                    ->since(),
+
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('roles')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->preload(),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->color('primary'), // edit button in brand blue
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make()
+                    ->visible(fn(User $record) => auth()->user()?->can('delete', $record)),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->color('danger'), // delete button in brand red
+                        ->visible(fn() => auth()->user()?->can('users.delete')),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
@@ -98,9 +152,14 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => ListUsers::route('/'),
+            'index' => ListUsers::route('/'),
             'create' => CreateUser::route('/create'),
-            'edit'   => EditUser::route('/{record}/edit'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['roles', 'permissions']);
     }
 }

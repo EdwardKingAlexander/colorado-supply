@@ -3,48 +3,53 @@
 namespace App\Policies;
 
 use App\Models\Customer;
-use App\Models\Admin;
+use App\Models\User;
 
 class CustomerPolicy
 {
-    public function viewAny(Admin $user): bool
+    public function viewAny(User $user): bool
     {
-        return true; // All authenticated users can view customers
+        return $user->can('crm.customers.viewAny');
     }
 
-    public function view(Admin $user, Customer $customer): bool
+    public function view(User $user, Customer $customer): bool
     {
-        return true;
+        return $user->can('crm.customers.view');
     }
 
-    public function create(Admin $user): bool
+    public function create(User $user): bool
     {
-        return true; // All authenticated admins can create customers
+        return $user->can('crm.customers.create');
     }
 
-    public function update(Admin $user, Customer $customer): bool
+    public function update(User $user, Customer $customer): bool
     {
-        // Admin and sales_manager can update any
-        // sales_rep can update if they own it
-        if (in_array($user->email, ['admin@example.com'])) {
+        // Check permission first
+        if (!$user->can('crm.customers.update')) {
+            return false;
+        }
+
+        // Admins and managers can update any
+        // Sales reps can only update if they own it
+        if ($user->hasAnyRole(['super_admin', 'admin', 'sales_manager'])) {
             return true;
         }
 
         return $customer->owner_id === $user->id;
     }
 
-    public function delete(Admin $user, Customer $customer): bool
+    public function delete(User $user, Customer $customer): bool
     {
-        return in_array($user->email, ['admin@example.com']);
+        return $user->can('crm.customers.delete');
     }
 
-    public function restore(Admin $user, Customer $customer): bool
+    public function restore(User $user, Customer $customer): bool
     {
-        return in_array($user->email, ['admin@example.com']);
+        return $user->can('crm.customers.delete');
     }
 
-    public function forceDelete(Admin $user, Customer $customer): bool
+    public function forceDelete(User $user, Customer $customer): bool
     {
-        return in_array($user->email, ['admin@example.com']);
+        return $user->can('crm.customers.delete');
     }
 }

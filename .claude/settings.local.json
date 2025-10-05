@@ -40,7 +40,14 @@
       "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan cache:clear)",
       "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan view:clear)",
       "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan route:list --path=admin/crm)",
-      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan route:list --path=admin)"
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan route:list --path=admin)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" \"C:\\Users\\babyd\\.config\\herd\\bin\\composer\" require spatie/laravel-permission:^6)",
+      "Bash(composer:*)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan vendor:publish --provider=\"Spatie\\Permission\\PermissionServiceProvider\")",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan vendor:publish --tag=\"permission-migrations\")",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan vendor:publish --all)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan db:seed --class=RolesAndPermissionsSeeder)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan optimize:clear)"
     ],
     "deny": [],
     "ask": []

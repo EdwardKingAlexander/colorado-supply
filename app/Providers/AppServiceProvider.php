@@ -35,7 +35,16 @@ class AppServiceProvider extends ServiceProvider
         // Register CRM Observers
         \App\Models\Opportunity::observe(\App\Observers\OpportunityObserver::class);
 
-        // Register CRM Policies
+        // Gate::before - Grant all permissions to super_admin
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+            if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
+                return true;
+            }
+            return null;
+        });
+
+        // Register Policies
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\User::class, \App\Policies\UserPolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Customer::class, \App\Policies\CustomerPolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Pipeline::class, \App\Policies\PipelinePolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Stage::class, \App\Policies\StagePolicy::class);

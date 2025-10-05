@@ -3,45 +3,42 @@
 namespace App\Policies;
 
 use App\Models\Pipeline;
-use App\Models\Admin;
+use App\Models\User;
 
 class PipelinePolicy
 {
-    public function viewAny(Admin $user): bool
+    public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('crm.pipelines.manage') || $user->can('crm.opportunities.viewAny');
     }
 
-    public function view(Admin $user, Pipeline $pipeline): bool
+    public function view(User $user, Pipeline $pipeline): bool
     {
-        return true;
+        return $user->can('crm.pipelines.manage') || $user->can('crm.opportunities.view');
     }
 
-    public function create(Admin $user): bool
+    public function create(User $user): bool
     {
-        // Only admin and sales_manager can create pipelines
-        return in_array($user->email, ['admin@example.com']) ||
-            str_contains($user->email, 'manager');
+        return $user->can('crm.pipelines.manage');
     }
 
-    public function update(Admin $user, Pipeline $pipeline): bool
+    public function update(User $user, Pipeline $pipeline): bool
     {
-        return in_array($user->email, ['admin@example.com']) ||
-            str_contains($user->email, 'manager');
+        return $user->can('crm.pipelines.manage');
     }
 
-    public function delete(Admin $user, Pipeline $pipeline): bool
+    public function delete(User $user, Pipeline $pipeline): bool
     {
-        return in_array($user->email, ['admin@example.com']);
+        return $user->can('crm.pipelines.manage');
     }
 
-    public function restore(Admin $user, Pipeline $pipeline): bool
+    public function restore(User $user, Pipeline $pipeline): bool
     {
-        return in_array($user->email, ['admin@example.com']);
+        return $user->can('crm.pipelines.manage');
     }
 
-    public function forceDelete(Admin $user, Pipeline $pipeline): bool
+    public function forceDelete(User $user, Pipeline $pipeline): bool
     {
-        return in_array($user->email, ['admin@example.com']);
+        return $user->can('crm.pipelines.manage');
     }
 }
