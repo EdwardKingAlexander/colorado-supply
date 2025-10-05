@@ -52,22 +52,27 @@
             </div>
           </div>
 
-          <!-- Optional link (only for PSC Codes card) -->
-          <div v-if="card.link" class="mt-2">
-            <a
-              :href="card.link"
-              class="text-sm font-semibold text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300"
+          <!-- Optional link for modal cards -->
+          <div v-if="card.hasModal" class="mt-2">
+            <button
+              @click="openModal(card.modalType)"
+              class="text-sm font-semibold text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300 transition-colors"
             >
-              View full code list →
-            </a>
+              View all codes →
+            </button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Modal Components -->
+    <NAICSCodes v-model="showNAICSModal" />
+    <PSCCodes v-model="showPSCModal" />
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import {
   ShieldCheckIcon,
   ClipboardDocumentCheckIcon,
@@ -77,6 +82,11 @@ import {
   TrophyIcon,
   TagIcon,
 } from '@heroicons/vue/24/outline'
+import NAICSCodes from './NAICSCodes.vue'
+import PSCCodes from './PSCCodes.vue'
+
+const showNAICSModal = ref(false)
+const showPSCModal = ref(false)
 
 const cards = [
   {
@@ -108,6 +118,8 @@ const cards = [
       '423720 – Plumbing & Heating Equipment & Supplies Wholesalers\n' +
       '332710 – Machine Shops (CNC)',
     icon: DocumentTextIcon,
+    hasModal: true,
+    modalType: 'naics',
   },
   {
     name: 'Experience',
@@ -121,7 +133,16 @@ const cards = [
       '3431 – Electric Arc Welding Equip • 3433 – Gas Welding/Heat Cutting Equip\n' +
       '4730 – Hose/Pipe/Tube/Fittings • 4820 – Valves, Nonpowered',
     icon: TagIcon,
-    link: '/compliance', // 🔗 Update this route once you build the compliance page
+    hasModal: true,
+    modalType: 'psc',
   },
 ]
+
+const openModal = (modalType) => {
+  if (modalType === 'naics') {
+    showNAICSModal.value = true
+  } else if (modalType === 'psc') {
+    showPSCModal.value = true
+  }
+}
 </script>
