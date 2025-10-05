@@ -19,11 +19,11 @@
           <dl class="mt-6 space-y-4 text-lg text-gray-600 dark:text-gray-300">
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Phone</dt>
-              <dd>(719) 425-9634</dd>
+              <dd><a class="text-blue-600 dark:text-blue-400" href="tel:7194259634">(719) 425-9634</a></dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Email</dt>
-              <dd>Edward@cogovsupply.com</dd>
+              <dd><a href="mailto:Edward@cogovsupply.com">Edward@cogovsupply.com</a></dd>
             </div>
             <div>
               <dt class="font-semibold text-gray-900 dark:text-white">Location</dt>

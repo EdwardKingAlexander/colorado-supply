@@ -78,7 +78,7 @@ const closeModal = () => {
           >
             View Capabilities Statement
           </button>
-          <a href="/contact" class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          <a href="#contact" class="text-sm font-semibold text-gray-900 dark:text-gray-100">
             Contact Us →
           </a>
         </div>
