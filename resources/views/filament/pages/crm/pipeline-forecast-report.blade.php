@@ -1,17 +1,19 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         {{-- Filters --}}
-        <x-filament-panels::form wire:submit="generateReport">
+        <form wire:submit="generateReport">
             {{ $this->form }}
 
-            <x-filament::button type="submit" class="mt-4">
-                Generate Report
-            </x-filament::button>
+            <div class="mt-4 flex gap-4">
+                <x-filament::button type="submit">
+                    Generate Report
+                </x-filament::button>
 
-            <x-filament::button color="gray" class="mt-4" wire:click="exportCsv">
-                Export CSV
-            </x-filament::button>
-        </x-filament-panels::form>
+                <x-filament::button color="gray" wire:click="exportCsv">
+                    Export CSV
+                </x-filament::button>
+            </div>
+        </form>
 
         {{-- Key Metrics --}}
         <div class="grid gap-4 md:grid-cols-4">
