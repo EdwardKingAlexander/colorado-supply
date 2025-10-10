@@ -5,20 +5,22 @@ namespace App\Filament\Resources\CRM;
 use App\Filament\Resources\CRM\CustomerResource\Pages;
 use App\Filament\Resources\CRM\CustomerResource\RelationManagers;
 use App\Models\Customer;
-use App\Models\User;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\KeyValue;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
+use App\Services\Google\PlacesAutocompleteService;
 use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Throwable;
 
 class CustomerResource extends Resource
 {
@@ -62,35 +64,122 @@ class CustomerResource extends Resource
                     ->default(fn() => auth()->id()),
             ]),
 
-            Section::make('Addresses')->columns(2)->schema([
-                KeyValue::make('billing_address')
-                    ->label('Billing Address')
-                    ->keyLabel('Field')
-                    ->valueLabel('Value')
-                    ->addActionLabel('Add field')
-                    ->default([
-                        'street' => '',
-                        'city' => '',
-                        'state' => '',
-                        'zip' => '',
-                        'country' => '',
-                    ]),
-
-                KeyValue::make('shipping_address')
-                    ->label('Shipping Address')
-                    ->keyLabel('Field')
-                    ->valueLabel('Value')
-                    ->addActionLabel('Add field')
-                    ->default([
-                        'street' => '',
-                        'city' => '',
-                        'state' => '',
-                        'zip' => '',
-                        'country' => '',
-                    ]),
-            ])->collapsible(),
+            Section::make('Addresses')
+                ->columns(2)
+                ->schema([
+                    Section::make('Billing Address')
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make('billing_address_lookup')
+                                ->label('Billing Address Search')
+                                ->placeholder('Start typing to autocomplete')
+                                ->live(debounce: 750)
+                                ->afterStateUpdated(fn (Set $set, ?string $state) => static::hydrateAddressFromLookup($set, $state, 'billing_address'))
+                                ->dehydrated(false)
+                                ->columnSpanFull(),
+                            TextInput::make('billing_address.street')
+                                ->label('Street')
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            TextInput::make('billing_address.line2')
+                                ->label('Apartment / Suite')
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            TextInput::make('billing_address.city')
+                                ->label('City')
+                                ->maxLength(255),
+                            TextInput::make('billing_address.state')
+                                ->label('State / Province')
+                                ->maxLength(255),
+                            TextInput::make('billing_address.zip')
+                                ->label('Postal Code')
+                                ->maxLength(20),
+                            TextInput::make('billing_address.country')
+                                ->label('Country')
+                                ->maxLength(255),
+                            Hidden::make('billing_address.formatted'),
+                            Hidden::make('billing_address.place_id'),
+                            Hidden::make('billing_address.latitude'),
+                            Hidden::make('billing_address.longitude'),
+                        ]),
+                    Section::make('Shipping Address')
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make('shipping_address_lookup')
+                                ->label('Shipping Address Search')
+                                ->placeholder('Start typing to autocomplete')
+                                ->live(debounce: 750)
+                                ->afterStateUpdated(fn (Set $set, ?string $state) => static::hydrateAddressFromLookup($set, $state, 'shipping_address'))
+                                ->dehydrated(false)
+                                ->columnSpanFull(),
+                            TextInput::make('shipping_address.street')
+                                ->label('Street')
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            TextInput::make('shipping_address.line2')
+                                ->label('Apartment / Suite')
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            TextInput::make('shipping_address.city')
+                                ->label('City')
+                                ->maxLength(255),
+                            TextInput::make('shipping_address.state')
+                                ->label('State / Province')
+                                ->maxLength(255),
+                            TextInput::make('shipping_address.zip')
+                                ->label('Postal Code')
+                                ->maxLength(20),
+                            TextInput::make('shipping_address.country')
+                                ->label('Country')
+                                ->maxLength(255),
+                            Hidden::make('shipping_address.formatted'),
+                            Hidden::make('shipping_address.place_id'),
+                            Hidden::make('shipping_address.latitude'),
+                            Hidden::make('shipping_address.longitude'),
+                        ]),
+                ])
+                ->collapsible(),
         ]);
     }
+
+    protected static function hydrateAddressFromLookup(Set $set, ?string $input, string $statePath): void
+    {
+        $query = trim((string) $input);
+
+        if ($query === '' || strlen($query) < 4) {
+            return;
+        }
+
+        try {
+            $address = app(PlacesAutocompleteService::class)->resolveAddress($query);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return;
+        }
+
+        if ($address === null) {
+            return;
+        }
+
+        $fields = [
+            'street' => $address['street'] ?? null,
+            'line2' => $address['line2'] ?? null,
+            'city' => $address['city'] ?? null,
+            'state' => $address['state'] ?? null,
+            'zip' => $address['zip'] ?? null,
+            'country' => $address['country'] ?? null,
+            'formatted' => $address['formatted'] ?? null,
+            'place_id' => $address['place_id'] ?? null,
+            'latitude' => $address['latitude'] ?? null,
+            'longitude' => $address['longitude'] ?? null,
+        ];
+
+        foreach ($fields as $field => $value) {
+            $set($statePath . '.' . $field, $value);
+        }
+    }
+
 
     public static function table(Table $table): Table
     {

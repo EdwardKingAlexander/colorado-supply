@@ -48,6 +48,11 @@ return [
             'secret_key' => env('GOOGLE_RECAPTCHA_SECRET_KEY'),
             'score_threshold' => (float) env('GOOGLE_RECAPTCHA_SCORE_THRESHOLD', 0.5),
         ],
+
+        'places' => [
+            'api_key' => env('GOOGLE_PLACES_API_KEY'),
+        ],
     ],
 
 ];
+
