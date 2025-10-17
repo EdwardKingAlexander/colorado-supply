@@ -7,6 +7,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\App;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -127,11 +128,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'crm.reports.view',
         ]);
 
-        // Assign super_admin role to first admin if exists
-        $firstAdmin = Admin::first();
-        if ($firstAdmin) {
-            $firstAdmin->assignRole('super_admin');
-            $this->command->info("Assigned super_admin role to admin: {$firstAdmin->email}");
+        // Assign super_admin role
+        if (App::environment(['local', 'development'])) {
+            $adminForRole = Admin::where('email', 'edward@rockymountainweb.design')->first();
+        } else {
+            $adminForRole = Admin::first();
+        }
+
+        if ($adminForRole) {
+            $adminForRole->assignRole('super_admin');
+            $this->command->info("Assigned super_admin role to admin: {$adminForRole->email}");
         } else {
             $this->command->warn('No admins found. Super admin role not assigned.');
         }

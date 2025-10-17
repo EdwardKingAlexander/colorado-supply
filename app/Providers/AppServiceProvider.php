@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Register CRM Observers
         \App\Models\Opportunity::observe(\App\Observers\OpportunityObserver::class);
+        \App\Models\Quote::observe(\App\Observers\QuoteObserver::class);
 
         // Gate::before - Grant all permissions to super_admin
         \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
@@ -49,5 +50,6 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Pipeline::class, \App\Policies\PipelinePolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Stage::class, \App\Policies\StagePolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Opportunity::class, \App\Policies\OpportunityPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Quote::class, \App\Policies\QuotePolicy::class);
     }
 }

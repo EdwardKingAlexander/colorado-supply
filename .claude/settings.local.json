@@ -1,10 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" -d opcache.enable=0 artisan about)",
-      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan about)",
-      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan route:list --path=ai)",
-      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan config:cache)"
+      "Bash(php artisan tinker --execute=\"dd(config(''services.google.places.api_key''));\")",
+      "Bash(vendor/bin/pint:*)"
     ],
     "deny": [],
     "ask": []

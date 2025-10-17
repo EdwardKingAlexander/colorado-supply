@@ -21,7 +21,7 @@ class VendorFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => 1,
+            'user_id' => \App\Models\User::factory(),
             'name' => fake()->company(),
             'email' => fake()->unique()->safeEmail,
             'phone' => fake()->phoneNumber(),
