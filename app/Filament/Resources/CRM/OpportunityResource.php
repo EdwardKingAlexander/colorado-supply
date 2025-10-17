@@ -181,12 +181,12 @@ class OpportunityResource extends Resource
                     ]),
             ])
             ->filters([])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');

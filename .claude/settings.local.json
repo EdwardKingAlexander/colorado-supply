@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(php artisan tinker --execute=\"dd(config(''services.google.places.api_key''));\")",
-      "Bash(vendor/bin/pint:*)"
+      "Bash(vendor/bin/pint:*)",
+      "Bash(php artisan:*)",
+      "Bash(php vendor/bin/pint:*)"
     ],
     "deny": [],
     "ask": []

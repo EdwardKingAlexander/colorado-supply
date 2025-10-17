@@ -94,11 +94,11 @@ class PipelineResource extends Resource
                     ->since(),
             ])
             ->filters([])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('position')

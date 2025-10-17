@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\CRM;
 
 use App\Filament\Resources\CRM\CustomerResource\Pages;
-use App\Filament\Resources\CRM\CustomerResource\RelationManagers;
 use App\Models\Customer;
 use App\Services\Google\PlacesAutocompleteService;
 use Filament\Forms\Components\Hidden;
@@ -13,12 +12,11 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 
 class CustomerResource extends Resource
@@ -224,11 +222,11 @@ class CustomerResource extends Resource
             ->filters([
                 // Filters would be configured differently in this version
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('updated_at', 'desc');

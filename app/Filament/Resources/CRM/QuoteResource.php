@@ -343,7 +343,7 @@ class QuoteResource extends Resource
                             );
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 Action::make('convertToOrder')
                     ->label('Convert to Order')
@@ -392,7 +392,7 @@ class QuoteResource extends Resource
 
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
                 \Filament\Actions\BulkAction::make('export')
                     ->label('Export CSV')
