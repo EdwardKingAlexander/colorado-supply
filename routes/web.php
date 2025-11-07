@@ -1,10 +1,11 @@
 <?php
 
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StoreController;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -19,6 +20,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/store', [StoreController::class, 'index'])->middleware(['auth', 'verified'])->name('store.index');
 
 // Profile Management
 Route::middleware('auth')->group(function () {
@@ -29,7 +31,6 @@ Route::middleware('auth')->group(function () {
 
 // Contact Form Submission
 Route::post('/contact',
-[ContactController::class, 'store'])->name('contact.store');
-
+    [ContactController::class, 'store'])->name('contact.store');
 
 require __DIR__.'/auth.php';

@@ -9,6 +9,8 @@ const mobileMenuOpen = ref(false)
 const page = usePage()
 
 const isAdminAuthenticated = computed(() => page.props?.auth?.guards?.admin ?? false)
+const isUserAuthenticated = computed(() => Boolean(page.props?.auth?.user))
+const shouldShowStoreLink = computed(() => isUserAuthenticated.value && !isAdminAuthenticated.value)
 const adminDashboardHref = computed(() => {
   if (!isAdminAuthenticated.value) {
     return null
@@ -19,6 +21,17 @@ const adminDashboardHref = computed(() => {
   }
 
   return '/admin'
+})
+const storeHref = computed(() => {
+  if (!shouldShowStoreLink.value) {
+    return null
+  }
+
+  if (typeof route === 'function') {
+    return route('store.index')
+  }
+
+  return '/store'
 })
 </script>
 
@@ -63,6 +76,15 @@ const adminDashboardHref = computed(() => {
             class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
           >
             Admin Dashboard
+          </a>
+        </template>
+        <template v-else-if="shouldShowStoreLink">
+          <a
+            v-if="storeHref"
+            :href="storeHref"
+            class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
+          >
+            Store
           </a>
         </template>
         <template v-else>
@@ -126,6 +148,16 @@ const adminDashboardHref = computed(() => {
                   class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
                 >
                   Admin Dashboard
+                </a>
+              </template>
+              <template v-else-if="shouldShowStoreLink">
+                <a
+                  v-if="storeHref"
+                  :href="storeHref"
+                  @click="mobileMenuOpen = false"
+                  class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
+                >
+                  Store
                 </a>
               </template>
               <template v-else>

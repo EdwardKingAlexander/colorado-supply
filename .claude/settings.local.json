@@ -4,7 +4,13 @@
       "Bash(php artisan tinker --execute=\"dd(config(''services.google.places.api_key''));\")",
       "Bash(vendor/bin/pint:*)",
       "Bash(php artisan:*)",
-      "Bash(php vendor/bin/pint:*)"
+      "Bash(php vendor/bin/pint:*)",
+      "Bash(where:*)",
+      "Bash(C:Usersbabyd.configherdbinphp.bat artisan make:controller StoreController --no-interaction)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan make:controller StoreController --no-interaction)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan make:test --pest StoreTest --no-interaction)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" artisan test --filter=StoreTest)",
+      "Bash(\"C:\\Users\\babyd\\.config\\herd\\bin\\php.bat\" vendor/bin/pint --dirty)"
     ],
     "deny": [],
     "ask": []
