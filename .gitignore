@@ -21,3 +21,35 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+/documentation
+/public/js
+/public/css
+
+
+# --- Local AI / MCP / Claude ---
+.claude/settings.local.json
+.claude/agents/
+.mcp.json
+AI/
+
+# --- Local debug / scratch ---
+errors/
+DEBUGGING_*.md
+tmp-*.php
+tmp-*.js
+tmp-*.json
+*.tmp
+nul
+
+# --- Local helper scripts (keep if you truly want them versioned) ---
+check-queue.php
+clear-cache*.bat
+clear-cache*.php
+start-queue-worker.bat
+scripts/
+
+
+# AI Development State Files
+/ai/state/*.json
+/ai_state
+/ai_scratch
