@@ -1,0 +1,87 @@
+{
+    "success": true,
+    "audit_date": "2025-11-09T22:40:02+00:00",
+    "summary": {
+        "total_vendors": 1,
+        "compliant": 0,
+        "non_compliant": 1,
+        "expiring_soon": 1,
+        "missing_documents": 1
+    },
+    "vendors": [
+        {
+            "vendor_id": 1,
+            "vendor_name": "Test Vendor",
+            "compliance_status": "non_compliant",
+            "missing_count": 5,
+            "expired_count": 0,
+            "expiring_soon_count": 1,
+            "compliant_count": 0,
+            "documents": {
+                "missing": [
+                    {
+                        "document": "W-9 Form",
+                        "status": "missing",
+                        "message": "Missing required fields: w9_date, tax_id",
+                        "fields_checked": [
+                            "w9_date",
+                            "tax_id"
+                        ]
+                    },
+                    {
+                        "document": "Insurance Certificate",
+                        "status": "missing",
+                        "message": "Missing required fields: insurance_expiration_date, insurance_policy_number",
+                        "fields_checked": [
+                            "insurance_expiration_date",
+                            "insurance_policy_number"
+                        ]
+                    },
+                    {
+                        "document": "CAGE Code",
+                        "status": "missing",
+                        "message": "Missing required fields: cage_code",
+                        "fields_checked": [
+                            "cage_code"
+                        ]
+                    },
+                    {
+                        "document": "DUNS Number",
+                        "status": "missing",
+                        "message": "Missing required fields: duns_number",
+                        "fields_checked": [
+                            "duns_number"
+                        ]
+                    },
+                    {
+                        "document": "NAICS Code",
+                        "status": "missing",
+                        "message": "Missing required fields: naics_code",
+                        "fields_checked": [
+                            "naics_code"
+                        ]
+                    }
+                ],
+                "expired": [],
+                "expiring_soon": [
+                    {
+                        "document": "SAM Registration",
+                        "status": "expiring_soon",
+                        "message": "Expires on 2026-05-09 (in -180.05552578256 days)",
+                        "fields_checked": [
+                            "sam_expiration_date",
+                            "sam_number"
+                        ],
+                        "expiration_date": "2026-05-09",
+                        "days_until_expiration": -180.05552578255788
+                    }
+                ],
+                "compliant": []
+            }
+        }
+    ],
+    "settings": {
+        "expiration_warning_days": 30,
+        "include_compliant": false
+    }
+}
