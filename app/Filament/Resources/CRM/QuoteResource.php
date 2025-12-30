@@ -3,18 +3,14 @@
 namespace App\Filament\Resources\CRM;
 
 use App\Filament\Resources\CRM\QuoteResource\Pages;
-use App\Models\Customer;
+use App\Filament\Resources\CRM\QuoteResource\RelationManagers\ItemsRelationManager;
 use App\Models\Product;
 use App\Models\Quote;
-use App\Models\User;
 use App\Services\QuoteOrderingService;
 use App\Services\QuoteTotalsService;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ExportAction;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -22,26 +18,23 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class QuoteResource extends Resource
 {
     protected static ?string $model = Quote::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+    protected static string|\UnitEnum|null $navigationGroup = 'CRM';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 30;
 
@@ -62,7 +55,7 @@ class QuoteResource extends Resource
                         ->label('Quote Number')
                         ->disabled()
                         ->dehydrated(false)
-                        ->default(fn() => 'Q-' . strtoupper(uniqid())),
+                        ->default(fn () => 'Q-'.strtoupper(uniqid())),
 
                     Select::make('status')
                         ->options([
@@ -80,7 +73,7 @@ class QuoteResource extends Resource
                         ->relationship('salesRep', 'name')
                         ->searchable()
                         ->preload()
-                        ->default(fn() => auth()->id())
+                        ->default(fn () => auth()->id())
                         ->required(),
                 ]),
 
@@ -108,43 +101,43 @@ class QuoteResource extends Resource
                         ->relationship('customer', 'name')
                         ->searchable()
                         ->preload()
-                        ->visible(fn(callable $get) => !$get('is_walk_in'))
+                        ->visible(fn (callable $get) => ! $get('is_walk_in'))
                         ->requiredUnless('is_walk_in', true)
                         ->columnSpanFull(),
 
                     TextInput::make('walk_in_label')
                         ->label('Walk-In Label')
                         ->default('cash/card')
-                        ->visible(fn(callable $get) => $get('is_walk_in'))
-                        ->required(fn(callable $get) => $get('is_walk_in')),
+                        ->visible(fn (callable $get) => $get('is_walk_in'))
+                        ->required(fn (callable $get) => $get('is_walk_in')),
 
                     TextInput::make('walk_in_org')
                         ->label('Organization')
-                        ->visible(fn(callable $get) => $get('is_walk_in')),
+                        ->visible(fn (callable $get) => $get('is_walk_in')),
 
                     TextInput::make('walk_in_contact_name')
                         ->label('Contact Name')
-                        ->visible(fn(callable $get) => $get('is_walk_in'))
-                        ->required(fn(callable $get) => $get('is_walk_in')),
+                        ->visible(fn (callable $get) => $get('is_walk_in'))
+                        ->required(fn (callable $get) => $get('is_walk_in')),
 
                     TextInput::make('walk_in_email')
                         ->label('Email')
                         ->email()
-                        ->visible(fn(callable $get) => $get('is_walk_in')),
+                        ->visible(fn (callable $get) => $get('is_walk_in')),
 
                     TextInput::make('walk_in_phone')
                         ->label('Phone')
                         ->tel()
-                        ->visible(fn(callable $get) => $get('is_walk_in')),
+                        ->visible(fn (callable $get) => $get('is_walk_in')),
 
                     Textarea::make('walk_in_billing_json')
                         ->label('Billing Address (JSON)')
-                        ->visible(fn(callable $get) => $get('is_walk_in'))
+                        ->visible(fn (callable $get) => $get('is_walk_in'))
                         ->columnSpanFull(),
 
                     Textarea::make('walk_in_shipping_json')
                         ->label('Shipping Address (JSON)')
-                        ->visible(fn(callable $get) => $get('is_walk_in'))
+                        ->visible(fn (callable $get) => $get('is_walk_in'))
                         ->columnSpanFull(),
                 ]),
 
@@ -268,7 +261,7 @@ class QuoteResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
-                    ->url(fn(Quote $record) => QuoteResource::getUrl('edit', ['record' => $record])),
+                    ->url(fn (Quote $record) => QuoteResource::getUrl('edit', ['record' => $record])),
 
                 TextColumn::make('customerDisplayName')
                     ->label('Customer / Walk-In')
@@ -297,6 +290,12 @@ class QuoteResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
+                TextColumn::make('portalUser.name')
+                    ->label('Portal User')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+
                 TextColumn::make('grand_total')
                     ->label('Total')
                     ->money('USD')
@@ -322,7 +321,7 @@ class QuoteResource extends Resource
 
                 Filter::make('my_quotes')
                     ->label('My Quotes')
-                    ->query(fn(Builder $query): Builder => $query->where('sales_rep_id', auth()->id())),
+                    ->query(fn (Builder $query): Builder => $query->where('sales_rep_id', auth()->id())),
 
                 Filter::make('created_at')
                     ->form([
@@ -335,62 +334,17 @@ class QuoteResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('convertToOrder')
-                    ->label('Convert to Order')
-                    ->icon('heroicon-o-shopping-cart')
-                    ->color('success')
-                    ->visible(fn(Quote $record) => $record->status !== 'ordered')
-                    ->authorize('convertToOrder')
-                    ->form([
-                        Select::make('payment_method')
-                            ->label('Payment Method')
-                            ->options([
-                                'credit_card' => 'Credit Card',
-                                'debit_card' => 'Debit Card',
-                                'online_portal' => 'Online Portal',
-                            ])
-                            ->required()
-                            ->helperText('Only credit card, debit card, and online portal are allowed for order conversion.'),
-
-                        TextInput::make('po_number')
-                            ->label('PO Number'),
-
-                        TextInput::make('job_number')
-                            ->label('Job Number'),
-
-                        Textarea::make('notes')
-                            ->label('Order Notes'),
-                    ])
-                    ->action(function (Quote $record, array $data) {
-                        try {
-                            $orderingService = app(QuoteOrderingService::class);
-                            $order = $orderingService->convert($record, $data);
-
-                            Notification::make()
-                                ->success()
-                                ->title('Quote Converted to Order')
-                                ->body("Order #{$order->id} created successfully.")
-                                ->send();
-                        } catch (ValidationException $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Conversion Failed')
-                                ->body($e->getMessage())
-                                ->send();
-                        }
-                    }),
-
-                DeleteAction::make(),
+                static::convertToOrderAction(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
@@ -398,7 +352,7 @@ class QuoteResource extends Resource
                     ->label('Export CSV')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(function ($records) {
-                        $filename = 'quotes-' . now()->format('Y-m-d-His') . '.csv';
+                        $filename = 'quotes-'.now()->format('Y-m-d-His').'.csv';
                         $headers = [
                             'Content-Type' => 'text/csv',
                             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
@@ -429,7 +383,9 @@ class QuoteResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            ItemsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
@@ -437,7 +393,60 @@ class QuoteResource extends Resource
         return [
             'index' => Pages\ListQuotes::route('/'),
             'create' => Pages\CreateQuote::route('/create'),
+            'view' => Pages\ViewQuote::route('/{record}'),
             'edit' => Pages\EditQuote::route('/{record}/edit'),
         ];
+    }
+
+    public static function convertToOrderAction(): Action
+    {
+        return Action::make('convertToOrder')
+            ->label('Convert to Order')
+            ->icon('heroicon-o-shopping-cart')
+            ->color('success')
+            ->visible(fn (Quote $record) => $record->status !== 'ordered')
+            ->authorize('convertToOrder')
+            ->form([
+                Select::make('payment_method')
+                    ->label('Payment Method')
+                    ->options([
+                        'online_portal' => 'Online Portal',
+                        'credit_card' => 'Credit Card',
+                        'debit_card' => 'Debit Card',
+                    ])
+                    ->required(),
+                TextInput::make('po_number')
+                    ->label('PO Number')
+                    ->maxLength(50),
+                TextInput::make('job_number')
+                    ->label('Job Number')
+                    ->maxLength(50),
+                Textarea::make('notes')
+                    ->label('Internal Notes')
+                    ->rows(3)
+                    ->maxLength(500),
+                Toggle::make('send_email')
+                    ->label('Email customer confirmation')
+                    ->default(true),
+            ])
+            ->action(function (Quote $record, array $data) {
+                try {
+                    $order = app(QuoteOrderingService::class)->convert($record, $data);
+
+                    Notification::make()
+                        ->success()
+                        ->title('Order '.$order->order_number.' created')
+                        ->body('Quote converted and ready for fulfillment.')
+                        ->send();
+
+                    return redirect(OrderResource::getUrl('view', ['record' => $order]));
+                } catch (ValidationException $exception) {
+                    Notification::make()
+                        ->danger()
+                        ->title('Conversion failed')
+                        ->body($exception->getMessage())
+                        ->send();
+                }
+            });
     }
 }

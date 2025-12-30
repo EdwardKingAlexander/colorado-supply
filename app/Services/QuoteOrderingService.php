@@ -3,20 +3,16 @@
 namespace App\Services;
 
 use App\Events\QuoteConvertedToOrder;
+use App\Mail\OrderConfirmationMail;
 use App\Models\Order;
 use App\Models\Quote;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class QuoteOrderingService
 {
-    protected array $allowedPaymentMethods = [
-        'credit_card',
-        'debit_card',
-        'online_portal',
-    ];
-
     /**
      * Convert a quote to an order
      *
@@ -24,54 +20,75 @@ class QuoteOrderingService
      */
     public function convert(Quote $quote, array $input): Order
     {
-        // Validate payment method
-        $paymentMethod = $input['payment_method'] ?? null;
+        $quote->loadMissing(['items', 'customer']);
 
-        if (!in_array($paymentMethod, $this->allowedPaymentMethods, true)) {
-            throw ValidationException::withMessages([
-                'payment_method' => [
-                    'Invalid payment method. Allowed methods: ' . implode(', ', $this->allowedPaymentMethods)
-                ],
-            ]);
-        }
+        $sendEmail = (bool) ($input['send_email'] ?? false);
 
-        return DB::transaction(function () use ($quote, $input, $paymentMethod) {
-            // Create the order
+        $order = DB::transaction(function () use ($quote, $input) {
             $order = Order::create([
+                'order_number' => $this->generateOrderNumber(),
                 'quote_id' => $quote->id,
                 'customer_id' => $quote->customer_id,
-                'payment_method' => $paymentMethod,
+                'portal_user_id' => $quote->portal_user_id,
+                'payment_method' => $input['payment_method'] ?? null,
                 'po_number' => $input['po_number'] ?? null,
                 'job_number' => $input['job_number'] ?? null,
-                'order_total' => $quote->grand_total,
-                'status' => 'created',
                 'notes' => $input['notes'] ?? null,
-                // Copy walk-in details if applicable
-                'walk_in_label' => $quote->walk_in_label,
-                'walk_in_org' => $quote->walk_in_org,
-                'walk_in_contact_name' => $quote->walk_in_contact_name,
-                'walk_in_email' => $quote->walk_in_email,
-                'walk_in_phone' => $quote->walk_in_phone,
-                'walk_in_billing_json' => $quote->walk_in_billing_json,
-                'walk_in_shipping_json' => $quote->walk_in_shipping_json,
+                'subtotal' => $quote->subtotal,
+                'tax_total' => $quote->tax_total,
+                'shipping_total' => 0,
+                'discount_total' => $quote->discount_amount,
+                'grand_total' => $quote->grand_total,
+                'tax_rate' => $quote->tax_rate,
+                'status' => $quote->grand_total > 0 ? 'draft' : 'confirmed',
+                'payment_status' => 'unpaid',
+                'fulfillment_status' => 'unfulfilled',
+                'contact_name' => $quote->walk_in_contact_name,
+                'contact_email' => $quote->walk_in_email,
+                'contact_phone' => $quote->walk_in_phone,
+                'company_name' => $quote->walk_in_org,
+                'cash_card_name' => $quote->walk_in_contact_name,
+                'cash_card_email' => $quote->walk_in_email,
+                'cash_card_phone' => $quote->walk_in_phone,
+                'cash_card_company' => $quote->walk_in_org,
+                'billing_address' => $quote->walk_in_billing_json,
+                'shipping_address' => $quote->walk_in_shipping_json,
             ]);
 
-            // Update quote status
-            $quote->status = 'ordered';
-            $quote->save();
+            foreach ($quote->items as $item) {
+                $order->items()->create([
+                    'product_id' => $item->product_id,
+                    'sku' => $item->sku,
+                    'name' => $item->name,
+                    'description' => $item->notes,
+                    'quantity' => $item->qty,
+                    'unit_price' => $item->unit_price,
+                    'line_discount' => 0,
+                    'line_total' => $item->line_total ?: $item->line_subtotal,
+                    'meta' => [
+                        'quote_item_id' => $item->id,
+                    ],
+                ]);
+            }
 
-            // Log the conversion
-            Log::info('Quote converted to order', [
-                'quote_id' => $quote->id,
-                'order_id' => $order->id,
-                'user_id' => auth()->id(),
-                'payment_method' => $paymentMethod,
+            $quote->update([
+                'status' => 'ordered',
             ]);
 
-            // Emit event
             event(new QuoteConvertedToOrder($quote, $order));
 
             return $order;
         });
+
+        if ($sendEmail && $order->customer_email) {
+            Mail::to($order->customer_email)->send(new OrderConfirmationMail($order->refresh()->load('items')));
+        }
+
+        return $order;
+    }
+
+    protected function generateOrderNumber(): string
+    {
+        return sprintf('ORD-%s-%s', now()->format('Ymd'), Str::upper(Str::random(4)));
     }
 }

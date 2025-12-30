@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Vendor;
-use App\Models\Product;
-use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         Vendor::factory()->count(10)->create();
         Category::factory()->count(5)->create();
         Product::factory()->count(50)->create();
+
+        $this->call(CompanySeeder::class);
     }
 }

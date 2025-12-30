@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Admin;
 use App\Models\Order;
 use App\Models\User;
 
@@ -10,7 +11,7 @@ class OrderPolicy
     /**
      * Determine if the user can view any orders.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User|Admin $user): bool
     {
         return $user->hasAnyRole(['super_admin', 'admin', 'sales_manager', 'sales_rep']);
     }
@@ -18,7 +19,7 @@ class OrderPolicy
     /**
      * Determine if the user can view the order.
      */
-    public function view(User $user, Order $order): bool
+    public function view(User|Admin $user, Order $order): bool
     {
         // Super admins and admins can view all
         if ($user->hasAnyRole(['super_admin', 'admin', 'sales_manager'])) {
@@ -32,7 +33,7 @@ class OrderPolicy
     /**
      * Determine if the user can create orders.
      */
-    public function create(User $user): bool
+    public function create(User|Admin $user): bool
     {
         return $user->hasAnyRole(['super_admin', 'admin', 'sales_manager', 'sales_rep']);
     }
@@ -40,7 +41,7 @@ class OrderPolicy
     /**
      * Determine if the user can update the order.
      */
-    public function update(User $user, Order $order): bool
+    public function update(User|Admin $user, Order $order): bool
     {
         // Super admins and admins can update all
         if ($user->hasAnyRole(['super_admin', 'admin', 'sales_manager'])) {
@@ -54,7 +55,7 @@ class OrderPolicy
     /**
      * Determine if the user can delete the order.
      */
-    public function delete(User $user, Order $order): bool
+    public function delete(User|Admin $user, Order $order): bool
     {
         // Only super admins and admins can delete
         if (! $user->hasAnyRole(['super_admin', 'admin'])) {
@@ -68,7 +69,7 @@ class OrderPolicy
     /**
      * Determine if the user can manually mark order as paid.
      */
-    public function markPaid(User $user, Order $order): bool
+    public function markPaid(User|Admin $user, Order $order): bool
     {
         return $user->hasAnyRole(['super_admin', 'admin']);
     }

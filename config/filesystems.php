@@ -60,6 +60,14 @@ return [
             'report' => false,
         ],
 
+        'contract_documents' => [
+            'driver' => 'local',
+            'root' => storage_path('app/contract-documents'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

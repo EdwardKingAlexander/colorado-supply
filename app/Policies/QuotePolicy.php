@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Admin;
 use App\Models\Quote;
 use App\Models\User;
 
@@ -14,47 +15,47 @@ class QuotePolicy
         'super_admins',
     ];
 
-    protected function hasAllowedRole(User $user): bool
+    protected function hasAllowedRole(User|Admin $user): bool
     {
         return $user->hasAnyRole($this->allowedRoles);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(User|Admin $user): bool
     {
         return $this->hasAllowedRole($user);
     }
 
-    public function view(User $user, Quote $quote): bool
+    public function view(User|Admin $user, Quote $quote): bool
     {
         return $this->hasAllowedRole($user);
     }
 
-    public function create(User $user): bool
+    public function create(User|Admin $user): bool
     {
         return $this->hasAllowedRole($user);
     }
 
-    public function update(User $user, Quote $quote): bool
+    public function update(User|Admin $user, Quote $quote): bool
     {
         return $this->hasAllowedRole($user);
     }
 
-    public function delete(User $user, Quote $quote): bool
+    public function delete(User|Admin $user, Quote $quote): bool
     {
         return $this->hasAllowedRole($user);
     }
 
-    public function restore(User $user, Quote $quote): bool
+    public function restore(User|Admin $user, Quote $quote): bool
     {
         return $this->hasAllowedRole($user);
     }
 
-    public function forceDelete(User $user, Quote $quote): bool
+    public function forceDelete(User|Admin $user, Quote $quote): bool
     {
         return $this->hasAllowedRole($user);
     }
 
-    public function convertToOrder(User $user, Quote $quote): bool
+    public function convertToOrder(User|Admin $user, Quote $quote): bool
     {
         return $this->hasAllowedRole($user) && $quote->status !== 'ordered';
     }

@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Inertia\Ssr\FastHttpGateway;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Filament\Support\Facades\FilamentColor;
+use Inertia\Ssr\Gateway;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(Gateway::class, FastHttpGateway::class);
     }
 
     /**
@@ -23,14 +25,14 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-         FilamentColor::register([
-        'primary'   => '#1d4ed8', // blue-700
-        'secondary' => '#4b5563', // gray-600
-        'accent'    => '#dc2626', // red-600
-        'success'   => '#16a34a', // green-600
-        'warning'   => '#d97706', // amber-600
-        'danger'    => '#dc2626', // same as accent
-    ]);
+        FilamentColor::register([
+            'primary' => '#1d4ed8', // blue-700
+            'secondary' => '#4b5563', // gray-600
+            'accent' => '#dc2626', // red-600
+            'success' => '#16a34a', // green-600
+            'warning' => '#d97706', // amber-600
+            'danger' => '#dc2626', // same as accent
+        ]);
 
         // Register CRM Observers
         \App\Models\Opportunity::observe(\App\Observers\OpportunityObserver::class);
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
             if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
                 return true;
             }
+
             return null;
         });
 
@@ -51,5 +54,6 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Stage::class, \App\Policies\StagePolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Opportunity::class, \App\Policies\OpportunityPolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Quote::class, \App\Policies\QuotePolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\ContractDocument::class, \App\Policies\ContractDocumentPolicy::class);
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     protected string $guard_name = 'web';
 
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'company_id',
     ];
 
     /**
@@ -66,6 +68,11 @@ class User extends Authenticatable
 
     // relationships
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     public function details()
     {
         return $this->hasOne(UserDetail::class);
@@ -76,4 +83,13 @@ class User extends Authenticatable
         return $this->hasMany(Product::class);
     }
 
+    public function favoriteSamOpportunities(): BelongsToMany
+    {
+        return $this->belongsToMany(SamOpportunity::class, 'sam_opportunity_favorites')->withTimestamps();
+    }
+
+    public function uploadedDocuments(): HasMany
+    {
+        return $this->hasMany(SamOpportunityDocument::class, 'uploaded_by_user_id');
+    }
 }

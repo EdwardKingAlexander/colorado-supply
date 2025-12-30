@@ -54,5 +54,8 @@ return [
         ],
     ],
 
-];
+    'sam' => [
+        'api_key' => env('SAM_API_KEY'),
+    ],
 
+];

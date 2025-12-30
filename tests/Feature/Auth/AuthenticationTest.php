@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
@@ -37,5 +39,14 @@ test('users can logout', function () {
     $response = $this->actingAs($user)->post('/logout');
 
     $this->assertGuest();
+    $response->assertRedirect('/');
+});
+
+test('admins can logout', function () {
+    $admin = Admin::factory()->create();
+
+    $response = $this->actingAs($admin, 'admin')->post('/logout');
+
+    expect(Auth::guard('admin')->check())->toBeFalse();
     $response->assertRedirect('/');
 });

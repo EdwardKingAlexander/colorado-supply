@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\CompanyScope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,12 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'quote_number',
         'status',
         'customer_id',
+        'portal_user_id',
         'walk_in_label',
         'walk_in_org',
         'walk_in_contact_name',
@@ -31,7 +34,13 @@ class Quote extends Model
         'grand_total',
         'sales_rep_id',
         'notes',
+        'company_id',
     ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
 
     protected function casts(): array
     {
@@ -56,6 +65,11 @@ class Quote extends Model
         return $this->belongsTo(User::class, 'sales_rep_id');
     }
 
+    public function portalUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'portal_user_id');
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(QuoteItem::class);
@@ -74,7 +88,7 @@ class Quote extends Model
     public function getCustomerDisplayNameAttribute(): string
     {
         if ($this->isWalkIn()) {
-            return $this->walk_in_label . ($this->walk_in_org ? ' - ' . $this->walk_in_org : '');
+            return $this->walk_in_label.($this->walk_in_org ? ' - '.$this->walk_in_org : '');
         }
 
         return $this->customer->name ?? 'Unknown';

@@ -2,34 +2,68 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\ProductAttributeResource\Pages\ListProductAttributes;
 use App\Filament\Resources\ProductAttributeResource\Pages\CreateProductAttribute;
 use App\Filament\Resources\ProductAttributeResource\Pages\EditProductAttribute;
-use App\Filament\Resources\ProductAttributeResource\Pages;
-use App\Filament\Resources\ProductAttributeResource\RelationManagers;
+use App\Filament\Resources\ProductAttributeResource\Pages\ListProductAttributes;
 use App\Models\ProductAttribute;
-use Filament\Forms;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Validation\Rule;
 
 class ProductAttributeResource extends Resource
 {
     protected static ?string $model = ProductAttribute::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                //
+                Select::make('product_id')
+                    ->label('Product')
+                    ->relationship('product', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                TextInput::make('name')
+                    ->label('Attribute Name')
+                    ->required()
+                    ->maxLength(120)
+                    ->rule(function (callable $get, ?ProductAttribute $record) {
+                        $productId = $get('product_id');
+
+                        if (! $productId) {
+                            return null;
+                        }
+
+                        $rule = Rule::unique(ProductAttribute::class, 'name')
+                            ->where('product_id', $productId);
+
+                        if ($record) {
+                            $rule->ignore($record->getKey());
+                        }
+
+                        return $rule;
+                    }),
+                Select::make('type')
+                    ->label('Data Type')
+                    ->options(self::getAttributeTypeOptions())
+                    ->default('string')
+                    ->native(false)
+                    ->required(),
+                TextInput::make('value')
+                    ->label('Default / Example Value')
+                    ->maxLength(255)
+                    ->helperText('Optional helper value that illustrates how this attribute should be filled.'),
             ]);
     }
 
@@ -37,10 +71,45 @@ class ProductAttributeResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('product.name')
+                    ->label('Product')
+                    ->sortable()
+                    ->searchable()
+                    ->wrap(),
+                TextColumn::make('name')
+                    ->label('Attribute')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('type')
+                    ->label('Type')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'string' => 'primary',
+                        'integer' => 'warning',
+                        'float' => 'info',
+                        'boolean' => 'success',
+                        'select' => 'purple',
+                        default => 'gray',
+                    })
+                    ->sortable(),
+                TextColumn::make('value')
+                    ->label('Value / Example')
+                    ->wrap()
+                    ->toggleable(),
+                TextColumn::make('updated_at')
+                    ->label('Updated')
+                    ->dateTime('M j, Y g:i a')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('product')
+                    ->label('Product')
+                    ->relationship('product', 'name')
+                    ->searchable(),
+                SelectFilter::make('type')
+                    ->label('Type')
+                    ->options(self::getAttributeTypeOptions()),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -65,6 +134,17 @@ class ProductAttributeResource extends Resource
             'index' => ListProductAttributes::route('/'),
             'create' => CreateProductAttribute::route('/create'),
             'edit' => EditProductAttribute::route('/{record}/edit'),
+        ];
+    }
+
+    protected static function getAttributeTypeOptions(): array
+    {
+        return [
+            'string' => 'Text',
+            'integer' => 'Integer',
+            'float' => 'Decimal',
+            'boolean' => 'Boolean',
+            'select' => 'Select',
         ];
     }
 }

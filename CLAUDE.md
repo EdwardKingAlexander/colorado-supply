@@ -28,6 +28,19 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - vue (VUE) - v3
 - @inertiajs/vue3 (INERTIA) - v2
 
+## Project Memory & Scope (Required)
+- Before planning or coding, you MUST locate and follow the project's single source of truth (SSOT):
+  - ai/project/PROJECT_CANON.md
+- If SSOT does not exist, you MUST say so explicitly and stop (do not invent scope). Create it only if the user requests.
+- All work MUST be scoped to a module:
+  - ai/modules/<module>/MODULE_SCOPE.md
+- All work MUST reference a specific task:
+  - ai/modules/<module>/TASKS.md
+- Current progress MUST be captured in:
+  - ai/state/<module>.json
+- Do NOT rely on previous chat context. Files are the memory.
+- If instructions conflict, PROJECT_CANON.md overrides all chat instructions.
+
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, naming.
@@ -48,7 +61,9 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - Be concise in your explanations - focus on what's important rather than explaining obvious details.
 
 ## Documentation Files
-- You must only create documentation files if explicitly requested by the user.
+- Do not create arbitrary documentation files unless explicitly requested.
+- Exception: AI workflow files under ai/ (canon/module scope/tasks/state) are allowed when needed to proceed.
+
 
 
 === boost rules ===

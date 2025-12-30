@@ -1,20 +1,37 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
+
+const accountName = computed(() => {
+    return page.props.auth?.user?.name
+        ?? page.props.auth?.admin?.name
+        ?? 'Account';
+});
+
+const accountEmail = computed(() => {
+    return page.props.auth?.user?.email
+        ?? page.props.auth?.admin?.email
+        ?? null;
+});
+
+const showProfileLink = computed(() => Boolean(page.props.auth?.user));
+const showAdminPanelLink = computed(() => Boolean(page.props.auth?.admin));
+const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.value);
 </script>
 
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav
-                class="border-b border-gray-100 bg-white"
+                class="relative z-50 border-b border-gray-100 bg-white"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -58,7 +75,7 @@ const showingNavigationDropdown = ref(false);
                                                 type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                             >
-                                                {{ $page.props.auth.user.name }}
+                                                {{ accountName }}
 
                                                 <svg
                                                     class="-me-0.5 ms-2 h-4 w-4"
@@ -78,11 +95,19 @@ const showingNavigationDropdown = ref(false);
 
                                     <template #content>
                                         <DropdownLink
+                                            v-if="showProfileLink"
                                             :href="route('profile.edit')"
                                         >
                                             Profile
                                         </DropdownLink>
                                         <DropdownLink
+                                            v-if="showAdminPanelLink"
+                                            :href="route('filament.admin.pages.dashboard')"
+                                        >
+                                            Admin Panel
+                                        </DropdownLink>
+                                        <DropdownLink
+                                            v-if="canLogout"
                                             :href="route('logout')"
                                             method="post"
                                             as="button"
@@ -168,16 +193,31 @@ const showingNavigationDropdown = ref(false);
                             <div
                                 class="text-base font-medium text-gray-800"
                             >
-                                {{ $page.props.auth.user.name }}
+                                {{ accountName }}
                             </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
+                            <div
+                                v-if="accountEmail"
+                                class="text-sm font-medium text-gray-500"
+                            >
+                                {{ accountEmail }}
                             </div>
                         </div>
 
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
+                        <div
+                            v-if="canLogout"
+                            class="mt-3 space-y-1"
+                        >
+                            <ResponsiveNavLink
+                                v-if="showProfileLink"
+                                :href="route('profile.edit')"
+                            >
                                 Profile
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                v-if="showAdminPanelLink"
+                                :href="route('filament.admin.pages.dashboard')"
+                            >
+                                Admin Panel
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"
