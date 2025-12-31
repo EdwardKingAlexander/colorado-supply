@@ -456,3 +456,31 @@ onMounted(() => {
           </template>
         </tbody>
       </table>
+
+      <!-- Pagination -->
+      <div v-if="pagination.last_page > 1" class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="!pagination.prev_page_url"
+            @click="fetchFavorites(pagination.prev_page_url)"
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="!pagination.next_page_url"
+            @click="fetchFavorites(pagination.next_page_url)"
+          >
+            Next
+          </button>
+        </div>
+        <div class="text-sm text-gray-600">
+          Page {{ pagination.current_page }} of {{ pagination.last_page }}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
