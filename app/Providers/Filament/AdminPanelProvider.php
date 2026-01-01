@@ -11,6 +11,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Enums\Width;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -28,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->authGuard('admin')
+            ->sidebarCollapsibleOnDesktop()
             ->login()
             ->colors([
                 'primary'   => '#1d4ed8', // blue-700
@@ -37,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
                 'warning'   => '#d97706', // amber-600
                 'danger'    => '#dc2626', // red-600
             ])
+            ->maxContentWidth(Width::ScreenTwoExtraLarge)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

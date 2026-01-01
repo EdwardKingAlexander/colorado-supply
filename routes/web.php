@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\SamOpportunitiesExportController;
 use App\Http\Controllers\MilSpecPartsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreController;
@@ -27,6 +28,10 @@ Route::get('/store', [StoreController::class, 'index'])->middleware(['auth.web_o
 Route::get('/store/location/{location:slug}', [StoreController::class, 'index'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.location.index');
 Route::get('/store/quote', [StoreController::class, 'quote'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.quote');
 Route::get('/store/{slug}', [StoreController::class, 'show'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.show');
+
+// SAM opportunities export (admin only)
+Route::get('/admin/sam-opportunities/export', SamOpportunitiesExportController::class)
+    ->name('admin.sam-opportunities.export');
 
 // Profile Management
 Route::middleware('auth')->group(function () {

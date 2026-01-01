@@ -162,6 +162,11 @@
                             'set_aside' => request()->get('set_aside', ''),
                         ];
 
+                        $exportFilters = array_filter(
+                            $filters,
+                            fn ($value) => $value !== '' && $value !== null
+                        );
+
                         $filtered = array_filter($ops, function ($opp) use ($filters) {
                             $title = $opp['title'] ?? '';
                             $agency = $opp['agency_name'] ?? '';
@@ -214,7 +219,7 @@
 
                     <x-filament::section class="mt-6">
                         <x-slot name="heading">
-                            Fetched Opportunities ({{ $total }}) — v2
+                            Fetched Opportunities ({{ $total }})
                         </x-slot>
 
                         {{-- Filters --}}
@@ -307,6 +312,7 @@
                             </div>
                             <div class="sam-filter-actions">
                                 <button type="submit" class="sam-btn sam-btn-primary">Apply</button>
+                                <a href="{{ route('admin.sam-opportunities.export', $exportFilters) }}" class="sam-btn sam-btn-ghost">Export Excel</a>
                                 <a href="{{ request()->url() }}" class="sam-btn sam-btn-ghost">Reset</a>
                             </div>
                             <input type="hidden" name="ops_page" value="1">
@@ -503,9 +509,9 @@
                                     $next = $page < $pages ? $baseUrl.'?ops_page='.($page + 1) : null;
                                 @endphp
                                 <div class="sam-page-controls">
-                                    <a href="{{ $prev ?? '#' }}" class="sam-page-btn {{ $prev ? '' : 'disabled' }}">← Prev</a>
+                                    <a href="{{ $prev ?? '#' }}" class="sam-page-btn {{ $prev ? '' : 'disabled' }}">Prev</a>
                                     <span class="sam-page-pill">Page {{ $page }} / {{ $pages }}</span>
-                                    <a href="{{ $next ?? '#' }}" class="sam-page-btn {{ $next ? '' : 'disabled' }}">Next →</a>
+                                    <a href="{{ $next ?? '#' }}" class="sam-page-btn {{ $next ? '' : 'disabled' }}">Next</a>
                                 </div>
                             @endif
                         </div>
@@ -657,15 +663,15 @@
                                         <div class="mt-2 pt-2 border-t border-red-200 dark:border-red-800">
                                             <p class="text-xs text-red-700 dark:text-red-400">
                                                 @if($failed['status_code'] == 401)
-                                                    💡 Check that SAM_API_KEY is set correctly in your .env file
+                                                    Check that SAM_API_KEY is set correctly in your .env file.
                                                 @elseif($failed['status_code'] == 429)
-                                                    💡 Too many requests - the system will retry automatically
+                                                    Too many requests. The system will retry automatically.
                                                 @elseif($failed['status_code'] >= 500)
-                                                    💡 SAM.gov server issue - try again in a few minutes
+                                                    SAM.gov server issue. Try again in a few minutes.
                                                 @elseif($failed['status_code'] == 404)
-                                                    💡 API endpoint may have changed - check SAM.gov API documentation
+                                                    API endpoint may have changed. Check SAM.gov API documentation.
                                                 @else
-                                                    💡 Contact support if this error persists
+                                                    Contact support if this error persists.
                                                 @endif
                                             </p>
                                         </div>
@@ -679,7 +685,7 @@
                             <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Common Solutions:</h4>
                             <ul class="text-xs text-gray-600 dark:text-gray-400 space-y-1 list-disc list-inside">
                                 <li>Check your internet connection</li>
-                                <li>Verify SAM_API_KEY in .env is valid</li>
+                                <li>Check that SAM_API_KEY is set correctly in your .env file.</li>
                                 <li>Try reducing the number of NAICS codes</li>
                                 <li>SAM.gov may be experiencing downtime</li>
                             </ul>
@@ -712,15 +718,15 @@
 
     <script>
         // Direct script tag - bypassing @script directive
-        console.log('🟢 SAM Control Panel JavaScript loaded (direct script tag)');
+        console.log('SAM Control Panel JavaScript loaded (direct script tag).');
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🟡 DOM loaded, initializing SAM fetch polling...');
+            console.log('DOM loaded, initializing SAM fetch polling...');
 
             let pollingInterval = null;
             let pollCount = 0;
             const MAX_POLL_COUNT = 120; // 120 polls * 3 seconds = 6 minutes timeout
-            let statusMessages = [
+            const statusMessages = [
                 'Connecting to SAM.gov API...',
                 'Fetching opportunities from NAICS codes...',
                 'Processing results...',
@@ -732,81 +738,81 @@
 
             // Wait for Livewire to be ready
             document.addEventListener('livewire:initialized', function() {
-                console.log('🟢 Livewire initialized');
-                console.log('🟡 $wire object:', typeof $wire !== 'undefined' ? 'exists' : 'MISSING');
+                console.log('Livewire initialized');
+                console.log('$wire object:', typeof $wire !== 'undefined' ? 'exists' : 'MISSING');
 
                 // Expose test function to console for manual testing
                 window.testSamPolling = function() {
-                    console.log('🧪 Manual test: Triggering start-polling event');
-                    const component = Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));
+                    console.log('Manual test: Triggering start-polling event');
+                    const component = Livewire.find(document.querySelector('[wire\:id]').getAttribute('wire:id'));
                     if (component) {
                         component.dispatch('start-polling');
                     } else {
-                        console.error('❌ Livewire component not found');
+                        console.error('Livewire component not found');
                     }
                 };
-                console.log('💡 Tip: Run window.testSamPolling() in console to manually test polling');
+                console.log('Tip: Run window.testSamPolling() in console to manually test polling');
             });
 
             // Listen for Livewire event to start polling
             Livewire.on('start-polling', () => {
-            console.log('🟣 Start polling event received');
+                console.log('Start polling event received');
 
-            // Show spinner using Alpine
-            Alpine.store('spinner', true);
-            const spinnerEl = document.querySelector('[x-data*="showSpinner"]');
-            if (spinnerEl && spinnerEl.__x) {
-                spinnerEl.__x.$data.showSpinner = true;
-            }
+                // Show spinner using Alpine
+                Alpine.store('spinner', true);
+                const spinnerEl = document.querySelector('[x-data*="showSpinner"]');
+                if (spinnerEl && spinnerEl.__x) {
+                    spinnerEl.__x.$data.showSpinner = true;
+                }
 
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-            }
-
-            pollCount = 0;
-
-            // Poll every 3 seconds
-            pollingInterval = setInterval(() => {
-                pollCount++;
-
-                // Check if we've exceeded the timeout
-                if (pollCount > MAX_POLL_COUNT) {
+                if (pollingInterval) {
                     clearInterval(pollingInterval);
-                    pollingInterval = null;
-                    pollCount = 0;
-
-                    // Hide spinner
-                    const spinnerEl = document.querySelector('[x-data*="showSpinner"]');
-                    if (spinnerEl && spinnerEl.__x) {
-                        spinnerEl.__x.$data.showSpinner = false;
-                    }
-
-                    // Show timeout notification
-                    new FilamentNotification()
-                        .title('Fetch Timeout')
-                        .body('The fetch operation is taking longer than expected. The job may still be running in the background. Check the queue worker logs or refresh the page in a few minutes.')
-                        .danger()
-                        .persistent()
-                        .send();
-
-                    return;
                 }
 
-                // Update status message every 10 seconds (every ~3 polls)
-                if (pollCount % 3 === 0) {
-                    let messageIndex = Math.min(Math.floor(pollCount / 3) - 1, statusMessages.length - 1);
-                    if (messageIndex >= 0) {
-                        console.log('SAM Fetch Status:', statusMessages[messageIndex]);
-                    }
-                }
+                pollCount = 0;
 
-                const component = Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));
+                // Poll every 3 seconds
+                pollingInterval = setInterval(() => {
+                    pollCount++;
+
+                    // Check if we've exceeded the timeout
+                    if (pollCount > MAX_POLL_COUNT) {
+                        clearInterval(pollingInterval);
+                        pollingInterval = null;
+                        pollCount = 0;
+
+                        // Hide spinner
+                        const spinnerEl = document.querySelector('[x-data*="showSpinner"]');
+                        if (spinnerEl && spinnerEl.__x) {
+                            spinnerEl.__x.$data.showSpinner = false;
+                        }
+
+                        // Show timeout notification
+                        new FilamentNotification()
+                            .title('Fetch Timeout')
+                            .body('The fetch operation is taking longer than expected. The job may still be running in the background. Check the queue worker logs or refresh the page in a few minutes.')
+                            .danger()
+                            .persistent()
+                            .send();
+
+                        return;
+                    }
+
+                    // Update status message every 10 seconds (every ~3 polls)
+                    if (pollCount % 3 === 0) {
+                        const messageIndex = Math.min(Math.floor(pollCount / 3) - 1, statusMessages.length - 1);
+                        if (messageIndex >= 0) {
+                            console.log('SAM Fetch Status:', statusMessages[messageIndex]);
+                        }
+                    }
+
+                    const component = Livewire.find(document.querySelector('[wire\:id]').getAttribute('wire:id'));
                     if (component) {
                         component.call('checkFetchStatus').then((isComplete) => {
                             console.log('Poll check - isComplete:', isComplete, 'pollCount:', pollCount);
 
                             if (isComplete && pollingInterval) {
-                                console.log('✅ Fetch complete! Reloading page in 1 second...');
+                                console.log('Fetch complete! Reloading page in 1 second...');
 
                                 clearInterval(pollingInterval);
                                 pollingInterval = null;
