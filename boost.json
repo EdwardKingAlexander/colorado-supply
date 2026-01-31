@@ -1,10 +1,13 @@
 {
     "agents": [
-        "claude_code"
+        "claude_code",
+        "codex"
     ],
     "editors": [
         "vscode"
     ],
-    "guidelines": [],
+    "guidelines": [
+        "filament/filament"
+    ],
     "herd_mcp": true
 }

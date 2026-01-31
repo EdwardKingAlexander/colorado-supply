@@ -441,6 +441,14 @@
                                             </td>
                                             <td class="sam-meta">{{ $opp['state_code'] ?? '—' }}</td>
                                         </tr>
+                                        <tr class="sm:hidden" data-testid="sam-naics-mobile">
+                                            <td colspan="9" class="bg-slate-50/60 px-4 py-2 dark:bg-slate-900/40">
+                                                <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                                                    <span class="uppercase tracking-wide text-slate-500 dark:text-slate-400">NAICS</span>
+                                                    <span class="sam-meta sam-mono">{{ $opp['naics_code'] ?: 'N/A' }}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
