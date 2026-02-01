@@ -6,7 +6,6 @@ use App\Enums\DeadlineCategory;
 use App\Enums\RecurrenceType;
 use App\Filament\Resources\BusinessDeadlineResource\Pages;
 use App\Models\BusinessDeadline;
-use App\Models\BusinessDocument;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -21,6 +20,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -98,55 +100,66 @@ class BusinessDeadlineResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')
-                    ->searchable()
-                    ->sortable()
-                    ->description(fn (BusinessDeadline $record) => $record->description ? \Str::limit($record->description, 50) : null),
+                Split::make([
+                    Stack::make([
+                        TextColumn::make('title')
+                            ->searchable()
+                            ->sortable()
+                            ->description(fn (BusinessDeadline $record) => $record->description ? \Str::limit($record->description, 50) : null),
 
-                TextColumn::make('category')
-                    ->badge()
-                    ->formatStateUsing(fn (DeadlineCategory $state) => $state->label())
-                    ->color(fn (DeadlineCategory $state) => $state->color())
-                    ->sortable(),
+                        TextColumn::make('category')
+                            ->badge()
+                            ->formatStateUsing(fn (DeadlineCategory $state) => $state->label())
+                            ->color(fn (DeadlineCategory $state) => $state->color())
+                            ->sortable(),
 
-                TextColumn::make('due_date')
-                    ->date()
-                    ->sortable()
-                    ->description(fn (BusinessDeadline $record) => match (true) {
-                        $record->isCompleted() => 'Completed',
-                        $record->isOverdue() => 'Overdue by ' . abs($record->daysUntilDue()) . ' days',
-                        default => $record->daysUntilDue() . ' days remaining',
-                    })
-                    ->color(fn (BusinessDeadline $record) => match (true) {
-                        $record->isCompleted() => 'success',
-                        $record->isOverdue() => 'danger',
-                        $record->isDueSoon() => 'warning',
-                        default => null,
-                    }),
+                        TextColumn::make('recurrence')
+                            ->badge()
+                            ->formatStateUsing(fn (RecurrenceType $state) => $state->label())
+                            ->color(fn (RecurrenceType $state) => $state->color())
+                            ->toggleable(),
+                    ])->grow(),
 
-                TextColumn::make('recurrence')
-                    ->badge()
-                    ->formatStateUsing(fn (RecurrenceType $state) => $state->label())
-                    ->color(fn (RecurrenceType $state) => $state->color())
-                    ->toggleable(),
+                    Stack::make([
+                        TextColumn::make('due_date')
+                            ->date()
+                            ->sortable()
+                            ->description(fn (BusinessDeadline $record) => match (true) {
+                                $record->isCompleted() => 'Completed',
+                                $record->isOverdue() => 'Overdue by ' . abs($record->daysUntilDue()) . ' days',
+                                default => $record->daysUntilDue() . ' days remaining',
+                            })
+                            ->color(fn (BusinessDeadline $record) => match (true) {
+                                $record->isCompleted() => 'success',
+                                $record->isOverdue() => 'danger',
+                                $record->isDueSoon() => 'warning',
+                                default => null,
+                            }),
 
-                IconColumn::make('completed_at')
-                    ->label('Status')
-                    ->icon(fn ($state) => $state ? 'heroicon-o-check-circle' : 'heroicon-o-clock')
-                    ->color(fn ($state) => $state ? 'success' : 'warning'),
+                        IconColumn::make('completed_at')
+                            ->label('Status')
+                            ->icon(fn ($state) => $state ? 'heroicon-o-check-circle' : 'heroicon-o-clock')
+                            ->color(fn ($state) => $state ? 'success' : 'warning'),
+                    ]),
+                ])->from('md'),
 
-                TextColumn::make('external_url')
-                    ->label('Link')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->url(fn ($record) => $record->external_url)
-                    ->openUrlInNewTab()
-                    ->formatStateUsing(fn ($state) => $state ? 'Open' : null)
-                    ->toggleable(),
+                Panel::make([
+                    Split::make([
+                        TextColumn::make('external_url')
+                            ->label('Link')
+                            ->icon('heroicon-o-arrow-top-right-on-square')
+                            ->url(fn ($record) => $record->external_url)
+                            ->openUrlInNewTab()
+                            ->formatStateUsing(fn ($state) => $state ? 'Open' : null)
+                            ->toggleable(),
 
-                TextColumn::make('relatedDocument.name')
-                    ->label('Document')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                        TextColumn::make('relatedDocument.name')
+                            ->label('Document')
+                            ->toggleable(isToggledHiddenByDefault: true),
+                    ])->from('md'),
+                ])->collapsible()->collapsed(),
             ])
+            ->contentGrid(['md' => 2])
             ->defaultSort('due_date', 'asc')
             ->filters([
                 SelectFilter::make('category')

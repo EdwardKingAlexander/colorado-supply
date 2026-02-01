@@ -6,7 +6,7 @@
         "dev": "concurrently \"npm:dev:vite\" \"npm:ssr\"",
         "dev:vite": "vite",
         "ssr-build": "vite build --ssr resources/js/ssr.js",
-        "ssr": "node bootstrap/ssr/ssr.js"
+        "ssr": "node bootstrap/ssr/ssr.js --port=13715"
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.23",

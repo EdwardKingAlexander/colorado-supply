@@ -10,6 +10,8 @@ class ListBusinessDeadlines extends ListRecords
 {
     protected static string $resource = BusinessDeadlineResource::class;
 
+    protected string $view = 'filament.resources.business-deadlines.pages.list-business-deadlines';
+
     protected function getHeaderActions(): array
     {
         return [

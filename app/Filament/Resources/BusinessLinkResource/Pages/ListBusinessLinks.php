@@ -10,6 +10,8 @@ class ListBusinessLinks extends ListRecords
 {
     protected static string $resource = BusinessLinkResource::class;
 
+    protected string $view = 'filament.resources.business-links.pages.list-business-links';
+
     protected function getHeaderActions(): array
     {
         return [

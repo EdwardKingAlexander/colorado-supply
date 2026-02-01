@@ -16,6 +16,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -78,36 +81,47 @@ class BusinessLinkResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->description(fn (BusinessLink $record) => $record->description ? \Str::limit($record->description, 60) : null),
+                Split::make([
+                    Stack::make([
+                        TextColumn::make('name')
+                            ->searchable()
+                            ->sortable()
+                            ->description(fn (BusinessLink $record) => $record->description ? \Str::limit($record->description, 60) : null),
 
-                TextColumn::make('category')
-                    ->badge()
-                    ->formatStateUsing(fn (LinkCategory $state) => $state->label())
-                    ->color(fn (LinkCategory $state) => $state->color())
-                    ->sortable(),
+                        TextColumn::make('category')
+                            ->badge()
+                            ->formatStateUsing(fn (LinkCategory $state) => $state->label())
+                            ->color(fn (LinkCategory $state) => $state->color())
+                            ->sortable(),
+                    ])->grow(),
 
-                TextColumn::make('url')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->url(fn ($record) => $record->url)
-                    ->openUrlInNewTab()
-                    ->limit(40)
-                    ->tooltip(fn ($record) => $record->url),
+                    Stack::make([
+                        IconColumn::make('is_active')
+                            ->label('Active')
+                            ->boolean()
+                            ->sortable(),
 
-                TextColumn::make('icon')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                        TextColumn::make('sort_order')
+                            ->label('Order')
+                            ->sortable()
+                            ->toggleable(),
+                    ]),
+                ])->from('md'),
 
-                TextColumn::make('sort_order')
-                    ->sortable()
-                    ->toggleable(),
+                Panel::make([
+                    TextColumn::make('url')
+                        ->label('URL')
+                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->url(fn ($record) => $record->url)
+                        ->openUrlInNewTab()
+                        ->limit(40)
+                        ->tooltip(fn ($record) => $record->url),
 
-                IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean()
-                    ->sortable(),
+                    TextColumn::make('icon')
+                        ->toggleable(isToggledHiddenByDefault: true),
+                ])->collapsible()->collapsed(),
             ])
+            ->contentGrid(['md' => 2])
             ->defaultSort('sort_order', 'asc')
             ->reorderable('sort_order')
             ->filters([

@@ -63,6 +63,7 @@ class BusinessServer extends Server
         \App\Mcp\Servers\Business\Tools\FetchCompetitorPricingTool::class,
         \App\Mcp\Servers\Business\Tools\ComplianceAuditTool::class,
         \App\Mcp\Servers\Business\Tools\FetchSamOpportunitiesTool::class,
+        \App\Mcp\Servers\Business\Tools\FetchNsnDataTool::class,
     ];
 
     /**

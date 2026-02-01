@@ -20,6 +20,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -100,53 +103,65 @@ class BusinessDocumentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->description(fn (BusinessDocument $record) => $record->document_number),
+                Split::make([
+                    Stack::make([
+                        TextColumn::make('name')
+                            ->searchable()
+                            ->sortable()
+                            ->description(fn (BusinessDocument $record) => $record->document_number),
 
-                TextColumn::make('type')
-                    ->badge()
-                    ->formatStateUsing(fn (DocumentType $state) => $state->label())
-                    ->color(fn (DocumentType $state) => $state->color())
-                    ->sortable(),
+                        Split::make([
+                            TextColumn::make('type')
+                                ->badge()
+                                ->formatStateUsing(fn (DocumentType $state) => $state->label())
+                                ->color(fn (DocumentType $state) => $state->color())
+                                ->sortable(),
 
-                TextColumn::make('status')
-                    ->badge()
-                    ->formatStateUsing(fn (DocumentStatus $state) => $state->label())
-                    ->color(fn (DocumentStatus $state) => $state->color())
-                    ->sortable(),
+                            TextColumn::make('status')
+                                ->badge()
+                                ->formatStateUsing(fn (DocumentStatus $state) => $state->label())
+                                ->color(fn (DocumentStatus $state) => $state->color())
+                                ->sortable(),
+                        ])->from('md'),
+                    ])->grow(),
 
-                TextColumn::make('issuing_authority')
-                    ->searchable()
-                    ->toggleable(),
+                    Stack::make([
+                        TextColumn::make('expiration_date')
+                            ->date()
+                            ->sortable()
+                            ->description(fn (BusinessDocument $record) => $record->daysUntilExpiration() !== null
+                                ? ($record->daysUntilExpiration() < 0
+                                    ? 'Expired ' . abs($record->daysUntilExpiration()) . ' days ago'
+                                    : $record->daysUntilExpiration() . ' days remaining')
+                                : null
+                            )
+                            ->color(fn (BusinessDocument $record) => match (true) {
+                                $record->isExpired() => 'danger',
+                                $record->isExpiringSoon() => 'warning',
+                                default => null,
+                            }),
 
-                TextColumn::make('expiration_date')
-                    ->date()
-                    ->sortable()
-                    ->description(fn (BusinessDocument $record) => $record->daysUntilExpiration() !== null
-                        ? ($record->daysUntilExpiration() < 0
-                            ? 'Expired ' . abs($record->daysUntilExpiration()) . ' days ago'
-                            : $record->daysUntilExpiration() . ' days remaining')
-                        : null
-                    )
-                    ->color(fn (BusinessDocument $record) => match (true) {
-                        $record->isExpired() => 'danger',
-                        $record->isExpiringSoon() => 'warning',
-                        default => null,
-                    }),
+                        IconColumn::make('file_path')
+                            ->label('File')
+                            ->icon(fn ($state) => $state ? 'heroicon-o-document' : 'heroicon-o-x-mark')
+                            ->color(fn ($state) => $state ? 'success' : 'gray')
+                            ->toggleable(),
+                    ]),
+                ])->from('md'),
 
-                IconColumn::make('file_path')
-                    ->label('File')
-                    ->icon(fn ($state) => $state ? 'heroicon-o-document' : 'heroicon-o-x-mark')
-                    ->color(fn ($state) => $state ? 'success' : 'gray')
-                    ->toggleable(),
+                Panel::make([
+                    TextColumn::make('issuing_authority')
+                        ->label('Issued by')
+                        ->searchable()
+                        ->toggleable(),
 
-                TextColumn::make('updated_at')
-                    ->dateTime('M j, Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    TextColumn::make('updated_at')
+                        ->dateTime('M j, Y')
+                        ->sortable()
+                        ->toggleable(isToggledHiddenByDefault: true),
+                ])->collapsible()->collapsed(),
             ])
+            ->contentGrid(['md' => 2])
             ->defaultSort('expiration_date', 'asc')
             ->filters([
                 SelectFilter::make('type')

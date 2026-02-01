@@ -10,6 +10,8 @@ class ListBusinessDocuments extends ListRecords
 {
     protected static string $resource = BusinessDocumentResource::class;
 
+    protected string $view = 'filament.resources.business-documents.pages.list-business-documents';
+
     protected function getHeaderActions(): array
     {
         return [
