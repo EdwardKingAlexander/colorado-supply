@@ -53,3 +53,15 @@ scripts/
 /ai/state/*.json
 /ai_state
 /ai_scratch
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+
+# Playwright
+playwright-report/
