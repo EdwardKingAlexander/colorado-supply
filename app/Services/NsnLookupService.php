@@ -22,7 +22,36 @@ class NsnLookupService
     public function __construct()
     {
         $this->scriptPath = base_path('scripts/nsn_lookup.py');
-        $this->pythonPath = config('services.python.path', 'python');
+        $this->pythonPath = $this->resolvePythonPath();
+    }
+
+    /**
+     * Resolve the Python executable path, preferring the virtual environment.
+     */
+    protected function resolvePythonPath(): string
+    {
+        // Check for explicit config/env setting first
+        $configPath = config('services.python.path');
+        if ($configPath && $configPath !== 'python' && file_exists($configPath)) {
+            return $configPath;
+        }
+
+        // Check for virtual environment in project root
+        $venvPaths = [
+            base_path('.venv/Scripts/python.exe'),  // Windows
+            base_path('.venv/bin/python'),          // Linux/Mac
+            base_path('venv/Scripts/python.exe'),   // Windows alt
+            base_path('venv/bin/python'),           // Linux/Mac alt
+        ];
+
+        foreach ($venvPaths as $venvPath) {
+            if (file_exists($venvPath)) {
+                return $venvPath;
+            }
+        }
+
+        // Fall back to system python
+        return 'python';
     }
 
     /**

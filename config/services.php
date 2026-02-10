@@ -58,4 +58,9 @@ return [
         'api_key' => env('SAM_API_KEY'),
     ],
 
+    'python' => [
+        // Path to Python executable. Uses venv if available, otherwise system python.
+        'path' => env('PYTHON_PATH', base_path('.venv/Scripts/python')),
+    ],
+
 ];
