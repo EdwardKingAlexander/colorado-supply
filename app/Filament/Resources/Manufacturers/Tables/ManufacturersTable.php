@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Manufacturers\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -18,6 +19,11 @@ class ManufacturersTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('cage_code')
+                    ->label('CAGE Code')
+                    ->badge()
+                    ->color(fn (?string $state): string => filled($state) ? 'primary' : 'gray')
+                    ->fontFamily(FontFamily::Mono)
+                    ->placeholder('--')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')

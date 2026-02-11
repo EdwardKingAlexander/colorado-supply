@@ -1,6 +1,15 @@
-<x-filament-panels::page>
+<x-terminal-page
+    footer-left="AUTOMATION // MCP CONTROL PANEL"
+    footer-center="SESSION {{ strtoupper(substr(md5(session()->getId()), 0, 8)) }}"
+    footer-right="OPERATOR {{ auth()->user()?->name ?? 'UNKNOWN' }}"
+>
+    <x-slot:banner>
+        DEFENSE LOGISTICS INTELLIGENCE SYSTEM <span class="t-sep">//</span> MCP CONTROL PANEL
+    </x-slot:banner>
+
+    <div class="mcp-shell">
     {{-- Quick Actions Section --}}
-    <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
+    <div class="mcp-main-grid">
         {{-- ChromeDevTools Actions --}}
         <x-filament::section>
             <x-slot name="heading">
@@ -103,7 +112,7 @@
                 <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <span class="text-sm font-medium">Scrape Progress</span>
                     @if($progress)
-                        <x-filament::badge color="info">
+                        <x-filament::badge color="primary">
                             {{ $progress['processed_count'] ?? 0 }} / {{ $progress['total_urls'] ?? 0 }}
                         </x-filament::badge>
                     @else
@@ -268,6 +277,63 @@
             </div>
         </x-filament::section>
     @endif
+
+    <style>
+        .mcp-shell {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .mcp-main-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1.25rem;
+        }
+
+        .mcp-shell .fi-section {
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            box-shadow: none;
+        }
+
+        .dark .mcp-shell .fi-section {
+            border-color: var(--t-border);
+            background: var(--t-surface);
+        }
+
+        .mcp-shell .fi-section-header {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .dark .mcp-shell .fi-section-header {
+            border-color: var(--t-border);
+        }
+
+        .mcp-shell .fi-section-header-heading {
+            font-family: var(--t-font-display);
+            letter-spacing: 0.12em;
+            font-size: 0.66rem;
+            text-transform: uppercase;
+        }
+
+        .mcp-shell .fi-section-header-description {
+            font-family: var(--t-font-mono);
+            font-size: 0.72rem;
+        }
+
+        .mcp-shell table thead {
+            background: linear-gradient(90deg, rgba(2, 119, 189, 0.06), transparent 88%);
+        }
+
+        .dark .mcp-shell table thead {
+            background: linear-gradient(90deg, var(--t-cyan-glow), transparent 88%);
+        }
+    </style>
+
+    </div>
 
     {{-- Vendor Login Modal --}}
     <x-filament::modal
@@ -599,4 +665,4 @@
         </form>
     </x-filament::modal>
 
-</x-filament-panels::page>
+</x-terminal-page>

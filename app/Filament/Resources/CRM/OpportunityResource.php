@@ -158,7 +158,7 @@ class OpportunityResource extends Resource
                         'success' => fn($record) => $record->stage?->is_won,
                         'danger' => fn($record) => $record->stage?->is_lost,
                         'warning' => fn($record) => $record->stage?->forecast_category === 'Commit',
-                        'info' => fn($record) => $record->stage?->forecast_category === 'BestCase',
+                        'primary' => fn($record) => $record->stage?->forecast_category === 'BestCase',
                         'gray' => fn($record) => $record->stage?->forecast_category === 'Pipeline',
                     ]),
 
@@ -177,7 +177,7 @@ class OpportunityResource extends Resource
                     ->colors([
                         'success' => 'won',
                         'danger' => 'lost',
-                        'info' => 'open',
+                        'primary' => 'open',
                     ]),
             ])
             ->filters([])

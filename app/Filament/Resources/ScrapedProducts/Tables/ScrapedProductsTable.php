@@ -42,7 +42,7 @@ class ScrapedProductsTable
                     ->sortable()
                     ->copyable()
                     ->copyMessage('SKU copied')
-                    ->placeholder('—'),
+                    ->placeholder('--'),
 
                 TextColumn::make('nsn')
                     ->label('NSN')
@@ -52,7 +52,7 @@ class ScrapedProductsTable
                     ->copyMessage('NSN copied')
                     ->badge()
                     ->color('success')
-                    ->placeholder('—')
+                    ->placeholder('--')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('cage_code')
@@ -63,7 +63,7 @@ class ScrapedProductsTable
                     ->copyMessage('CAGE code copied')
                     ->badge()
                     ->color('warning')
-                    ->placeholder('—')
+                    ->placeholder('--')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('milspec')
@@ -73,15 +73,15 @@ class ScrapedProductsTable
                     ->copyable()
                     ->copyMessage('Mil-spec copied')
                     ->badge()
-                    ->color('info')
-                    ->placeholder('—')
+                    ->color('primary')
+                    ->placeholder('--')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('price_numeric')
                     ->label('Price')
                     ->money('USD')
                     ->sortable()
-                    ->placeholder('—'),
+                    ->placeholder('--'),
 
                 BadgeColumn::make('status')
                     ->searchable()
@@ -104,7 +104,7 @@ class ScrapedProductsTable
                     ->searchable()
                     ->sortable()
                     ->badge()
-                    ->color('info'),
+                    ->color('primary'),
 
                 TextColumn::make('source_url')
                     ->label('Source URL')
@@ -247,7 +247,7 @@ class ScrapedProductsTable
                 Action::make('viewRawData')
                     ->label('View Raw Data')
                     ->icon('heroicon-o-code-bracket')
-                    ->color('info')
+                    ->color('primary')
                     ->modalContent(fn (ScrapedProduct $record) => view('filament.pages.scraped-product-raw-data', [
                         'data' => $record->raw_data,
                     ]))
@@ -275,7 +275,7 @@ class ScrapedProductsTable
                     BulkAction::make('exportJson')
                         ->label('Export as JSON')
                         ->icon('heroicon-o-code-bracket')
-                        ->color('info')
+                        ->color('primary')
                         ->action(function (Collection $records) {
                             return self::exportToJson($records);
                         }),

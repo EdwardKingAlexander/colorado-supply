@@ -13,9 +13,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class CompanyResource extends Resource
 {
@@ -42,6 +42,7 @@ class CompanyResource extends Resource
                         ->required()
                         ->maxLength(255)
                         ->unique(ignoreRecord: true)
+                        ->extraInputAttributes(['class' => 'font-mono'])
                         ->helperText('Auto-generated from company name'),
                 ])
                 ->columns(2),
@@ -57,6 +58,10 @@ class CompanyResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('slug')
+                    ->badge()
+                    ->color('gray')
+                    ->fontFamily(FontFamily::Mono)
+                    ->placeholder('--')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -64,12 +69,16 @@ class CompanyResource extends Resource
                 TextColumn::make('users_count')
                     ->counts('users')
                     ->label('Users')
+                    ->badge()
+                    ->color('primary')
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('locations_count')
                     ->counts('locations')
                     ->label('Locations')
+                    ->badge()
+                    ->color('primary')
                     ->sortable()
                     ->toggleable(),
 

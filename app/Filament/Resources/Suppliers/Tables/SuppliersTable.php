@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Suppliers\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -18,6 +19,11 @@ class SuppliersTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('cage_code')
+                    ->label('CAGE Code')
+                    ->badge()
+                    ->color(fn (?string $state): string => filled($state) ? 'primary' : 'gray')
+                    ->fontFamily(FontFamily::Mono)
+                    ->placeholder('--')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('contact_info')
@@ -27,11 +33,25 @@ class SuppliersTable
                         if (strlen($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
+
                         return $state;
                     })
                     ->toggleable(isToggledHiddenByDefault: true), // Hidden by default
                 TextColumn::make('website')
-                    ->url()
+                    ->placeholder('--')
+                    ->url(function ($record): ?string {
+                        $website = trim((string) $record->website);
+
+                        if ($website === '') {
+                            return null;
+                        }
+
+                        if (! preg_match('/^https?:\/\//i', $website)) {
+                            $website = "https://{$website}";
+                        }
+
+                        return $website;
+                    })
                     ->openUrlInNewTab()
                     ->searchable()
                     ->sortable(),

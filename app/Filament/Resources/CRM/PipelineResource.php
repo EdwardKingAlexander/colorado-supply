@@ -75,7 +75,7 @@ class PipelineResource extends Resource
                     ->counts('stages')
                     ->label('Stages')
                     ->badge()
-                    ->color('info'),
+                    ->color('primary'),
 
                 TextColumn::make('opportunities_count')
                     ->counts('opportunities')

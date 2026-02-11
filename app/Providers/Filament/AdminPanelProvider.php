@@ -2,17 +2,16 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Pages\Dashboard;
-use Filament\Widgets\AccountWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\Width;
 use Filament\Widgets;
+use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -32,13 +31,14 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->login()
             ->colors([
-                'primary'   => '#1d4ed8', // blue-700
+                'primary' => '#0277bd', // terminal cyan-blue
                 'secondary' => '#4b5563', // gray-600
-                'accent'    => '#dc2626', // red-600
-                'success'   => '#16a34a', // green-600
-                'warning'   => '#d97706', // amber-600
-                'danger'    => '#dc2626', // red-600
+                'accent' => '#00e5ff', // terminal cyan
+                'success' => '#00e676', // terminal green
+                'warning' => '#ffab00', // terminal amber
+                'danger' => '#ff1744', // terminal red
             ])
+            ->darkMode(true)
             ->maxContentWidth(Width::ScreenTwoExtraLarge)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

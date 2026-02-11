@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Suppliers\Schemas;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -22,6 +22,7 @@ class SupplierForm
                         TextInput::make('cage_code')
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
+                            ->extraInputAttributes(['class' => 'font-mono'])
                             ->nullable(),
                         Textarea::make('contact_info')
                             ->maxLength(65535)

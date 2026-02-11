@@ -62,6 +62,8 @@ class ContactMessageResource extends Resource
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-clock')
+                    ->trueColor('success')
+                    ->falseColor('warning')
                     ->getStateUsing(fn (ContactMessage $record) => $record->is_handled)
                     ->sortable(),
 
@@ -109,6 +111,7 @@ class ContactMessageResource extends Resource
                 Action::make('mark_handled')
                     ->label('Mark handled')
                     ->icon('heroicon-o-check')
+                    ->color('success')
                     ->visible(fn (ContactMessage $record) => is_null($record->handled_at))
                     ->requiresConfirmation()
                     ->action(function (ContactMessage $record) {

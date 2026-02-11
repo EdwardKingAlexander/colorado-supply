@@ -86,9 +86,9 @@ class ProductAttributeResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         'string' => 'primary',
                         'integer' => 'warning',
-                        'float' => 'info',
+                        'float' => 'primary',
                         'boolean' => 'success',
-                        'select' => 'purple',
+                        'select' => 'primary',
                         default => 'gray',
                     })
                     ->sortable(),

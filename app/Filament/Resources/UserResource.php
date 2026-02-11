@@ -2,24 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\User;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 
@@ -27,9 +26,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Admin';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shield-check';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
 
     protected static ?int $navigationSort = 10;
 
@@ -51,12 +50,12 @@ class UserResource extends Resource
 
                         TextInput::make('password')
                             ->password()
-                            ->required(fn($context) => $context === 'create')
-                            ->dehydrateStateUsing(fn($state) => filled($state) ? Hash::make($state) : null)
-                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn ($context) => $context === 'create')
+                            ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
+                            ->dehydrated(fn ($state) => filled($state))
                             ->maxLength(255)
                             ->revealable()
-                            ->helperText(fn($context) => $context === 'edit' ? 'Leave blank to keep current password' : null),
+                            ->helperText(fn ($context) => $context === 'edit' ? 'Leave blank to keep current password' : null),
                     ])
                     ->columns(2),
 
@@ -68,7 +67,7 @@ class UserResource extends Resource
                             ->multiple()
                             ->preload()
                             ->searchable()
-                            ->visible(fn() => auth()->user()?->can('users.assignRoles'))
+                            ->visible(fn () => auth()->user()?->can('users.assignRoles'))
                             ->helperText('Assign one or more roles to this user'),
 
                         Select::make('permissions')
@@ -77,7 +76,7 @@ class UserResource extends Resource
                             ->multiple()
                             ->preload()
                             ->searchable()
-                            ->visible(fn() => auth()->user()?->can('users.assignPermissions'))
+                            ->visible(fn () => auth()->user()?->can('users.assignPermissions'))
                             ->helperText('Assign direct permissions (in addition to role permissions)'),
                     ])
                     ->columns(2)
@@ -102,11 +101,11 @@ class UserResource extends Resource
                 TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge()
-                    ->color(fn($state) => match($state) {
+                    ->color(fn ($state) => match ($state) {
                         'super_admin' => 'danger',
                         'admin' => 'warning',
                         'sales_manager' => 'success',
-                        'sales_rep' => 'info',
+                        'sales_rep' => 'primary',
                         'viewer' => 'gray',
                         default => 'primary',
                     })
@@ -133,12 +132,12 @@ class UserResource extends Resource
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make()
-                    ->visible(fn(User $record) => auth()->user()?->can('delete', $record)),
+                    ->visible(fn (User $record) => auth()->user()?->can('delete', $record)),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(fn() => auth()->user()?->can('users.delete')),
+                        ->visible(fn () => auth()->user()?->can('users.delete')),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

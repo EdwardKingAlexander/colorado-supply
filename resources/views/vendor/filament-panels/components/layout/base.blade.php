@@ -79,6 +79,8 @@
             }
         </style>
 
+        @include('filament.pages.partials.terminal-theme')
+
         @stack('styles')
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::STYLES_AFTER, scopes: $renderHookScopes) }}
@@ -122,6 +124,8 @@
                 ->class([
                     'fi-body',
                     'fi-panel-' . filament()->getId(),
+                    't-terminal',
+                    't-admin-terminal',
                 ])
         }}
     >

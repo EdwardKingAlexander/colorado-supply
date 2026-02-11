@@ -28,10 +28,9 @@ class ActivityTimelineWidget extends BaseWidget
             ->columns([
                 Tables\Columns\BadgeColumn::make('type')
                     ->colors([
-                        'primary' => 'call',
+                        'primary' => ['call', 'task'],
                         'success' => 'email',
                         'warning' => 'meeting',
-                        'info' => 'task',
                         'gray' => 'note',
                     ]),
 

@@ -20,6 +20,7 @@ class ManufacturerForm
                         TextInput::make('cage_code')
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
+                            ->extraInputAttributes(['class' => 'font-mono'])
                             ->nullable(),
                     ]),
             ]);

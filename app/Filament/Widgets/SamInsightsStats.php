@@ -26,10 +26,18 @@ class SamInsightsStats extends BaseWidget
         $embedPct = $chunkCounts > 0 ? round(($embeddingCounts / $chunkCounts) * 100) : 0;
 
         return [
-            Stat::make('SAM Opportunities', $totalOpps),
-            Stat::make('Favorited Opportunities', $favorited),
-            Stat::make('Parsed Docs', "{$parseSuccess} / {$docCounts} ({$parsedPct}%)"),
-            Stat::make('Embedded Chunks', "{$embeddingCounts} / {$chunkCounts} ({$embedPct}%)"),
+            Stat::make('SAM Opportunities', $totalOpps)
+                ->description('Tracked federal opportunities')
+                ->color('primary'),
+            Stat::make('Favorited Opportunities', $favorited)
+                ->description('Saved by users for monitoring')
+                ->color('success'),
+            Stat::make('Parsed Docs', "{$parseSuccess} / {$docCounts} ({$parsedPct}%)")
+                ->description('Successful document parse coverage')
+                ->color($parsedPct >= 90 ? 'success' : ($parsedPct >= 50 ? 'warning' : 'danger')),
+            Stat::make('Embedded Chunks', "{$embeddingCounts} / {$chunkCounts} ({$embedPct}%)")
+                ->description('Vectorized chunk readiness')
+                ->color($embedPct >= 90 ? 'success' : ($embedPct >= 50 ? 'warning' : 'danger')),
         ];
     }
 }

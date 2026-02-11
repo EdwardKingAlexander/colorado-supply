@@ -135,8 +135,8 @@ class BusinessDeadlineResource extends Resource
                             ->color(fn (?DeadlineCategory $state) => match ($state) {
                                 DeadlineCategory::Tax => 'danger',
                                 DeadlineCategory::LicenseRenewal => 'warning',
-                                DeadlineCategory::Registration => 'info',
-                                DeadlineCategory::Compliance => 'primary',
+                                DeadlineCategory::Registration => 'primary',
+                                DeadlineCategory::Compliance => 'success',
                                 DeadlineCategory::Other => 'gray',
                                 null => 'gray',
                             })
@@ -226,8 +226,8 @@ class BusinessDeadlineResource extends Resource
                             ->color(fn (?DeadlineCategory $state) => match ($state) {
                                 DeadlineCategory::Tax => 'danger',
                                 DeadlineCategory::LicenseRenewal => 'warning',
-                                DeadlineCategory::Registration => 'info',
-                                DeadlineCategory::Compliance => 'primary',
+                                DeadlineCategory::Registration => 'primary',
+                                DeadlineCategory::Compliance => 'success',
                                 DeadlineCategory::Other => 'gray',
                                 null => 'gray',
                             })
@@ -306,7 +306,7 @@ class BusinessDeadlineResource extends Resource
                                 $record?->isCompleted() => 'success',
                                 $record?->isOverdue() => 'danger',
                                 $record?->isDueSoon() => 'warning',
-                                default => 'info',
+                                default => 'primary',
                             })
                             ->size('xs')
                             ->weight(FontWeight::Bold)

@@ -5,6 +5,7 @@
 @php
     use Filament\Pages\Enums\SubNavigationPosition;
 
+    $isDashboardPage = $this instanceof \Filament\Pages\Dashboard;
     $subNavigation = $this->getCachedSubNavigation();
     $subNavigationPosition = $this->getSubNavigationPosition();
     $widgetData = $this->getWidgetData();
@@ -17,6 +18,7 @@
             'fi-height-full' => $fullHeight,
             'fi-page-has-sub-navigation' => $subNavigation,
             "fi-page-has-sub-navigation-{$subNavigationPosition->value}" => $subNavigation,
+            'fi-page-dashboard' => $isDashboardPage,
             ...$this->getPageClasses(),
         ])
     }}
@@ -69,6 +71,15 @@
                     </x-slot>
                 @endif
             </x-filament-panels::header>
+        @endif
+
+        @if ($isDashboardPage)
+            <div class="t-dashboard-band" aria-live="polite">
+                <span class="t-dashboard-band-dot"></span>
+                <span>SYSTEM STATUS: NOMINAL</span>
+                <span class="t-dashboard-band-sep">|</span>
+                <span>{{ now()->format('Y-m-d H:i') }} UTC</span>
+            </div>
         @endif
 
         <div class="fi-page-main">

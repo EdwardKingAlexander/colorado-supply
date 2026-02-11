@@ -10,6 +10,8 @@ class EditMilSpecPart extends EditRecord
 {
     protected static string $resource = MilSpecPartResource::class;
 
+    protected string $view = 'filament.resources.mil-spec-parts.pages.edit-mil-spec-part';
+
     protected function getHeaderActions(): array
     {
         return [

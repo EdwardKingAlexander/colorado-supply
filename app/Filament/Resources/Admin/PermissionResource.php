@@ -3,26 +3,25 @@
 namespace App\Filament\Resources\Admin;
 
 use App\Filament\Resources\Admin\PermissionResource\Pages;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Resources\Resource;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Spatie\Permission\Models\Permission;
 
 class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Admin';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-lock-closed';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-lock-closed';
 
     protected static ?int $navigationSort = 30;
 
@@ -66,7 +65,7 @@ class PermissionResource extends Resource
                     ->sortable()
                     ->weight('medium')
                     ->badge()
-                    ->color(fn($record) => str_starts_with($record->name, 'users.') ? 'warning' : 'primary'),
+                    ->color(fn ($record) => str_starts_with($record->name, 'users.') ? 'warning' : 'primary'),
 
                 TextColumn::make('guard_name')
                     ->label('Guard')

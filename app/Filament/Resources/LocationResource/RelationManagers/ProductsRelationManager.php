@@ -16,6 +16,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -91,6 +92,10 @@ class ProductsRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('product.sku')
                     ->label('SKU')
+                    ->badge()
+                    ->color('gray')
+                    ->fontFamily(FontFamily::Mono)
+                    ->placeholder('--')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -98,7 +103,7 @@ class ProductsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('bin_label')
                     ->label('Bin/Location')
                     ->searchable()
-                    ->placeholder('—')
+                    ->placeholder('--')
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('on_hand')

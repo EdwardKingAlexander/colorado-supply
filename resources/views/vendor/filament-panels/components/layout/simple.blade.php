@@ -19,6 +19,14 @@
     ])
 
     <div class="fi-simple-layout">
+        <div class="t-simple-grid-bg" aria-hidden="true"></div>
+
+        <div class="t-simple-boot-seq" aria-hidden="true">
+            <div>BOOT: DEFENSE LOGISTICS TERMINAL</div>
+            <div>AUTH GATEWAY: ONLINE</div>
+            <div>CHANNEL STATUS: ENCRYPTED / VERIFIED</div>
+        </div>
+
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_START, scopes: $renderHookScopes) }}
 
         @if (($hasTopbar ?? true) && filament()->auth()->check())

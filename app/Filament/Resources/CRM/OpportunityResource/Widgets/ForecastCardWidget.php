@@ -26,7 +26,7 @@ class ForecastCardWidget extends BaseWidget
         return [
             Stat::make('Opportunity Value', '$' . number_format($amount, 2))
                 ->description('Total deal value')
-                ->color('info')
+                ->color('primary')
                 ->icon('heroicon-o-currency-dollar'),
 
             Stat::make('Probability', $probability . '%')

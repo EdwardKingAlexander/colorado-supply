@@ -2,32 +2,26 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\VendorResource\Pages\ListVendors;
 use App\Filament\Resources\VendorResource\Pages\CreateVendor;
 use App\Filament\Resources\VendorResource\Pages\EditVendor;
-use Dom\Text;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\Resources\VendorResource\Pages\ListVendors;
 use App\Models\Vendor;
-use Filament\Tables\Table;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\VendorResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\VendorResource\RelationManagers;
+use Filament\Tables\Table;
 
 class VendorResource extends Resource
 {
     protected static ?string $model = Vendor::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {
@@ -57,18 +51,25 @@ class VendorResource extends Resource
     {
         return $table
             ->columns([
-               TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Vendor Name')
                     ->searchable()
-               ->sortable(),
-               TextColumn::make('email')
+                    ->sortable(),
+                TextColumn::make('email')
                     ->label('Email')
+                    ->url(fn ($record) => filled($record->email) ? "mailto:{$record->email}" : null)
                     ->searchable()
-               ->sortable(),
-               TextColumn::make('phone')
+                    ->placeholder('--')
+                    ->sortable(),
+                TextColumn::make('phone')
                     ->label('Phone')
+                    ->url(fn ($record) => filled($record->phone) ? "tel:{$record->phone}" : null)
+                    ->badge()
+                    ->color('primary')
+                    ->fontFamily(FontFamily::Mono)
                     ->searchable()
-               ->sortable(), 
+                    ->placeholder('--')
+                    ->sortable(),
             ])
             ->filters([
                 //

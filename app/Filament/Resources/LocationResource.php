@@ -14,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -48,6 +49,7 @@ class LocationResource extends Resource
                         ->required()
                         ->maxLength(255)
                         ->unique(ignoreRecord: true)
+                        ->extraInputAttributes(['class' => 'font-mono'])
                         ->helperText('Auto-generated from location name'),
                 ])
                 ->columns(2),
@@ -67,6 +69,10 @@ class LocationResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('slug')
+                    ->badge()
+                    ->color('gray')
+                    ->fontFamily(FontFamily::Mono)
+                    ->placeholder('--')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -74,6 +80,8 @@ class LocationResource extends Resource
                 Tables\Columns\TextColumn::make('locationProducts_count')
                     ->counts('locationProducts')
                     ->label('Products')
+                    ->badge()
+                    ->color('primary')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')

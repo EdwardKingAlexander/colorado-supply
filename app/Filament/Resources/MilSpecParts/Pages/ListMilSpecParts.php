@@ -10,6 +10,8 @@ class ListMilSpecParts extends ListRecords
 {
     protected static string $resource = MilSpecPartResource::class;
 
+    protected string $view = 'filament.resources.mil-spec-parts.pages.list-mil-spec-parts';
+
     protected function getHeaderActions(): array
     {
         return [

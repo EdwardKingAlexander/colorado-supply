@@ -2,35 +2,29 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\UserDetailResource\Pages\ListUserDetails;
 use App\Filament\Resources\UserDetailResource\Pages\CreateUserDetail;
 use App\Filament\Resources\UserDetailResource\Pages\EditUserDetail;
-use Dom\Text;
-use Filament\Forms;
+use App\Filament\Resources\UserDetailResource\Pages\ListUserDetails;
 use App\Models\User;
-use Filament\Tables;
 use App\Models\UserDetail;
-use Filament\Tables\Table;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\UserDetailResource\Pages;
-use App\Filament\Resources\UserDetailResource\RelationManagers;
+use Filament\Tables\Table;
 
 class UserDetailResource extends Resource
 {
     protected static ?string $model = UserDetail::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {
@@ -102,15 +96,24 @@ class UserDetailResource extends Resource
                 TextColumn::make('user.name')
                     ->label('User Name')
                     ->searchable()
+                    ->weight('medium')
                     ->sortable(),
-                    TextColumn::make('user.email')
+
+                TextColumn::make('user.email')
                     ->label('Email')
-                    ->url(fn ($record) => "mailto:{$record->user->email} ")
+                    ->url(fn ($record) => filled($record->user?->email) ? "mailto:{$record->user->email}" : null)
                     ->searchable()
+                    ->copyable()
+                    ->placeholder('--')
                     ->sortable(),
-                    TextColumn::make('phone_number')
+
+                TextColumn::make('phone_number')
                     ->label('Phone Number')
-                    ->url(fn ($record) => "tel:{$record->phone_number}")
+                    ->url(fn ($record) => filled($record->phone_number) ? "tel:{$record->phone_number}" : null)
+                    ->badge()
+                    ->color('primary')
+                    ->fontFamily(FontFamily::Mono)
+                    ->placeholder('--')
                     ->searchable()
                     ->sortable(),
             ])

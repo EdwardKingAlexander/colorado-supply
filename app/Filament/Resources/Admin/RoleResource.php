@@ -3,25 +3,24 @@
 namespace App\Filament\Resources\Admin;
 
 use App\Filament\Resources\Admin\RoleResource\Pages;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Resources\Resource;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Admin';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-key';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-key';
 
     protected static ?int $navigationSort = 20;
 
@@ -65,11 +64,11 @@ class RoleResource extends Resource
                     ->sortable()
                     ->weight('bold')
                     ->badge()
-                    ->color(fn($state) => match($state) {
+                    ->color(fn ($state) => match ($state) {
                         'super_admin' => 'danger',
                         'admin' => 'warning',
                         'sales_manager' => 'success',
-                        'sales_rep' => 'info',
+                        'sales_rep' => 'primary',
                         'viewer' => 'gray',
                         default => 'primary',
                     }),
@@ -96,7 +95,7 @@ class RoleResource extends Resource
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
-                    ->visible(fn(Role $record) => !in_array($record->name, ['super_admin', 'admin']))
+                    ->visible(fn (Role $record) => ! in_array($record->name, ['super_admin', 'admin']))
                     ->requiresConfirmation(),
             ])
             ->toolbarActions([

@@ -34,7 +34,7 @@ class PipelineKpis extends BaseWidget
             Stat::make('Total Pipeline', '$' . number_format($totalPipeline, 2))
                 ->description($openOpportunities->count() . ' open opportunities')
                 ->descriptionIcon('heroicon-o-arrow-trending-up')
-                ->color('info')
+                ->color('primary')
                 ->chart([7, 3, 4, 5, 6, 3, 5, 3]),
 
             Stat::make('Weighted Forecast', '$' . number_format($totalForecast, 2))

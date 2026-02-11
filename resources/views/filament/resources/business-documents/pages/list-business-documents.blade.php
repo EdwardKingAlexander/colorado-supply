@@ -1,200 +1,197 @@
-<x-filament-panels::page>
-    @php
-        $totalDocuments = \App\Models\BusinessDocument::count();
-        $activeDocuments = \App\Models\BusinessDocument::active()->count();
-        $expiredQuery = \App\Models\BusinessDocument::query()
-            ->where('status', \App\Enums\DocumentStatus::Expired)
-            ->orWhere(function ($query) {
-                $query->whereNotNull('expiration_date')
-                    ->where('expiration_date', '<', now());
-            });
-        $expiredDocuments = (clone $expiredQuery)
-            ->orderBy('expiration_date', 'desc')
-            ->limit(5)
-            ->get();
-        $expiredCount = (clone $expiredQuery)->count();
-        $expiringDocuments = \App\Models\BusinessDocument::expiringSoon(30)
-            ->orderBy('expiration_date')
-            ->limit(5)
-            ->get();
-        $expiringCount = \App\Models\BusinessDocument::expiringSoon(30)->count();
-    @endphp
+@php
+    $totalDocuments = \App\Models\BusinessDocument::count();
+    $activeDocuments = \App\Models\BusinessDocument::active()->count();
+    $expiredQuery = \App\Models\BusinessDocument::query()
+        ->where('status', \App\Enums\DocumentStatus::Expired)
+        ->orWhere(function ($query) {
+            $query->whereNotNull('expiration_date')
+                ->where('expiration_date', '<', now());
+        });
+    $expiredDocuments = (clone $expiredQuery)
+        ->orderBy('expiration_date', 'desc')
+        ->limit(5)
+        ->get();
+    $expiredCount = (clone $expiredQuery)->count();
+    $expiringDocuments = \App\Models\BusinessDocument::expiringSoon(30)
+        ->orderBy('expiration_date')
+        ->limit(5)
+        ->get();
+    $expiringCount = \App\Models\BusinessDocument::expiringSoon(30)->count();
+@endphp
 
-    <div class="px-4 sm:px-6 lg:px-8">
-        <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
-                <h1 class="text-base font-semibold text-gray-900 dark:text-white">Business documents</h1>
-                <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">Track certificates, licenses, and compliance files across your organization.</p>
-            </div>
-            <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-                <a href="{{ route('filament.admin.resources.business-documents.create') }}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500">
-                    Add document
+<x-terminal-page
+    footer-left="BUSINESS HUB // DOCUMENT REGISTRY"
+    footer-center="SESSION {{ strtoupper(substr(md5(session()->getId()), 0, 8)) }}"
+    footer-right="OPERATOR {{ auth()->user()?->name ?? 'UNKNOWN' }}"
+>
+    <x-slot:banner>
+        DEFENSE LOGISTICS INTELLIGENCE SYSTEM <span class="t-sep">//</span> DOCUMENT CONTROL
+    </x-slot:banner>
+
+    @include('filament.pages.partials.business-hub-styles')
+
+    <div class="bh-shell">
+        <div class="t-panel t-scanlines t-glow-hover" style="animation-delay: 0.05s">
+            <div class="t-panel-corner t-panel-corner--tl"></div>
+            <div class="t-panel-corner t-panel-corner--tr"></div>
+            <div class="t-panel-corner t-panel-corner--bl"></div>
+            <div class="t-panel-corner t-panel-corner--br"></div>
+
+            <div class="bh-hero">
+                <div>
+                    <p class="bh-kicker">Business Hub</p>
+                    <h1 class="bh-title">Business Documents</h1>
+                    <p class="bh-subtitle">Track certificates, licenses, and compliance files across your organization.</p>
+                </div>
+
+                <a href="{{ route('filament.admin.resources.business-documents.create') }}" class="t-action-link">
+                    <x-heroicon-o-plus class="w-4 h-4" />
+                    ADD DOCUMENT
                 </a>
             </div>
-        </div>
 
-        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <div class="rounded-md border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-gray-900 {{ $expiredCount ? 'border-red-200 dark:border-red-500/40' : '' }}">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Expired</dt>
-                <dd class="mt-1 text-2xl font-semibold tracking-tight {{ $expiredCount ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white' }}">{{ $expiredCount }}</dd>
-            </div>
-            <div class="rounded-md border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-gray-900 {{ $expiringCount ? 'border-amber-200 dark:border-amber-500/40' : '' }}">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Expiring Soon</dt>
-                <dd class="mt-1 text-2xl font-semibold tracking-tight {{ $expiringCount ? 'text-amber-600 dark:text-amber-400' : 'text-gray-900 dark:text-white' }}">{{ $expiringCount }}</dd>
-            </div>
-            <div class="rounded-md border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-gray-900">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Active</dt>
-                <dd class="mt-1 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ $activeDocuments }}</dd>
-            </div>
-            <div class="rounded-md border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-gray-900">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total</dt>
-                <dd class="mt-1 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ $totalDocuments }}</dd>
+            <div class="t-divider"></div>
+
+            <div class="bh-stats-row">
+                <div class="t-stat {{ $expiredCount ? 't-stat--danger' : '' }}">
+                    <div class="t-stat-value">{{ $expiredCount }}</div>
+                    <div class="t-stat-label">EXPIRED</div>
+                </div>
+                <div class="t-stat {{ $expiringCount ? 't-stat--warning' : '' }}">
+                    <div class="t-stat-value">{{ $expiringCount }}</div>
+                    <div class="t-stat-label">EXPIRING SOON</div>
+                </div>
+                <div class="t-stat t-stat--success">
+                    <div class="t-stat-value">{{ $activeDocuments }}</div>
+                    <div class="t-stat-label">ACTIVE</div>
+                </div>
+                <div class="t-stat t-stat--accent">
+                    <div class="t-stat-value">{{ $totalDocuments }}</div>
+                    <div class="t-stat-label">TOTAL</div>
+                </div>
             </div>
         </div>
 
         @if($expiredCount || $expiringCount)
-            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div class="bh-alert-grid">
                 @if($expiredCount)
-                    <div class="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-500/40 dark:bg-red-900/20">
-                        <p class="text-sm font-semibold text-red-800 dark:text-red-200">{{ $expiredCount }} expired {{ Str::plural('document', $expiredCount) }}</p>
-                        <p class="mt-1 text-sm text-red-700 dark:text-red-300">Immediate action required.</p>
-                        <ul class="mt-3 space-y-1 text-sm text-red-700 dark:text-red-300">
+                    <div class="bh-alert-panel bh-alert-panel--danger">
+                        <p class="bh-alert-title">{{ $expiredCount }} EXPIRED {{ Str::plural('DOCUMENT', $expiredCount) }}</p>
+                        <p class="bh-alert-meta">Immediate renewal required.</p>
+                        <div class="bh-alert-list">
                             @foreach($expiredDocuments as $document)
-                                <li>{{ $document->name }} <span class="text-red-600 dark:text-red-300">({{ $document->expiration_date?->diffForHumans() ?? 'Expired' }})</span></li>
+                                <div class="bh-alert-item">
+                                    <span class="bh-alert-item-title">{{ $document->name }}</span>
+                                    <span class="bh-alert-item-meta bh-alert-item-meta--danger">{{ $document->expiration_date?->diffForHumans() ?? 'EXPIRED' }}</span>
+                                </div>
                             @endforeach
-                        </ul>
+                        </div>
                     </div>
                 @endif
 
                 @if($expiringCount)
-                    <div class="rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/40 dark:bg-amber-900/20">
-                        <p class="text-sm font-semibold text-amber-800 dark:text-amber-200">{{ $expiringCount }} {{ Str::plural('document', $expiringCount) }} expiring soon</p>
-                        <p class="mt-1 text-sm text-amber-700 dark:text-amber-300">Next 30 days.</p>
-                        <ul class="mt-3 space-y-1 text-sm text-amber-700 dark:text-amber-300">
+                    <div class="bh-alert-panel bh-alert-panel--warning">
+                        <p class="bh-alert-title">{{ $expiringCount }} {{ Str::plural('DOCUMENT', $expiringCount) }} EXPIRING SOON</p>
+                        <p class="bh-alert-meta">Next 30 days.</p>
+                        <div class="bh-alert-list">
                             @foreach($expiringDocuments as $document)
-                                <li>{{ $document->name }} <span class="text-amber-600 dark:text-amber-400">({{ $document->expiration_date?->format('M j, Y') }})</span></li>
+                                <div class="bh-alert-item">
+                                    <span class="bh-alert-item-title">{{ $document->name }}</span>
+                                    <span class="bh-alert-item-meta bh-alert-item-meta--warning">{{ $document->expiration_date?->format('M j, Y') }}</span>
+                                </div>
                             @endforeach
-                        </ul>
+                        </div>
                     </div>
                 @endif
             </div>
         @endif
 
-        <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div class="lg:col-span-2">
-                <div class="overflow-hidden rounded-md border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
-                    <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10 sm:px-6">
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Document registry</h2>
+        <div class="bh-main-grid">
+            <div class="bh-primary-stack">
+                <div class="t-panel t-scanlines t-glow-hover" style="animation-delay: 0.12s">
+                    <div class="t-panel-corner t-panel-corner--tl"></div>
+                    <div class="t-panel-corner t-panel-corner--tr"></div>
+                    <div class="t-panel-corner t-panel-corner--bl"></div>
+                    <div class="t-panel-corner t-panel-corner--br"></div>
+
+                    <div class="t-panel-header">
+                        <div class="t-panel-header-icon">
+                            <x-heroicon-o-document-text class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h2 class="t-panel-title">DOCUMENT REGISTRY</h2>
+                            <p class="t-panel-subtitle">Audit all document records, status tags, and expiry windows in one table.</p>
+                        </div>
                     </div>
-                    <div class="filament-table-clean">
+
+                    <div class="t-divider"></div>
+
+                    <div class="bh-table-wrapper">
                         {{ $this->content }}
                     </div>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div class="overflow-hidden rounded-md border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
-                    <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10">
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Expiring soon</h2>
+            <div class="bh-sidebar-stack">
+                <div class="t-card t-glow-hover">
+                    <div class="t-card-header">
+                        <h2 class="t-card-title">EXPIRING SOON</h2>
                     </div>
-                    <div class="divide-y divide-gray-200 dark:divide-white/10">
-                        @forelse($expiringDocuments as $document)
-                            @php
-                                $days = $document->daysUntilExpiration();
-                                $isUrgent = $days !== null && $days <= 14;
-                            @endphp
-                            <div class="px-4 py-3 sm:px-6">
-                                <div class="flex items-center justify-between gap-4">
-                                    <div class="min-w-0">
-                                        <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ $document->name }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $document->type->label() }}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-sm font-semibold {{ $isUrgent ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400' }}">
-                                            {{ $document->expiration_date?->format('M j') }}
-                                        </p>
-                                        @if($days !== null)
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $days }}d left</p>
-                                        @endif
-                                    </div>
-                                </div>
+
+                    @forelse($expiringDocuments as $document)
+                        @php
+                            $days = $document->daysUntilExpiration();
+                            $isUrgent = $days !== null && $days <= 14;
+                        @endphp
+                        <div class="t-row" style="justify-content: space-between;">
+                            <div style="min-width: 0; flex: 1;">
+                                <div class="bh-row-title">{{ $document->name }}</div>
+                                <div class="bh-row-meta">{{ $document->type->label() }}</div>
                             </div>
-                        @empty
-                            <div class="px-4 py-8 text-center">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white">All clear</p>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">No documents expiring in the next 30 days.</p>
+                            <div style="text-align: right; flex-shrink: 0;">
+                                <div class="bh-row-title {{ $isUrgent ? 'bh-row-danger' : 'bh-row-warning' }}">{{ $document->expiration_date?->format('M j') }}</div>
+                                @if($days !== null)
+                                    <div class="bh-row-meta" style="justify-content: flex-end;">{{ $days }}D LEFT</div>
+                                @endif
                             </div>
-                        @endforelse
-                    </div>
+                        </div>
+                    @empty
+                        <div class="t-empty">
+                            <div class="t-empty-title">ALL CLEAR</div>
+                            <div class="t-empty-text">No documents expiring in the next 30 days.</div>
+                        </div>
+                    @endforelse
                 </div>
 
-                <div class="overflow-hidden rounded-md border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
-                    <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10">
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Business hub</h2>
+                <div class="t-card t-glow-hover">
+                    <div class="t-card-header">
+                        <h2 class="t-card-title">BUSINESS HUB</h2>
                     </div>
-                    <nav class="divide-y divide-gray-200 dark:divide-white/10">
-                        <a href="{{ \App\Filament\Pages\BusinessHubDashboard::getUrl() }}" class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 sm:px-6">
+                    <div style="padding: 1rem;">
+                        <a href="{{ \App\Filament\Pages\BusinessHubDashboard::getUrl() }}" class="bh-side-link">
                             <div>
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white">Dashboard</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Overview and alerts</p>
+                                <div class="bh-side-link-title">Dashboard</div>
+                                <div class="bh-side-link-desc">Overview and alerts.</div>
                             </div>
-                            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Open</span>
+                            <span class="bh-side-link-cta">OPEN</span>
                         </a>
-                        <a href="{{ route('filament.admin.resources.business-deadlines.index') }}" class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 sm:px-6">
+                        <a href="{{ route('filament.admin.resources.business-deadlines.index') }}" class="bh-side-link bh-side-link--warning">
                             <div>
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white">Deadlines</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Filings and renewals</p>
+                                <div class="bh-side-link-title">Deadlines</div>
+                                <div class="bh-side-link-desc">Filings and renewals.</div>
                             </div>
-                            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Open</span>
+                            <span class="bh-side-link-cta">OPEN</span>
                         </a>
-                        <a href="{{ route('filament.admin.resources.business-links.index') }}" class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 sm:px-6">
+                        <a href="{{ route('filament.admin.resources.business-links.index') }}" class="bh-side-link bh-side-link--success">
                             <div>
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white">Quick links</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Portals and resources</p>
+                                <div class="bh-side-link-title">Quick Links</div>
+                                <div class="bh-side-link-desc">Portals and resources.</div>
                             </div>
-                            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Open</span>
+                            <span class="bh-side-link-cta">OPEN</span>
                         </a>
-                    </nav>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <style>
-        /* Clean table styling to match reference */
-        .filament-table-clean .fi-ta-ctn {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            border-radius: 0;
-        }
-
-        .filament-table-clean .fi-ta-header-ctn {
-            border-bottom: 1px solid rgb(229 231 235);
-        }
-
-        .dark .filament-table-clean .fi-ta-header-ctn {
-            border-color: rgb(255 255 255 / 0.1);
-        }
-
-        .filament-table-clean table {
-            @apply min-w-full divide-y divide-gray-300 dark:divide-white/15;
-        }
-
-        .filament-table-clean th {
-            @apply py-3.5 px-3 text-left text-sm font-semibold text-gray-900 dark:text-white;
-        }
-
-        .filament-table-clean tbody {
-            @apply divide-y divide-gray-200 bg-white dark:divide-white/10 dark:bg-gray-900;
-        }
-
-        .filament-table-clean td {
-            @apply whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400;
-        }
-
-        .filament-table-clean tr:hover {
-            @apply bg-gray-50 dark:bg-gray-800;
-        }
-    </style>
-</x-filament-panels::page>
+</x-terminal-page>

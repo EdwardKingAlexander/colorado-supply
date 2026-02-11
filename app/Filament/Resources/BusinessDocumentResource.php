@@ -112,7 +112,7 @@ class BusinessDocumentResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (?DocumentType $state) => $state?->label() ?? 'Unknown')
                     ->color(fn (?DocumentType $state) => match ($state) {
-                        DocumentType::License => 'info',
+                        DocumentType::License => 'primary',
                         DocumentType::Insurance => 'success',
                         DocumentType::Registration => 'primary',
                         DocumentType::TaxDocument => 'warning',

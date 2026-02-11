@@ -144,7 +144,7 @@ class BusinessLinkResource extends Resource
                                 ->formatStateUsing(fn (?LinkCategory $state) => $state?->label() ?? 'Unknown')
                                 ->color(fn (?LinkCategory $state) => match ($state) {
                                     LinkCategory::Federal => 'primary',
-                                    LinkCategory::State => 'info',
+                                    LinkCategory::State => 'primary',
                                     LinkCategory::Local => 'success',
                                     LinkCategory::Banking => 'gray',
                                     LinkCategory::Vendor => 'warning',
