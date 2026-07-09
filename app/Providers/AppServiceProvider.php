@@ -3,10 +3,32 @@
 namespace App\Providers;
 
 use App\Inertia\Ssr\FastHttpGateway;
+use App\Models\ContractDocument;
+use App\Models\Customer;
+use App\Models\Opportunity;
+use App\Models\Pipeline;
+use App\Models\Quote;
+use App\Models\Stage;
+use App\Models\User;
+use App\Observers\OpportunityObserver;
+use App\Observers\QuoteObserver;
+use App\Policies\ContractDocumentPolicy;
+use App\Policies\CustomerPolicy;
+use App\Policies\OpportunityPolicy;
+use App\Policies\PipelinePolicy;
+use App\Policies\QuotePolicy;
+use App\Policies\StagePolicy;
+use App\Policies\UserPolicy;
+use App\Services\Stripe\StripeClientFactory;
+use App\Support\ActivitylogCauserResolver;
 use Filament\Support\Facades\FilamentColor;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Ssr\Gateway;
+use Spatie\Activitylog\Facades\CauserResolver;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(Gateway::class, FastHttpGateway::class);
+
+        $this->app->singleton(StripeClient::class, function ($app) {
+            return $app->make(StripeClientFactory::class)->make();
+        });
     }
 
     /**
@@ -24,6 +50,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
 
         FilamentColor::register([
             'primary' => '#1d4ed8', // blue-700
@@ -35,11 +65,21 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         // Register CRM Observers
-        \App\Models\Opportunity::observe(\App\Observers\OpportunityObserver::class);
-        \App\Models\Quote::observe(\App\Observers\QuoteObserver::class);
+        Opportunity::observe(OpportunityObserver::class);
+        Quote::observe(QuoteObserver::class);
+
+        CauserResolver::resolveUsing(\Closure::fromCallable(new ActivitylogCauserResolver));
 
         // Gate::before - Grant all permissions to super_admin
-        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+        Gate::before(function ($user, $ability, $arguments = []) {
+            // Never blanket-bypass "delete" on User accounts: UserPolicy::delete()
+            // enforces safety guards (can't delete yourself, can't delete the last
+            // super_admin) that must apply even to super_admins, not just to
+            // lower-privileged roles.
+            if ($ability === 'delete' && ($arguments[0] ?? null) instanceof User) {
+                return null;
+            }
+
             if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
                 return true;
             }
@@ -48,12 +88,12 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Register Policies
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\User::class, \App\Policies\UserPolicy::class);
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\Customer::class, \App\Policies\CustomerPolicy::class);
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\Pipeline::class, \App\Policies\PipelinePolicy::class);
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\Stage::class, \App\Policies\StagePolicy::class);
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\Opportunity::class, \App\Policies\OpportunityPolicy::class);
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\Quote::class, \App\Policies\QuotePolicy::class);
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\ContractDocument::class, \App\Policies\ContractDocumentPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Customer::class, CustomerPolicy::class);
+        Gate::policy(Pipeline::class, PipelinePolicy::class);
+        Gate::policy(Stage::class, StagePolicy::class);
+        Gate::policy(Opportunity::class, OpportunityPolicy::class);
+        Gate::policy(Quote::class, QuotePolicy::class);
+        Gate::policy(ContractDocument::class, ContractDocumentPolicy::class);
     }
 }

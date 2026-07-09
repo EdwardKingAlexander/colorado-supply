@@ -1,6 +1,6 @@
 import { reactive, computed, watch } from 'vue'
 
-const STORAGE_KEY = 'colorado-supply.quote'
+const STORAGE_KEY = 'colorado-supply.cart'
 
 const loadInitialItems = () => {
   if (typeof window === 'undefined') {
@@ -31,7 +31,7 @@ const loadInitialItems = () => {
         location_id: item.location_id ?? null, // Add location_id here
       }))
   } catch (error) {
-    console.warn('Failed to parse quote storage', error)
+    console.warn('Failed to parse cart storage', error)
     return []
   }
 }
@@ -48,7 +48,7 @@ const persistItems = (items) => {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   } catch (error) {
-    console.warn('Failed to persist quote storage', error)
+    console.warn('Failed to persist cart storage', error)
   }
 }
 
@@ -62,7 +62,7 @@ if (typeof window !== 'undefined') {
   )
 }
 
-export function useQuoteStore() {
+export function useCartStore() {
   const addItem = (product, quantity = 1, location_id = null) => { // Add location_id parameter
     if (!product || typeof product.id === 'undefined') {
       return
@@ -103,7 +103,7 @@ export function useQuoteStore() {
     state.items.splice(index, 1)
   }
 
-  const clearQuote = () => {
+  const clearCart = () => {
     if (!state.items.length) {
       return
     }
@@ -112,7 +112,7 @@ export function useQuoteStore() {
   }
 
   const incrementQuantity = (id) => {
-    const item = state.items.find((quoteItem) => quoteItem.id === id)
+    const item = state.items.find((cartItem) => cartItem.id === id)
 
     if (!item) {
       return
@@ -122,7 +122,7 @@ export function useQuoteStore() {
   }
 
   const decrementQuantity = (id) => {
-    const item = state.items.find((quoteItem) => quoteItem.id === id)
+    const item = state.items.find((cartItem) => cartItem.id === id)
 
     if (!item || item.quantity <= 1) {
       return
@@ -132,7 +132,7 @@ export function useQuoteStore() {
   }
 
   const updateItemLocation = (id, newLocationId) => {
-    const item = state.items.find((quoteItem) => quoteItem.id === id)
+    const item = state.items.find((cartItem) => cartItem.id === id)
 
     if (!item) {
       return
@@ -152,7 +152,7 @@ export function useQuoteStore() {
     totalCost: total,
     addItem,
     removeItem,
-    clearQuote,
+    clearCart,
     incrementQuantity,
     decrementQuantity,
     updateItemLocation,

@@ -10,7 +10,7 @@
           <p class="mt-4 text-gray-600 dark:text-gray-400">
             Colorado Springs, CO — Serving Nationwide
           </p>
-          <p class="mt-2 text-sm text-gray-500 dark:text-gray-500">
+          <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">
             Registered Small Business | SAM.gov Active
           </p>
         </div>
@@ -22,6 +22,7 @@
             <li><a href="#home" class="footer-link">Home</a></li>
             <li><a href="#about" class="footer-link">About</a></li>
             <li><a href="#capabilities" class="footer-link">Capabilities</a></li>
+            <li><a :href="route('repair-services.index')" class="footer-link">Repair Services</a></li>
             <li><a href="#industries" class="footer-link">Industries</a></li>
             <li><a href="#credentials" class="footer-link">Credentials</a></li>
             <li><a href="#contact" class="footer-link">Contact</a></li>
@@ -62,7 +63,7 @@
             <a
               href="/docs/Colorado_Supply_Capabilities_Statement.pdf"
               download
-              class="inline-flex items-center rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
+              class="inline-flex items-center rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
             >
               Download Capabilities
             </a>
@@ -72,11 +73,11 @@
 
       <!-- Bottom Bar -->
       <div class="mt-12 border-t border-gray-200 pt-6 dark:border-gray-700">
-        <div class="text-xs text-gray-500 dark:text-gray-500">
+        <div class="text-xs text-gray-700 dark:text-gray-300">
           <p>© {{ new Date().getFullYear() }} Colorado Supply & Procurement LLC. All rights reserved.</p>
           <p class="mt-2">
-            <span class="text-blue-300">Website by</span>
-            <a href="https://www.rockymountainweb.design" class="hover:underline text-blue-500 dark:text-blue-500">
+            <span class="text-gray-700 dark:text-gray-300">Website by</span>
+            <a href="https://www.rockymountainweb.design" class="text-blue-700 hover:underline dark:text-blue-300">
               Rocky Mountain Web Design LLC
             </a>
           </p>
@@ -92,6 +93,6 @@
 
 <style scoped>
 .footer-link {
-  @apply text-sm text-gray-600 hover:text-amber-600 dark:text-gray-400 dark:hover:text-amber-400;
+  @apply text-sm text-gray-700 hover:text-amber-700 dark:text-gray-300 dark:hover:text-amber-300;
 }
 </style>

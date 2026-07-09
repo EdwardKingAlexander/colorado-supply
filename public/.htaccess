@@ -13,6 +13,14 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    <IfModule mod_headers.c>
+        SetEnvIf Request_URI "^/build/assets/" vite_asset=1
+        Header set Cache-Control "public, max-age=31536000, immutable" env=vite_asset
+
+        SetEnvIf Request_URI "^/(site\.webmanifest|favicon\.ico|favicon\.svg|apple-touch-icon\.png)$" public_static=1
+        Header set Cache-Control "public, max-age=86400" env=public_static
+    </IfModule>
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$

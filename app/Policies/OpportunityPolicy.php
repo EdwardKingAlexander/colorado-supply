@@ -2,30 +2,31 @@
 
 namespace App\Policies;
 
-use App\Models\Opportunity;
 use App\Models\Admin;
+use App\Models\Opportunity;
+use App\Models\User;
 
 class OpportunityPolicy
 {
-    public function viewAny(Admin $user): bool
+    public function viewAny(User|Admin $user): bool
     {
         return $user->can('crm.opportunities.viewAny');
     }
 
-    public function view(Admin $user, Opportunity $opportunity): bool
+    public function view(User|Admin $user, Opportunity $opportunity): bool
     {
         return $user->can('crm.opportunities.view');
     }
 
-    public function create(Admin $user): bool
+    public function create(User|Admin $user): bool
     {
         return $user->can('crm.opportunities.create');
     }
 
-    public function update(Admin $user, Opportunity $opportunity): bool
+    public function update(User|Admin $user, Opportunity $opportunity): bool
     {
         // Check permission first
-        if (!$user->can('crm.opportunities.update')) {
+        if (! $user->can('crm.opportunities.update')) {
             return false;
         }
 
@@ -38,10 +39,10 @@ class OpportunityPolicy
         return $opportunity->owner_id === $user->id;
     }
 
-    public function delete(Admin $user, Opportunity $opportunity): bool
+    public function delete(User|Admin $user, Opportunity $opportunity): bool
     {
         // Check permission first
-        if (!$user->can('crm.opportunities.delete')) {
+        if (! $user->can('crm.opportunities.delete')) {
             return false;
         }
 
@@ -54,17 +55,17 @@ class OpportunityPolicy
         return $opportunity->owner_id === $user->id;
     }
 
-    public function restore(Admin $user, Opportunity $opportunity): bool
+    public function restore(User|Admin $user, Opportunity $opportunity): bool
     {
         return $user->can('crm.opportunities.delete');
     }
 
-    public function forceDelete(Admin $user, Opportunity $opportunity): bool
+    public function forceDelete(User|Admin $user, Opportunity $opportunity): bool
     {
         return $user->can('crm.opportunities.delete');
     }
 
-    public function reassignOwner(Admin $user, Opportunity $opportunity): bool
+    public function reassignOwner(User|Admin $user, Opportunity $opportunity): bool
     {
         // Only admin and sales_manager can reassign
         return $user->hasAnyRole(['super_admin', 'admin', 'sales_manager']);

@@ -251,20 +251,28 @@ class ComplianceAuditTool extends Tool
                     $expirationDate = $fieldValue->copy()->addDays($config['renewal_period']);
                 }
 
+                // Carbon 3's diffInDays() defaults to a *signed* difference (this
+                // changed from Carbon 2, where it defaulted to absolute). Since
+                // $expirationDate is always in the future here (the isPast() branch
+                // above already handled expired dates), pass absolute: true
+                // explicitly so this never silently goes negative and satisfies
+                // "<= $warningDays" for every far-future date.
+                $daysUntilExpiration = $now->diffInDays($expirationDate, absolute: true);
+
                 if ($expirationDate->isPast()) {
                     $result['status'] = 'expired';
                     $result['message'] = 'Expired on '.$expirationDate->toDateString().' ('.$expirationDate->diffForHumans().')';
                     $result['expiration_date'] = $expirationDate->toDateString();
-                } elseif ($expirationDate->diffInDays($now) <= $warningDays) {
+                } elseif ($daysUntilExpiration <= $warningDays) {
                     $result['status'] = 'expiring_soon';
-                    $result['message'] = 'Expires on '.$expirationDate->toDateString().' (in '.$expirationDate->diffInDays($now).' days)';
+                    $result['message'] = 'Expires on '.$expirationDate->toDateString().' (in '.$daysUntilExpiration.' days)';
                     $result['expiration_date'] = $expirationDate->toDateString();
-                    $result['days_until_expiration'] = $expirationDate->diffInDays($now);
+                    $result['days_until_expiration'] = $daysUntilExpiration;
                 } else {
                     $result['status'] = 'compliant';
                     $result['message'] = 'Valid until '.$expirationDate->toDateString();
                     $result['expiration_date'] = $expirationDate->toDateString();
-                    $result['days_until_expiration'] = $expirationDate->diffInDays($now);
+                    $result['days_until_expiration'] = $daysUntilExpiration;
                 }
             }
         } else {

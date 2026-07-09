@@ -4,7 +4,9 @@ namespace App\Filament\Resources\CRM;
 
 use App\Filament\Resources\CRM\OrderResource\Pages;
 use App\Filament\Resources\CRM\OrderResource\RelationManagers\ItemsRelationManager;
+use App\Filament\Resources\CRM\OrderResource\RelationManagers\PaymentsRelationManager;
 use App\Models\Order;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -31,14 +33,14 @@ class OrderResource extends Resource
             Section::make('Order Overview')
                 ->schema([
                     Grid::make(2)->schema([
-                        \Filament\Forms\Components\TextInput::make('order_number')
+                        TextInput::make('order_number')
                             ->disabled()
                             ->label('Order #'),
-                        \Filament\Forms\Components\TextInput::make('status')
+                        TextInput::make('status')
                             ->disabled(),
-                        \Filament\Forms\Components\TextInput::make('payment_status')
+                        TextInput::make('payment_status')
                             ->disabled(),
-                        \Filament\Forms\Components\TextInput::make('fulfillment_status')
+                        TextInput::make('fulfillment_status')
                             ->disabled(),
                     ]),
                 ]),
@@ -92,6 +94,7 @@ class OrderResource extends Resource
     {
         return [
             ItemsRelationManager::class,
+            PaymentsRelationManager::class,
         ];
     }
 

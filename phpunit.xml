@@ -29,5 +29,12 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="STRIPE_KEY" value="pk_test_dummy"/>
+        <env name="STRIPE_SECRET" value="sk_test_dummy"/>
+        <env name="STRIPE_WEBHOOK_SECRET" value="whsec_dummy"/>
+        <env name="PAYPAL_CLIENT_ID" value="paypal_client_id_dummy"/>
+        <env name="PAYPAL_CLIENT_SECRET" value="paypal_client_secret_dummy"/>
+        <env name="PAYPAL_MODE" value="sandbox"/>
+        <env name="PAYPAL_WEBHOOK_ID" value="paypal_webhook_id_dummy"/>
     </php>
 </phpunit>

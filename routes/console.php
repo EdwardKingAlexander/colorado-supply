@@ -22,3 +22,28 @@ Schedule::command('business:check-deadlines')
     ->dailyAt('08:00')
     ->withoutOverlapping()
     ->onOneServer();
+
+/*
+|--------------------------------------------------------------------------
+| Automated Backups
+|--------------------------------------------------------------------------
+|
+| Clean up backups that fall outside the retention policy before creating
+| today's, then verify what's on the configured disk(s) is healthy.
+|
+*/
+
+Schedule::command('backup:clean')
+    ->dailyAt('01:00')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+Schedule::command('backup:run')
+    ->dailyAt('01:30')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+Schedule::command('backup:monitor')
+    ->dailyAt('03:00')
+    ->withoutOverlapping()
+    ->onOneServer();

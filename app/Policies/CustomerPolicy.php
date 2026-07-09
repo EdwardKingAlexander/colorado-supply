@@ -2,30 +2,31 @@
 
 namespace App\Policies;
 
-use App\Models\Customer;
 use App\Models\Admin;
+use App\Models\Customer;
+use App\Models\User;
 
 class CustomerPolicy
 {
-    public function viewAny(Admin $user): bool
+    public function viewAny(User|Admin $user): bool
     {
         return $user->can('crm.customers.viewAny');
     }
 
-    public function view(Admin $user, Customer $customer): bool
+    public function view(User|Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.view');
     }
 
-    public function create(Admin $user): bool
+    public function create(User|Admin $user): bool
     {
         return $user->can('crm.customers.create');
     }
 
-    public function update(Admin $user, Customer $customer): bool
+    public function update(User|Admin $user, Customer $customer): bool
     {
         // Check permission first
-        if (!$user->can('crm.customers.update')) {
+        if (! $user->can('crm.customers.update')) {
             return false;
         }
 
@@ -38,17 +39,17 @@ class CustomerPolicy
         return $customer->owner_id === $user->id;
     }
 
-    public function delete(Admin $user, Customer $customer): bool
+    public function delete(User|Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.delete');
     }
 
-    public function restore(Admin $user, Customer $customer): bool
+    public function restore(User|Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.delete');
     }
 
-    public function forceDelete(Admin $user, Customer $customer): bool
+    public function forceDelete(User|Admin $user, Customer $customer): bool
     {
         return $user->can('crm.customers.delete');
     }

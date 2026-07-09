@@ -10,6 +10,7 @@ use App\Support\SamPerformanceLogger;
 use App\Support\SamResponseBuilder;
 use App\Support\SamStateFileManager;
 use Carbon\Carbon;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
 
 class FetchSamOpportunitiesTool extends Tool
@@ -91,7 +92,7 @@ class FetchSamOpportunitiesTool extends Tool
      *
      * @return array Output schema structure
      */
-    protected function outputSchema(): array
+    protected function legacyOutputSchema(): array
     {
         return [
             'success' => [
@@ -481,7 +482,7 @@ class FetchSamOpportunitiesTool extends Tool
             return $legacy;
         } catch (\Exception $e) {
             $errorCategory = 'unexpected_exception';
-            if ($e instanceof \Illuminate\Http\Client\ConnectionException) {
+            if ($e instanceof ConnectionException) {
                 $errorCategory = 'network_error';
             } elseif ($e instanceof \InvalidArgumentException) {
                 $errorCategory = 'data_error';

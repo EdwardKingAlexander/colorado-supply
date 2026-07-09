@@ -1,12 +1,20 @@
 <?php
 
 use App\Console\Commands\EnsureEdwardAdminUser;
+use App\Http\Middleware\AuthenticateWebOrAdmin;
+use App\Http\Middleware\EnsureStoreEnabled;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ScopeToCompany;
+use App\Http\Middleware\SecurityHeaders;
+use App\Mcp\Servers\Business\Tools\FetchSamOpportunitiesTool;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             Route::middleware('web')
-                ->withoutMiddleware(VerifyCsrfToken::class)
+                ->withoutMiddleware(PreventRequestForgery::class)
                 ->group(base_path('routes/ai.php'));
         },
     )
@@ -28,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->call(function () {
             try {
                 // Section H - Use static handle() for programmatic access
-                $result = \App\Mcp\Servers\Business\Tools\FetchSamOpportunitiesTool::handle([
+                $result = FetchSamOpportunitiesTool::handle([
                     'days_back' => 7,
                     'place' => 'CO',
                     'limit' => 100,
@@ -41,7 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 // Section H - Log results with detailed metrics
                 if ($result['success']) {
-                    \Illuminate\Support\Facades\Log::info('Scheduled SAM.gov fetch completed successfully', [
+                    Log::info('Scheduled SAM.gov fetch completed successfully', [
                         'trigger' => 'scheduled_task',
                         'total_records' => $result['summary']['total_records'] ?? 0,
                         'total_after_dedup' => $result['summary']['total_after_dedup'] ?? 0,
@@ -51,7 +59,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     ]);
                 } elseif ($result['partial_success'] ?? false) {
                     // Section H - Partial success: Some NAICS failed but we have results
-                    \Illuminate\Support\Facades\Log::warning('Scheduled SAM.gov fetch had partial success', [
+                    Log::warning('Scheduled SAM.gov fetch had partial success', [
                         'trigger' => 'scheduled_task',
                         'total_after_dedup' => $result['summary']['total_after_dedup'] ?? 0,
                         'successful_naics' => $result['summary']['successful_naics_count'] ?? 0,
@@ -65,7 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     //     ->notify(new SamOpportunitiesPartialFailure($result));
                 } else {
                     // Section H - Complete failure: All NAICS failed
-                    \Illuminate\Support\Facades\Log::error('Scheduled SAM.gov fetch failed completely', [
+                    Log::error('Scheduled SAM.gov fetch failed completely', [
                         'trigger' => 'scheduled_task',
                         'error' => $result['error'] ?? 'Unknown error',
                         'failed_naics' => $result['summary']['failed_naics'] ?? [],
@@ -75,9 +83,9 @@ return Application::configure(basePath: dirname(__DIR__))
                     // Notification::route('slack', config('logging.channels.slack.url'))
                     //     ->notify(new SamOpportunitiesCompleteFailure($result));
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Section H - Catch unexpected exceptions in scheduled task
-                \Illuminate\Support\Facades\Log::error('Scheduled SAM.gov fetch threw exception', [
+                Log::error('Scheduled SAM.gov fetch threw exception', [
                     'trigger' => 'scheduled_task',
                     'error' => $e->getMessage(),
                     'file' => $e->getFile(),
@@ -91,24 +99,28 @@ return Application::configure(basePath: dirname(__DIR__))
         })->dailyAt('06:00')->name('fetch-sam-opportunities');
     })
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->append(SecurityHeaders::class);
+
+        $middleware->statefulApi();
+
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         // Web middleware stack
         $middleware->web([
             HandleInertiaRequests::class,
-            \App\Http\Middleware\ScopeToCompany::class,
+            ScopeToCompany::class,
         ]);
 
         // Middleware aliases
         $middleware->alias([
-            'auth.web_or_admin' => \App\Http\Middleware\AuthenticateWebOrAdmin::class,
-            'store.enabled' => \App\Http\Middleware\EnsureStoreEnabled::class,
-            'scope.company' => \App\Http\Middleware\ScopeToCompany::class,
+            'auth.web_or_admin' => AuthenticateWebOrAdmin::class,
+            'store.enabled' => EnsureStoreEnabled::class,
+            'scope.company' => ScopeToCompany::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        Integration::handles($exceptions);
     })->create();

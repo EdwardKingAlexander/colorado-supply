@@ -8,6 +8,10 @@
             class="absolute inset-0 size-full bg-gray-50 object-cover dark:bg-gray-800"
             :src="aboutImageUrl"
             alt="Industrial supplies warehouse"
+            width="900"
+            height="1200"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </div>
@@ -84,6 +88,5 @@
 
 <script setup>
 import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/vue/20/solid'
-import aboutImageUrl from '@images/grinding.jpg'
+import aboutImageUrl from '@images/optimized/grinding-900.webp'
 </script>
-

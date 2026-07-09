@@ -112,7 +112,7 @@
               <button
                 type="submit"
                 :disabled="isSubmitting"
-                class="w-full rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
+                class="w-full rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <span v-if="isSubmitting">Sending...</span>
                 <span v-else>Send Message</span>
@@ -132,6 +132,7 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { getRecaptchaToken } from '@/Support/recaptcha'
 
 const form = ref({
   name: '',
@@ -145,40 +146,7 @@ const successMessage = ref('')
 const errors = ref({})
 const isSubmitting = ref(false)
 
-const recaptchaSiteKey = window.googleRecaptchaSiteKey || ''
 const recaptchaAction = 'contact_form'
-
-const getRecaptchaToken = () => new Promise((resolve, reject) => {
-  if (!recaptchaSiteKey) {
-    reject(new Error('Missing reCAPTCHA site key'))
-    return
-  }
-
-  let attempts = 0
-  const maxAttempts = 30
-
-  const attempt = () => {
-    const grecaptcha = window.grecaptcha
-    if (grecaptcha?.execute) {
-      grecaptcha.ready(() => {
-        grecaptcha.execute(recaptchaSiteKey, { action: recaptchaAction })
-          .then(resolve)
-          .catch(reject)
-      })
-      return
-    }
-
-    if (attempts >= maxAttempts) {
-      reject(new Error('reCAPTCHA unavailable'))
-      return
-    }
-
-    attempts += 1
-    setTimeout(attempt, 100)
-  }
-
-  attempt()
-})
 
 const submitForm = async () => {
   successMessage.value = ''
@@ -188,7 +156,7 @@ const submitForm = async () => {
   let captchaToken
 
   try {
-    captchaToken = await getRecaptchaToken()
+    captchaToken = await getRecaptchaToken(recaptchaAction)
   } catch (error) {
     errors.value = { captcha_token: ['reCAPTCHA failed to load. Please refresh the page and try again.'] }
     isSubmitting.value = false

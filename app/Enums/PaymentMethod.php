@@ -8,6 +8,7 @@ enum PaymentMethod: string
     case Cash = 'cash';
     case Check = 'check';
     case Wire = 'wire';
+    case Paypal = 'paypal';
     case Other = 'other';
 
     public function label(): string
@@ -17,6 +18,7 @@ enum PaymentMethod: string
             self::Cash => 'Cash',
             self::Check => 'Check',
             self::Wire => 'Wire Transfer',
+            self::Paypal => 'PayPal',
             self::Other => 'Other',
         };
     }

@@ -132,6 +132,40 @@ $this->actingAs($user)
 - `config/scraping.php`: Chrome/browser automation parameters
 - `bootstrap/app.php`: Middleware, exceptions, routing (Laravel 12 structure)
 
+## Feature Planning Workflow
+
+Every non-trivial feature (anything the user asks to "plan") is planned in
+`ai/modules/<feature-slug>/` **before any code is written**, per
+`PROJECT_CANNON.md`'s Planner/Worker/Orchestrator gates. Do not skip this for
+new feature requests, even if the user doesn't explicitly say "use ai/modules".
+
+Each module directory contains:
+
+| File | Purpose |
+|------|---------|
+| `00-overview.md` | Problem statement, constraints, architecture (textual), data flow, risks, and the phase table |
+| `phase-N-<name>.md` | One file per phase: goal, files to create/modify, tests to write, success criteria. Ends with "STOP. Await phase approval." |
+| `STATE.md` | Status table for the module plan and every phase, plus a dated log |
+
+`STATE.md` status values: `Not Started`, `Awaiting Plan Approval`,
+`Awaiting Phase Approval`, `In Progress`, `Blocked`, `Awaiting Validation`,
+`Complete`.
+
+Workflow:
+1. Write/update `00-overview.md` and all `phase-N-*.md` files, set the plan
+   row in `STATE.md` to `Awaiting Plan Approval`, then **stop**.
+2. Once the overall plan is approved, before starting a phase confirm its
+   scope is still accurate, set that phase's status to
+   `Awaiting Phase Approval`, then **stop**.
+3. After phase approval, set status to `In Progress`, implement *only* that
+   phase, write/update tests, run `php artisan test` and
+   `vendor/bin/pint --dirty`, set status to `Awaiting Validation`, then
+   **stop**.
+4. Do not begin the next phase until the orchestrator marks the current phase
+   `Complete` in `STATE.md`.
+
+See `ai/modules/stripe-integration/` for a reference example of this layout.
+
 ## Filament v4 Notes
 
 - Layout components (`Grid`, `Section`, `Fieldset`) moved to `Filament\Schemas\Components`

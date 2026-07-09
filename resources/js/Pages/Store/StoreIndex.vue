@@ -6,7 +6,7 @@ import SearchBar from '@/Components/Store/SearchBar.vue'
 import ParametricFilters from '@/Components/Store/ParametricFilters.vue'
 import ProductList from '@/Components/Store/ProductList.vue'
 import { Head, Link } from '@inertiajs/vue3'
-import { useQuoteStore } from '@/Stores/useQuoteStore'
+import { useCartStore } from '@/Stores/useCartStore'
 
 // Navigation state
 const allCategories = ref([])
@@ -30,8 +30,8 @@ const isSearching = computed(() => searchTerm.value.trim().length > 0)
 const showFilters = computed(() => navigationLevel.value === 'products' && Boolean(selectedSubcategory.value))
 const showingProductView = computed(() => navigationLevel.value === 'products' && (selectedSubcategory.value || isSearching.value))
 const isGlobalSearch = computed(() => navigationLevel.value === 'products' && !selectedSubcategory.value && isSearching.value)
-const quoteStore = useQuoteStore()
-const quoteItemCount = computed(() => quoteStore.itemCount.value)
+const cartStore = useCartStore()
+const cartItemCount = computed(() => cartStore.itemCount.value)
 
 // Computed: Get parent categories (top-level categories with no parent)
 const parentCategories = computed(() => {
@@ -373,17 +373,17 @@ onMounted(() => {
   <AuthenticatedLayout>
     <div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header with Quote CTA -->
+        <!-- Header with Cart CTA -->
         <div class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div class="space-y-2">
             <p class="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase">Industrial Supply Catalog</p>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Browse products & build your quote</h1>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Browse products & build your cart</h1>
             <p class="text-sm text-gray-600 dark:text-gray-400">
               Use the search bar and filters below to zero in on the exact specs you need.
             </p>
           </div>
           <Link
-            :href="route('store.quote')"
+            :href="route('store.cart')"
             class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -392,10 +392,10 @@ onMounted(() => {
             </svg>
             <span>View Cart</span>
             <span
-              v-if="quoteItemCount"
+              v-if="cartItemCount"
               class="ml-1 inline-flex items-center justify-center rounded-full bg-gray-900 dark:bg-blue-600 px-2 py-0.5 text-xs font-bold text-white"
             >
-              {{ quoteItemCount }}
+              {{ cartItemCount }}
             </span>
           </Link>
         </div>

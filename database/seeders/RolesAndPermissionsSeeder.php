@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Models\Admin;
-use Illuminate\Support\Facades\Cache;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -140,6 +141,13 @@ class RolesAndPermissionsSeeder extends Seeder
             $this->command->info("Assigned super_admin role to admin: {$adminForRole->email}");
         } else {
             $this->command->warn('No admins found. Super admin role not assigned.');
+        }
+
+        $userForRole = User::where('email', $adminForRole?->email)->first();
+
+        if ($userForRole) {
+            $userForRole->assignRole('super_admin');
+            $this->command->info("Assigned super_admin role to user: {$userForRole->email}");
         }
 
         $this->command->info('Roles and permissions seeded successfully!');

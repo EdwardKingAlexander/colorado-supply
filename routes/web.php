@@ -1,10 +1,18 @@
 <?php
 
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\SamOpportunitiesExportController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardReportController;
+use App\Http\Controllers\DashboardReportExportController;
 use App\Http\Controllers\MilSpecPartsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RepairServiceController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\StorePaypalReturnController;
+use App\Models\Order;
+use App\Models\ScrapedProduct;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,16 +26,40 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/company', [\App\Http\Controllers\CompanyController::class, 'index'])->middleware(['auth'])->name('company.index');
+Route::get('/company', [CompanyController::class, 'index'])->middleware(['auth'])->name('company.index');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)->middleware(['auth.web_or_admin'])->name('dashboard');
+Route::get('/dashboard/reports', DashboardReportController::class)->middleware(['auth.web_or_admin'])->name('dashboard.reports');
+Route::get('/dashboard/reports/export', DashboardReportExportController::class)->middleware(['auth.web_or_admin'])->name('dashboard.reports.export');
 
 Route::get('/store', [StoreController::class, 'index'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.index');
 Route::get('/store/location/{location:slug}', [StoreController::class, 'index'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.location.index');
-Route::get('/store/quote', [StoreController::class, 'quote'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.quote');
+Route::get('/store/cart', [StoreController::class, 'cart'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.cart');
+Route::get('/store/checkout', [StoreController::class, 'checkout'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout');
+Route::get('/store/checkout/{order}/pay', [StoreController::class, 'checkoutPay'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout.pay');
+Route::get('/store/checkout/{order}/paypal/return', [StorePaypalReturnController::class, 'return'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout.paypal.return');
 Route::get('/store/{slug}', [StoreController::class, 'show'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.show');
+
+// Stripe Checkout result pages
+Route::get('/store/checkout/{order}/success', function (Order $order) {
+    return Inertia::render('Store/CheckoutSuccess', [
+        'order' => [
+            'id' => $order->id,
+            'order_number' => $order->order_number,
+            'payment_status' => $order->payment_status->value,
+            'grand_total' => (float) $order->grand_total,
+        ],
+    ]);
+})->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout.success');
+
+Route::get('/store/checkout/{order}/cancel', function (Order $order) {
+    return Inertia::render('Store/CheckoutCancel', [
+        'order' => [
+            'id' => $order->id,
+            'order_number' => $order->order_number,
+        ],
+    ]);
+})->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout.cancel');
 
 // SAM opportunities export (admin only)
 Route::get('/admin/sam-opportunities/export', SamOpportunitiesExportController::class)
@@ -49,13 +81,17 @@ Route::middleware('auth')->group(function () {
 Route::post('/contact',
     [ContactController::class, 'store'])->name('contact.store');
 
+// Repair Services
+Route::get('/repair-services', [RepairServiceController::class, 'index'])->name('repair-services.index');
+Route::post('/repair-services', [RepairServiceController::class, 'store'])->name('repair-services.store');
+
 // Mil-Spec Parts Database Download
 Route::get('/mil-spec-parts/download', [MilSpecPartsController::class, 'downloadExcel'])
     ->middleware('auth')
     ->name('mil-spec-parts.download');
 
 // Scraped Product HTML Cache Viewing (admin only)
-Route::get('/admin/scraped-products/{scrapedProduct}/html-cache', function (\App\Models\ScrapedProduct $scrapedProduct) {
+Route::get('/admin/scraped-products/{scrapedProduct}/html-cache', function (ScrapedProduct $scrapedProduct) {
     if (! auth()->guard('admin')->check()) {
         abort(403);
     }

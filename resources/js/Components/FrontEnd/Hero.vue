@@ -1,16 +1,25 @@
 <script setup>
 import { ref } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import pipelineImageUrl from '@images/pipeline.jpg'
+import pipelineImageUrl from '@images/optimized/pipeline-1600.webp'
+import pipelineMobileImageUrl from '@images/optimized/pipeline-900.webp'
 
 const props = defineProps({
   lightImage: {
     type: String,
     default: pipelineImageUrl,
   },
+  lightImageSrcset: {
+    type: String,
+    default: `${pipelineMobileImageUrl} 900w, ${pipelineImageUrl} 1600w`,
+  },
   darkImage: {
     type: String,
     default: pipelineImageUrl,
+  },
+  darkImageSrcset: {
+    type: String,
+    default: `${pipelineMobileImageUrl} 900w, ${pipelineImageUrl} 1600w`,
   },
 })
 
@@ -31,13 +40,35 @@ const closeModal = () => {
   <div class="relative isolate overflow-hidden min-h-[100dvh] flex items-center pt-24 safe-top">
     <!-- Dark mode background -->
     <div class="absolute inset-0 -z-10 hidden dark:block">
-      <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url(${darkImage})` }"></div>
+      <img
+        :src="darkImage"
+        :srcset="darkImageSrcset"
+        sizes="100vw"
+        alt=""
+        width="1600"
+        height="1067"
+        fetchpriority="high"
+        loading="eager"
+        decoding="async"
+        class="absolute inset-0 size-full object-cover object-center"
+      />
       <div class="absolute inset-0 bg-black/50"></div>
     </div>
 
     <!-- Light mode background -->
     <div class="absolute inset-0 -z-10 dark:hidden">
-      <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url(${lightImage})` }"></div>
+      <img
+        :src="lightImage"
+        :srcset="lightImageSrcset"
+        sizes="100vw"
+        alt=""
+        width="1600"
+        height="1067"
+        fetchpriority="high"
+        loading="eager"
+        decoding="async"
+        class="absolute inset-0 size-full object-cover object-center"
+      />
       <div class="absolute inset-0 bg-black/30"></div>
     </div>
 
@@ -57,7 +88,7 @@ const closeModal = () => {
     <!-- Content -->
     <div class="mx-auto max-w-7xl px-6 lg:px-8 w-full">
       <div class="mx-auto max-w-2xl text-center">
-        <p class="text-md font-extrabold text-primary-700 dark:text-primary-400 mb-4">
+        <p class="text-md font-extrabold text-primary-800 dark:text-primary-300 mb-4">
           Colorado-Based • SAM Registered • CAGE & DUNS Verified
         </p>
 
@@ -175,4 +206,3 @@ const closeModal = () => {
     </Teleport>
   </div>
 </template>
-

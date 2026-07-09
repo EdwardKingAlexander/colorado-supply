@@ -36,7 +36,7 @@ class FetchNsnDataTool extends Tool
     /**
      * Get the output schema documentation.
      */
-    protected function outputSchema(): array
+    protected function legacyOutputSchema(): array
     {
         return [
             'success' => [

@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { useQuoteStore } from '@/Stores/useQuoteStore';
+import { useCartStore } from '@/Stores/useCartStore';
 
 const props = defineProps({
     slug: {
@@ -106,7 +106,7 @@ const hasDimensions = computed(() => {
     return dims.length_mm || dims.width_mm || dims.height_mm || dims.weight_g;
 });
 
-const quoteStore = useQuoteStore();
+const cartStore = useCartStore();
 const justAdded = ref(false);
 let feedbackTimer;
 
@@ -135,12 +135,12 @@ onMounted(() => {
     fetchProduct();
 });
 
-const handleAddToQuote = () => {
+const handleAddToCart = () => {
     if (!product.value) {
         return;
     }
 
-    quoteStore.addItem(product.value);
+    cartStore.addItem(product.value);
     justAdded.value = true;
 
     if (feedbackTimer) {
@@ -364,12 +364,12 @@ onBeforeUnmount(() => {
                                 <button
                                     type="button"
                                     class="w-full px-6 py-3 text-base font-semibold text-white bg-gray-900 hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                                    @click="handleAddToQuote"
+                                    @click="handleAddToCart"
                                 >
                                     <span v-if="justAdded" class="inline-flex items-center gap-1">
                                         Added <span aria-hidden="true">&check;</span>
                                     </span>
-                                    <span v-else>Add to Quote</span>
+                                    <span v-else>Add to Cart</span>
                                 </button>
                                 <p class="text-xs text-gray-500 text-center mt-3">
                                     Questions? Contact our sales team for assistance.

@@ -31,7 +31,15 @@
           :key="industry.name"
           class="overflow-hidden rounded-xl shadow bg-white dark:bg-gray-800"
         >
-          <img :src="industry.image" alt="" class="h-48 w-full object-cover" />
+          <img
+            :src="industry.image"
+            alt=""
+            class="h-48 w-full object-cover"
+            :width="industry.width"
+            :height="industry.height"
+            loading="lazy"
+            decoding="async"
+          />
           <div class="p-6">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ industry.name }}</h3>
             <p class="mt-3 text-gray-600 dark:text-gray-400">{{ industry.description }}</p>
@@ -44,43 +52,55 @@
 
 <script setup>
 
-import aerospaceImageUrl from '@images/industries/aerospace.jpg';
-import constructionImageUrl from '@images/industries/construction-site.jpg';
-import foodProcessingImageUrl from '@images/industries/food-processing.jpg';
-import manufacturingImageUrl from '@images/industries/manufacturing.jpg';
-import automotiveImageUrl from '@images/industries/automotive.jpg';
-import energyImageUrl from '@images/industries/energy.jpg';
+import aerospaceImageUrl from '@images/optimized/industries/aerospace.webp';
+import constructionImageUrl from '@images/optimized/industries/construction-site.webp';
+import foodProcessingImageUrl from '@images/optimized/industries/food-processing.webp';
+import manufacturingImageUrl from '@images/optimized/industries/manufacturing.webp';
+import automotiveImageUrl from '@images/optimized/industries/automotive.webp';
+import energyImageUrl from '@images/optimized/industries/energy.webp';
 
 const industries = [
   {
     name: 'Aerospace & Defense',
     description: 'Supplying precision components, fasteners, and specialized materials for aerospace and defense projects.',
     image: aerospaceImageUrl,
+    width: 768,
+    height: 512,
   },
   {
     name: 'Construction & Infrastructure',
     description: 'Providing tools, safety gear, and materials for government and commercial construction projects.',
     image: constructionImageUrl,
+    width: 768,
+    height: 576,
   },
   {
     name: 'Food Processing',
     description: 'Specialized equipment, MRO supplies, and safety products tailored for food production environments.',
     image: foodProcessingImageUrl,
+    width: 768,
+    height: 576,
   },
   {
     name: 'Manufacturing & Industrial',
     description: 'Wide range of OEM and MRO solutions for diverse industrial manufacturing needs.',
     image: manufacturingImageUrl,
+    width: 768,
+    height: 576,
   },
   {
     name: 'Automotive & Repair',
     description: 'Fasteners, tools, and repair shop essentials for automotive and fleet maintenance operations.',
     image: automotiveImageUrl,
+    width: 768,
+    height: 512,
   },
   {
     name: 'Energy & Utilities',
     description: 'Supplying fluid power, welding, and transmission solutions for energy and utility sectors.',
     image: energyImageUrl,
+    width: 768,
+    height: 512,
   },
 ]
 </script>

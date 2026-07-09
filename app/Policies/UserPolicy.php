@@ -7,28 +7,33 @@ use App\Models\User;
 
 class UserPolicy
 {
-    public function viewAny(Admin $admin): bool
+    public function viewAny(User|Admin $admin): bool
     {
         return $admin->can('users.viewAny');
     }
 
-    public function view(Admin $admin, User $model): bool
+    public function view(User|Admin $admin, User $model): bool
     {
         return $admin->can('users.view');
     }
 
-    public function create(Admin $admin): bool
+    public function create(User|Admin $admin): bool
     {
         return $admin->can('users.create');
     }
 
-    public function update(Admin $admin, User $model): bool
+    public function update(User|Admin $admin, User $model): bool
     {
         return $admin->can('users.update');
     }
 
-    public function delete(Admin $admin, User $model): bool
+    public function delete(User|Admin $admin, User $model): bool
     {
+        // Prevent deleting yourself
+        if ($admin::class === $model::class && $admin->id === $model->id) {
+            return false;
+        }
+
         // Prevent deleting the last super_admin
         if ($model->hasRole('super_admin')) {
             $superAdminCount = User::role('super_admin')->count();
@@ -40,22 +45,22 @@ class UserPolicy
         return $admin->can('users.delete');
     }
 
-    public function restore(Admin $admin, User $model): bool
+    public function restore(User|Admin $admin, User $model): bool
     {
         return $admin->can('users.delete');
     }
 
-    public function forceDelete(Admin $admin, User $model): bool
+    public function forceDelete(User|Admin $admin, User $model): bool
     {
         return $admin->can('users.delete');
     }
 
-    public function assignRoles(Admin $admin): bool
+    public function assignRoles(User|Admin $admin): bool
     {
         return $admin->can('users.assignRoles');
     }
 
-    public function assignPermissions(Admin $admin): bool
+    public function assignPermissions(User|Admin $admin): bool
     {
         return $admin->can('users.assignPermissions');
     }

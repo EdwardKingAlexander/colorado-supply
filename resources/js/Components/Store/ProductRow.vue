@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, onBeforeUnmount } from 'vue'
 import { Link } from '@inertiajs/vue3'
-import { useQuoteStore } from '@/Stores/useQuoteStore'
+import { useCartStore } from '@/Stores/useCartStore'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -74,7 +74,7 @@ const stockStatus = computed(() => {
   }
 })
 
-const quoteStore = useQuoteStore()
+const cartStore = useCartStore()
 const justAdded = ref(false)
 let feedbackTimer
 const quantity = ref(1)
@@ -91,8 +91,8 @@ const decrementLocalQuantity = () => {
   quantity.value -= 1
 }
 
-const handleAddToQuote = () => {
-  quoteStore.addItem(props.product, quantity.value)
+const handleAddToCart = () => {
+  cartStore.addItem(props.product, quantity.value)
   justAdded.value = true
 
   if (feedbackTimer) {
@@ -174,12 +174,12 @@ onBeforeUnmount(() => {
         <button
           type="button"
           class="w-full px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          @click="handleAddToQuote"
+          @click="handleAddToCart"
         >
           <span v-if="justAdded" class="inline-flex items-center gap-1">
             Added <span aria-hidden="true">&check;</span>
           </span>
-          <span v-else>Add to Quote</span>
+          <span v-else>Add to Cart</span>
         </button>
       </div>
     </div>
@@ -240,12 +240,12 @@ onBeforeUnmount(() => {
         <button
           type="button"
           class="flex-1 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          @click="handleAddToQuote"
+          @click="handleAddToCart"
         >
           <span v-if="justAdded" class="inline-flex items-center gap-1">
             Added <span aria-hidden="true">&check;</span>
           </span>
-          <span v-else>Add to Quote</span>
+          <span v-else>Add to Cart</span>
         </button>
       </div>
     </div>

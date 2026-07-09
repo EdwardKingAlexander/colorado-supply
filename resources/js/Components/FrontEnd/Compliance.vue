@@ -2,13 +2,21 @@
   <div id="credentials" class="relative isolate overflow-hidden bg-white py-24 sm:py-32 dark:bg-gray-900">
     <!-- Background images -->
     <img
-      src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2830&q=80&blend=111827&sat=-100&exp=15&blend-mode=screen"
+      :src="complianceImageUrl"
       alt=""
+      width="1400"
+      height="1050"
+      loading="lazy"
+      decoding="async"
       class="absolute inset-0 -z-10 size-full object-cover object-right opacity-10 md:object-center dark:hidden"
     />
     <img
-      src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2830&q=80&blend=111827&sat=-100&exp=15&blend-mode=multiply"
+      :src="complianceImageUrl"
       alt=""
+      width="1400"
+      height="1050"
+      loading="lazy"
+      decoding="async"
       class="absolute inset-0 -z-10 size-full object-cover object-right not-dark:hidden md:object-center"
     />
 
@@ -84,6 +92,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import NAICSCodes from './NAICSCodes.vue'
 import PSCCodes from './PSCCodes.vue'
+import complianceImageUrl from '@images/optimized/compliance-bg-1400.webp'
 
 const showNAICSModal = ref(false)
 const showPSCModal = ref(false)

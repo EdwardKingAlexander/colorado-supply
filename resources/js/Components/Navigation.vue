@@ -10,7 +10,7 @@ const page = usePage()
 
 const isAdminAuthenticated = computed(() => page.props?.auth?.guards?.admin ?? false)
 const isUserAuthenticated = computed(() => Boolean(page.props?.auth?.user))
-const shouldShowStoreLink = computed(() => isUserAuthenticated.value && !isAdminAuthenticated.value)
+const shouldShowStoreLink = computed(() => isUserAuthenticated.value || isAdminAuthenticated.value)
 const adminDashboardHref = computed(() => {
   if (!isAdminAuthenticated.value) {
     return null
@@ -42,8 +42,8 @@ const storeHref = computed(() => {
       <div class="flex lg:flex-1">
         <a href="#home" class="-m-1.5 p-1.5">
           <span class="sr-only">Colorado Supply & Procurement LLC</span>
-          <img class="h-12 w-auto sm:h-14 lg:h-16 dark:hidden" :src="logo" alt="Colorado Supply & Procurement LLC" />
-          <img class="h-12 w-auto sm:h-14 lg:h-16 hidden dark:block" :src="logo" alt="Colorado Supply & Procurement LLC" />
+          <img class="h-12 w-auto sm:h-14 lg:h-16 dark:hidden" :src="logo" alt="" aria-hidden="true" width="64" height="64" />
+          <img class="h-12 w-auto sm:h-14 lg:h-16 hidden dark:block" :src="logo" alt="" aria-hidden="true" width="64" height="64" />
         </a>
       </div>
 
@@ -64,6 +64,7 @@ const storeHref = computed(() => {
         <a href="#home" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400">Home</a>
         <a href="#about" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400">About</a>
         <a href="#capabilities" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400">Capabilities</a>
+        <a :href="route('repair-services.index')" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400">Repair Services</a>
         <a href="#contact" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400">Contact</a>
       </div>
 
@@ -76,6 +77,13 @@ const storeHref = computed(() => {
             class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
           >
             Admin Dashboard
+          </a>
+          <a
+            v-if="storeHref"
+            :href="storeHref"
+            class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
+          >
+            Store
           </a>
         </template>
         <template v-else-if="shouldShowStoreLink">
@@ -107,8 +115,8 @@ const storeHref = computed(() => {
         <div class="flex items-center justify-between">
           <a href="#home" class="-m-1.5 p-1.5" @click="mobileMenuOpen = false">
             <span class="sr-only">Colorado Supply & Procurement LLC</span>
-            <img class="h-10 w-auto dark:hidden" :src="logo" alt="Colorado Supply & Procurement LLC" />
-            <img class="h-10 w-auto hidden dark:block" :src="logo" alt="Colorado Supply & Procurement LLC" />
+            <img class="h-10 w-auto dark:hidden" :src="logo" alt="" aria-hidden="true" width="40" height="40" />
+            <img class="h-10 w-auto hidden dark:block" :src="logo" alt="" aria-hidden="true" width="40" height="40" />
           </a>
           <button
             type="button"
@@ -133,6 +141,9 @@ const storeHref = computed(() => {
               <a href="#capabilities" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
                 Capabilities
               </a>
+              <a :href="route('repair-services.index')" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
+                Repair Services
+              </a>
               <a href="#contact" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
                 Contact
               </a>
@@ -148,6 +159,14 @@ const storeHref = computed(() => {
                   class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
                 >
                   Admin Dashboard
+                </a>
+                <a
+                  v-if="storeHref"
+                  :href="storeHref"
+                  @click="mobileMenuOpen = false"
+                  class="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
+                >
+                  Store
                 </a>
               </template>
               <template v-else-if="shouldShowStoreLink">
@@ -175,7 +194,4 @@ const storeHref = computed(() => {
     </Dialog>
   </header>
 </template>
-
-
-
 

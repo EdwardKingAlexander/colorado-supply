@@ -31,24 +31,24 @@ test('authenticated admins can access store', function () {
     );
 });
 
-test('store quote page is accessible to authenticated users', function () {
+test('store cart page is accessible to authenticated users', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get('/store/quote');
+    $response = $this->actingAs($user)->get('/store/cart');
 
     $response->assertSuccessful();
     $response->assertInertia(fn ($page) => $page
-        ->component('Store/QuoteView')
+        ->component('Store/Cart')
     );
 });
 
-test('store quote page is accessible to authenticated admins', function () {
+test('store cart page is accessible to authenticated admins', function () {
     $admin = Admin::factory()->create();
 
-    $response = $this->actingAs($admin, 'admin')->get('/store/quote');
+    $response = $this->actingAs($admin, 'admin')->get('/store/cart');
 
     $response->assertSuccessful();
     $response->assertInertia(fn ($page) => $page
-        ->component('Store/QuoteView')
+        ->component('Store/Cart')
     );
 });

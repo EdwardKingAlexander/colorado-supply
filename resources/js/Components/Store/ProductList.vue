@@ -69,7 +69,7 @@ const showPagination = computed(() => props.totalPages > 1)
       <div class="col-span-3">Name</div>
       <div class="col-span-2">Description</div>
       <div class="col-span-2">Price</div>
-      <div class="col-span-2 text-right">Quote</div>
+      <div class="col-span-2 text-right">Cart</div>
     </div>
 
     <div v-if="loading" class="grid grid-cols-1 gap-4 px-4 py-6 sm:grid-cols-2">

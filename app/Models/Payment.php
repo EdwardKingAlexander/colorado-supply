@@ -69,4 +69,16 @@ class Payment extends Model
             'failure_message' => $message,
         ]);
     }
+
+    /**
+     * Mark payment as refunded.
+     */
+    public function markAsRefunded(?string $refundId = null): void
+    {
+        $this->update([
+            'status' => PaymentStatus::Refunded,
+            'refunded_at' => now(),
+            'gateway_refund_id' => $refundId,
+        ]);
+    }
 }

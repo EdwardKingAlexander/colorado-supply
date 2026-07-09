@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
@@ -13,6 +13,7 @@ beforeEach(function () {
 
     // Create permissions
     Permission::create(['name' => 'users.viewAny', 'guard_name' => 'web']);
+    Permission::create(['name' => 'users.view', 'guard_name' => 'web']);
     Permission::create(['name' => 'users.create', 'guard_name' => 'web']);
     Permission::create(['name' => 'users.update', 'guard_name' => 'web']);
     Permission::create(['name' => 'users.delete', 'guard_name' => 'web']);

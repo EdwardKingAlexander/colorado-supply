@@ -62,6 +62,13 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                                 >
                                     Store
                                 </NavLink>
+                                <NavLink
+                                    v-if="showProfileLink"
+                                    :href="route('dashboard.reports')"
+                                    :active="route().current('dashboard.reports')"
+                                >
+                                    Reports
+                                </NavLink>
                             </div>
                         </div>
 
@@ -182,6 +189,13 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                             :active="route().current('store.index')"
                         >
                             Store
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="showProfileLink"
+                            :href="route('dashboard.reports')"
+                            :active="route().current('dashboard.reports')"
+                        >
+                            Reports
                         </ResponsiveNavLink>
                     </div>
 

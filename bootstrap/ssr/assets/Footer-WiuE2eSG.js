@@ -1,0 +1,22 @@
+import { mergeProps, useSSRContext } from "vue";
+import { ssrRenderAttrs, ssrRenderAttr, ssrInterpolate } from "vue/server-renderer";
+import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
+const _sfc_main = {
+  __name: "Footer",
+  __ssrInlineRender: true,
+  setup(__props) {
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<footer${ssrRenderAttrs(mergeProps({ class: "bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700" }, _attrs))} data-v-8b45a01d><div class="mx-auto max-w-7xl px-6 py-12 lg:px-8" data-v-8b45a01d><div class="grid grid-cols-1 gap-12 lg:grid-cols-4" data-v-8b45a01d><div data-v-8b45a01d><h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-v-8b45a01d> Colorado Supply &amp; Procurement LLC </h3><p class="mt-4 text-gray-600 dark:text-gray-400" data-v-8b45a01d> Colorado Springs, CO — Serving Nationwide </p><p class="mt-2 text-sm text-gray-700 dark:text-gray-300" data-v-8b45a01d> Registered Small Business | SAM.gov Active </p></div><div data-v-8b45a01d><h4 class="text-sm font-semibold text-gray-900 dark:text-white" data-v-8b45a01d>Navigation</h4><ul role="list" class="mt-4 space-y-2" data-v-8b45a01d><li data-v-8b45a01d><a href="#home" class="footer-link" data-v-8b45a01d>Home</a></li><li data-v-8b45a01d><a href="#about" class="footer-link" data-v-8b45a01d>About</a></li><li data-v-8b45a01d><a href="#capabilities" class="footer-link" data-v-8b45a01d>Capabilities</a></li><li data-v-8b45a01d><a${ssrRenderAttr("href", _ctx.route("repair-services.index"))} class="footer-link" data-v-8b45a01d>Repair Services</a></li><li data-v-8b45a01d><a href="#industries" class="footer-link" data-v-8b45a01d>Industries</a></li><li data-v-8b45a01d><a href="#credentials" class="footer-link" data-v-8b45a01d>Credentials</a></li><li data-v-8b45a01d><a href="#contact" class="footer-link" data-v-8b45a01d>Contact</a></li></ul></div><div data-v-8b45a01d><h4 class="text-sm font-semibold text-gray-900 dark:text-white" data-v-8b45a01d>Resources</h4><ul role="list" class="mt-4 space-y-2" data-v-8b45a01d><li data-v-8b45a01d><a href="/docs/Colorado_Supply_Capabilities_Statement.pdf" download class="footer-link" data-v-8b45a01d> Capabilities Statement </a></li><li data-v-8b45a01d><a href="https://sam.gov" target="_blank" rel="noopener noreferrer" class="footer-link" data-v-8b45a01d> SAM.gov Profile </a></li><li data-v-8b45a01d><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-link" data-v-8b45a01d> LinkedIn </a></li></ul></div><div data-v-8b45a01d><h4 class="text-sm font-semibold text-gray-900 dark:text-white" data-v-8b45a01d>Compliance</h4><ul role="list" class="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-400" data-v-8b45a01d><li data-v-8b45a01d><span class="font-semibold" data-v-8b45a01d>CAGE Code:</span> 15NL2</li><li data-v-8b45a01d><span class="font-semibold" data-v-8b45a01d>UEI:</span> DBGXU2BFS5N7</li><li data-v-8b45a01d><span class="font-semibold" data-v-8b45a01d>NAICS:</span> 423840, 423830, 423710, 423120, 423610, 423450</li></ul><div class="mt-6" data-v-8b45a01d><a href="/docs/Colorado_Supply_Capabilities_Statement.pdf" download class="inline-flex items-center rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700" data-v-8b45a01d> Download Capabilities </a></div></div></div><div class="mt-12 border-t border-gray-200 pt-6 dark:border-gray-700" data-v-8b45a01d><div class="text-xs text-gray-700 dark:text-gray-300" data-v-8b45a01d><p data-v-8b45a01d>© ${ssrInterpolate((/* @__PURE__ */ new Date()).getFullYear())} Colorado Supply &amp; Procurement LLC. All rights reserved.</p><p class="mt-2" data-v-8b45a01d><span class="text-gray-700 dark:text-gray-300" data-v-8b45a01d>Website by</span><a href="https://www.rockymountainweb.design" class="text-blue-700 hover:underline dark:text-blue-300" data-v-8b45a01d> Rocky Mountain Web Design LLC </a></p></div></div></div></footer>`);
+    };
+  }
+};
+const _sfc_setup = _sfc_main.setup;
+_sfc_main.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/FrontEnd/Footer.vue");
+  return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+const Footer = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-8b45a01d"]]);
+export {
+  Footer as F
+};

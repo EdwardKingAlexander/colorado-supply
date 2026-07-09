@@ -13,10 +13,12 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class LocationResource extends Resource
 {
@@ -37,13 +39,26 @@ class LocationResource extends Resource
                         ->relationship('company', 'name')
                         ->required()
                         ->searchable()
-                        ->preload(),
+                        ->preload()
+                        ->live(),
+
+                    Select::make('parent_id')
+                        ->label('Parent Location')
+                        ->options(fn (Get $get, ?Location $record) => Location::query()
+                            ->when($get('company_id'), fn ($query, $companyId) => $query->where('company_id', $companyId))
+                            ->when($record?->id, fn ($query, $recordId) => $query->whereKeyNot($recordId))
+                            ->orderBy('name')
+                            ->pluck('name', 'id'))
+                        ->searchable()
+                        ->preload()
+                        ->nullable()
+                        ->helperText('Leave blank for a primary location. Select a parent to create a sublocation.'),
 
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (string $operation, $state, callable $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null),
+                        ->afterStateUpdated(fn (string $operation, $state, callable $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                     TextInput::make('slug')
                         ->required()
@@ -68,6 +83,12 @@ class LocationResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('parent.name')
+                    ->label('Parent')
+                    ->placeholder('Primary')
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('slug')
                     ->badge()
                     ->color('gray')
@@ -84,6 +105,13 @@ class LocationResource extends Resource
                     ->color('primary')
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('children_count')
+                    ->counts('children')
+                    ->label('Sublocations')
+                    ->badge()
+                    ->color('info')
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -97,6 +125,12 @@ class LocationResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('company')
                     ->relationship('company', 'name')
+                    ->searchable()
+                    ->preload(),
+
+                Tables\Filters\SelectFilter::make('parent_id')
+                    ->label('Parent Location')
+                    ->relationship('parent', 'name')
                     ->searchable()
                     ->preload(),
             ])
