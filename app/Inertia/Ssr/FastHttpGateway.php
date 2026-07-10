@@ -40,7 +40,11 @@ class FastHttpGateway extends HttpGateway
                 ->throw()
                 ->json();
 
-            if (! is_array($response) || empty($response['body'])) {
+            if (
+                ! is_array($response)
+                || empty($response['body'])
+                || ! str_contains($response['body'], 'data-page=')
+            ) {
                 return null;
             }
         } catch (ConnectionException|RequestException $exception) {
