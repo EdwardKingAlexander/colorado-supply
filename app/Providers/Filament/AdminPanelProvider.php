@@ -2,12 +2,15 @@
 
 namespace App\Providers\Filament;
 
+use App\Support\McpSettings;
+use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Notifications\Notification;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -20,6 +23,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Throwable;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -56,6 +60,9 @@ class AdminPanelProvider extends PanelProvider
                 AccountWidget::class,
                 // add more widgets here they show up on the dashboard
             ])
+            ->userMenuItems([
+                'toggleStoreAvailability' => static::storeToggleUserMenuAction(),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -70,5 +77,47 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /**
+     * Quick-access duplicate of McpDashboard::getHeaderActions()'s
+     * `toggleStore` action, exposed in the profile dropdown so admins
+     * don't have to leave the current page to flip store availability.
+     * Keep both in sync if this changes.
+     */
+    protected static function storeToggleUserMenuAction(): Action
+    {
+        $isStoreEnabled = fn (): bool => McpSettings::for('store-settings', ['enabled' => true])['enabled'] ?? true;
+
+        return Action::make('toggleStoreAvailability')
+            ->label(fn () => $isStoreEnabled() ? 'Disable Store' : 'Enable Store')
+            ->icon(fn () => $isStoreEnabled() ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
+            ->color(fn () => $isStoreEnabled() ? 'warning' : 'success')
+            ->requiresConfirmation()
+            ->modalHeading(fn () => $isStoreEnabled() ? 'Disable Store?' : 'Enable Store?')
+            ->modalDescription(fn () => $isStoreEnabled()
+                ? 'This will make the store inaccessible to all users except admins. Regular users will see a 403 error.'
+                : 'This will make the store accessible to all authenticated users again.')
+            ->action(function () use ($isStoreEnabled) {
+                $storeEnabled = $isStoreEnabled();
+
+                try {
+                    McpSettings::put('store-settings', ['enabled' => ! $storeEnabled], 'Store availability settings');
+
+                    Notification::make()
+                        ->title($storeEnabled ? 'Store Disabled' : 'Store Enabled')
+                        ->body($storeEnabled
+                            ? 'The store is now only accessible to admins.'
+                            : 'The store is now accessible to all users.')
+                        ->success()
+                        ->send();
+                } catch (Throwable $e) {
+                    Notification::make()
+                        ->title('Error')
+                        ->body($e->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            });
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\ScrapedProducts\ScrapedProductResource;
+use App\Models\ScrapedProduct;
 use App\Support\McpClient;
 use App\Support\McpSettings;
 use BackedEnum;
@@ -157,6 +159,9 @@ class McpDashboard extends Page
         $storeEnabled = $settings['enabled'] ?? true;
 
         return [
+            // Also exposed as a quick-access item in the admin panel's
+            // profile dropdown (AdminPanelProvider::panel()'s
+            // userMenuItems()) — keep both in sync if this changes.
             Action::make('toggleStore')
                 ->label($storeEnabled ? 'Disable Store' : 'Enable Store')
                 ->icon($storeEnabled ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
@@ -387,7 +392,7 @@ class McpDashboard extends Page
                 ->body('Session saved to State/session.json')
                 ->success()
                 ->send();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Notification::make()
                 ->title('Login Failed')
                 ->body($e->getMessage())
@@ -413,7 +418,7 @@ class McpDashboard extends Page
 
             if ($resultData && ($resultData['success'] ?? false)) {
                 // Save to database
-                $scrapedProduct = \App\Models\ScrapedProduct::createFromToolResult(
+                $scrapedProduct = ScrapedProduct::createFromToolResult(
                     $payload['url'],
                     $resultData
                 );
@@ -425,7 +430,7 @@ class McpDashboard extends Page
                     ->actions([
                         \Filament\Notifications\Actions\Action::make('view')
                             ->button()
-                            ->url(\App\Filament\Resources\ScrapedProducts\ScrapedProductResource::getUrl('index')),
+                            ->url(ScrapedProductResource::getUrl('index')),
                     ])
                     ->send();
             } else {
@@ -435,7 +440,7 @@ class McpDashboard extends Page
                     ->warning()
                     ->send();
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Notification::make()
                 ->title('Scraping Failed')
                 ->body($e->getMessage())
@@ -475,7 +480,7 @@ class McpDashboard extends Page
                 ->body($text ?? 'Report generated successfully.')
                 ->success()
                 ->send();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Notification::make()
                 ->title('Error')
                 ->body($e->getMessage())
