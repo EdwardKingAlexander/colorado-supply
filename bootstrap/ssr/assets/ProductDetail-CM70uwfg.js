@@ -1,6 +1,6 @@
 import { ref, computed, onMounted, onBeforeUnmount, unref, withCtx, createBlock, createTextVNode, openBlock, createVNode, createCommentVNode, toDisplayString, Fragment, renderList, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrInterpolate, ssrRenderClass, ssrRenderStyle, ssrRenderAttr, ssrRenderList } from "vue/server-renderer";
-import { _ as _sfc_main$1 } from "./AuthenticatedLayout-BaKoCKvn.js";
+import { _ as _sfc_main$1 } from "./AuthenticatedLayout-DnHFEBKh.js";
 import { Head, Link } from "@inertiajs/vue3";
 import { u as useCartStore } from "./useCartStore-OHIRORWN.js";
 import "./ApplicationLogo-B2173abF.js";

@@ -1,6 +1,6 @@
 import { computed, unref, withCtx, createTextVNode, createVNode, createBlock, toDisplayString, openBlock, Fragment, renderList, createCommentVNode, withDirectives, vModelSelect, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrIncludeBooleanAttr, ssrInterpolate, ssrRenderList, ssrRenderAttr, ssrLooseContain, ssrLooseEqual } from "vue/server-renderer";
-import { _ as _sfc_main$1 } from "./AuthenticatedLayout-BaKoCKvn.js";
+import { _ as _sfc_main$1 } from "./AuthenticatedLayout-DnHFEBKh.js";
 import { Head, Link } from "@inertiajs/vue3";
 import { u as useCartStore } from "./useCartStore-OHIRORWN.js";
 import "./ApplicationLogo-B2173abF.js";

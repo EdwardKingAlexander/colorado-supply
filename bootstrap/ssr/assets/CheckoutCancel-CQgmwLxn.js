@@ -1,9 +1,10 @@
 import { mergeProps, withCtx, unref, createVNode, createTextVNode, toDisplayString, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrInterpolate } from "vue/server-renderer";
-import { _ as _sfc_main$1 } from "./AppLayout-DAY7LMhN.js";
+import { _ as _sfc_main$1 } from "./AppLayout-BKnJF8b8.js";
 import { Head, Link } from "@inertiajs/vue3";
 import "@headlessui/vue";
 import "@heroicons/vue/24/outline";
+import "./logo-cleansed-CSOLeLOy.js";
 const _sfc_main = {
   __name: "CheckoutCancel",
   __ssrInlineRender: true,

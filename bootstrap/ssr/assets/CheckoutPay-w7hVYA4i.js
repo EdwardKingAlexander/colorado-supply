@@ -1,7 +1,7 @@
 import { computed, ref, unref, withCtx, createTextVNode, createBlock, openBlock, createVNode, createCommentVNode, toDisplayString, Fragment, renderList, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrInterpolate, ssrRenderList } from "vue/server-renderer";
 import axios from "axios";
-import { _ as _sfc_main$1 } from "./AuthenticatedLayout-BaKoCKvn.js";
+import { _ as _sfc_main$1 } from "./AuthenticatedLayout-DnHFEBKh.js";
 import { P as PrimaryButton } from "./PrimaryButton-CIooT64n.js";
 import { _ as _sfc_main$2 } from "./InputError-fLcttu_2.js";
 import { Head, Link } from "@inertiajs/vue3";

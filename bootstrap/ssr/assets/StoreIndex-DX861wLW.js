@@ -1,7 +1,7 @@
 import { ref, computed, watch, mergeProps, useSSRContext, onBeforeUnmount, unref, withCtx, createVNode, createTextVNode, toDisplayString, onMounted, createBlock, createCommentVNode, openBlock, Fragment, renderList } from "vue";
 import { ssrRenderAttrs, ssrRenderClass, ssrRenderAttr, ssrIncludeBooleanAttr, ssrInterpolate, ssrRenderList, ssrRenderComponent } from "vue/server-renderer";
 import axios from "axios";
-import { _ as _sfc_main$5 } from "./AuthenticatedLayout-BaKoCKvn.js";
+import { _ as _sfc_main$5 } from "./AuthenticatedLayout-DnHFEBKh.js";
 import { Link, Head } from "@inertiajs/vue3";
 import { u as useCartStore } from "./useCartStore-OHIRORWN.js";
 import "./ApplicationLogo-B2173abF.js";

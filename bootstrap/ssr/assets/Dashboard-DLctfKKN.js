@@ -1,6 +1,6 @@
 import { mergeProps, unref, withCtx, createTextVNode, useSSRContext, reactive, watch, createVNode, createBlock, createCommentVNode, toDisplayString, openBlock } from "vue";
 import { ssrRenderAttrs, ssrInterpolate, ssrRenderClass, ssrRenderComponent, ssrRenderList, ssrRenderAttr, ssrIncludeBooleanAttr, ssrLooseContain, ssrLooseEqual, ssrRenderStyle } from "vue/server-renderer";
-import { _ as _sfc_main$8 } from "./AuthenticatedLayout-BaKoCKvn.js";
+import { _ as _sfc_main$8 } from "./AuthenticatedLayout-DnHFEBKh.js";
 import { Link, Head } from "@inertiajs/vue3";
 import "./ApplicationLogo-B2173abF.js";
 import "./_plugin-vue_export-helper-1tPrXgE0.js";

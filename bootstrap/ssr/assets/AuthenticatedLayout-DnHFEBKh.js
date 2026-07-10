@@ -68,25 +68,38 @@ const _sfc_main$3 = {
     href: {
       type: String,
       required: true
+    },
+    external: {
+      type: Boolean,
+      default: false
     }
   },
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
-      _push(ssrRenderComponent(unref(Link), mergeProps({
-        href: __props.href,
-        class: "block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
-      }, _attrs), {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            ssrRenderSlot(_ctx.$slots, "default", {}, null, _push2, _parent2, _scopeId);
-          } else {
-            return [
-              renderSlot(_ctx.$slots, "default")
-            ];
-          }
-        }),
-        _: 3
-      }, _parent));
+      if (__props.external) {
+        _push(`<a${ssrRenderAttrs(mergeProps({
+          href: __props.href,
+          class: "block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+        }, _attrs))}>`);
+        ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
+        _push(`</a>`);
+      } else {
+        _push(ssrRenderComponent(unref(Link), mergeProps({
+          href: __props.href,
+          class: "block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+        }, _attrs), {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              ssrRenderSlot(_ctx.$slots, "default", {}, null, _push2, _parent2, _scopeId);
+            } else {
+              return [
+                renderSlot(_ctx.$slots, "default")
+              ];
+            }
+          }),
+          _: 3
+        }, _parent));
+      }
     };
   }
 };
@@ -148,6 +161,10 @@ const _sfc_main$1 = {
     },
     active: {
       type: Boolean
+    },
+    external: {
+      type: Boolean,
+      default: false
     }
   },
   setup(__props) {
@@ -156,21 +173,30 @@ const _sfc_main$1 = {
       () => props.active ? "block w-full ps-3 pe-4 py-2 border-l-4 border-indigo-400 text-start text-base font-medium text-indigo-700 bg-indigo-50 focus:outline-none focus:text-indigo-800 focus:bg-indigo-100 focus:border-indigo-700 transition duration-150 ease-in-out" : "block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
     );
     return (_ctx, _push, _parent, _attrs) => {
-      _push(ssrRenderComponent(unref(Link), mergeProps({
-        href: __props.href,
-        class: classes.value
-      }, _attrs), {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            ssrRenderSlot(_ctx.$slots, "default", {}, null, _push2, _parent2, _scopeId);
-          } else {
-            return [
-              renderSlot(_ctx.$slots, "default")
-            ];
-          }
-        }),
-        _: 3
-      }, _parent));
+      if (__props.external) {
+        _push(`<a${ssrRenderAttrs(mergeProps({
+          href: __props.href,
+          class: classes.value
+        }, _attrs))}>`);
+        ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
+        _push(`</a>`);
+      } else {
+        _push(ssrRenderComponent(unref(Link), mergeProps({
+          href: __props.href,
+          class: classes.value
+        }, _attrs), {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              ssrRenderSlot(_ctx.$slots, "default", {}, null, _push2, _parent2, _scopeId);
+            } else {
+              return [
+                renderSlot(_ctx.$slots, "default")
+              ];
+            }
+          }),
+          _: 3
+        }, _parent));
+      }
     };
   }
 };
@@ -316,7 +342,8 @@ const _sfc_main = {
             }
             if (showAdminPanelLink.value) {
               _push2(ssrRenderComponent(_sfc_main$3, {
-                href: _ctx.route("filament.admin.pages.dashboard")
+                href: _ctx.route("filament.admin.pages.dashboard"),
+                external: ""
               }, {
                 default: withCtx((_2, _push3, _parent3, _scopeId2) => {
                   if (_push3) {
@@ -365,7 +392,8 @@ const _sfc_main = {
               }, 8, ["href"])) : createCommentVNode("", true),
               showAdminPanelLink.value ? (openBlock(), createBlock(_sfc_main$3, {
                 key: 1,
-                href: _ctx.route("filament.admin.pages.dashboard")
+                href: _ctx.route("filament.admin.pages.dashboard"),
+                external: ""
               }, {
                 default: withCtx(() => [
                   createTextVNode(" Admin Panel ")
@@ -476,7 +504,8 @@ const _sfc_main = {
         }
         if (showAdminPanelLink.value) {
           _push(ssrRenderComponent(_sfc_main$1, {
-            href: _ctx.route("filament.admin.pages.dashboard")
+            href: _ctx.route("filament.admin.pages.dashboard"),
+            external: ""
           }, {
             default: withCtx((_, _push2, _parent2, _scopeId) => {
               if (_push2) {

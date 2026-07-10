@@ -3,9 +3,10 @@ import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrRenderVNode, ssrI
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 import { CurrencyDollarIcon, ShieldCheckIcon, ClipboardDocumentCheckIcon, TruckIcon, ClockIcon, ArrowsRightLeftIcon, CpuChipIcon, BoltIcon, Cog6ToothIcon, AdjustmentsHorizontalIcon } from "@heroicons/vue/24/outline";
 import { F as Footer } from "./Footer-WiuE2eSG.js";
-import { _ as _sfc_main$6 } from "./AppLayout-DAY7LMhN.js";
+import { _ as _sfc_main$6 } from "./AppLayout-BKnJF8b8.js";
 import { Head } from "@inertiajs/vue3";
 import "@headlessui/vue";
+import "./logo-cleansed-CSOLeLOy.js";
 const _sfc_main$5 = {};
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
   _push(`<section${ssrRenderAttrs(mergeProps({

@@ -17,8 +17,9 @@
       height="1050"
       loading="lazy"
       decoding="async"
-      class="absolute inset-0 -z-10 size-full object-cover object-right not-dark:hidden md:object-center"
+      class="absolute inset-0 -z-10 size-full object-cover object-right opacity-45 not-dark:hidden md:object-center"
     />
+    <div class="absolute inset-0 -z-10 hidden bg-gray-950/65 dark:block"></div>
 
     <!-- Gradient decorations -->
     <div class="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl">
@@ -50,13 +51,13 @@
         <div
           v-for="card in cards"
           :key="card.name"
-          class="flex flex-col gap-y-4 rounded-xl bg-white/30 p-6 ring-1 ring-gray-900/5 backdrop-blur-sm dark:bg-white/5 dark:inset-ring dark:inset-ring-white/5"
+          class="flex flex-col gap-y-4 rounded-xl bg-white/85 p-6 shadow-sm ring-1 ring-gray-900/10 backdrop-blur-md dark:bg-gray-950/80 dark:ring-white/15"
         >
           <div class="flex gap-x-4">
             <component :is="card.icon" class="h-7 w-7 flex-none text-amber-600 dark:text-amber-400" aria-hidden="true" />
             <div class="text-base/7">
               <h3 class="font-semibold text-gray-900 dark:text-white">{{ card.name }}</h3>
-              <p class="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ card.description }}</p>
+              <p class="mt-2 text-gray-700 dark:text-gray-200 whitespace-pre-line">{{ card.description }}</p>
             </div>
           </div>
 

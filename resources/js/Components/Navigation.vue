@@ -4,6 +4,7 @@ import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { usePage } from '@inertiajs/vue3'
 import logo from '@images/logo-cleansed.svg'
+import logoLight from '@images/logo-cleansed-light.svg'
 
 const mobileMenuOpen = ref(false)
 const page = usePage()
@@ -36,14 +37,14 @@ const storeHref = computed(() => {
 </script>
 
 <template>
-  <header class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm">
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/80 dark:border-white/10 shadow-sm">
     <nav class="flex items-center justify-between p-2 lg:px-8" aria-label="Global">
       <!-- Logo -->
       <div class="flex lg:flex-1">
         <a href="#home" class="-m-1.5 p-1.5">
           <span class="sr-only">Colorado Supply & Procurement LLC</span>
-          <img class="h-12 w-auto sm:h-14 lg:h-16 dark:hidden" :src="logo" alt="" aria-hidden="true" width="64" height="64" />
-          <img class="h-12 w-auto sm:h-14 lg:h-16 hidden dark:block" :src="logo" alt="" aria-hidden="true" width="64" height="64" />
+          <img class="h-12 w-auto sm:h-14 lg:h-16 dark:hidden" :src="logo" alt="" aria-hidden="true" width="193" height="64" />
+          <img class="h-12 w-auto sm:h-14 lg:h-16 hidden dark:block" :src="logoLight" alt="" aria-hidden="true" width="193" height="64" />
         </a>
       </div>
 
@@ -115,8 +116,8 @@ const storeHref = computed(() => {
         <div class="flex items-center justify-between">
           <a href="#home" class="-m-1.5 p-1.5" @click="mobileMenuOpen = false">
             <span class="sr-only">Colorado Supply & Procurement LLC</span>
-            <img class="h-10 w-auto dark:hidden" :src="logo" alt="" aria-hidden="true" width="40" height="40" />
-            <img class="h-10 w-auto hidden dark:block" :src="logo" alt="" aria-hidden="true" width="40" height="40" />
+            <img class="h-10 w-auto dark:hidden" :src="logo" alt="" aria-hidden="true" width="120" height="40" />
+            <img class="h-10 w-auto hidden dark:block" :src="logoLight" alt="" aria-hidden="true" width="120" height="40" />
           </a>
           <button
             type="button"
@@ -194,4 +195,3 @@ const storeHref = computed(() => {
     </Dialog>
   </header>
 </template>
-

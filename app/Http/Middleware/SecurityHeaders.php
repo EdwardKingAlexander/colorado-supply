@@ -87,6 +87,8 @@ class SecurityHeaders
 
     protected function usesViteDevServer(): bool
     {
-        return is_file(public_path('hot'));
+        // The hot file is a developer-machine artifact; ignore it in tests so
+        // the CSP assertions don't depend on whether `npm run dev` is running.
+        return ! app()->runningUnitTests() && is_file(public_path('hot'));
     }
 }

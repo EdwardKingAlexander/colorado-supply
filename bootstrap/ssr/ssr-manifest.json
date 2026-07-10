@@ -4,13 +4,11 @@
   ],
   "node_modules/laravel-vite-plugin/inertia-helpers/index.js": [],
   "resources/images/logo-cleansed.svg": [
-    "/build/assets/AppLayout-DAY7LMhN.js",
-    "/build/assets/logo-cleansed-DO49-8-I.svg"
+    "/build/assets/logo-cleansed-CSOLeLOy.js",
+    "/build/assets/logo-cleansed-C0Bn4uDZ.svg"
   ],
   "resources/images/optimized/compliance-bg-1400.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -21,9 +19,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/grinding-900.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -34,9 +30,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/industries/aerospace.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -47,9 +41,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/industries/automotive.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -60,9 +52,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/industries/construction-site.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -73,9 +63,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/industries/energy.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -86,9 +74,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/industries/food-processing.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -99,9 +85,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/industries/manufacturing.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -112,77 +96,59 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/images/optimized/pipeline-1600.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
+    "/build/assets/pipeline-900-CwP-DKPX.js",
     "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
-    "/build/assets/grinding-900-w6ZCeDKB.webp",
-    "/build/assets/compliance-bg-1400-DS7FZsym.webp",
-    "/build/assets/aerospace-6eD9rQ9B.webp",
-    "/build/assets/construction-site-C3jnF-2n.webp",
-    "/build/assets/food-processing-D3fITbFN.webp",
-    "/build/assets/manufacturing-BwW-KBCn.webp",
-    "/build/assets/automotive-CR5sa78h.webp",
-    "/build/assets/energy-DutLTZ5b.webp"
+    "/build/assets/pipeline-900-DWT5-sqJ.webp"
   ],
   "resources/images/optimized/pipeline-900.webp": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
+    "/build/assets/pipeline-900-CwP-DKPX.js",
     "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
-    "/build/assets/grinding-900-w6ZCeDKB.webp",
-    "/build/assets/compliance-bg-1400-DS7FZsym.webp",
-    "/build/assets/aerospace-6eD9rQ9B.webp",
-    "/build/assets/construction-site-C3jnF-2n.webp",
-    "/build/assets/food-processing-D3fITbFN.webp",
-    "/build/assets/manufacturing-BwW-KBCn.webp",
-    "/build/assets/automotive-CR5sa78h.webp",
-    "/build/assets/energy-DutLTZ5b.webp"
+    "/build/assets/pipeline-900-DWT5-sqJ.webp"
   ],
   "resources/js/Components/ApplicationLogo.vue": [
     "/build/assets/ApplicationLogo-B2173abF.js"
   ],
   "resources/js/Components/Checkbox.vue": [
-    "/build/assets/Login-izBK69jF.js"
+    "/build/assets/Login-BAMJWSk6.js"
   ],
   "resources/js/Components/DangerButton.vue": [
     "/build/assets/DeleteUserForm-DB6kQIka.js"
   ],
   "resources/js/Components/Dashboard/AccountSummaryPanel.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Components/Dashboard/DashboardEmptyState.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Components/Dashboard/DashboardKpiGrid.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Components/Dashboard/DateRangeControl.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Components/Dashboard/RecentOrdersTable.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Components/Dashboard/ReportBuilderForm.vue": [
-    "/build/assets/Reports-BQtc3FfS.js"
+    "/build/assets/Reports-C2LJWZV8.js"
   ],
   "resources/js/Components/Dashboard/ReportPreviewTable.vue": [
-    "/build/assets/Reports-BQtc3FfS.js"
+    "/build/assets/Reports-C2LJWZV8.js"
   ],
   "resources/js/Components/Dashboard/SpendBarChart.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Components/Dashboard/TopItemsTable.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Components/Dropdown.vue": [
-    "/build/assets/AuthenticatedLayout-BaKoCKvn.js"
+    "/build/assets/AuthenticatedLayout-DnHFEBKh.js"
   ],
   "resources/js/Components/DropdownLink.vue": [
-    "/build/assets/AuthenticatedLayout-BaKoCKvn.js"
+    "/build/assets/AuthenticatedLayout-DnHFEBKh.js"
   ],
   "resources/js/Components/FrontEnd/About.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -193,9 +159,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/Capabilities.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -206,9 +170,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/Compliance.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -219,9 +181,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/Contact.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -240,9 +200,7 @@
     "/build/assets/Footer-HVTNTrc7.css"
   ],
   "resources/js/Components/FrontEnd/Hero.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -253,9 +211,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/IndustriesServed.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -266,9 +222,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/NAICSCodes.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -279,9 +233,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/PSCCodes.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -292,21 +244,19 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/RepairCategories.vue": [
-    "/build/assets/Index-BiUam-Ql.js"
+    "/build/assets/Index-DyMmlt_r.js"
   ],
   "resources/js/Components/FrontEnd/RepairHero.vue": [
-    "/build/assets/Index-BiUam-Ql.js"
+    "/build/assets/Index-DyMmlt_r.js"
   ],
   "resources/js/Components/FrontEnd/RepairProcess.vue": [
-    "/build/assets/Index-BiUam-Ql.js"
+    "/build/assets/Index-DyMmlt_r.js"
   ],
   "resources/js/Components/FrontEnd/RepairRequestForm.vue": [
-    "/build/assets/Index-BiUam-Ql.js"
+    "/build/assets/Index-DyMmlt_r.js"
   ],
   "resources/js/Components/FrontEnd/RepairServicesTeaser.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",
@@ -317,7 +267,7 @@
     "/build/assets/energy-DutLTZ5b.webp"
   ],
   "resources/js/Components/FrontEnd/RepairValueProps.vue": [
-    "/build/assets/Index-BiUam-Ql.js"
+    "/build/assets/Index-DyMmlt_r.js"
   ],
   "resources/js/Components/InputError.vue": [
     "/build/assets/InputError-fLcttu_2.js"
@@ -329,42 +279,43 @@
     "/build/assets/DeleteUserForm-DB6kQIka.js"
   ],
   "resources/js/Components/NavLink.vue": [
-    "/build/assets/AuthenticatedLayout-BaKoCKvn.js"
+    "/build/assets/AuthenticatedLayout-DnHFEBKh.js"
   ],
   "resources/js/Components/Navigation.vue": [
-    "/build/assets/AppLayout-DAY7LMhN.js",
-    "/build/assets/logo-cleansed-DO49-8-I.svg"
+    "/build/assets/AppLayout-BKnJF8b8.js"
   ],
   "resources/js/Components/PrimaryButton.vue": [
     "/build/assets/PrimaryButton-CIooT64n.js"
   ],
   "resources/js/Components/ResponsiveNavLink.vue": [
-    "/build/assets/AuthenticatedLayout-BaKoCKvn.js"
+    "/build/assets/AuthenticatedLayout-DnHFEBKh.js"
   ],
   "resources/js/Components/SecondaryButton.vue": [
     "/build/assets/DeleteUserForm-DB6kQIka.js"
   ],
   "resources/js/Components/Store/ParametricFilters.vue": [
-    "/build/assets/StoreIndex-DCxJG6YQ.js"
+    "/build/assets/StoreIndex-DX861wLW.js"
   ],
   "resources/js/Components/Store/ProductList.vue": [
-    "/build/assets/StoreIndex-DCxJG6YQ.js"
+    "/build/assets/StoreIndex-DX861wLW.js"
   ],
   "resources/js/Components/Store/ProductRow.vue": [
-    "/build/assets/StoreIndex-DCxJG6YQ.js"
+    "/build/assets/StoreIndex-DX861wLW.js"
   ],
   "resources/js/Components/Store/SearchBar.vue": [
-    "/build/assets/StoreIndex-DCxJG6YQ.js"
+    "/build/assets/StoreIndex-DX861wLW.js"
   ],
   "resources/js/Components/TextInput.vue": [
     "/build/assets/TextInput-Dr24WIxr.js"
   ],
   "resources/js/Layouts/AppLayout.vue": [
-    "/build/assets/AppLayout-DAY7LMhN.js",
-    "/build/assets/logo-cleansed-DO49-8-I.svg"
+    "/build/assets/AppLayout-BKnJF8b8.js"
   ],
   "resources/js/Layouts/AuthenticatedLayout.vue": [
-    "/build/assets/AuthenticatedLayout-BaKoCKvn.js"
+    "/build/assets/AuthenticatedLayout-DnHFEBKh.js"
+  ],
+  "resources/js/Layouts/BrandedAuthLayout.vue": [
+    "/build/assets/BrandedAuthLayout-CDng6w26.js"
   ],
   "resources/js/Layouts/GuestLayout.vue": [
     "/build/assets/GuestLayout-39lAgZRd.js"
@@ -376,10 +327,10 @@
     "/build/assets/ForgotPassword-qbKV3yn5.js"
   ],
   "resources/js/Pages/Auth/Login.vue": [
-    "/build/assets/Login-izBK69jF.js"
+    "/build/assets/Login-BAMJWSk6.js"
   ],
   "resources/js/Pages/Auth/Register.vue": [
-    "/build/assets/Register-B1uA2RWn.js"
+    "/build/assets/Register-3WeFPOh3.js"
   ],
   "resources/js/Pages/Auth/ResetPassword.vue": [
     "/build/assets/ResetPassword-Cxm67TBJ.js"
@@ -388,16 +339,16 @@
     "/build/assets/VerifyEmail-giyvWrLQ.js"
   ],
   "resources/js/Pages/Company/Index.vue": [
-    "/build/assets/Index-HdCA7amO.js"
+    "/build/assets/Index-CjAdK7EA.js"
   ],
   "resources/js/Pages/Dashboard.vue": [
-    "/build/assets/Dashboard-DEMrQl7r.js"
+    "/build/assets/Dashboard-DLctfKKN.js"
   ],
   "resources/js/Pages/Dashboard/Reports.vue": [
-    "/build/assets/Reports-BQtc3FfS.js"
+    "/build/assets/Reports-C2LJWZV8.js"
   ],
   "resources/js/Pages/Profile/Edit.vue": [
-    "/build/assets/Edit-C0RZt72a.js"
+    "/build/assets/Edit-D173vqZ9.js"
   ],
   "resources/js/Pages/Profile/Partials/DeleteUserForm.vue": [
     "/build/assets/DeleteUserForm-DB6kQIka.js"
@@ -409,42 +360,40 @@
     "/build/assets/UpdateProfileInformationForm-BjXKTZGs.js"
   ],
   "resources/js/Pages/RepairServices/Index.vue": [
-    "/build/assets/Index-BiUam-Ql.js"
+    "/build/assets/Index-DyMmlt_r.js"
   ],
   "resources/js/Pages/Sam/Favorites.vue": [
     "/build/assets/Favorites-C85E8QBi.js"
   ],
   "resources/js/Pages/Store/Authenticated.vue": [
-    "/build/assets/Authenticated-B2pAw88r.js"
+    "/build/assets/Authenticated-BbEUxKi1.js"
   ],
   "resources/js/Pages/Store/Cart.vue": [
-    "/build/assets/Cart-Cfl0ax3D.js"
+    "/build/assets/Cart-DXqbqr09.js"
   ],
   "resources/js/Pages/Store/Checkout.vue": [
-    "/build/assets/Checkout-PhqfoB2G.js"
+    "/build/assets/Checkout-BGQgdYog.js"
   ],
   "resources/js/Pages/Store/CheckoutCancel.vue": [
-    "/build/assets/CheckoutCancel-o0bOwYs8.js"
+    "/build/assets/CheckoutCancel-CQgmwLxn.js"
   ],
   "resources/js/Pages/Store/CheckoutPay.vue": [
-    "/build/assets/CheckoutPay-C5mz0zF3.js"
+    "/build/assets/CheckoutPay-w7hVYA4i.js"
   ],
   "resources/js/Pages/Store/CheckoutSuccess.vue": [
-    "/build/assets/CheckoutSuccess-DzkKTcH0.js"
+    "/build/assets/CheckoutSuccess-L81ekK67.js"
   ],
   "resources/js/Pages/Store/ProductDetail.vue": [
-    "/build/assets/ProductDetail-DMEEQq2k.js"
+    "/build/assets/ProductDetail-CM70uwfg.js"
   ],
   "resources/js/Pages/Store/Public.vue": [
-    "/build/assets/Public-EhDz33XN.js"
+    "/build/assets/Public-BRf09wAk.js"
   ],
   "resources/js/Pages/Store/StoreIndex.vue": [
-    "/build/assets/StoreIndex-DCxJG6YQ.js"
+    "/build/assets/StoreIndex-DX861wLW.js"
   ],
   "resources/js/Pages/Welcome.vue": [
-    "/build/assets/Welcome-Cp8C_Z_d.js",
-    "/build/assets/pipeline-1600-DN3-79Aa.webp",
-    "/build/assets/pipeline-900-DWT5-sqJ.webp",
+    "/build/assets/Welcome-wMCt_JV1.js",
     "/build/assets/grinding-900-w6ZCeDKB.webp",
     "/build/assets/compliance-bg-1400-DS7FZsym.webp",
     "/build/assets/aerospace-6eD9rQ9B.webp",

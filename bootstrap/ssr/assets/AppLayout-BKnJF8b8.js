@@ -3,7 +3,7 @@ import { ssrRenderAttrs, ssrRenderAttr, ssrRenderComponent, ssrRenderSlot } from
 import { Dialog, DialogPanel } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { usePage } from "@inertiajs/vue3";
-const logo = "/build/assets/logo-cleansed-DO49-8-I.svg";
+import { l as logo } from "./logo-cleansed-CSOLeLOy.js";
 const _sfc_main$1 = {
   __name: "Navigation",
   __ssrInlineRender: true,
@@ -32,7 +32,7 @@ const _sfc_main$1 = {
       return "/store";
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<header${ssrRenderAttrs(mergeProps({ class: "fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm" }, _attrs))}><nav class="flex items-center justify-between p-2 lg:px-8" aria-label="Global"><div class="flex lg:flex-1"><a href="#home" class="-m-1.5 p-1.5"><span class="sr-only">Colorado Supply &amp; Procurement LLC</span><img class="h-12 w-auto sm:h-14 lg:h-16 dark:hidden"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="64" height="64"><img class="h-12 w-auto sm:h-14 lg:h-16 hidden dark:block"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="64" height="64"></a></div><div class="flex lg:hidden"><button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-500 dark:text-gray-400"><span class="sr-only">Open main menu</span>`);
+      _push(`<header${ssrRenderAttrs(mergeProps({ class: "fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm" }, _attrs))}><nav class="flex items-center justify-between p-2 lg:px-8" aria-label="Global"><div class="flex lg:flex-1"><a href="#home" class="-m-1.5 p-1.5"><span class="sr-only">Colorado Supply &amp; Procurement LLC</span><img class="h-12 w-auto sm:h-14 lg:h-16 dark:hidden"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="193" height="64"><img class="h-12 w-auto sm:h-14 lg:h-16 hidden dark:block"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="193" height="64"></a></div><div class="flex lg:hidden"><button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-500 dark:text-gray-400"><span class="sr-only">Open main menu</span>`);
       _push(ssrRenderComponent(unref(Bars3Icon), {
         class: "size-6",
         "aria-hidden": "true"
@@ -74,7 +74,7 @@ const _sfc_main$1 = {
             _push2(ssrRenderComponent(unref(DialogPanel), { class: "fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 dark:bg-gray-900 dark:sm:ring-gray-100/10" }, {
               default: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
-                  _push3(`<div class="flex items-center justify-between"${_scopeId2}><a href="#home" class="-m-1.5 p-1.5"${_scopeId2}><span class="sr-only"${_scopeId2}>Colorado Supply &amp; Procurement LLC</span><img class="h-10 w-auto dark:hidden"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="40" height="40"${_scopeId2}><img class="h-10 w-auto hidden dark:block"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="40" height="40"${_scopeId2}></a><button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700 dark:text-gray-400"${_scopeId2}><span class="sr-only"${_scopeId2}>Close menu</span>`);
+                  _push3(`<div class="flex items-center justify-between"${_scopeId2}><a href="#home" class="-m-1.5 p-1.5"${_scopeId2}><span class="sr-only"${_scopeId2}>Colorado Supply &amp; Procurement LLC</span><img class="h-10 w-auto dark:hidden"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="120" height="40"${_scopeId2}><img class="h-10 w-auto hidden dark:block"${ssrRenderAttr("src", unref(logo))} alt="" aria-hidden="true" width="120" height="40"${_scopeId2}></a><button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700 dark:text-gray-400"${_scopeId2}><span class="sr-only"${_scopeId2}>Close menu</span>`);
                   _push3(ssrRenderComponent(unref(XMarkIcon), {
                     class: "size-6",
                     "aria-hidden": "true"
@@ -119,7 +119,7 @@ const _sfc_main$1 = {
                           src: unref(logo),
                           alt: "",
                           "aria-hidden": "true",
-                          width: "40",
+                          width: "120",
                           height: "40"
                         }, null, 8, ["src"]),
                         createVNode("img", {
@@ -127,7 +127,7 @@ const _sfc_main$1 = {
                           src: unref(logo),
                           alt: "",
                           "aria-hidden": "true",
-                          width: "40",
+                          width: "120",
                           height: "40"
                         }, null, 8, ["src"])
                       ], 8, ["onClick"]),
@@ -230,7 +230,7 @@ const _sfc_main$1 = {
                         src: unref(logo),
                         alt: "",
                         "aria-hidden": "true",
-                        width: "40",
+                        width: "120",
                         height: "40"
                       }, null, 8, ["src"]),
                       createVNode("img", {
@@ -238,7 +238,7 @@ const _sfc_main$1 = {
                         src: unref(logo),
                         alt: "",
                         "aria-hidden": "true",
-                        width: "40",
+                        width: "120",
                         height: "40"
                       }, null, 8, ["src"])
                     ], 8, ["onClick"]),

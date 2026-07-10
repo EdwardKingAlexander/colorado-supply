@@ -1,11 +1,12 @@
-import { withCtx, unref, createTextVNode, createVNode, withModifiers, useSSRContext } from "vue";
+import { mergeProps, withCtx, unref, createTextVNode, createVNode, withModifiers, useSSRContext } from "vue";
 import { ssrRenderComponent } from "vue/server-renderer";
-import { _ as _sfc_main$1 } from "./GuestLayout-39lAgZRd.js";
+import { _ as _sfc_main$1 } from "./BrandedAuthLayout-CDng6w26.js";
 import { _ as _sfc_main$4 } from "./InputError-fLcttu_2.js";
 import { _ as _sfc_main$2, a as _sfc_main$3 } from "./TextInput-Dr24WIxr.js";
 import { P as PrimaryButton } from "./PrimaryButton-CIooT64n.js";
 import { useForm, Head, Link } from "@inertiajs/vue3";
-import "./ApplicationLogo-B2173abF.js";
+import "./logo-cleansed-CSOLeLOy.js";
+import "./pipeline-900-CwP-DKPX.js";
 import "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _sfc_main = {
   __name: "Register",
@@ -23,19 +24,25 @@ const _sfc_main = {
       });
     };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(ssrRenderComponent(_sfc_main$1, _attrs, {
+      _push(ssrRenderComponent(_sfc_main$1, mergeProps({
+        title: "Create your account",
+        subtitle: "Set up access for quotes, ordering, and customer purchasing workflows with Colorado Supply.",
+        "secondary-action-label": "Log in",
+        "secondary-action-href": _ctx.route("login")
+      }, _attrs), {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
             _push2(ssrRenderComponent(unref(Head), { title: "Register" }, null, _parent2, _scopeId));
-            _push2(`<form${_scopeId}><div${_scopeId}>`);
+            _push2(`<form class="space-y-5"${_scopeId}><div${_scopeId}>`);
             _push2(ssrRenderComponent(_sfc_main$2, {
               for: "name",
-              value: "Name"
+              value: "Name",
+              class: "text-gray-800"
             }, null, _parent2, _scopeId));
             _push2(ssrRenderComponent(_sfc_main$3, {
               id: "name",
               type: "text",
-              class: "mt-1 block w-full",
+              class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
               modelValue: unref(form).name,
               "onUpdate:modelValue": ($event) => unref(form).name = $event,
               required: "",
@@ -46,15 +53,16 @@ const _sfc_main = {
               class: "mt-2",
               message: unref(form).errors.name
             }, null, _parent2, _scopeId));
-            _push2(`</div><div class="mt-4"${_scopeId}>`);
+            _push2(`</div><div${_scopeId}>`);
             _push2(ssrRenderComponent(_sfc_main$2, {
               for: "email",
-              value: "Email"
+              value: "Email",
+              class: "text-gray-800"
             }, null, _parent2, _scopeId));
             _push2(ssrRenderComponent(_sfc_main$3, {
               id: "email",
               type: "email",
-              class: "mt-1 block w-full",
+              class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
               modelValue: unref(form).email,
               "onUpdate:modelValue": ($event) => unref(form).email = $event,
               required: "",
@@ -64,15 +72,16 @@ const _sfc_main = {
               class: "mt-2",
               message: unref(form).errors.email
             }, null, _parent2, _scopeId));
-            _push2(`</div><div class="mt-4"${_scopeId}>`);
+            _push2(`</div><div${_scopeId}>`);
             _push2(ssrRenderComponent(_sfc_main$2, {
               for: "password",
-              value: "Password"
+              value: "Password",
+              class: "text-gray-800"
             }, null, _parent2, _scopeId));
             _push2(ssrRenderComponent(_sfc_main$3, {
               id: "password",
               type: "password",
-              class: "mt-1 block w-full",
+              class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
               modelValue: unref(form).password,
               "onUpdate:modelValue": ($event) => unref(form).password = $event,
               required: "",
@@ -82,15 +91,16 @@ const _sfc_main = {
               class: "mt-2",
               message: unref(form).errors.password
             }, null, _parent2, _scopeId));
-            _push2(`</div><div class="mt-4"${_scopeId}>`);
+            _push2(`</div><div${_scopeId}>`);
             _push2(ssrRenderComponent(_sfc_main$2, {
               for: "password_confirmation",
-              value: "Confirm Password"
+              value: "Confirm Password",
+              class: "text-gray-800"
             }, null, _parent2, _scopeId));
             _push2(ssrRenderComponent(_sfc_main$3, {
               id: "password_confirmation",
               type: "password",
-              class: "mt-1 block w-full",
+              class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
               modelValue: unref(form).password_confirmation,
               "onUpdate:modelValue": ($event) => unref(form).password_confirmation = $event,
               required: "",
@@ -100,24 +110,25 @@ const _sfc_main = {
               class: "mt-2",
               message: unref(form).errors.password_confirmation
             }, null, _parent2, _scopeId));
-            _push2(`</div><div class="mt-4 flex items-center justify-end"${_scopeId}>`);
+            _push2(`</div><div class="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between"${_scopeId}><p class="text-sm text-gray-600"${_scopeId}> Already have an account? `);
             _push2(ssrRenderComponent(unref(Link), {
               href: _ctx.route("login"),
-              class: "rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              class: "font-semibold text-amber-700 hover:text-amber-800"
             }, {
               default: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
-                  _push3(` Already registered? `);
+                  _push3(` Log in `);
                 } else {
                   return [
-                    createTextVNode(" Already registered? ")
+                    createTextVNode(" Log in ")
                   ];
                 }
               }),
               _: 1
             }, _parent2, _scopeId));
+            _push2(`</p>`);
             _push2(ssrRenderComponent(PrimaryButton, {
-              class: ["ms-4", { "opacity-25": unref(form).processing }],
+              class: ["justify-center bg-primary-700 px-5 py-3 text-sm hover:bg-primary-600 focus:bg-primary-600 focus:ring-amber-500 active:bg-primary-800", { "opacity-25": unref(form).processing }],
               disabled: unref(form).processing
             }, {
               default: withCtx((_2, _push3, _parent3, _scopeId2) => {
@@ -136,17 +147,19 @@ const _sfc_main = {
             return [
               createVNode(unref(Head), { title: "Register" }),
               createVNode("form", {
+                class: "space-y-5",
                 onSubmit: withModifiers(submit, ["prevent"])
               }, [
                 createVNode("div", null, [
                   createVNode(_sfc_main$2, {
                     for: "name",
-                    value: "Name"
+                    value: "Name",
+                    class: "text-gray-800"
                   }),
                   createVNode(_sfc_main$3, {
                     id: "name",
                     type: "text",
-                    class: "mt-1 block w-full",
+                    class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
                     modelValue: unref(form).name,
                     "onUpdate:modelValue": ($event) => unref(form).name = $event,
                     required: "",
@@ -158,15 +171,16 @@ const _sfc_main = {
                     message: unref(form).errors.name
                   }, null, 8, ["message"])
                 ]),
-                createVNode("div", { class: "mt-4" }, [
+                createVNode("div", null, [
                   createVNode(_sfc_main$2, {
                     for: "email",
-                    value: "Email"
+                    value: "Email",
+                    class: "text-gray-800"
                   }),
                   createVNode(_sfc_main$3, {
                     id: "email",
                     type: "email",
-                    class: "mt-1 block w-full",
+                    class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
                     modelValue: unref(form).email,
                     "onUpdate:modelValue": ($event) => unref(form).email = $event,
                     required: "",
@@ -177,15 +191,16 @@ const _sfc_main = {
                     message: unref(form).errors.email
                   }, null, 8, ["message"])
                 ]),
-                createVNode("div", { class: "mt-4" }, [
+                createVNode("div", null, [
                   createVNode(_sfc_main$2, {
                     for: "password",
-                    value: "Password"
+                    value: "Password",
+                    class: "text-gray-800"
                   }),
                   createVNode(_sfc_main$3, {
                     id: "password",
                     type: "password",
-                    class: "mt-1 block w-full",
+                    class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
                     modelValue: unref(form).password,
                     "onUpdate:modelValue": ($event) => unref(form).password = $event,
                     required: "",
@@ -196,15 +211,16 @@ const _sfc_main = {
                     message: unref(form).errors.password
                   }, null, 8, ["message"])
                 ]),
-                createVNode("div", { class: "mt-4" }, [
+                createVNode("div", null, [
                   createVNode(_sfc_main$2, {
                     for: "password_confirmation",
-                    value: "Confirm Password"
+                    value: "Confirm Password",
+                    class: "text-gray-800"
                   }),
                   createVNode(_sfc_main$3, {
                     id: "password_confirmation",
                     type: "password",
-                    class: "mt-1 block w-full",
+                    class: "mt-2 block w-full border-gray-300 bg-white px-3 py-2.5 text-gray-950 shadow-sm focus:border-amber-500 focus:ring-amber-500",
                     modelValue: unref(form).password_confirmation,
                     "onUpdate:modelValue": ($event) => unref(form).password_confirmation = $event,
                     required: "",
@@ -215,18 +231,21 @@ const _sfc_main = {
                     message: unref(form).errors.password_confirmation
                   }, null, 8, ["message"])
                 ]),
-                createVNode("div", { class: "mt-4 flex items-center justify-end" }, [
-                  createVNode(unref(Link), {
-                    href: _ctx.route("login"),
-                    class: "rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  }, {
-                    default: withCtx(() => [
-                      createTextVNode(" Already registered? ")
-                    ]),
-                    _: 1
-                  }, 8, ["href"]),
+                createVNode("div", { class: "flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between" }, [
+                  createVNode("p", { class: "text-sm text-gray-600" }, [
+                    createTextVNode(" Already have an account? "),
+                    createVNode(unref(Link), {
+                      href: _ctx.route("login"),
+                      class: "font-semibold text-amber-700 hover:text-amber-800"
+                    }, {
+                      default: withCtx(() => [
+                        createTextVNode(" Log in ")
+                      ]),
+                      _: 1
+                    }, 8, ["href"])
+                  ]),
                   createVNode(PrimaryButton, {
-                    class: ["ms-4", { "opacity-25": unref(form).processing }],
+                    class: ["justify-center bg-primary-700 px-5 py-3 text-sm hover:bg-primary-600 focus:bg-primary-600 focus:ring-amber-500 active:bg-primary-800", { "opacity-25": unref(form).processing }],
                     disabled: unref(form).processing
                   }, {
                     default: withCtx(() => [
