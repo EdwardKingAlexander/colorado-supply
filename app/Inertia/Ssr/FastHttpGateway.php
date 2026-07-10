@@ -39,6 +39,10 @@ class FastHttpGateway extends HttpGateway
                 ->post($url, $page)
                 ->throw()
                 ->json();
+
+            if (! is_array($response) || empty($response['body'])) {
+                return null;
+            }
         } catch (ConnectionException|RequestException $exception) {
             report($exception);
 

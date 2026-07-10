@@ -23,7 +23,7 @@ return [
         'ensure_runtime_exists' => (bool) env('INERTIA_SSR_ENSURE_RUNTIME_EXISTS', false),
         'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:13714'),
         'ensure_bundle_exists' => (bool) env('INERTIA_SSR_ENSURE_BUNDLE_EXISTS', true),
-        'bundle' => env('INERTIA_SSR_BUNDLE', base_path('bootstrap/ssr/ssr.mjs')),
+        'bundle' => env('INERTIA_SSR_BUNDLE', base_path('bootstrap/ssr/ssr.js')),
         'throw_on_error' => (bool) env('INERTIA_SSR_THROW_ON_ERROR', false),
         'connect_timeout' => (float) env('INERTIA_SSR_CONNECT_TIMEOUT', 1.5),
         'request_timeout' => (float) env('INERTIA_SSR_REQUEST_TIMEOUT', 5),
