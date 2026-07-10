@@ -26,12 +26,12 @@ const categories = [
 </script>
 
 <template>
-  <section id="repair-categories" class="bg-gray-50 dark:bg-gray-800 py-24 sm:py-32 scroll-mt-20">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+  <section id="repair-categories" class="scroll-mt-20 bg-gray-50 py-16 sm:py-24 dark:bg-gray-800">
+    <div class="mobile-page-gutter mx-auto max-w-7xl lg:px-8">
       <!-- Section Header -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-base font-semibold text-amber-600 dark:text-amber-400">What We Repair</h2>
-        <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+        <p class="mt-2 text-3xl font-bold leading-10 tracking-normal text-gray-900 sm:text-4xl dark:text-white">
           Equipment Categories
         </p>
         <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">

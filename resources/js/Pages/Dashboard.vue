@@ -25,20 +25,20 @@ defineProps({
 
   <AuthenticatedLayout>
     <div class="min-h-screen bg-gray-50">
-      <div class="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div class="mobile-page-gutter mx-auto max-w-7xl space-y-6 py-6 lg:px-8">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p class="text-sm font-semibold uppercase tracking-wide text-gray-500">Customer dashboard</p>
             <h1 class="mt-1 text-2xl font-semibold text-gray-900">Purchasing overview</h1>
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-base text-gray-600">
               {{ filters.start_date }} through {{ filters.end_date }}
             </p>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <Link :href="route('dashboard.reports')" class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+          <div class="grid grid-cols-1 gap-2 xs:grid-cols-2 sm:flex">
+            <Link :href="route('dashboard.reports')" class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
               Build report
             </Link>
-            <Link :href="route('store.index')" class="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">
+            <Link :href="route('store.index')" class="inline-flex min-h-12 items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
               Browse store
             </Link>
           </div>

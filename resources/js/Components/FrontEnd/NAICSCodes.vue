@@ -118,7 +118,7 @@ const closeModal = () => {
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal"></div>
 
         <!-- Modal Content -->
-        <div class="flex min-h-full items-center justify-center p-4">
+        <div class="safe-y flex min-h-full items-end justify-center p-4 sm:items-center">
           <Transition
             enter-active-class="transition-all duration-300 ease-out"
             enter-from-class="opacity-0 scale-95"
@@ -129,11 +129,11 @@ const closeModal = () => {
           >
             <div
               v-if="isOpen"
-              class="relative w-full max-w-5xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden"
+              class="relative w-full max-w-5xl overflow-hidden rounded-lg bg-white shadow-2xl dark:bg-gray-900"
               @click.stop
             >
               <!-- Header -->
-              <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <div class="sticky top-0 z-10 flex min-h-16 items-center justify-between gap-3 border-b border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800 sm:px-6">
                 <div>
                   <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
                     NAICS Codes
@@ -144,7 +144,7 @@ const closeModal = () => {
                 </div>
                 <button
                   @click="closeModal"
-                  class="rounded-lg p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
                   aria-label="Close modal"
                 >
                   <XMarkIcon class="h-6 w-6" />
@@ -152,17 +152,17 @@ const closeModal = () => {
               </div>
 
               <!-- Content -->
-              <div class="max-h-[70vh] overflow-y-auto p-6">
+              <div class="max-h-[68svh] overflow-y-auto p-4 sm:p-6">
                 <div class="space-y-4">
                   <div
                     v-for="naics in naicsCodes"
                     :key="naics.code"
-                    class="p-5 rounded-lg border transition-all"
+                    class="rounded-lg border p-4 transition-all sm:p-5"
                     :class="naics.isPrimary
                       ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-500 dark:border-amber-500'
                       : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-amber-400 dark:hover:border-amber-400'"
                   >
-                    <div class="flex items-start gap-4">
+                    <div class="flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
                       <div class="flex-shrink-0">
                         <span
                           class="inline-flex items-center justify-center px-3 py-1 text-sm font-semibold rounded-md"
@@ -192,15 +192,15 @@ const closeModal = () => {
               </div>
 
               <!-- Footer -->
-              <div class="sticky bottom-0 px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between">
+              <div class="safe-bottom sticky bottom-0 border-t border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800 sm:px-6">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p class="text-sm text-gray-600 dark:text-gray-400">
                     Total: <span class="font-semibold text-gray-900 dark:text-white">{{ naicsCodes.length }}</span> NAICS Codes
                     <span class="ml-2 text-amber-600 dark:text-amber-400">(1 Primary, {{ naicsCodes.length - 1 }} Supporting)</span>
                   </p>
                   <button
                     @click="closeModal"
-                    class="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition-colors"
+                    class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-gray-200 px-4 py-3 text-base font-semibold text-gray-900 transition-colors hover:bg-gray-300 sm:w-auto dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
                   >
                     Close
                   </button>

@@ -17,17 +17,17 @@
       </div>
 
       <!-- Content side -->
-      <div class="px-6 lg:contents">
+      <div class="mobile-page-gutter lg:contents">
         <div
-          class="mx-auto max-w-2xl pt-16 pb-24 sm:pt-20 sm:pb-32 lg:mr-0 lg:ml-8 lg:w-full lg:max-w-lg lg:flex-none lg:pt-32 xl:w-1/2"
+          class="mx-auto max-w-2xl py-16 sm:py-24 lg:mr-0 lg:ml-8 lg:w-full lg:max-w-lg lg:flex-none xl:w-1/2"
         >
           <p class="text-base/7 font-semibold text-amber-600 dark:text-amber-400">Who We Are</p>
           <h1
-            class="mt-2 text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-white"
+            class="mt-2 text-3xl font-semibold leading-10 tracking-normal text-pretty text-gray-900 sm:text-4xl dark:text-white"
           >
             About Colorado Supply & Procurement LLC
           </h1>
-          <p class="mt-6 text-xl/8 text-gray-700 dark:text-gray-300">
+          <p class="mt-6 text-lg leading-8 text-gray-700 sm:text-xl dark:text-gray-300">
             Colorado-based with nationwide reach, we bring over a decade of industrial supply chain experience,
             delivering dependable goods and services tailored to the needs of federal, state, and local agencies.
           </p>

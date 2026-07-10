@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import { Dialog, DialogPanel } from '@headlessui/vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
@@ -31,7 +32,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav
-                class="relative z-50 border-b border-gray-100 bg-white"
+                class="safe-top relative z-50 border-b border-gray-200 bg-white"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -39,7 +40,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('dashboard')" class="flex min-h-12 items-center rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                     <ApplicationLogo
                                         class="block h-9 w-auto fill-current text-gray-800"
                                     />
@@ -48,7 +49,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
 
                             <!-- Navigation Links -->
                             <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                                class="hidden space-x-4 md:-my-px md:ms-8 md:flex lg:space-x-8"
                             >
                                 <NavLink
                                     :href="route('dashboard')"
@@ -72,7 +73,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                             </div>
                         </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                        <div class="hidden md:ms-6 md:flex md:items-center">
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
@@ -80,7 +81,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                class="inline-flex min-h-12 items-center rounded-md border border-transparent bg-white px-3 py-2 text-base font-medium leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                             >
                                                 {{ accountName }}
 
@@ -128,13 +129,16 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                         </div>
 
                         <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
+                        <div class="flex items-center md:hidden">
                             <button
                                 @click="
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                class="inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                :aria-expanded="showingNavigationDropdown"
+                                aria-controls="customer-mobile-menu"
+                                aria-label="Toggle account navigation"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -171,23 +175,27 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                 </div>
 
                 <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
-                >
+                <Dialog class="md:hidden" :open="showingNavigationDropdown" @close="showingNavigationDropdown = false">
+                  <div class="fixed inset-0 z-40 bg-gray-950/55" aria-hidden="true" />
+                  <DialogPanel id="customer-mobile-menu" class="safe-y fixed inset-y-0 right-0 z-50 w-full max-w-drawer overflow-y-auto bg-white pb-6 shadow-2xl ring-1 ring-gray-900/10">
+                    <div class="flex h-16 items-center justify-between border-b border-gray-200 px-4">
+                      <p class="text-base font-semibold text-gray-900">Account navigation</p>
+                      <button type="button" class="inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Close account navigation" @click="showingNavigationDropdown = false">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" /></svg>
+                      </button>
+                    </div>
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
+                            @click="showingNavigationDropdown = false"
                         >
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('store.index')"
                             :active="route().current('store.index')"
+                            @click="showingNavigationDropdown = false"
                         >
                             Store
                         </ResponsiveNavLink>
@@ -195,6 +203,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                             v-if="showProfileLink"
                             :href="route('dashboard.reports')"
                             :active="route().current('dashboard.reports')"
+                            @click="showingNavigationDropdown = false"
                         >
                             Reports
                         </ResponsiveNavLink>
@@ -204,7 +213,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                     <div
                         class="border-t border-gray-200 pb-1 pt-4"
                     >
-                        <div class="px-4">
+                        <div class="px-4 pb-2">
                             <div
                                 class="text-base font-medium text-gray-800"
                             >
@@ -225,6 +234,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                             <ResponsiveNavLink
                                 v-if="showProfileLink"
                                 :href="route('profile.edit')"
+                                @click="showingNavigationDropdown = false"
                             >
                                 Profile
                             </ResponsiveNavLink>
@@ -232,6 +242,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                                 v-if="showAdminPanelLink"
                                 :href="route('filament.admin.pages.dashboard')"
                                 external
+                                @click="showingNavigationDropdown = false"
                             >
                                 Admin Panel
                             </ResponsiveNavLink>
@@ -239,12 +250,14 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
+                                @click="showingNavigationDropdown = false"
                             >
                                 Log Out
                             </ResponsiveNavLink>
                         </div>
                     </div>
-                </div>
+                  </DialogPanel>
+                </Dialog>
             </nav>
 
             <!-- Page Heading -->

@@ -2,7 +2,180 @@
 @tailwind components;
 @tailwind utilities;
 
-
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+button,
+[role='button'],
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+@layer components {
+  .mobile-page-gutter {
+    padding-inline: 1rem;
+  }
+
+  .tap-target {
+    min-width: 3rem;
+    min-height: 3rem;
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .safe-x {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  .safe-y {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  @media (min-width: 390px) {
+    .mobile-page-gutter {
+      padding-inline: 1.25rem;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .mobile-page-gutter {
+      padding-inline: 1.5rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Public lead forms share one mobile interaction baseline. */
+#contact label,
+#repair-form label {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+#contact input:not([type='hidden']),
+#contact textarea,
+#repair-form input:not([type='hidden']),
+#repair-form select,
+#repair-form textarea {
+  min-height: 3rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+#contact textarea,
+#repair-form textarea {
+  min-height: 8rem;
+}
+
+#contact button[type='submit'],
+#repair-form button[type='submit'] {
+  min-height: 3rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.checkout-form textarea,
+.dashboard-filter input,
+.dashboard-filter select {
+  min-height: 3rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.checkout-form textarea {
+  min-height: 7rem;
+}
+
+@media (max-width: 767px) {
+  .responsive-data-table,
+  .responsive-data-table tbody,
+  .responsive-data-table tr,
+  .responsive-data-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .responsive-data-table thead {
+    display: none;
+  }
+
+  .responsive-data-table tbody {
+    padding: 0.75rem;
+    background: rgb(249 250 251);
+  }
+
+  .responsive-data-table tbody tr {
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 0.5rem;
+    background: white;
+  }
+
+  .responsive-data-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .responsive-data-table tbody td:not([colspan]) {
+    display: grid;
+    grid-template-columns: minmax(5.75rem, 36%) minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.75rem 1rem;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .responsive-data-table tbody td:not([colspan])::before {
+    content: attr(data-label);
+    color: rgb(75 85 99);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+  }
+
+  .responsive-data-table tbody td[colspan] {
+    padding: 1rem;
+  }
 }

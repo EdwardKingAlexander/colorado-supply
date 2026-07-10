@@ -99,14 +99,14 @@ const submit = () => {
             </div>
 
             <div class="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
-                <p class="text-sm text-gray-600">
+                <p class="text-base leading-6 text-gray-600">
                     Already have an account?
                     <Link :href="route('login')" class="font-semibold text-amber-700 hover:text-amber-800">
                         Log in
                     </Link>
                 </p>
                 <PrimaryButton
-                    class="justify-center bg-primary-700 px-5 py-3 text-sm hover:bg-primary-600 focus:bg-primary-600 focus:ring-amber-500 active:bg-primary-800"
+                    class="w-full justify-center bg-primary-700 px-5 py-3 text-base hover:bg-primary-600 focus:bg-primary-600 focus:ring-amber-500 active:bg-primary-800 sm:w-auto"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >

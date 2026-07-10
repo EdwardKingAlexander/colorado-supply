@@ -88,13 +88,13 @@ const payWithPaypal = async () => {
 
   <AuthenticatedLayout>
     <div class="bg-gray-50 min-h-screen">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div class="mobile-page-gutter mx-auto max-w-5xl space-y-6 py-6 sm:py-8 lg:px-8">
         <div>
           <p class="text-sm text-gray-500 uppercase tracking-wide">Checkout</p>
           <h1 class="text-2xl font-semibold text-gray-900">Order #{{ order.order_number }}</h1>
         </div>
 
-        <div v-if="isPaid" class="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-800">
+        <div v-if="isPaid" class="rounded-lg border border-green-200 bg-green-50 p-4 text-base leading-6 text-green-800" role="status">
           This order has already been paid.
           <Link :href="route('store.checkout.success', order.id)" class="font-semibold underline">
             View confirmation
@@ -104,14 +104,14 @@ const payWithPaypal = async () => {
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="lg:col-span-2 space-y-6">
             <!-- Order Items -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
               <h2 class="text-lg font-semibold text-gray-900">Order Items</h2>
 
               <div class="divide-y divide-gray-100">
-                <div v-for="item in order.items" :key="item.id" class="flex items-center justify-between py-2 text-sm">
+                <div v-for="item in order.items" :key="item.id" class="flex items-start justify-between gap-3 py-3 text-base">
                   <div>
                     <p class="font-medium text-gray-900">{{ item.name }}</p>
-                    <p class="text-xs text-gray-500">Qty {{ item.quantity }} &times; {{ formatCurrency(item.unit_price) }}</p>
+                    <p class="text-sm text-gray-600">Qty {{ item.quantity }} &times; {{ formatCurrency(item.unit_price) }}</p>
                   </div>
                   <p class="font-semibold text-gray-900">{{ formatCurrency(item.line_total) }}</p>
                 </div>
@@ -125,20 +125,20 @@ const payWithPaypal = async () => {
 
             <!-- Addresses -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 class="text-sm font-semibold text-gray-900 mb-2">Billing Address</h3>
-                <p class="text-sm text-gray-600 whitespace-pre-line">{{ formatAddress(order.billing_address) }}</p>
+              <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+                <h3 class="mb-2 text-base font-semibold text-gray-900">Billing Address</h3>
+                <p class="whitespace-pre-line text-base leading-6 text-gray-600">{{ formatAddress(order.billing_address) }}</p>
               </div>
-              <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 class="text-sm font-semibold text-gray-900 mb-2">Shipping Address</h3>
-                <p class="text-sm text-gray-600 whitespace-pre-line">{{ formatAddress(order.shipping_address) }}</p>
+              <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+                <h3 class="mb-2 text-base font-semibold text-gray-900">Shipping Address</h3>
+                <p class="whitespace-pre-line text-base leading-6 text-gray-600">{{ formatAddress(order.shipping_address) }}</p>
               </div>
             </div>
           </div>
 
           <!-- Payment -->
           <div class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4 sticky top-24">
+            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-20">
               <h2 class="text-lg font-semibold text-gray-900">Choose a Payment Method</h2>
 
               <div id="payment-methods" class="space-y-3">
@@ -154,7 +154,7 @@ const payWithPaypal = async () => {
 
                 <InputError :message="cardError" />
 
-                <p class="text-xs text-gray-500">
+                <p class="text-sm leading-5 text-gray-600">
                   Google Pay and Apple Pay are available automatically on the
                   Stripe payment page when supported by your browser and
                   device.

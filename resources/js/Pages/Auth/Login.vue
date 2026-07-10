@@ -40,7 +40,8 @@ const submit = () => {
 
         <div
             v-if="status"
-            class="mb-6 border-l-4 border-green-500 bg-green-50 px-4 py-3 text-sm font-medium text-green-800"
+            class="mb-6 border-l-4 border-green-500 bg-green-50 px-4 py-3 text-base font-medium leading-6 text-green-800"
+            role="status"
         >
             {{ status }}
         </div>
@@ -77,14 +78,14 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="flex items-center justify-between gap-4">
-                <label class="flex items-center">
+            <div class="flex flex-col items-stretch gap-2 xs:flex-row xs:items-center xs:justify-between">
+                <label class="flex min-h-12 items-center rounded-md px-1 focus-within:ring-2 focus-within:ring-amber-500">
                     <Checkbox
                         name="remember"
                         v-model:checked="form.remember"
                         class="border-gray-300 text-amber-600 focus:ring-amber-500"
                     />
-                    <span class="ms-2 text-sm text-gray-700"
+                    <span class="ms-3 text-base text-gray-700"
                         >Remember me</span
                     >
                 </label>
@@ -92,21 +93,21 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-sm font-semibold text-amber-700 hover:text-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                    class="inline-flex min-h-12 items-center rounded-md px-2 text-base font-semibold text-amber-700 hover:bg-amber-50 hover:text-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
                 >
                     Forgot your password?
                 </Link>
             </div>
 
             <div class="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
-                <p class="text-sm text-gray-600">
+                <p class="text-base leading-6 text-gray-600">
                     New to Colorado Supply?
                     <Link :href="route('register')" class="font-semibold text-amber-700 hover:text-amber-800">
                         Create an account
                     </Link>
                 </p>
                 <PrimaryButton
-                    class="justify-center bg-primary-700 px-5 py-3 text-sm hover:bg-primary-600 focus:bg-primary-600 focus:ring-amber-500 active:bg-primary-800"
+                    class="w-full justify-center bg-primary-700 px-5 py-3 text-base hover:bg-primary-600 focus:bg-primary-600 focus:ring-amber-500 active:bg-primary-800 sm:w-auto"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >

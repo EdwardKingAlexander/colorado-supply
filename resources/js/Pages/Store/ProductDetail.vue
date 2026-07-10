@@ -165,12 +165,12 @@ onBeforeUnmount(() => {
 
     <AuthenticatedLayout>
         <div class="bg-gray-50 min-h-screen">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="mobile-page-gutter mx-auto max-w-7xl py-6 sm:py-8 lg:px-8">
                 <!-- Back to Catalog -->
                 <div class="mb-6">
                     <Link
                         :href="route('store.index')"
-                        class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                        class="inline-flex min-h-12 items-center rounded-md px-2 text-base text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                         <svg
                             class="w-4 h-4 mr-2"
@@ -222,8 +222,8 @@ onBeforeUnmount(() => {
                 <!-- Product Details -->
                 <div v-else-if="product" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                     <!-- Header -->
-                    <div class="border-b border-gray-200 dark:border-gray-700 px-8 py-6">
-                        <div class="flex justify-between items-start gap-4">
+                    <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-8 sm:py-6">
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div class="flex-1">
                                 <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
                                     {{ product.name }}
@@ -244,7 +244,7 @@ onBeforeUnmount(() => {
                                     Category: {{ product.category.name }}
                                 </p>
                             </div>
-                            <div class="text-right flex-shrink-0">
+                            <div class="flex-shrink-0 text-left sm:text-right">
                                 <p class="text-3xl font-bold text-gray-900 dark:text-white">
                                     {{ priceDisplay }}
                                 </p>
@@ -259,7 +259,7 @@ onBeforeUnmount(() => {
                     </div>
 
                     <!-- Two-column layout -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+                    <div class="grid grid-cols-1 gap-8 p-4 sm:p-8 lg:grid-cols-2">
                         <!-- Left: Image/Preview -->
                         <div class="space-y-4">
                             <div
@@ -363,7 +363,7 @@ onBeforeUnmount(() => {
                             <div class="pt-4">
                                 <button
                                     type="button"
-                                    class="w-full px-6 py-3 text-base font-semibold text-white bg-gray-900 hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                    class="min-h-12 w-full rounded-md bg-gray-900 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                                     @click="handleAddToCart"
                                 >
                                     <span v-if="justAdded" class="inline-flex items-center gap-1">
@@ -371,7 +371,7 @@ onBeforeUnmount(() => {
                                     </span>
                                     <span v-else>Add to Cart</span>
                                 </button>
-                                <p class="text-xs text-gray-500 text-center mt-3">
+                                <p class="mt-3 text-center text-sm leading-5 text-gray-600">
                                     Questions? Contact our sales team for assistance.
                                 </p>
                             </div>

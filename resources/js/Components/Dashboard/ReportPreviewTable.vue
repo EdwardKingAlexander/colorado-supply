@@ -30,8 +30,8 @@ const format = (value, column) => {
       <h2 class="text-base font-semibold text-gray-900">Report preview</h2>
       <p class="text-sm text-gray-500">{{ rowCount }} rows</p>
     </div>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 text-sm">
+    <div>
+      <table class="responsive-data-table min-w-full divide-y divide-gray-200 text-sm">
         <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
           <tr>
             <th v-for="column in columns" :key="column" class="px-5 py-3">{{ label(column) }}</th>
@@ -39,7 +39,7 @@ const format = (value, column) => {
         </thead>
         <tbody class="divide-y divide-gray-100">
           <tr v-for="(row, index) in rows" :key="index">
-            <td v-for="column in columns" :key="column" class="whitespace-nowrap px-5 py-3 text-gray-700">
+            <td v-for="column in columns" :key="column" :data-label="label(column)" class="whitespace-nowrap px-5 py-3 text-gray-700">
               {{ format(row[column], column) }}
             </td>
           </tr>

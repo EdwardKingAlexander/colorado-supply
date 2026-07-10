@@ -26,12 +26,12 @@ const isPaid = computed(() => props.order.payment_status === 'paid')
       <title>Payment | Colorado Supply & Procurement</title>
     </Head>
 
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-800 flex items-center justify-center px-4">
-      <div class="max-w-md w-full bg-white dark:bg-gray-700 rounded-lg shadow-md p-8 text-center">
+    <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 pb-12 pt-28 dark:bg-gray-800 sm:px-6">
+      <div class="w-full max-w-md rounded-lg bg-white p-6 text-center shadow-md dark:bg-gray-700 sm:p-8">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Thank you for your order
         </h1>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">
+        <p class="mb-6 text-base leading-6 text-gray-600 dark:text-gray-300">
           Order <span class="font-semibold">{{ order.order_number }}</span> — {{ totalDisplay }}
         </p>
 
@@ -42,7 +42,7 @@ const isPaid = computed(() => props.order.payment_status === 'paid')
           We're confirming your payment now. You'll receive an email once it's complete.
         </p>
 
-        <Link href="/store" class="inline-block px-6 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800">
+        <Link href="/store" class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-blue-700 px-6 py-3 text-base font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
           Continue Shopping
         </Link>
       </div>

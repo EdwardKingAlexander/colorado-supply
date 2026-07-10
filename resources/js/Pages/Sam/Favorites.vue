@@ -225,8 +225,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-6xl mx-auto px-4 py-8 space-y-6">
-    <div class="flex items-center justify-between">
+  <div class="mobile-page-gutter mx-auto max-w-6xl space-y-6 py-6 sm:py-8 lg:px-8">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-semibold text-gray-900">SAM Opportunities</h1>
         <p class="text-gray-600">Favorited opportunities for your account.</p>
@@ -235,7 +235,7 @@ onMounted(() => {
         <button
           v-if="!loading && favorites.length > 0"
           type="button"
-          class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          class="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-blue-700 px-4 py-3 text-base font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           :disabled="exporting"
           @click="exportToExcel"
         >
@@ -265,7 +265,7 @@ onMounted(() => {
     </div>
 
     <div v-else-if="!loading" class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
-      <table class="min-w-full divide-y divide-gray-200 bg-white">
+      <table class="responsive-data-table min-w-full divide-y divide-gray-200 bg-white">
         <thead class="bg-gray-50">
           <tr>
             <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700">Title</th>
@@ -281,7 +281,7 @@ onMounted(() => {
         <tbody class="divide-y divide-gray-100">
           <template v-for="opp in favorites" :key="opp.id">
             <tr class="hover:bg-gray-50">
-              <td class="px-4 py-3 text-sm text-gray-900">
+              <td data-label="Opportunity" class="px-4 py-3 text-sm text-gray-900">
                 <div class="font-medium">{{ opp.title || 'Untitled opportunity' }}</div>
                 <div class="text-gray-500 text-xs" v-if="opp.naics_code || opp.psc_code">
                   <span v-if="opp.naics_code">NAICS: {{ opp.naics_code }}</span>
@@ -289,17 +289,17 @@ onMounted(() => {
                   <span v-if="opp.psc_code">PSC: {{ opp.psc_code }}</span>
                 </div>
               </td>
-              <td class="px-4 py-3 text-sm text-gray-700">{{ opp.agency || '—' }}</td>
-              <td class="px-4 py-3 text-sm text-gray-700">{{ opp.posted_date || '—' }}</td>
-              <td class="px-4 py-3 text-sm text-gray-700">{{ opp.response_deadline || '—' }}</td>
-              <td class="px-4 py-3 text-sm text-blue-600">
-                <a v-if="opp.sam_url" :href="opp.sam_url" class="hover:underline" target="_blank" rel="noopener noreferrer">View</a>
+              <td data-label="Agency" class="px-4 py-3 text-sm text-gray-700">{{ opp.agency || '—' }}</td>
+              <td data-label="Posted" class="px-4 py-3 text-sm text-gray-700">{{ opp.posted_date || '—' }}</td>
+              <td data-label="Due" class="px-4 py-3 text-sm text-gray-700">{{ opp.response_deadline || '—' }}</td>
+              <td data-label="SAM.gov" class="px-4 py-3 text-sm text-blue-600">
+                <a v-if="opp.sam_url" :href="opp.sam_url" class="inline-flex min-h-12 items-center rounded-md px-3 text-base font-semibold hover:bg-blue-50 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600" target="_blank" rel="noopener noreferrer">View opportunity</a>
                 <span v-else class="text-gray-500">—</span>
               </td>
-              <td class="px-4 py-3 text-right">
+              <td data-label="Favorite" class="px-4 py-3 text-right">
                 <button
                   type="button"
-                  class="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium transition"
+                  class="inline-flex min-h-12 items-center rounded-full border px-4 py-2 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-amber-500"
                   :class="opp.is_favorite ? 'border-amber-400 text-amber-600 bg-amber-50' : 'border-gray-300 text-gray-700 hover:border-amber-300 hover:text-amber-600'"
                   :disabled="toggling.has(opp.id)"
                   @click="toggleFavorite(opp)"
@@ -314,19 +314,19 @@ onMounted(() => {
                   <span>{{ opp.is_favorite ? 'Favorited' : 'Favorite' }}</span>
                 </button>
               </td>
-              <td class="px-4 py-3 text-right">
+              <td data-label="Documents" class="px-4 py-3 text-right">
                 <button
                   type="button"
-                  class="inline-flex items-center rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:border-blue-300 hover:text-blue-600 transition"
+                  class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:border-blue-400 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   @click="toggleDocs(opp.id)"
                 >
                   Manage Documents
                 </button>
               </td>
-              <td class="px-4 py-3 text-right">
+              <td data-label="Insights" class="px-4 py-3 text-right">
                 <button
                   type="button"
-                  class="inline-flex items-center rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:border-green-300 hover:text-green-600 transition"
+                  class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:border-green-400 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
                   @click="toggleInsights(opp.id)"
                 >
                   Insights
@@ -338,13 +338,13 @@ onMounted(() => {
               <td colspan="8" class="px-4 py-4">
                 <div class="flex items-start justify-between">
                   <div class="space-y-3 w-full">
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <h3 class="text-sm font-semibold text-gray-900">Documents</h3>
                         <p class="text-xs text-gray-600">Upload and manage documents for this opportunity.</p>
                       </div>
                       <div class="flex items-center gap-2">
-                        <label class="inline-flex items-center rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 bg-white cursor-pointer hover:border-blue-300 hover:text-blue-600 transition">
+                        <label class="inline-flex min-h-12 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-base font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-700 focus-within:ring-2 focus-within:ring-blue-600">
                           <input type="file" class="hidden" :disabled="uploading.has(opp.id)" @change="(e) => uploadDocument(opp.id, e)" />
                           <span v-if="!uploading.has(opp.id)">Upload</span>
                           <span v-else>Uploading...</span>
@@ -366,7 +366,7 @@ onMounted(() => {
                       <div
                         v-for="doc in documents[opp.id]"
                         :key="doc.id"
-                        class="flex items-center justify-between px-3 py-2"
+                        class="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div>
                           <div class="text-sm text-gray-900 font-medium">{{ doc.original_filename }}</div>
@@ -379,7 +379,7 @@ onMounted(() => {
                           <span class="text-xs text-gray-500" v-if="doc.uploaded_by">by {{ doc.uploaded_by.name }}</span>
                           <button
                             type="button"
-                            class="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
+                            class="inline-flex min-h-12 items-center justify-center rounded-md px-4 py-2 text-base font-semibold text-red-700 hover:bg-red-50 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 disabled:opacity-50"
                             :disabled="uploading.has(doc.id)"
                             @click="deleteDocument(opp.id, doc.id)"
                           >
@@ -403,16 +403,16 @@ onMounted(() => {
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-2">
+                  <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <input
                       v-model="insightsQuestion"
                       type="text"
-                      class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+                      class="min-h-12 w-full rounded-md border border-gray-300 px-3 py-3 text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                       placeholder="Ask a question..."
                     />
                     <button
                       type="button"
-                      class="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                      class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-blue-700 px-4 py-3 text-base font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:w-auto"
                       :disabled="insightsLoading.has(opp.id)"
                       @click="askInsights(opp.id)"
                     >
@@ -458,11 +458,11 @@ onMounted(() => {
       </table>
 
       <!-- Pagination -->
-      <div v-if="pagination.last_page > 1" class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
-        <div class="flex items-center gap-2">
+      <div v-if="pagination.last_page > 1" class="flex flex-col gap-3 border-t border-gray-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
           <button
             type="button"
-            class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="!pagination.prev_page_url"
             @click="fetchFavorites(pagination.prev_page_url)"
           >
@@ -470,7 +470,7 @@ onMounted(() => {
           </button>
           <button
             type="button"
-            class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="!pagination.next_page_url"
             @click="fetchFavorites(pagination.next_page_url)"
           >

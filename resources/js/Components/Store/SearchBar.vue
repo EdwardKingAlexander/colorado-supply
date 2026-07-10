@@ -47,7 +47,7 @@ const innerClasses = computed(() => {
 
 const inputClasses = computed(() => {
   const base =
-    'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-900'
+    'min-h-12 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-base leading-6 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-900'
 
   if (props.variant === 'inline') {
     return base + ' shadow-sm'
@@ -58,10 +58,10 @@ const inputClasses = computed(() => {
 
 const buttonClasses = computed(() => {
   const base =
-    'text-sm font-semibold text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed'
+    'min-h-12 text-base font-semibold text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed'
 
   if (props.variant === 'inline') {
-    return base + ' px-4 py-2 bg-gray-900 hover:bg-gray-800 flex-shrink-0'
+    return base + ' px-4 py-3 bg-gray-900 hover:bg-gray-800 flex-shrink-0'
   }
 
   return base + ' px-5 py-3 bg-gray-900 hover:bg-gray-800'

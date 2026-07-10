@@ -3,8 +3,8 @@ import { WrenchScrewdriverIcon } from '@heroicons/vue/24/outline'
 </script>
 
 <template>
-  <section id="repair-services-teaser" class="bg-gray-50 dark:bg-gray-800 py-24 sm:py-32 scroll-mt-20">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+  <section id="repair-services-teaser" class="scroll-mt-20 bg-gray-50 py-16 sm:py-24 dark:bg-gray-800">
+    <div class="mobile-page-gutter mx-auto max-w-7xl lg:px-8">
       <div class="mx-auto max-w-3xl rounded-2xl bg-white dark:bg-gray-900 p-10 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10 sm:p-12">
         <div class="flex flex-col items-center text-center">
           <WrenchScrewdriverIcon class="h-10 w-10 text-amber-600 dark:text-amber-400" />
@@ -17,7 +17,7 @@ import { WrenchScrewdriverIcon } from '@heroicons/vue/24/outline'
           </p>
           <a
             :href="route('repair-services.index')"
-            class="mt-8 inline-flex items-center rounded-md bg-amber-700 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+            class="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-md bg-amber-700 px-5 py-3 text-base font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 sm:w-auto"
           >
             Explore Repair Services →
           </a>

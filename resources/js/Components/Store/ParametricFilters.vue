@@ -103,7 +103,7 @@ const activeFilterCount = computed(() => {
 </script>
 
 <template>
-  <div class="bg-white/95 dark:bg-gray-900/90 rounded-2xl shadow-lg ring-1 ring-gray-100 dark:ring-gray-800 p-4">
+  <div class="rounded-lg bg-white/95 p-4 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900/90 dark:ring-gray-800">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-base font-semibold tracking-tight text-gray-900 dark:text-white">
         Filter by Specs
@@ -111,7 +111,7 @@ const activeFilterCount = computed(() => {
       <button
         v-if="hasActiveFilters"
         type="button"
-        class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+        class="inline-flex min-h-12 items-center rounded-md px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-300 dark:hover:bg-white/10"
         @click="clearAllFilters"
       >
         Clear All ({{ activeFilterCount }})
@@ -151,17 +151,17 @@ const activeFilterCount = computed(() => {
           <label
             v-for="value in filter.values"
             :key="value"
-            class="flex items-center px-2 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition"
+            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <input
               type="checkbox"
               :name="`filter-${filter.name}-${value}`"
               :value="value"
               :checked="isValueSelected(filter.name, value)"
-              class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               @change="toggleFilter(filter.name, value, true)"
             />
-            <span class="ml-2 text-sm font-mono text-gray-700 dark:text-gray-300">{{ value }}</span>
+            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value }}</span>
           </label>
         </div>
 
@@ -170,17 +170,17 @@ const activeFilterCount = computed(() => {
           <label
             v-for="value in filter.values"
             :key="value"
-            class="flex items-center px-2 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition"
+            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <input
               type="radio"
               :name="`filter-${filter.name}`"
               :value="value"
               :checked="isValueSelected(filter.name, value)"
-              class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               @change="toggleFilter(filter.name, value)"
             />
-            <span class="ml-2 text-sm font-mono text-gray-700 dark:text-gray-300">{{ value }}</span>
+            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value }}</span>
           </label>
         </div>
 
@@ -189,17 +189,17 @@ const activeFilterCount = computed(() => {
           <label
             v-for="value in ['true', 'false']"
             :key="value"
-            class="flex items-center px-2 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition"
+            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <input
               type="radio"
               :name="`filter-${filter.name}`"
               :value="value"
               :checked="isValueSelected(filter.name, value)"
-              class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               @change="toggleFilter(filter.name, value)"
             />
-            <span class="ml-2 text-sm font-mono text-gray-700 dark:text-gray-300">{{ value === 'true' ? 'Yes' : 'No' }}</span>
+            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value === 'true' ? 'Yes' : 'No' }}</span>
           </label>
         </div>
 
@@ -208,17 +208,17 @@ const activeFilterCount = computed(() => {
           <label
             v-for="value in filter.values"
             :key="value"
-            class="flex items-center px-2 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition"
+            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <input
               type="radio"
               :name="`filter-${filter.name}`"
               :value="value"
               :checked="isValueSelected(filter.name, value)"
-              class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               @change="toggleFilter(filter.name, value)"
             />
-            <span class="ml-2 text-sm font-mono text-gray-700 dark:text-gray-300">{{ value }}</span>
+            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value }}</span>
           </label>
         </div>
       </div>

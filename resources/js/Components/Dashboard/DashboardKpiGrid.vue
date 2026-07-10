@@ -19,10 +19,10 @@ const cards = [
 </script>
 
 <template>
-  <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+  <section class="grid gap-3 xs:grid-cols-2 xl:grid-cols-5">
     <div v-for="card in cards" :key="card.label" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-      <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ card.label }}</p>
-      <p class="mt-2 truncate text-2xl font-semibold text-gray-900">{{ card.value() }}</p>
+      <p class="text-sm font-semibold uppercase text-gray-600">{{ card.label }}</p>
+      <p class="mt-2 break-words text-2xl font-semibold leading-8 text-gray-900">{{ card.value() }}</p>
     </div>
   </section>
 </template>

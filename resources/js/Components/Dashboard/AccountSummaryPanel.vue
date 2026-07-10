@@ -37,10 +37,10 @@ defineProps({
     </dl>
 
     <div class="mt-5 flex flex-wrap gap-2">
-      <Link :href="route('profile.edit')" class="rounded-md border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+      <Link :href="route('profile.edit')" class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
         Edit profile
       </Link>
-      <Link :href="route('store.index')" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-800">
+      <Link :href="route('store.index')" class="inline-flex min-h-12 items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
         Browse store
       </Link>
     </div>

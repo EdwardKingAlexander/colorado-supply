@@ -5,6 +5,7 @@
         "build": "vite build",
         "dev": "concurrently \"npm:dev:vite\" \"npm:ssr\"",
         "dev:vite": "vite",
+        "test:browser": "playwright test",
         "ssr-build": "vite build --ssr resources/js/ssr.js",
         "ssr": "node bootstrap/ssr/ssr.js"
     },
@@ -26,7 +27,9 @@
         "lightningcss-linux-x64-gnu": "^1.29.1"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.12.1",
         "@inertiajs/vue3": "^3.0",
+        "@playwright/test": "^1.61.1",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/postcss": "^4.1.13",
         "@vitejs/plugin-vue": "^6.0.1",

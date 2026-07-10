@@ -113,7 +113,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="px-4 py-4 hover:bg-gray-50/70 dark:hover:bg-gray-800 transition-all">
+  <div class="px-4 py-5 transition-all hover:bg-gray-50/70 dark:hover:bg-gray-800">
     <div class="hidden lg:grid lg:grid-cols-12 gap-4 items-center">
       <div class="col-span-1">
         <Link :href="route('store.show', productSlug)">
@@ -184,9 +184,9 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <div class="lg:hidden space-y-3">
+    <div class="space-y-4 lg:hidden">
       <div class="flex gap-3">
-        <Link :href="route('store.show', productSlug)" class="flex-shrink-0">
+        <Link :href="route('store.show', productSlug)" class="flex min-h-12 flex-shrink-0 items-start rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
           <img
             :src="productImage"
             :alt="product.name"
@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
           />
         </Link>
         <div class="flex-1 min-w-0">
-          <Link :href="route('store.show', productSlug)" class="text-sm font-medium text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 hover:underline">
+          <Link :href="route('store.show', productSlug)" class="inline-flex min-h-12 items-center rounded-md text-base font-semibold leading-6 text-gray-900 hover:text-gray-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-white dark:hover:text-gray-300">
             {{ product.name }}
           </Link>
           <p class="text-xs font-mono text-gray-500 dark:text-gray-400 mt-1">{{ partNumber }}</p>
@@ -217,29 +217,29 @@ onBeforeUnmount(() => {
           </p>
         </div>
       </div>
-      <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+      <p class="text-base leading-6 text-gray-600 line-clamp-3 dark:text-gray-300">
         {{ product.description ?? 'No description available.' }}
       </p>
       <div class="flex items-center gap-2">
         <button
           type="button"
-          class="px-3 py-1 border border-gray-300 rounded text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-gray-300 text-xl font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="quantity <= 1"
           @click="decrementLocalQuantity"
         >
           &minus;
         </button>
-        <span class="w-10 text-center text-sm font-semibold text-gray-900">{{ quantity }}</span>
+        <span class="w-10 text-center text-base font-semibold text-gray-900">{{ quantity }}</span>
         <button
           type="button"
-          class="px-3 py-1 border border-gray-300 rounded text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-gray-300 text-xl font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600"
           @click="incrementLocalQuantity"
         >
           +
         </button>
         <button
           type="button"
-          class="flex-1 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          class="min-h-12 flex-1 rounded-md bg-blue-700 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           @click="handleAddToCart"
         >
           <span v-if="justAdded" class="inline-flex items-center gap-1">

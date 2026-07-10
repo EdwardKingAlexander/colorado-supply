@@ -53,10 +53,10 @@ const showPagination = computed(() => props.totalPages > 1)
 </script>
 
 <template>
-  <div class="bg-white/95 dark:bg-gray-900/90 rounded-2xl shadow-xl ring-1 ring-gray-100 dark:ring-gray-800 overflow-hidden">
+  <div class="overflow-hidden rounded-lg bg-white/95 shadow-xl ring-1 ring-gray-100 dark:bg-gray-900/90 dark:ring-gray-800">
     <div class="p-5 border-b border-gray-100 dark:border-gray-800">
       <h1 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Products</h1>
-      <p class="text-sm font-mono text-gray-500 dark:text-gray-400 mt-1">
+      <p class="mt-1 text-base leading-6 text-gray-600 dark:text-gray-300">
         {{ headerSubtitle }}
       </p>
     </div>
@@ -96,8 +96,8 @@ const showPagination = computed(() => props.totalPages > 1)
       <div v-if="products.length" class="divide-y divide-gray-100 dark:divide-gray-800">
         <ProductRow v-for="product in products" :key="product.id" :product="product" />
       </div>
-      <div v-else class="p-10 text-center text-sm text-gray-500">
-        <div class="inline-flex flex-col items-center gap-2 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 px-8 py-6 shadow-sm">
+      <div v-else class="p-4 text-center text-base text-gray-500 sm:p-10">
+        <div class="inline-flex w-full flex-col items-center gap-2 rounded-lg border border-dashed border-gray-300 px-4 py-6 shadow-sm sm:w-auto sm:px-8 dark:border-gray-600">
           <p class="font-semibold text-lg text-gray-800 dark:text-gray-100">No products match your filters</p>
           <p class="text-sm text-gray-500 dark:text-gray-400">
             Try removing a filter, widening the search term, or browsing categories.
@@ -105,14 +105,14 @@ const showPagination = computed(() => props.totalPages > 1)
           <div class="mt-4 flex flex-wrap justify-center gap-2">
             <button
               type="button"
-              class="px-3 py-1.5 text-xs font-semibold rounded-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              class="inline-flex min-h-12 items-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
               @click="$emit('clear-filters')"
             >
               Clear filters
             </button>
             <button
               type="button"
-              class="px-3 py-1.5 text-xs font-semibold rounded-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              class="inline-flex min-h-12 items-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
               @click="$emit('reset-navigation')"
             >
               Browse categories
@@ -124,23 +124,23 @@ const showPagination = computed(() => props.totalPages > 1)
 
     <div
       v-if="showPagination"
-      class="px-5 py-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-3 text-sm bg-gray-50/60 dark:bg-gray-900/60"
+      class="flex items-center justify-between gap-2 border-t border-gray-100 bg-gray-50/60 px-4 py-4 text-base dark:border-gray-800 dark:bg-gray-900/60 sm:px-5"
     >
       <button
         type="button"
-        class="px-4 py-2 border rounded-lg font-medium transition"
+        class="inline-flex min-h-12 min-w-12 items-center justify-center rounded-md border px-3 py-3 font-medium transition sm:px-4"
         :class="canGoPrevious ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 cursor-not-allowed'"
         :disabled="!canGoPrevious"
         @click="emit('previous')"
       >
         Previous
       </button>
-      <p class="text-xs text-gray-500">
+      <p class="text-sm text-gray-600">
         Page {{ currentPage }} of {{ totalPages }}
       </p>
       <button
         type="button"
-        class="px-4 py-2 border rounded-lg font-medium transition"
+        class="inline-flex min-h-12 min-w-12 items-center justify-center rounded-md border px-3 py-3 font-medium transition sm:px-4"
         :class="canGoNext ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 cursor-not-allowed'"
         :disabled="!canGoNext"
         @click="emit('next')"

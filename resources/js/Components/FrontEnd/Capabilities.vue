@@ -3,12 +3,12 @@ import { WrenchScrewdriverIcon, TruckIcon, Cog6ToothIcon, CubeIcon, BuildingOffi
 </script>
 
 <template>
-  <section id="capabilities" class="bg-white dark:bg-gray-900 py-24 sm:py-32 scroll-mt-20">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+  <section id="capabilities" class="scroll-mt-20 bg-white py-16 sm:py-24 dark:bg-gray-900">
+    <div class="mobile-page-gutter mx-auto max-w-7xl lg:px-8">
       <!-- Section Header -->
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-base font-semibold text-amber-600 dark:text-amber-400">Our Expertise</h2>
-        <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+        <p class="mt-2 text-3xl font-bold leading-10 tracking-normal text-gray-900 sm:text-4xl dark:text-white">
           Capabilities
         </p>
         <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
@@ -18,7 +18,7 @@ import { WrenchScrewdriverIcon, TruckIcon, Cog6ToothIcon, CubeIcon, BuildingOffi
       </div>
 
       <!-- Grid -->
-      <div class="mx-auto mt-16 max-w-4xl grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-12">
         <!-- Industrial Supplies -->
         <div class="flex flex-col items-start">
           <WrenchScrewdriverIcon class="h-10 w-10 text-amber-600 dark:text-amber-400" />
@@ -75,22 +75,22 @@ import { WrenchScrewdriverIcon, TruckIcon, Cog6ToothIcon, CubeIcon, BuildingOffi
       </div>
 
       <!-- Call to Action -->
-      <div class="mt-20 text-center">
+      <div class="mt-16 text-center sm:mt-20">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Ready to work with us?</h3>
         <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
           Download our Capabilities Statement or contact us today to discuss how we can support your next project.
         </p>
-        <div class="mt-8 flex justify-center gap-x-6">
+        <div class="mx-auto mt-8 flex max-w-md flex-col justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
           <a
             href="/docs/Colorado_Supply_Capabilities_Statement.pdf"
             download
-            class="rounded-md bg-amber-700 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+            class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-amber-700 px-5 py-3 text-base font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 sm:w-auto"
           >
             Download Capabilities Statement
           </a>
           <a
             href="#contact"
-            class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
+            class="inline-flex min-h-12 w-full items-center justify-center rounded-md px-5 py-3 text-base font-semibold text-gray-900 hover:bg-gray-100 hover:text-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 sm:w-auto dark:text-white dark:hover:bg-white/10 dark:hover:text-amber-300"
           >
             Contact Us →
           </a>

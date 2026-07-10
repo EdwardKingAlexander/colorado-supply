@@ -1,6 +1,6 @@
 <template>
   <footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-    <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+    <div class="mobile-page-gutter mx-auto max-w-7xl py-12 lg:px-8">
       <div class="grid grid-cols-1 gap-12 lg:grid-cols-4">
         <!-- Company Info -->
         <div>
@@ -63,7 +63,7 @@
             <a
               href="/docs/Colorado_Supply_Capabilities_Statement.pdf"
               download
-              class="inline-flex items-center rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+              class="inline-flex min-h-12 items-center rounded-md bg-amber-700 px-4 py-3 text-base font-semibold text-white shadow hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
             >
               Download Capabilities
             </a>
@@ -73,7 +73,7 @@
 
       <!-- Bottom Bar -->
       <div class="mt-12 border-t border-gray-200 pt-6 dark:border-gray-700">
-        <div class="text-xs text-gray-700 dark:text-gray-300">
+        <div class="text-sm leading-5 text-gray-700 dark:text-gray-300">
           <p>© {{ new Date().getFullYear() }} Colorado Supply & Procurement LLC. All rights reserved.</p>
           <p class="mt-2">
             <span class="text-gray-700 dark:text-gray-300">Website by</span>
@@ -93,6 +93,6 @@
 
 <style scoped>
 .footer-link {
-  @apply text-sm text-gray-700 hover:text-amber-700 dark:text-gray-300 dark:hover:text-amber-300;
+  @apply flex min-h-12 items-center text-base leading-6 text-gray-700 hover:text-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-600 dark:text-gray-300 dark:hover:text-amber-300 lg:min-h-0 lg:text-sm lg:leading-5;
 }
 </style>

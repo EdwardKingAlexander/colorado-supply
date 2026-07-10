@@ -38,11 +38,11 @@ const exportUrl = () => route('dashboard.reports.export', {
 </script>
 
 <template>
-  <section class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+  <section class="dashboard-filter rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
     <div class="grid gap-4 md:grid-cols-6">
-      <label class="text-sm">
+      <label class="text-base">
         <span class="font-medium text-gray-700">Range</span>
-        <select v-model="form.range" class="mt-1 block w-full rounded-md border-gray-300 text-sm">
+        <select v-model="form.range" class="mt-2 block w-full rounded-md border-gray-300 text-base">
           <option value="this_month">This month</option>
           <option value="last_30_days">Last 30 days</option>
           <option value="quarter_to_date">Quarter to date</option>
@@ -51,30 +51,30 @@ const exportUrl = () => route('dashboard.reports.export', {
           <option value="custom">Custom</option>
         </select>
       </label>
-      <label class="text-sm">
+      <label class="text-base">
         <span class="font-medium text-gray-700">Start</span>
-        <input v-model="form.start_date" type="date" :disabled="form.range !== 'custom'" class="mt-1 block w-full rounded-md border-gray-300 text-sm disabled:bg-gray-100" />
+        <input v-model="form.start_date" type="date" :disabled="form.range !== 'custom'" class="mt-2 block w-full rounded-md border-gray-300 text-base disabled:bg-gray-100" />
       </label>
-      <label class="text-sm">
+      <label class="text-base">
         <span class="font-medium text-gray-700">End</span>
-        <input v-model="form.end_date" type="date" :disabled="form.range !== 'custom'" class="mt-1 block w-full rounded-md border-gray-300 text-sm disabled:bg-gray-100" />
+        <input v-model="form.end_date" type="date" :disabled="form.range !== 'custom'" class="mt-2 block w-full rounded-md border-gray-300 text-base disabled:bg-gray-100" />
       </label>
-      <label class="text-sm">
+      <label class="text-base">
         <span class="font-medium text-gray-700">Group by</span>
-        <select v-model="form.group_by" class="mt-1 block w-full rounded-md border-gray-300 text-sm">
+        <select v-model="form.group_by" class="mt-2 block w-full rounded-md border-gray-300 text-base">
           <option v-for="option in filters.options.group_by" :key="option.value" :value="option.value">{{ option.label }}</option>
         </select>
       </label>
-      <label class="text-sm">
+      <label class="text-base">
         <span class="font-medium text-gray-700">Location</span>
-        <select v-model="form.location_id" class="mt-1 block w-full rounded-md border-gray-300 text-sm">
+        <select v-model="form.location_id" class="mt-2 block w-full rounded-md border-gray-300 text-base">
           <option value="">All</option>
           <option v-for="location in filters.options.locations" :key="location.id" :value="location.id">{{ location.name }}</option>
         </select>
       </label>
-      <label class="text-sm">
+      <label class="text-base">
         <span class="font-medium text-gray-700">Sublocation</span>
-        <select v-model="form.sublocation_id" class="mt-1 block w-full rounded-md border-gray-300 text-sm">
+        <select v-model="form.sublocation_id" class="mt-2 block w-full rounded-md border-gray-300 text-base">
           <option value="">All</option>
           <template v-for="location in filters.options.locations" :key="location.id">
             <option v-for="child in location.children" :key="child.id" :value="child.id">{{ location.name }} / {{ child.name }}</option>
@@ -83,11 +83,11 @@ const exportUrl = () => route('dashboard.reports.export', {
       </label>
     </div>
 
-    <div class="mt-5 flex flex-wrap gap-2">
-      <button type="button" class="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800" @click="apply">
+    <div class="mt-5 grid gap-2 xs:grid-cols-2 sm:flex">
+      <button type="button" class="inline-flex min-h-12 items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" @click="apply">
         Preview report
       </button>
-      <a :href="exportUrl()" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+      <a :href="exportUrl()" class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
         Export CSV
       </a>
     </div>

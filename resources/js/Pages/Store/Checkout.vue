@@ -147,37 +147,37 @@ const submit = async () => {
 
   <AuthenticatedLayout>
     <div class="bg-gray-50 min-h-screen">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div class="mobile-page-gutter mx-auto max-w-5xl space-y-6 py-6 sm:py-8 lg:px-8">
         <div>
           <p class="text-sm text-gray-500 uppercase tracking-wide">Checkout</p>
           <h1 class="text-2xl font-semibold text-gray-900">Shipping & Billing Details</h1>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <form class="lg:col-span-2 space-y-6" @submit.prevent="submit">
+          <form class="checkout-form space-y-6 lg:col-span-2" @submit.prevent="submit">
             <!-- Contact Info -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
               <h2 class="text-lg font-semibold text-gray-900">Contact Information</h2>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <InputLabel for="contact_name" value="Full Name" />
-                  <TextInput id="contact_name" v-model="form.contact_name" class="mt-1 block w-full" required />
+                  <TextInput id="contact_name" v-model="form.contact_name" class="mt-2 block w-full" required autocomplete="name" />
                   <InputError class="mt-1" :message="fieldError('contact_name')" />
                 </div>
                 <div>
                   <InputLabel for="contact_email" value="Email" />
-                  <TextInput id="contact_email" type="email" v-model="form.contact_email" class="mt-1 block w-full" required />
+                  <TextInput id="contact_email" type="email" v-model="form.contact_email" class="mt-2 block w-full" required autocomplete="email" />
                   <InputError class="mt-1" :message="fieldError('contact_email')" />
                 </div>
                 <div>
                   <InputLabel for="contact_phone" value="Phone (optional)" />
-                  <TextInput id="contact_phone" v-model="form.contact_phone" class="mt-1 block w-full" />
+                  <TextInput id="contact_phone" type="tel" inputmode="tel" autocomplete="tel" v-model="form.contact_phone" class="mt-2 block w-full" />
                   <InputError class="mt-1" :message="fieldError('contact_phone')" />
                 </div>
                 <div>
                   <InputLabel for="company_name" value="Company (optional)" />
-                  <TextInput id="company_name" v-model="form.company_name" class="mt-1 block w-full" />
+                  <TextInput id="company_name" v-model="form.company_name" class="mt-2 block w-full" autocomplete="organization" />
                   <InputError class="mt-1" :message="fieldError('company_name')" />
                 </div>
                 <div>
@@ -205,7 +205,7 @@ const submit = async () => {
             </div>
 
             <!-- Billing Address -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
               <h2 class="text-lg font-semibold text-gray-900">Billing Address</h2>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -243,11 +243,11 @@ const submit = async () => {
             </div>
 
             <!-- Shipping Address -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
-              <div class="flex items-center justify-between">
+            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Shipping Address</h2>
-                <label class="flex items-center gap-2 text-sm text-gray-700">
-                  <input type="checkbox" v-model="form.shipping_same_as_billing" class="rounded border-gray-300" />
+                <label class="flex min-h-12 cursor-pointer items-center gap-3 rounded-md px-2 text-base text-gray-700 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-500">
+                  <input type="checkbox" v-model="form.shipping_same_as_billing" class="h-5 w-5 rounded border-gray-300" />
                   Same as billing address
                 </label>
               </div>
@@ -288,11 +288,11 @@ const submit = async () => {
 
             <InputError :message="fieldError('items')" />
 
-            <div class="flex items-center justify-between">
-              <Link :href="route('store.cart')" class="text-sm text-gray-600 hover:text-gray-900">
+            <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <Link :href="route('store.cart')" class="inline-flex min-h-12 items-center justify-center rounded-md px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 &larr; Back to Cart
               </Link>
-              <PrimaryButton :disabled="submitting || !hasItems">
+              <PrimaryButton class="w-full sm:w-auto" :disabled="submitting || !hasItems">
                 <span v-if="submitting">Placing Order…</span>
                 <span v-else>Place Order</span>
               </PrimaryButton>
@@ -301,19 +301,19 @@ const submit = async () => {
 
           <!-- Order Summary -->
           <div class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4 sticky top-24">
+            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-20">
               <h2 class="text-lg font-semibold text-gray-900">Order Summary</h2>
 
               <div class="space-y-4 divide-y divide-gray-100">
                 <template v-for="(group, locationId) in groupedItems" :key="locationId">
                   <div class="pt-2 first:pt-0">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    <p class="mb-2 text-sm font-semibold uppercase text-gray-600">
                       {{ locationNameById[locationId] }}
                     </p>
-                    <div v-for="item in group" :key="item.id" class="flex items-center justify-between text-sm py-1">
+                    <div v-for="item in group" :key="item.id" class="flex items-start justify-between gap-3 py-2 text-base">
                       <div>
                         <p class="font-medium text-gray-900">{{ item.name }}</p>
-                        <p class="text-xs text-gray-500">Qty {{ item.quantity }} &times; {{ formatCurrency(item.price) }}</p>
+                        <p class="text-sm text-gray-600">Qty {{ item.quantity }} &times; {{ formatCurrency(item.price) }}</p>
                       </div>
                       <p class="font-semibold text-gray-900">{{ formatCurrency(item.price * item.quantity) }}</p>
                     </div>

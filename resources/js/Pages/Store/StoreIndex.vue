@@ -7,6 +7,7 @@ import ParametricFilters from '@/Components/Store/ParametricFilters.vue'
 import ProductList from '@/Components/Store/ProductList.vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { useCartStore } from '@/Stores/useCartStore'
+import { Dialog, DialogPanel } from '@headlessui/vue'
 
 // Navigation state
 const allCategories = ref([])
@@ -25,6 +26,7 @@ const totalPages = ref(1)
 const availableFilters = ref([])
 const activeFilters = ref({})
 const filtersLoading = ref(false)
+const mobileFiltersOpen = ref(false)
 
 const isSearching = computed(() => searchTerm.value.trim().length > 0)
 const showFilters = computed(() => navigationLevel.value === 'products' && Boolean(selectedSubcategory.value))
@@ -32,6 +34,9 @@ const showingProductView = computed(() => navigationLevel.value === 'products' &
 const isGlobalSearch = computed(() => navigationLevel.value === 'products' && !selectedSubcategory.value && isSearching.value)
 const cartStore = useCartStore()
 const cartItemCount = computed(() => cartStore.itemCount.value)
+const activeFilterCount = computed(() => Object.values(activeFilters.value).reduce((count, value) => {
+  return count + (Array.isArray(value) ? value.length : 1)
+}, 0))
 
 // Computed: Get parent categories (top-level categories with no parent)
 const parentCategories = computed(() => {
@@ -372,19 +377,19 @@ onMounted(() => {
 
   <AuthenticatedLayout>
     <div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mobile-page-gutter mx-auto max-w-7xl py-6 sm:py-8 lg:px-8">
         <!-- Header with Cart CTA -->
         <div class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div class="space-y-2">
-            <p class="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase">Industrial Supply Catalog</p>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Browse products & build your cart</h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm font-semibold uppercase text-gray-600 dark:text-gray-300">Industrial Supply Catalog</p>
+            <h1 class="text-3xl font-bold leading-10 text-gray-900 dark:text-white">Browse products & build your cart</h1>
+            <p class="text-base leading-6 text-gray-600 dark:text-gray-300">
               Use the search bar and filters below to zero in on the exact specs you need.
             </p>
           </div>
           <Link
             :href="route('store.cart')"
-            class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
+            class="inline-flex min-h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-4 py-3 text-base font-semibold text-gray-800 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:w-auto dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75h-9A2.25 2.25 0 005.25 6v12a2.25 2.25 0 002.25 2.25h9A2.25 2.25 0 0018.75 18V6a2.25 2.25 0 00-2.25-2.25z" />
@@ -401,8 +406,8 @@ onMounted(() => {
         </div>
 
         <!-- Sticky Search + Context Bar -->
-        <div class="sticky top-24 z-0 -mx-4 sm:-mx-6 lg:-mx-8 mb-8">
-          <div class="bg-gray-50/95 dark:bg-gray-900/95 border border-gray-200 dark:border-gray-700 shadow-sm backdrop-blur rounded-b-2xl px-4 sm:px-6 lg:px-8 py-3 space-y-3">
+        <div class="sticky top-16 z-20 -mx-4 mb-6 sm:-mx-6 lg:-mx-8 lg:mb-8">
+          <div class="space-y-3 border-y border-gray-200 bg-gray-50/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6 lg:rounded-b-lg lg:border-x lg:px-8 dark:border-gray-700 dark:bg-gray-900/95">
             <SearchBar
               v-model="searchTerm"
               variant="inline"
@@ -413,13 +418,13 @@ onMounted(() => {
 
             <div
               v-if="breadcrumbTrail.length"
-              class="flex flex-wrap items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300"
+              class="flex flex-wrap items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-300"
             >
               <template v-for="(crumb, index) in breadcrumbTrail" :key="crumb.key">
                 <button
                   v-if="crumb.clickable"
                   type="button"
-                  class="text-blue-600 dark:text-blue-400 hover:underline"
+                  class="inline-flex min-h-12 items-center rounded-md px-2 text-blue-700 hover:bg-blue-50 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-300 dark:hover:bg-white/10"
                   @click="handleBreadcrumbClick(crumb)"
                 >
                   {{ crumb.label }}
@@ -444,7 +449,7 @@ onMounted(() => {
                 v-for="pill in activeFilterPills"
                 :key="pill.id"
                 type="button"
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs font-medium text-gray-700 dark:text-gray-100 shadow-sm hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-300 transition"
+                class="inline-flex min-h-12 items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-blue-500 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:border-blue-400 dark:hover:text-blue-300"
                 @click="removeFilterPill(pill)"
               >
                 <span>{{ pill.label }}</span>
@@ -456,7 +461,7 @@ onMounted(() => {
               <button
                 v-if="hasRemovableFilters"
                 type="button"
-                class="ml-auto text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                class="ml-auto inline-flex min-h-12 items-center rounded-md px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-300 dark:hover:bg-white/10"
                 @click="handleClearFilters"
               >
                 Clear filters
@@ -528,8 +533,14 @@ onMounted(() => {
 
         <!-- VIEW 3: Products with Filters (McMaster-Carr layout) -->
         <div v-if="showingProductView" class="grid grid-cols-12 gap-6">
+          <div v-if="showFilters" class="col-span-12 lg:hidden">
+            <button type="button" class="inline-flex min-h-12 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-3 text-base font-semibold text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-white" @click="mobileFiltersOpen = true">
+              <span>Filters</span>
+              <span v-if="activeFilterCount" class="rounded-full bg-blue-700 px-2.5 py-1 text-sm font-bold text-white">{{ activeFilterCount }}</span>
+            </button>
+          </div>
           <!-- Left Sidebar: Parametric Filters (McMaster-Carr style) -->
-          <div v-if="showFilters" class="col-span-12 lg:col-span-3">
+          <div v-if="showFilters" class="hidden lg:col-span-3 lg:block">
             <ParametricFilters
               :filters="availableFilters"
               :active-filters="activeFilters"
@@ -559,6 +570,24 @@ onMounted(() => {
           </div>
         </div>
       </div>
+
+      <Dialog class="lg:hidden" :open="mobileFiltersOpen" @close="mobileFiltersOpen = false">
+        <div class="fixed inset-0 z-40 bg-gray-950/55" aria-hidden="true" />
+        <DialogPanel class="safe-y fixed inset-y-0 right-0 z-50 flex w-full max-w-drawer flex-col bg-gray-50 shadow-2xl dark:bg-gray-900">
+          <div class="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-700">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Filter products</h2>
+            <button type="button" class="inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-gray-200 dark:hover:bg-white/10" aria-label="Close filters" @click="mobileFiltersOpen = false">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+          <div class="min-h-0 flex-1 overflow-y-auto p-4">
+            <ParametricFilters :filters="availableFilters" :active-filters="activeFilters" :loading="filtersLoading" @update:active-filters="handleFiltersUpdate" @clear="handleClearFilters" />
+          </div>
+          <div class="safe-bottom shrink-0 border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+            <button type="button" class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-blue-700 px-4 py-3 text-base font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" @click="mobileFiltersOpen = false">Show products</button>
+          </div>
+        </DialogPanel>
+      </Dialog>
     </div>
   </AuthenticatedLayout>
 </template>

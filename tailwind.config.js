@@ -14,6 +14,16 @@ export default {
 
   theme: {
     extend: {
+      screens: {
+        xs: '390px',
+      },
+      spacing: {
+        control: '3rem',
+        appbar: '4rem',
+      },
+      maxWidth: {
+        drawer: '22.5rem',
+      },
        fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
