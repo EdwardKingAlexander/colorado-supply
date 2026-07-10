@@ -110,6 +110,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                                         <DropdownLink
                                             v-if="showAdminPanelLink"
                                             :href="route('filament.admin.pages.dashboard')"
+                                            external
                                         >
                                             Admin Panel
                                         </DropdownLink>
@@ -230,6 +231,7 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                             <ResponsiveNavLink
                                 v-if="showAdminPanelLink"
                                 :href="route('filament.admin.pages.dashboard')"
+                                external
                             >
                                 Admin Panel
                             </ResponsiveNavLink>

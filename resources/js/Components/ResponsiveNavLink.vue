@@ -10,6 +10,10 @@ const props = defineProps({
     active: {
         type: Boolean,
     },
+    external: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const classes = computed(() =>
@@ -20,7 +24,10 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <Link :href="href" :class="classes">
+    <a v-if="external" :href="href" :class="classes">
+        <slot />
+    </a>
+    <Link v-else :href="href" :class="classes">
         <slot />
     </Link>
 </template>
