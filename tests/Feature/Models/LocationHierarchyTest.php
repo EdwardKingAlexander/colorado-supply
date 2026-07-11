@@ -4,6 +4,7 @@ use App\Models\Company;
 use App\Models\Location;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\Organizations\LocationManagementService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 
@@ -93,7 +94,7 @@ test('locations can be scoped to a company', function () {
         ->not->toContain($locationB->id);
 });
 
-test('deleting a parent keeps child locations and historical order items', function () {
+test('archiving a parent can promote child locations and keeps historical order items', function () {
     $company = Company::create(['name' => 'Acme Co', 'slug' => 'acme-co']);
     $parent = Location::create([
         'company_id' => $company->id,
@@ -118,8 +119,10 @@ test('deleting a parent keeps child locations and historical order items', funct
         'line_discount' => 0,
     ]);
 
-    $parent->delete();
+    app(LocationManagementService::class)->archive($parent, 'promote');
 
     expect($child->fresh()->parent_id)->toBeNull()
-        ->and($orderItem->fresh()->location_id)->toBe($child->id);
+        ->and($orderItem->fresh()->location_id)->toBe($child->id)
+        ->and(Location::query()->find($parent->id))->toBeNull()
+        ->and(Location::withTrashed()->findOrFail($parent->id)->trashed())->toBeTrue();
 });

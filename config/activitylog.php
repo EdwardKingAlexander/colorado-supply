@@ -1,6 +1,6 @@
 <?php
 
-use Spatie\Activitylog\Models\Activity;
+use App\Models\ActivityLog;
 
 return [
 
@@ -38,7 +38,7 @@ return [
      * It should implement the Spatie\Activitylog\Contracts\Activity interface
      * and extend Illuminate\Database\Eloquent\Model.
      */
-    'activity_model' => Activity::class,
+    'activity_model' => ActivityLog::class,
 
     /*
      * This is the name of the table that will be created by the migration and

@@ -52,6 +52,7 @@ class CompanyEmailDomain extends Model
 
     public function tapActivity(Activity $activity, string $eventName): void
     {
+        $activity->company_id = $this->company_id;
         $activity->properties = $activity->properties->put('company_id', $this->company_id);
     }
 

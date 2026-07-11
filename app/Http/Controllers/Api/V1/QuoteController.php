@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,6 +22,11 @@ class QuoteController extends Controller
 {
     public function store(Request $request): Response
     {
+        $locationRule = Rule::exists('locations', 'id')
+            ->where(fn ($query) => $query
+                ->whereNull('deleted_at')
+                ->when($request->user()?->company_id, fn ($query, $companyId) => $query->where('company_id', $companyId)));
+
         $validated = $request->validate([
             'customer.name' => ['nullable', 'string', 'max:255'],
             'customer.company' => ['nullable', 'string', 'max:255'],
@@ -30,7 +36,7 @@ class QuoteController extends Controller
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.slug' => ['nullable', 'string', 'max:255'],
-            'items.*.location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'items.*.location_id' => ['nullable', 'integer', $locationRule],
             'tax' => ['nullable', 'numeric', 'min:0'],
             'total' => ['nullable', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string', 'max:1000'],

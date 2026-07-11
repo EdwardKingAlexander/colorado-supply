@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\StoreCheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class StoreCheckoutController extends Controller
 {
@@ -13,6 +14,11 @@ class StoreCheckoutController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $locationRule = Rule::exists('locations', 'id')
+            ->where(fn ($query) => $query
+                ->whereNull('deleted_at')
+                ->when($request->user()?->company_id, fn ($query, $companyId) => $query->where('company_id', $companyId)));
+
         $validated = $request->validate([
             'items' => ['required', 'array', 'min:1'],
             'items.*.id' => ['required'],
@@ -21,7 +27,7 @@ class StoreCheckoutController extends Controller
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.slug' => ['nullable', 'string', 'max:255'],
-            'items.*.location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'items.*.location_id' => ['nullable', 'integer', $locationRule],
 
             'contact_name' => ['required', 'string', 'max:255'],
             'contact_email' => ['required', 'email', 'max:255'],

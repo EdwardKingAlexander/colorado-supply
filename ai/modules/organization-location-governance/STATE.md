@@ -7,7 +7,7 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
 |---|---|---|---|---|
 | - | Module plan (`00-overview.md`) | Complete | 2026-07-10 | Orchestrator approved the overall plan |
 | 1 | Company domains and membership boundary | Complete | 2026-07-10 | Implemented, targeted verification passed, and orchestrator validated |
-| 2 | Auditable location CRUD backend | Awaiting Phase Approval | 2026-07-10 | Scope reconfirmed; implementation remains gated by unrelated full-suite failures |
+| 2 | Auditable location CRUD backend | Awaiting Validation | 2026-07-10 | Implemented; focused and full regression suites pass |
 | 3 | Dashboard location management and history | Not Started | 2026-07-10 | Normal-user UI and tenant-visible read-only trail |
 | 4 | Supervisor requests and member locks | Not Started | 2026-07-10 | First approval by admin; later approvals by supervisor/admin |
 | 5 | Migration, security, and hardening | Not Started | 2026-07-10 | Staged domain activation and adversarial tenant testing |
@@ -97,3 +97,28 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
     `PROJECT_CANNON.md`'s all-tests-pass gate is red from the unrelated MCP
     scraper, SAM document fake-disk, and backup ZIP memory failures recorded
     above. Correcting those failures requires explicit scope authorization.
+- 2026-07-10 — Orchestrator authorized repairing the unrelated test/memory
+  blockers and approved Phase 2. Baseline gate restored before Phase 2 work:
+  - Fixed stale MCP scraper reflection calls, registered the private SAM
+    document disk, and raised PHPUnit-only memory to 512 MB (`64569959`).
+  - Added missing factories, aligned legacy tests with current routes/config and
+    Excel fake APIs, restored quote payment-method validation, and made SAM
+    retry sleeps production-only (`270d235b`).
+  - Full baseline suite passes: 650 passed, 5 skipped, 2,391 assertions.
+  - Phase 2 set to In Progress; later-phase UI and supervisor controls remain
+    out of scope.
+- 2026-07-10 — Phase 2 implemented:
+  - Added company-scoped location authorization, validated dashboard CRUD API
+    routes, and a transactional lifecycle service for root locations and
+    sublocations.
+  - Added archive/restore semantics with explicit promote-or-subtree handling,
+    cycle protection, historical order/quote preservation, and active-location
+    validation for new commerce requests.
+  - Added an indexed `activity_log.company_id`, company-indexed location and
+    domain audit events, administrator-override metadata, and a tenant-scoped
+    read-only organization activity endpoint for the Phase 3 dashboard.
+  - Focused verification passes: 33 tests / 155 assertions. Full regression
+    verification passes: 664 tests, 5 skipped / 2,463 assertions.
+    `vendor/bin/pint --dirty`, config caching, route caching, and
+    `git diff --check` pass.
+  - Phase 2 is Awaiting Validation. No Phase 3 implementation has started.

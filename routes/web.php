@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\MfaSettingsController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Dashboard\LocationController;
+use App\Http\Controllers\Dashboard\OrganizationActivityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardReportController;
 use App\Http\Controllers\DashboardReportExportController;
@@ -39,6 +41,17 @@ Route::get('/company', [CompanyController::class, 'index'])->middleware(['auth',
 Route::get('/dashboard', DashboardController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard');
 Route::get('/dashboard/reports', DashboardReportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports');
 Route::get('/dashboard/reports/export', DashboardReportExportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports.export');
+
+Route::middleware(['auth', 'verified.enabled'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
+    Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
+    Route::patch('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
+    Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
+    Route::post('/locations/{location}/restore', [LocationController::class, 'restore'])
+        ->withTrashed()
+        ->name('locations.restore');
+    Route::get('/organization-history', OrganizationActivityController::class)->name('organization-history.index');
+});
 
 Route::get('/store', [StoreController::class, 'index'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.index');
 Route::get('/store/location/{location:slug}', [StoreController::class, 'index'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.location.index');

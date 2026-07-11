@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Inertia\Ssr\FastHttpGateway;
 use App\Models\ContractDocument;
 use App\Models\Customer;
+use App\Models\Location;
 use App\Models\Opportunity;
 use App\Models\Order;
 use App\Models\Pipeline;
@@ -18,6 +19,7 @@ use App\Observers\QuoteObserver;
 use App\Observers\ShipmentObserver;
 use App\Policies\ContractDocumentPolicy;
 use App\Policies\CustomerPolicy;
+use App\Policies\LocationPolicy;
 use App\Policies\OpportunityPolicy;
 use App\Policies\PipelinePolicy;
 use App\Policies\QuotePolicy;
@@ -97,6 +99,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Register Policies
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Location::class, LocationPolicy::class);
         Gate::policy(Customer::class, CustomerPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);
         Gate::policy(Stage::class, StagePolicy::class);

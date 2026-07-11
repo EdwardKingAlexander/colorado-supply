@@ -128,6 +128,7 @@ class CompanyDomainService
 
                 $activity
                     ->event('domain_enforcement_activated')
+                    ->tap(fn ($record) => $record->company_id = $lockedCompany->getKey())
                     ->withProperties([
                         'company_id' => $lockedCompany->getKey(),
                         'attributes' => ['domain_enforcement_enabled_at' => $lockedCompany->domain_enforcement_enabled_at?->toISOString()],
@@ -157,6 +158,7 @@ class CompanyDomainService
 
                 $activity
                     ->event('domain_enforcement_deactivated')
+                    ->tap(fn ($record) => $record->company_id = $lockedCompany->getKey())
                     ->withProperties([
                         'company_id' => $lockedCompany->getKey(),
                         'attributes' => ['domain_enforcement_enabled_at' => null],

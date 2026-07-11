@@ -29,6 +29,11 @@ class Company extends Model
         return $this->hasMany(Location::class);
     }
 
+    public function allLocations(): HasMany
+    {
+        return $this->hasMany(Location::class)->withTrashed();
+    }
+
     public function users()
     {
         return $this->hasMany(User::class);
