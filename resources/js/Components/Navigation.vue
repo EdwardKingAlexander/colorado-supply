@@ -34,6 +34,19 @@ const storeHref = computed(() => {
 
   return '/store'
 })
+// Dashboard is always reachable for a signed-in customer, regardless of whether
+// the store is currently enabled.
+const dashboardHref = computed(() => {
+  if (!isUserAuthenticated.value) {
+    return null
+  }
+
+  if (typeof route === 'function') {
+    return route('dashboard')
+  }
+
+  return '/dashboard'
+})
 </script>
 
 <template>
@@ -90,6 +103,13 @@ const storeHref = computed(() => {
           </a>
         </template>
         <template v-else-if="shouldShowStoreLink">
+          <a
+            v-if="dashboardHref"
+            :href="dashboardHref"
+            class="text-sm font-semibold text-gray-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
+          >
+            Dashboard
+          </a>
           <a
             v-if="storeHref"
             :href="storeHref"
@@ -174,6 +194,14 @@ const storeHref = computed(() => {
                 </a>
               </template>
               <template v-else-if="shouldShowStoreLink">
+                <a
+                  v-if="dashboardHref"
+                  :href="dashboardHref"
+                  @click="mobileMenuOpen = false"
+                  class="flex min-h-[52px] items-center rounded-md px-3 py-3 text-base font-semibold text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-amber-600 dark:text-white dark:hover:bg-white/5"
+                >
+                  Dashboard
+                </a>
                 <a
                   v-if="storeHref"
                   :href="storeHref"
