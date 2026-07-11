@@ -6,8 +6,8 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
 | # | Phase | Status | Last Updated | Notes |
 |---|---|---|---|---|
 | - | Module plan (`00-overview.md`) | Complete | 2026-07-10 | Orchestrator approved the overall plan |
-| 1 | Company domains and membership boundary | Awaiting Validation | 2026-07-10 | Implemented; 26 targeted tests passing, full suite blocked by unrelated pre-existing failures |
-| 2 | Auditable location CRUD backend | Not Started | 2026-07-10 | Reuses Location hierarchy and Activitylog v4 foundation |
+| 1 | Company domains and membership boundary | Complete | 2026-07-10 | Implemented, targeted verification passed, and orchestrator validated |
+| 2 | Auditable location CRUD backend | Awaiting Phase Approval | 2026-07-10 | Scope reconfirmed; implementation remains gated by unrelated full-suite failures |
 | 3 | Dashboard location management and history | Not Started | 2026-07-10 | Normal-user UI and tenant-visible read-only trail |
 | 4 | Supervisor requests and member locks | Not Started | 2026-07-10 | First approval by admin; later approvals by supervisor/admin |
 | 5 | Migration, security, and hardening | Not Started | 2026-07-10 | Staged domain activation and adversarial tenant testing |
@@ -81,3 +81,19 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
     128 MB PHP limit inside the backup ZIP dependency. Each failing test file
     reproduces independently without this feature's code path.
   - Phase 1 is Awaiting Validation. No Phase 2 implementation has started.
+- 2026-07-10 — Orchestrator validated Phase 1. Phase 1 marked Complete and
+  Phase 2 scope reconfirmed:
+  - Add company-scoped Location policy, form requests, controller, routes, and
+    transactional lifecycle service.
+  - Add soft-delete archive/restore semantics with an explicit child strategy,
+    preserve historical order/quote relations, and exclude archived locations
+    from new commerce selections.
+  - Extend Activitylog with indexed `company_id`, instrument location lifecycle
+    events, and expose a tenant-scoped read-only activity service/endpoint for
+    the Phase 3 UI.
+  - No dashboard CRUD UI or supervisor/member lock workflow is included in
+    Phase 2.
+  - Phase 2 is Awaiting Phase Approval, but implementation cannot begin while
+    `PROJECT_CANNON.md`'s all-tests-pass gate is red from the unrelated MCP
+    scraper, SAM document fake-disk, and backup ZIP memory failures recorded
+    above. Correcting those failures requires explicit scope authorization.
