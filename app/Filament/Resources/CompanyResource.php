@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CompanyResource\Pages;
+use App\Filament\Resources\CompanyResource\RelationManagers\EmailDomainsRelationManager;
 use App\Filament\Resources\CompanyResource\RelationManagers\LocationsRelationManager;
 use App\Models\Company;
 use Filament\Actions\BulkActionGroup;
@@ -16,6 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class CompanyResource extends Resource
 {
@@ -36,7 +38,7 @@ class CompanyResource extends Resource
                         ->required()
                         ->maxLength(255)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (string $operation, $state, callable $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null),
+                        ->afterStateUpdated(fn (string $operation, $state, callable $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                     TextInput::make('slug')
                         ->required()
@@ -82,6 +84,20 @@ class CompanyResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
+                TextColumn::make('emailDomains.domain')
+                    ->label('Approved domains')
+                    ->badge()
+                    ->separator(',')
+                    ->placeholder('Not configured')
+                    ->toggleable(),
+
+                TextColumn::make('domain_enforcement_enabled_at')
+                    ->label('Domain enforcement')
+                    ->formatStateUsing(fn ($state) => $state ? 'Enabled' : 'Disabled')
+                    ->badge()
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->sortable(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -109,6 +125,7 @@ class CompanyResource extends Resource
     public static function getRelations(): array
     {
         return [
+            EmailDomainsRelationManager::class,
             LocationsRelationManager::class,
         ];
     }

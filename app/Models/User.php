@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Notifications\VerifyEmailAddress;
+use App\Services\Organizations\CompanyDomainService;
 use App\Support\EmailVerificationSettings;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -126,5 +127,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function mfaCodes(): HasMany
     {
         return $this->hasMany(MfaCode::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if (! $user->isDirty(['email', 'company_id'])) {
+                return;
+            }
+
+            $company = $user->company_id
+                ? Company::query()->find($user->company_id)
+                : null;
+
+            app(CompanyDomainService::class)->assertMembershipAllowed($company, $user->email);
+        });
     }
 }

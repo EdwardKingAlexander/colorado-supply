@@ -52,6 +52,14 @@ class UserResource extends Resource
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
 
+                        Select::make('company_id')
+                            ->label('Company')
+                            ->relationship('company', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->nullable()
+                            ->helperText('For enforced companies, the email must use an approved company domain.'),
+
                         TextInput::make('password')
                             ->password()
                             ->required(fn ($context) => $context === 'create')
