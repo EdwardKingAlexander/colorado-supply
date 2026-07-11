@@ -43,7 +43,7 @@ class StoreToggleUserMenuTest extends TestCase
         $this->assertTrue(McpSettings::for('store-settings', ['enabled' => true])['enabled']);
     }
 
-    public function test_disabling_the_store_via_the_action_blocks_non_admin_access(): void
+    public function test_disabling_the_store_via_the_action_shows_unavailable_page_to_non_admins(): void
     {
         $admin = Admin::factory()->create();
         $this->actingAs($admin, 'admin');
@@ -57,6 +57,7 @@ class StoreToggleUserMenuTest extends TestCase
 
         $this->actingAs($user, 'web')
             ->get('/store')
-            ->assertForbidden();
+            ->assertSuccessful()
+            ->assertInertia(fn ($page) => $page->component('Store/Unavailable'));
     }
 }
