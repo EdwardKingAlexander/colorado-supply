@@ -33,6 +33,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Web-guard users with MFA enrolled must clear the challenge before the
+        // session counts as authenticated. Admins (Filament MFA) are unaffected.
+        $user = Auth::guard('web')->user();
+
+        if ($user && $user->hasTwoFactorEnabled()) {
+            $request->session()->forget('mfa.passed');
+
+            return redirect()->route('mfa.challenge');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

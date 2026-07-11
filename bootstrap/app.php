@@ -2,6 +2,7 @@
 
 use App\Console\Commands\EnsureEdwardAdminUser;
 use App\Http\Middleware\AuthenticateWebOrAdmin;
+use App\Http\Middleware\EnsureMfaSatisfied;
 use App\Http\Middleware\EnsureStoreEnabled;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ScopeToCompany;
@@ -106,6 +107,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+            EnsureMfaSatisfied::class,
         ]);
 
         // Web middleware stack

@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
+import TwoFactorAuthenticationForm from './Partials/TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import { Head } from '@inertiajs/vue3';
@@ -11,6 +12,22 @@ defineProps({
     },
     status: {
         type: String,
+    },
+    twoFactorEnabled: {
+        type: Boolean,
+        default: false,
+    },
+    twoFactorMethod: {
+        type: String,
+        default: null,
+    },
+    twoFactorSetup: {
+        type: Object,
+        default: null,
+    },
+    mfaRecoveryCodes: {
+        type: Array,
+        default: null,
     },
 });
 </script>
@@ -43,6 +60,18 @@ defineProps({
                     class="rounded-lg bg-white p-4 shadow sm:p-8"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
+                </div>
+
+                <div
+                    class="rounded-lg bg-white p-4 shadow sm:p-8"
+                >
+                    <TwoFactorAuthenticationForm
+                        class="max-w-xl"
+                        :enabled="twoFactorEnabled"
+                        :method="twoFactorMethod"
+                        :setup="twoFactorSetup"
+                        :recovery-codes="mfaRecoveryCodes"
+                    />
                 </div>
 
                 <div

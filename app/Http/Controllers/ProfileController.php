@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\Auth\TwoFactorAuthenticationService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,11 +17,33 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): Response
+    public function edit(Request $request, TwoFactorAuthenticationService $twoFactor): Response
     {
+        $user = $request->user();
+
+        // In-progress TOTP enrollment: render the provisioning QR from the
+        // secret held pending in the session (never persisted unconfirmed).
+        $pendingSecret = $request->session()->get('mfa.pending_secret');
+        $pendingMethod = $request->session()->get('mfa.pending_method');
+
+        $twoFactorSetup = null;
+        if ($pendingMethod === 'totp' && $pendingSecret) {
+            $twoFactorSetup = [
+                'method' => 'totp',
+                'secret' => $pendingSecret,
+                'qr' => $twoFactor->qrCodeSvg($user, $pendingSecret),
+            ];
+        } elseif ($pendingMethod === 'email') {
+            $twoFactorSetup = ['method' => 'email'];
+        }
+
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
+            'twoFactorEnabled' => $user->hasTwoFactorEnabled(),
+            'twoFactorMethod' => $user->two_factor_method,
+            'twoFactorSetup' => $twoFactorSetup,
+            'mfaRecoveryCodes' => session('mfaRecoveryCodes'),
         ]);
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\SamOpportunitiesExportController;
+use App\Http\Controllers\Auth\MfaSettingsController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
@@ -70,6 +71,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Two-factor authentication (customer/web guard) — enrollment management.
+    Route::post('/profile/two-factor/enable', [MfaSettingsController::class, 'enable'])->name('mfa.enable');
+    Route::post('/profile/two-factor/confirm', [MfaSettingsController::class, 'confirm'])->name('mfa.confirm');
+    Route::post('/profile/two-factor/recovery-codes', [MfaSettingsController::class, 'regenerateRecoveryCodes'])->name('mfa.recovery-codes');
+    Route::delete('/profile/two-factor', [MfaSettingsController::class, 'disable'])->name('mfa.disable');
 
     // SAM favorites page
     Route::get('/sam/opportunities/favorites', function () {

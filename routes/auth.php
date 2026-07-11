@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\MfaChallengeController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -36,6 +37,16 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // MFA login challenge (reachable while the challenge is pending).
+    Route::get('mfa/challenge', [MfaChallengeController::class, 'show'])
+        ->name('mfa.challenge');
+    Route::post('mfa/challenge', [MfaChallengeController::class, 'verify'])
+        ->middleware('throttle:10,1')
+        ->name('mfa.challenge.verify');
+    Route::post('mfa/challenge/email', [MfaChallengeController::class, 'sendEmailCode'])
+        ->middleware('throttle:6,1')
+        ->name('mfa.challenge.email');
+
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 
