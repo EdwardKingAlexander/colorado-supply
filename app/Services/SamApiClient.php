@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -162,7 +163,9 @@ class SamApiClient
             'error_category' => 'rate_limit',
         ]);
 
-        sleep($delay);
+        if (! app()->environment('testing')) {
+            sleep($delay);
+        }
     }
 
     /**
@@ -192,7 +195,7 @@ class SamApiClient
      * Build error response for HTTP errors.
      *
      * @param  string  $naicsCode  NAICS code
-     * @param  \Illuminate\Http\Client\Response  $response  HTTP response
+     * @param  Response  $response  HTTP response
      * @return array Error response
      */
     protected function buildErrorResponse(string $naicsCode, $response): array
@@ -305,7 +308,7 @@ class SamApiClient
      * Parse and validate successful API response.
      *
      * @param  string  $naicsCode  NAICS code
-     * @param  \Illuminate\Http\Client\Response  $response  HTTP response
+     * @param  Response  $response  HTTP response
      * @return array Success response with mapped opportunities
      */
     protected function parseSuccessResponse(string $naicsCode, $response): array

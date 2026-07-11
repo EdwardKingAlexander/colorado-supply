@@ -274,7 +274,7 @@ describe('cache forget operations', function () {
         expect($cache->has('123456', $params))->toBeFalse();
     });
 
-    test('returns true even when clearing non-existent cache entry', function () {
+    test('returns false when clearing a non-existent cache entry', function () {
         $cache = new SamOpportunitiesCache;
 
         $params = [
@@ -285,10 +285,9 @@ describe('cache forget operations', function () {
             'posted_to' => '11/19/2025',
         ];
 
-        // Laravel's cache forget returns true even if key didn't exist
         $result = $cache->forget('123456', $params);
 
-        expect($result)->toBeTrue();
+        expect($result)->toBeFalse();
     });
 
     test('returns false and logs warning on cache driver failure', function () {
@@ -345,7 +344,7 @@ describe('cache forgetMultiple operations', function () {
         expect($cache->has('345678', $params))->toBeFalse();
     });
 
-    test('returns total count when clearing entries (Laravel cache always returns true)', function () {
+    test('returns the count of entries that existed', function () {
         $cache = new SamOpportunitiesCache;
 
         $params = [
@@ -359,13 +358,12 @@ describe('cache forgetMultiple operations', function () {
         // Only store one entry
         $cache->put('123456', $params, ['success' => true]);
 
-        // Try to clear three (Laravel cache forget returns true even for non-existent)
         $clearedCount = $cache->forgetMultiple(['123456', '234567', '345678'], $params);
 
-        expect($clearedCount)->toBe(3); // All return true in array cache driver
+        expect($clearedCount)->toBe(1);
     });
 
-    test('returns count when no entries exist (Laravel cache behavior)', function () {
+    test('returns zero when no entries exist', function () {
         $cache = new SamOpportunitiesCache;
 
         $params = [
@@ -376,10 +374,9 @@ describe('cache forgetMultiple operations', function () {
             'posted_to' => '11/19/2025',
         ];
 
-        // Laravel cache forget returns true even for non-existent keys
         $clearedCount = $cache->forgetMultiple(['123456', '234567'], $params);
 
-        expect($clearedCount)->toBe(2); // Both return true in array cache driver
+        expect($clearedCount)->toBe(0);
     });
 });
 
@@ -518,6 +515,6 @@ describe('cache key generation', function () {
     test('uses correct cache key prefix', function () {
         $cache = new SamOpportunitiesCache;
 
-        expect($cache->getPrefix())->toBe('sam_opp_v2');
+        expect($cache->getPrefix())->toBe('sam_opp_v3');
     });
 });

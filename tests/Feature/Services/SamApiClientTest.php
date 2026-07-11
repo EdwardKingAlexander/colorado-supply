@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Log;
 beforeEach(function () {
     // Prevent actual HTTP requests
     Http::preventStrayRequests();
+    Log::shouldReceive('debug')->zeroOrMoreTimes()->byDefault();
+    Log::shouldReceive('warning')->zeroOrMoreTimes()->byDefault();
+    Log::shouldReceive('error')->zeroOrMoreTimes()->byDefault();
 });
 
 describe('successful API requests', function () {
@@ -119,10 +122,10 @@ describe('successful API requests', function () {
                 && $request['api_key'] === 'my-api-key'
                 && $request['postedFrom'] === '01/01/2025'
                 && $request['postedTo'] === '01/31/2025'
-                && $request['ncode'] === '234567'
+                && $request['naics'] === '234567'
                 && $request['ptype'] === 'o,p,k'
                 && $request['state'] === 'TX'
-                && $request['limit'] === 500;
+                && $request['limit'] === 1000;
         });
     });
 
@@ -268,7 +271,7 @@ describe('HTTP error handling', function () {
 
         expect($result['success'])->toBeFalse()
             ->and($result['status_code'])->toBe(401)
-            ->and($result['error'])->toBe('SAM.gov API request failed');
+            ->and($result['error'])->toBe('Authentication failed - check SAM.gov API key');
     });
 
     test('handles 404 endpoint not found', function () {

@@ -6,20 +6,18 @@ use Livewire\Volt\Volt;
 test('profile page is displayed', function () {
     $this->actingAs($user = User::factory()->create());
 
-    $this->get('/settings/profile')->assertOk();
+    $this->get('/profile')->assertOk();
 });
 
 test('profile information can be updated', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
-
-    $response = Volt::test('settings.profile')
-        ->set('name', 'Test User')
-        ->set('email', 'test@example.com')
-        ->call('updateProfileInformation');
-
-    $response->assertHasNoErrors();
+    $this->actingAs($user)
+        ->patch('/profile', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ])
+        ->assertSessionHasNoErrors();
 
     $user->refresh();
 
@@ -31,14 +29,12 @@ test('profile information can be updated', function () {
 test('email verification status is unchanged when email address is unchanged', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
-
-    $response = Volt::test('settings.profile')
-        ->set('name', 'Test User')
-        ->set('email', $user->email)
-        ->call('updateProfileInformation');
-
-    $response->assertHasNoErrors();
+    $this->actingAs($user)
+        ->patch('/profile', [
+            'name' => 'Test User',
+            'email' => $user->email,
+        ])
+        ->assertSessionHasNoErrors();
 
     expect($user->refresh()->email_verified_at)->not->toBeNull();
 });

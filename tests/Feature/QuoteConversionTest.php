@@ -40,7 +40,7 @@ test('quote conversion accepts allowed payment methods', function () {
         'status' => 'draft',
     ]);
 
-    $orderingService = new QuoteOrderingService();
+    $orderingService = new QuoteOrderingService;
 
     $allowedMethods = ['credit_card', 'debit_card', 'online_portal'];
 
@@ -63,7 +63,7 @@ test('quote conversion accepts allowed payment methods', function () {
 
         expect($order)->toBeInstanceOf(Order::class);
         expect($order->payment_method)->toBe($method);
-        expect($order->order_total)->toBe(1000.00);
+        expect((float) $order->grand_total)->toBe(1000.00);
         expect($testQuote->fresh()->status)->toBe('ordered');
 
         Event::assertDispatched(QuoteConvertedToOrder::class);
@@ -80,7 +80,7 @@ test('quote conversion rejects disallowed payment methods', function () {
         'status' => 'draft',
     ]);
 
-    $orderingService = new QuoteOrderingService();
+    $orderingService = new QuoteOrderingService;
 
     $disallowedMethods = ['cash', 'check', 'terms', 'invoice'];
 
@@ -109,7 +109,7 @@ test('quote conversion creates order with correct totals and data', function () 
         'status' => 'draft',
     ]);
 
-    $orderingService = new QuoteOrderingService();
+    $orderingService = new QuoteOrderingService;
 
     $order = $orderingService->convert($quote, [
         'payment_method' => 'credit_card',
@@ -120,12 +120,12 @@ test('quote conversion creates order with correct totals and data', function () 
 
     expect($order->quote_id)->toBe($quote->id);
     expect($order->customer_id)->toBe($customer->id);
-    expect($order->order_total)->toBe(1080.00);
+    expect((float) $order->grand_total)->toBe(1080.00);
     expect($order->payment_method)->toBe('credit_card');
     expect($order->po_number)->toBe('PO-TEST-123');
     expect($order->job_number)->toBe('JOB-TEST-456');
     expect($order->notes)->toBe('Test conversion');
-    expect($order->status)->toBe('created');
+    expect($order->status->value)->toBe('draft');
 
     // Verify quote status updated
     expect($quote->fresh()->status)->toBe('ordered');
@@ -147,17 +147,16 @@ test('quote conversion copies walk-in details to order', function () {
         'status' => 'draft',
     ]);
 
-    $orderingService = new QuoteOrderingService();
+    $orderingService = new QuoteOrderingService;
 
     $order = $orderingService->convert($quote, [
         'payment_method' => 'debit_card',
     ]);
 
-    expect($order->walk_in_label)->toBe('cash/card');
-    expect($order->walk_in_org)->toBe('Test Org');
-    expect($order->walk_in_contact_name)->toBe('Jane Doe');
-    expect($order->walk_in_email)->toBe('jane@test.com');
-    expect($order->walk_in_phone)->toBe('555-1234');
-    expect($order->walk_in_billing_json)->toBe(['street' => '123 Main St']);
-    expect($order->walk_in_shipping_json)->toBe(['street' => '456 Oak Ave']);
+    expect($order->cash_card_company)->toBe('Test Org');
+    expect($order->cash_card_name)->toBe('Jane Doe');
+    expect($order->cash_card_email)->toBe('jane@test.com');
+    expect($order->cash_card_phone)->toBe('555-1234');
+    expect($order->billing_address)->toBe(['street' => '123 Main St']);
+    expect($order->shipping_address)->toBe(['street' => '456 Oak Ave']);
 });

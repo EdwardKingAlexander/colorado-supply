@@ -6,6 +6,12 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 
+function assertSamExportDownloaded(?Closure $callback = null): void
+{
+    Excel::matchByRegex();
+    Excel::assertDownloaded('/^sam-opportunities-\d{8}-\d{6}\.xlsx$/', $callback);
+}
+
 beforeEach(function () {
     if (! Schema::hasTable('sam_opportunities')) {
         Schema::create('sam_opportunities', function (Blueprint $table) {
@@ -53,9 +59,7 @@ test('authenticated user can export opportunities', function () {
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename) {
-        return str_contains($filename, 'sam-opportunities-') && str_ends_with($filename, '.xlsx');
-    });
+    assertSamExportDownloaded();
 });
 
 test('export includes only favorited opportunities when favorites_only is true', function () {
@@ -89,7 +93,7 @@ test('export includes only favorited opportunities when favorites_only is true',
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename, $export) use ($favoriteOpp, $nonFavoriteOpp) {
+    assertSamExportDownloaded(function ($export) use ($favoriteOpp, $nonFavoriteOpp) {
         $query = $export->query();
         $results = $query->get();
 
@@ -127,7 +131,7 @@ test('export respects agency filter', function () {
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename, $export) {
+    assertSamExportDownloaded(function ($export) {
         $query = $export->query();
         $results = $query->get();
 
@@ -167,7 +171,7 @@ test('export respects notice_type filter', function () {
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename, $export) {
+    assertSamExportDownloaded(function ($export) {
         $query = $export->query();
         $results = $query->get();
 
@@ -207,7 +211,7 @@ test('export respects naics_code filter', function () {
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename, $export) {
+    assertSamExportDownloaded(function ($export) {
         $query = $export->query();
         $results = $query->get();
 
@@ -252,7 +256,7 @@ test('export sorts by response_deadline ascending then posted_date descending', 
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename, $export) use ($opp1, $opp2, $opp3) {
+    assertSamExportDownloaded(function ($export) use ($opp1, $opp2, $opp3) {
         $results = $export->query()->get();
 
         // Should be sorted by deadline ascending
@@ -285,7 +289,7 @@ test('export can handle empty result set', function () {
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename, $export) {
+    assertSamExportDownloaded(function ($export) {
         $results = $export->query()->get();
 
         // Should have empty results
@@ -308,12 +312,7 @@ test('export filename includes timestamp in america denver timezone', function (
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename) {
-        // Check filename format: sam-opportunities-YYYYMMDD-HHMMSS.xlsx
-        $pattern = '/^sam-opportunities-\d{8}-\d{6}\.xlsx$/';
-
-        return preg_match($pattern, $filename) === 1;
-    });
+    assertSamExportDownloaded();
 });
 
 test('export limits results to max export rows', function () {
@@ -327,7 +326,7 @@ test('export limits results to max export rows', function () {
 
     $response->assertSuccessful();
 
-    Excel::assertDownloaded(function ($filename, $export) {
+    assertSamExportDownloaded(function ($export) {
         $query = $export->query();
         $sql = $query->toSql();
 
@@ -374,5 +373,5 @@ test('export handles server errors gracefully', function () {
         ]);
 
     // Should either succeed (if validation passes) or return validation error
-    expect($response->status())->toBeIn([200, 422, 500]);
+    expect($response->getStatusCode())->toBeIn([200, 422, 500]);
 });

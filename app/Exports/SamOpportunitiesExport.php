@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class SamOpportunitiesExport implements FromQuery, WithColumnWidths, WithEvents, WithHeadings, WithMapping, WithStyles
@@ -29,8 +30,7 @@ class SamOpportunitiesExport implements FromQuery, WithColumnWidths, WithEvents,
         protected ?User $user = null,
         protected bool $favoritesOnly = false,
         protected array $filters = []
-    ) {
-    }
+    ) {}
 
     /**
      * Build the query for SAM opportunities export.
@@ -47,21 +47,21 @@ class SamOpportunitiesExport implements FromQuery, WithColumnWidths, WithEvents,
         }
 
         // Apply additional filters (can be extended in future)
-        if (!empty($this->filters['agency'])) {
+        if (! empty($this->filters['agency'])) {
             $query->where('agency', $this->filters['agency']);
         }
 
-        if (!empty($this->filters['notice_type'])) {
+        if (! empty($this->filters['notice_type'])) {
             $query->where('notice_type', $this->filters['notice_type']);
         }
 
-        if (!empty($this->filters['naics_code'])) {
+        if (! empty($this->filters['naics_code'])) {
             $query->where('naics_code', $this->filters['naics_code']);
         }
 
         // Default sorting: response_deadline ascending, then by posted_date descending
         $query->orderBy('response_deadline', 'asc')
-              ->orderBy('posted_date', 'desc');
+            ->orderBy('posted_date', 'desc');
 
         // Apply row limit for performance
         $query->limit(self::MAX_EXPORT_ROWS);
@@ -127,7 +127,7 @@ class SamOpportunitiesExport implements FromQuery, WithColumnWidths, WithEvents,
                     'color' => ['rgb' => 'FFFFFF'],
                 ],
                 'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '4472C4'],
                 ],
             ],
@@ -158,7 +158,7 @@ class SamOpportunitiesExport implements FromQuery, WithColumnWidths, WithEvents,
     /**
      * Format date for Excel display.
      */
-    protected function formatDate(?string $date): string
+    protected function formatDate(mixed $date): string
     {
         if (empty($date)) {
             return '';
@@ -206,30 +206,30 @@ class SamOpportunitiesExport implements FromQuery, WithColumnWidths, WithEvents,
                 $this->rowCount = $highestRow - 1; // Subtract header row
 
                 // Add text wrapping to title and description columns
-                $sheet->getStyle('B2:B' . $highestRow)->getAlignment()->setWrapText(true);
-                $sheet->getStyle('J2:J' . $highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('B2:B'.$highestRow)->getAlignment()->setWrapText(true);
+                $sheet->getStyle('J2:J'.$highestRow)->getAlignment()->setWrapText(true);
 
                 // Center align some columns
-                $sheet->getStyle('D2:D' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('E2:E' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('F2:F' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('L2:L' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('D2:D'.$highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('E2:E'.$highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('F2:F'.$highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('L2:L'.$highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 // Add metadata footer
                 $footerRow = $highestRow + 2;
                 $exportTimestamp = Carbon::now('America/Denver')->format('Y-m-d H:i:s T');
                 $exportedBy = $this->user ? $this->user->name : 'System';
 
-                $sheet->setCellValue('A' . $footerRow, "Exported by {$exportedBy} on {$exportTimestamp}");
-                $sheet->getStyle('A' . $footerRow)->getFont()->setItalic(true)->setSize(9);
-                $sheet->getStyle('A' . $footerRow)->getFont()->getColor()->setARGB('FF666666');
+                $sheet->setCellValue('A'.$footerRow, "Exported by {$exportedBy} on {$exportTimestamp}");
+                $sheet->getStyle('A'.$footerRow)->getFont()->setItalic(true)->setSize(9);
+                $sheet->getStyle('A'.$footerRow)->getFont()->getColor()->setARGB('FF666666');
 
                 // Add row count info
                 if ($this->rowCount >= self::MAX_EXPORT_ROWS) {
                     $limitRow = $footerRow + 1;
-                    $sheet->setCellValue('A' . $limitRow, "Note: Export limited to " . number_format(self::MAX_EXPORT_ROWS) . " rows. Some results may be excluded.");
-                    $sheet->getStyle('A' . $limitRow)->getFont()->setItalic(true)->setSize(9)->setBold(true);
-                    $sheet->getStyle('A' . $limitRow)->getFont()->getColor()->setARGB('FFFF6600');
+                    $sheet->setCellValue('A'.$limitRow, 'Note: Export limited to '.number_format(self::MAX_EXPORT_ROWS).' rows. Some results may be excluded.');
+                    $sheet->getStyle('A'.$limitRow)->getFont()->setItalic(true)->setSize(9)->setBold(true);
+                    $sheet->getStyle('A'.$limitRow)->getFont()->getColor()->setARGB('FFFF6600');
                 }
             },
         ];

@@ -1,9 +1,9 @@
 <?php
 
-use App\Filament\Resources\CRM\CustomerResource;
 use App\Filament\Resources\CRM\CustomerResource\Pages\CreateCustomer;
 use App\Filament\Resources\CRM\CustomerResource\Pages\EditCustomer;
 use App\Filament\Resources\CRM\CustomerResource\Pages\ListCustomers;
+use App\Models\Admin;
 use App\Models\Customer;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -18,7 +18,9 @@ beforeEach(function () {
     // Set up Filament panel
     Filament::setCurrentPanel('admin');
 
-    // Create a user with permissions
+    $this->actingAs(Admin::factory()->create(), 'admin');
+
+    // The resource policies use the web guard's permission roles.
     $this->actingAs($this->user = User::factory()->create());
 
     // Create super_admin role

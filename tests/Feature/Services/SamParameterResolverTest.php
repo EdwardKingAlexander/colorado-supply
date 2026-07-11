@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\GsaFilter;
-use App\Support\GsaFilterSet;
 use App\Support\SamParameterResolver;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -30,7 +29,7 @@ describe('NAICS code resolution', function () {
             ->toBe(['123456', '234567']);
     });
 
-    test('loads NAICS codes from database when no override provided', function () {
+    test('uses configured NAICS codes when no override is provided', function () {
         GsaFilter::create([
             'type' => 'naics',
             'code' => '111111',
@@ -48,12 +47,13 @@ describe('NAICS code resolution', function () {
         $resolver = new SamParameterResolver;
         $resolved = $resolver->resolve([]);
 
-        expect($resolved['naics_codes'])
-            ->toContain('111111', '222222')
-            ->toHaveCount(2);
+        expect($resolved['naics_codes'])->toBe(array_merge(
+            config('sam_opportunities.naics_codes.primary'),
+            config('sam_opportunities.naics_codes.secondary'),
+        ));
     });
 
-    test('only loads enabled NAICS codes from database', function () {
+    test('does not let legacy database filters replace configured NAICS codes', function () {
         GsaFilter::create([
             'type' => 'naics',
             'code' => '111111',
@@ -72,16 +72,21 @@ describe('NAICS code resolution', function () {
         $resolved = $resolver->resolve([]);
 
         expect($resolved['naics_codes'])
-            ->toContain('111111')
-            ->not->toContain('222222')
-            ->toHaveCount(1);
+            ->not->toContain('111111', '222222')
+            ->toBe(array_merge(
+                config('sam_opportunities.naics_codes.primary'),
+                config('sam_opportunities.naics_codes.secondary'),
+            ));
     });
 
-    test('falls back to GsaFilterSet defaults when no DB records or override', function () {
+    test('uses all configured NAICS defaults when no database records or override exist', function () {
         $resolver = new SamParameterResolver;
         $resolved = $resolver->resolve([]);
 
-        $expectedDefaults = GsaFilterSet::getDefaultNaicsCodes();
+        $expectedDefaults = array_merge(
+            config('sam_opportunities.naics_codes.primary'),
+            config('sam_opportunities.naics_codes.secondary'),
+        );
 
         expect($resolved['naics_codes'])
             ->toBe($expectedDefaults);
@@ -117,15 +122,18 @@ describe('NAICS code resolution', function () {
         $resolver->resolve($params);
     })->throws(InvalidArgumentException::class, 'Invalid NAICS code format: 12345. Expected 6 digits.');
 
-    test('throws exception when no NAICS codes are available anywhere', function () {
-        // Mock GsaFilterSet to return empty array
+    test('does not depend on the legacy cached GSA defaults', function () {
         Cache::forget('gsa_default_naics');
         Cache::put('gsa_default_naics', [], 3600);
 
         $resolver = new SamParameterResolver;
+        $resolved = $resolver->resolve([]);
 
-        $resolver->resolve([]);
-    })->throws(InvalidArgumentException::class, 'No NAICS codes available');
+        expect($resolved['naics_codes'])->toBe(array_merge(
+            config('sam_opportunities.naics_codes.primary'),
+            config('sam_opportunities.naics_codes.secondary'),
+        ));
+    });
 });
 
 describe('PSC code resolution', function () {
@@ -164,7 +172,7 @@ describe('PSC code resolution', function () {
             ->toContain('5340', '5305');
     });
 
-    test('only loads enabled PSC codes from database', function () {
+    test('does not let legacy database filters replace configured PSC codes', function () {
         GsaFilter::create([
             'type' => 'psc',
             'code' => '5340',
@@ -182,16 +190,14 @@ describe('PSC code resolution', function () {
         $resolver = new SamParameterResolver;
         $resolved = $resolver->resolve([]);
 
-        expect($resolved['psc_codes'])
-            ->toContain('5340')
-            ->not->toContain('5305');
+        expect($resolved['psc_codes'])->toBe(config('sam_opportunities.psc_codes'));
     });
 
-    test('falls back to GsaFilterSet defaults when no DB records or override', function () {
+    test('uses configured PSC defaults when no database records or override exist', function () {
         $resolver = new SamParameterResolver;
         $resolved = $resolver->resolve([]);
 
-        $expectedDefaults = GsaFilterSet::getDefaultPscCodes();
+        $expectedDefaults = config('sam_opportunities.psc_codes');
 
         expect($resolved['psc_codes'])
             ->toBe($expectedDefaults);
@@ -214,11 +220,7 @@ describe('notice type resolution', function () {
         $resolved = $resolver->resolve([]);
 
         expect($resolved['notice_types'])
-            ->toBe([
-                'Presolicitation',
-                'Solicitation',
-                'Combined Synopsis/Solicitation',
-            ]);
+            ->toBe(config('sam_opportunities.filters.notice_types'));
     });
 
     test('uses override notice types when provided', function () {
@@ -409,11 +411,11 @@ describe('date range resolution', function () {
 });
 
 describe('limit resolution', function () {
-    test('uses default limit of 50 when not provided', function () {
+    test('uses default limit of 100 when not provided', function () {
         $resolver = new SamParameterResolver;
         $resolved = $resolver->resolve([]);
 
-        expect($resolved['limit'])->toBe(50);
+        expect($resolved['limit'])->toBe(100);
     });
 
     test('uses override limit when provided', function () {
@@ -444,11 +446,11 @@ describe('limit resolution', function () {
 });
 
 describe('other parameters resolution', function () {
-    test('uses default keywords null when not provided', function () {
+    test('uses configured keywords when not provided', function () {
         $resolver = new SamParameterResolver;
         $resolved = $resolver->resolve([]);
 
-        expect($resolved['keywords'])->toBeNull();
+        expect($resolved['keywords'])->toBe(config('sam_opportunities.keywords'));
     });
 
     test('uses override keywords when provided', function () {
@@ -458,7 +460,7 @@ describe('other parameters resolution', function () {
 
         $resolved = $resolver->resolve($params);
 
-        expect($resolved['keywords'])->toBe('fasteners');
+        expect($resolved['keywords'])->toBe(['fasteners']);
     });
 
     test('uses default clearCache false when not provided', function () {
@@ -508,7 +510,7 @@ describe('query metadata generation', function () {
             ->toHaveKey('keywords')
             ->and($resolved['query_metadata']['date_range'])->toBe('10/20/2025 to 11/19/2025')
             ->and($resolved['query_metadata']['state_code'])->toBe('CO')
-            ->and($resolved['query_metadata']['keywords'])->toBe('hardware');
+            ->and($resolved['query_metadata']['keywords'])->toBe(['hardware']);
     });
 
     test('shows nationwide when place is empty string', function () {
@@ -582,7 +584,7 @@ describe('complete resolution integration', function () {
             ->and($resolved['place'])->toBe('TX')
             ->and($resolved['days_back'])->toBe(60)
             ->and($resolved['limit'])->toBe(75)
-            ->and($resolved['keywords'])->toBe('bolts')
+            ->and($resolved['keywords'])->toBe(['bolts'])
             ->and($resolved['clearCache'])->toBeTrue()
             ->and($resolved['notice_type_codes'])->toBe(['o']);
     });

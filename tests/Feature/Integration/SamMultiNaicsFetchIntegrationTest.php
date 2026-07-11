@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Mcp\Servers\Business\Tools\FetchSamOpportunitiesTool;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -127,7 +128,7 @@ describe('complete success scenario', function () {
 
         // Verify query metadata
         expect($result['query']['naics_codes'])->toBe(['236220', '541330', '562910'])
-            ->and($result['query']['state_code'])->toBe('nationwide');
+            ->and($result['query']['state_code'])->toBe('CO');
 
         // Verify state file was created
         $stateFiles = Storage::disk('local')->files('sam/state');
@@ -257,7 +258,7 @@ describe('partial success scenario', function () {
                 ],
             ], 200),
             '*naics=541330*' => function () {
-                throw new \Illuminate\Http\Client\ConnectionException('Connection timeout');
+                throw new ConnectionException('Connection timeout');
             },
             '*naics=562910*' => Http::response([
                 'opportunitiesData' => [

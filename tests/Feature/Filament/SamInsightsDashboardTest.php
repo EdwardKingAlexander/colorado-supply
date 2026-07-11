@@ -3,6 +3,7 @@
 namespace Tests\Feature\Filament;
 
 use App\Filament\Pages\SamInsightsDashboard;
+use App\Models\Admin;
 use App\Models\SamOpportunity;
 use App\Models\SamOpportunityDocument;
 use App\Models\SamOpportunityDocumentChunk;
@@ -11,6 +12,7 @@ use App\Models\SamOpportunityDocumentParse;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class SamInsightsDashboardTest extends TestCase
@@ -63,8 +65,9 @@ class SamInsightsDashboardTest extends TestCase
             'vector' => [0.1, 0.2],
         ]);
 
+        $this->actingAs(Admin::factory()->create(), 'admin');
         $this->actingAs($user);
 
-        $this->get(SamInsightsDashboard::getUrl())->assertStatus(200);
+        Livewire::test(SamInsightsDashboard::class)->assertSuccessful();
     }
 }

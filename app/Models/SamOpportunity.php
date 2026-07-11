@@ -15,6 +15,16 @@ class SamOpportunity extends Model
 
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'response_deadline' => 'date',
+            'posted_date' => 'datetime',
+            'last_modified_date' => 'datetime',
+            'raw_data' => 'array',
+        ];
+    }
+
     public function favoritedBy(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'sam_opportunity_favorites')->withTimestamps();

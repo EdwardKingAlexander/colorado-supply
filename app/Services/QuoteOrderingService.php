@@ -8,7 +8,9 @@ use App\Models\Order;
 use App\Models\Quote;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class QuoteOrderingService
@@ -20,6 +22,10 @@ class QuoteOrderingService
      */
     public function convert(Quote $quote, array $input): Order
     {
+        Validator::make($input, [
+            'payment_method' => ['required', Rule::in(['online_portal', 'credit_card', 'debit_card'])],
+        ])->validate();
+
         $quote->loadMissing(['items', 'customer']);
 
         $sendEmail = (bool) ($input['send_email'] ?? false);
