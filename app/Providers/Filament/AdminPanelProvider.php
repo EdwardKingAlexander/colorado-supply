@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Support\EmailVerificationSettings;
 use App\Support\McpSettings;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
@@ -62,6 +63,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 'toggleStoreAvailability' => static::storeToggleUserMenuAction(),
+                'toggleEmailVerification' => static::emailVerificationToggleUserMenuAction(),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -109,6 +111,48 @@ class AdminPanelProvider extends PanelProvider
                         ->body($storeEnabled
                             ? 'The store is now only accessible to admins.'
                             : 'The store is now accessible to all users.')
+                        ->success()
+                        ->send();
+                } catch (Throwable $e) {
+                    Notification::make()
+                        ->title('Error')
+                        ->body($e->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            });
+    }
+
+    /**
+     * Quick-access duplicate of McpDashboard::getHeaderActions()'s
+     * `toggleEmailVerification` action, exposed in the profile dropdown so
+     * admins don't have to leave the current page to flip it (primarily a
+     * local-development convenience). Keep both in sync if this changes.
+     */
+    protected static function emailVerificationToggleUserMenuAction(): Action
+    {
+        $isEnabled = fn (): bool => EmailVerificationSettings::isEnabled();
+
+        return Action::make('toggleEmailVerification')
+            ->label(fn () => $isEnabled() ? 'Disable Email Verification' : 'Enable Email Verification')
+            ->icon(fn () => $isEnabled() ? 'heroicon-o-envelope-open' : 'heroicon-o-envelope')
+            ->color(fn () => $isEnabled() ? 'warning' : 'success')
+            ->requiresConfirmation()
+            ->modalHeading(fn () => $isEnabled() ? 'Disable Email Verification?' : 'Enable Email Verification?')
+            ->modalDescription(fn () => $isEnabled()
+                ? 'This is a GLOBAL switch: new registrations will not be asked to verify their email address, and no verification emails will be sent. Intended for local development — do not leave disabled in production.'
+                : 'New registrations will be required to verify their email address before accessing account areas.')
+            ->action(function () use ($isEnabled) {
+                $enabled = $isEnabled();
+
+                try {
+                    EmailVerificationSettings::setEnabled(! $enabled);
+
+                    Notification::make()
+                        ->title($enabled ? 'Email Verification Disabled' : 'Email Verification Enabled')
+                        ->body($enabled
+                            ? 'Registrations no longer require email verification, and verification emails are muted.'
+                            : 'Registrations must verify their email address again.')
                         ->success()
                         ->send();
                 } catch (Throwable $e) {

@@ -2,6 +2,8 @@
 
 use App\Console\Commands\EnsureEdwardAdminUser;
 use App\Http\Middleware\AuthenticateWebOrAdmin;
+use App\Http\Middleware\DetectGpcSignal;
+use App\Http\Middleware\EnsureEmailIsVerifiedWhenEnabled;
 use App\Http\Middleware\EnsureMfaSatisfied;
 use App\Http\Middleware\EnsureStoreEnabled;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -104,6 +106,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->statefulApi();
 
+        // Privacy compliance: GPC opt-out detection runs before anything that
+        // consumes the flag; the consent cookie stays unencrypted so the
+        // client-side analytics bootstrap can read the same value (it holds
+        // no secrets — see config/privacy.php).
+        $middleware->web(prepend: [DetectGpcSignal::class]);
+        $middleware->encryptCookies(except: ['cs_privacy_consent']);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
@@ -121,6 +130,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.web_or_admin' => AuthenticateWebOrAdmin::class,
             'store.enabled' => EnsureStoreEnabled::class,
             'scope.company' => ScopeToCompany::class,
+            'verified.enabled' => EnsureEmailIsVerifiedWhenEnabled::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

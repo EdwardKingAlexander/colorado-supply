@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Filament\Resources\ScrapedProducts\ScrapedProductResource;
 use App\Models\ScrapedProduct;
+use App\Support\EmailVerificationSettings;
 use App\Support\McpClient;
 use App\Support\McpSettings;
 use BackedEnum;
@@ -157,8 +158,40 @@ class McpDashboard extends Page
         // Get current store status
         $settings = McpSettings::for('store-settings', ['enabled' => true]);
         $storeEnabled = $settings['enabled'] ?? true;
+        $verificationEnabled = EmailVerificationSettings::isEnabled();
 
         return [
+            // Also exposed as a quick-access item in the admin panel's
+            // profile dropdown (AdminPanelProvider::panel()'s
+            // userMenuItems()) — keep both in sync if this changes.
+            Action::make('toggleEmailVerification')
+                ->label($verificationEnabled ? 'Disable Email Verification' : 'Enable Email Verification')
+                ->icon($verificationEnabled ? 'heroicon-o-envelope-open' : 'heroicon-o-envelope')
+                ->color($verificationEnabled ? 'warning' : 'success')
+                ->requiresConfirmation()
+                ->modalHeading($verificationEnabled ? 'Disable Email Verification?' : 'Enable Email Verification?')
+                ->modalDescription($verificationEnabled
+                    ? 'This is a GLOBAL switch: new registrations will not be asked to verify their email address, and no verification emails will be sent. Intended for local development — do not leave disabled in production.'
+                    : 'New registrations will be required to verify their email address before accessing account areas.')
+                ->action(function () use ($verificationEnabled) {
+                    try {
+                        EmailVerificationSettings::setEnabled(! $verificationEnabled);
+
+                        Notification::make()
+                            ->title($verificationEnabled ? 'Email Verification Disabled' : 'Email Verification Enabled')
+                            ->body($verificationEnabled
+                                ? 'Registrations no longer require email verification, and verification emails are muted.'
+                                : 'Registrations must verify their email address again.')
+                            ->success()
+                            ->send();
+                    } catch (Throwable $e) {
+                        Notification::make()
+                            ->title('Error')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
             // Also exposed as a quick-access item in the admin panel's
             // profile dropdown (AdminPanelProvider::panel()'s
             // userMenuItems()) — keep both in sync if this changes.

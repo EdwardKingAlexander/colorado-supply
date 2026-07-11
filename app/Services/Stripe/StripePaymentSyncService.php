@@ -7,8 +7,8 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Notifications\OrderPaymentFailed;
 use App\Notifications\OrderPaymentReceived;
+use App\Support\OrderNotifier;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 use Stripe\Charge;
 use Stripe\Checkout\Session;
 use Stripe\PaymentIntent;
@@ -66,7 +66,7 @@ class StripePaymentSyncService
 
         if ($order && ! $order->isPaid()) {
             $order->markAsPaid();
-            $this->notifyOrder($order, new OrderPaymentReceived($order));
+            OrderNotifier::send($order, new OrderPaymentReceived($order));
         }
     }
 
@@ -90,7 +90,7 @@ class StripePaymentSyncService
 
         if ($order) {
             $order->markPaymentAsFailed();
-            $this->notifyOrder($order, new OrderPaymentFailed($order, $error?->message));
+            OrderNotifier::send($order, new OrderPaymentFailed($order, $error?->message));
         }
     }
 
@@ -115,17 +115,6 @@ class StripePaymentSyncService
         $order = Order::withoutGlobalScopes()->find($payment->order_id);
 
         $order?->update(['payment_status' => PaymentStatus::Refunded]);
-    }
-
-    private function notifyOrder(Order $order, mixed $notification): void
-    {
-        $email = $order->customer_email;
-
-        if (! $email) {
-            return;
-        }
-
-        Notification::route('mail', $email)->notify($notification);
     }
 
     private function resolvePaymentForIntent(PaymentIntent $intent): ?Payment

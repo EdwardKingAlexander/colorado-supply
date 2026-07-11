@@ -3,11 +3,14 @@
 use App\Http\Controllers\Admin\SamOpportunitiesExportController;
 use App\Http\Controllers\Auth\MfaSettingsController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardReportController;
 use App\Http\Controllers\DashboardReportExportController;
 use App\Http\Controllers\MilSpecPartsController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderTrackingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepairServiceController;
 use App\Http\Controllers\StoreController;
@@ -27,11 +30,15 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/company', [CompanyController::class, 'index'])->middleware(['auth'])->name('company.index');
+Route::post('/privacy/consent', [ConsentController::class, 'store'])
+    ->middleware('throttle:30,1')
+    ->name('privacy.consent.store');
 
-Route::get('/dashboard', DashboardController::class)->middleware(['auth.web_or_admin'])->name('dashboard');
-Route::get('/dashboard/reports', DashboardReportController::class)->middleware(['auth.web_or_admin'])->name('dashboard.reports');
-Route::get('/dashboard/reports/export', DashboardReportExportController::class)->middleware(['auth.web_or_admin'])->name('dashboard.reports.export');
+Route::get('/company', [CompanyController::class, 'index'])->middleware(['auth', 'verified.enabled'])->name('company.index');
+
+Route::get('/dashboard', DashboardController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard');
+Route::get('/dashboard/reports', DashboardReportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports');
+Route::get('/dashboard/reports/export', DashboardReportExportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports.export');
 
 Route::get('/store', [StoreController::class, 'index'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.index');
 Route::get('/store/location/{location:slug}', [StoreController::class, 'index'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.location.index');
@@ -78,11 +85,22 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/two-factor/recovery-codes', [MfaSettingsController::class, 'regenerateRecoveryCodes'])->name('mfa.recovery-codes');
     Route::delete('/profile/two-factor', [MfaSettingsController::class, 'disable'])->name('mfa.disable');
 
+    // Order-notification bell. Deliberately not verification-gated so an
+    // unverified buyer can still receive and follow order updates.
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read', [NotificationController::class, 'markAllRead'])->name('notifications.read');
+
     // SAM favorites page
     Route::get('/sam/opportunities/favorites', function () {
         return Inertia::render('Sam/Favorites');
-    })->name('sam.favorites');
+    })->middleware('verified.enabled')->name('sam.favorites');
 });
+
+// Public order status tracker: signed URL from order emails — intentionally
+// no auth/verification middleware (guests and unverified buyers included).
+Route::get('/orders/{order}/track', OrderTrackingController::class)
+    ->middleware('signed')
+    ->name('orders.track');
 
 // Contact Form Submission
 Route::post('/contact',
@@ -94,7 +112,7 @@ Route::post('/repair-services', [RepairServiceController::class, 'store'])->name
 
 // Mil-Spec Parts Database Download
 Route::get('/mil-spec-parts/download', [MilSpecPartsController::class, 'downloadExcel'])
-    ->middleware('auth')
+    ->middleware(['auth', 'verified.enabled'])
     ->name('mil-spec-parts.download');
 
 // Scraped Product HTML Cache Viewing (admin only)

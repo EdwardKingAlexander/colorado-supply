@@ -6,12 +6,16 @@ use App\Inertia\Ssr\FastHttpGateway;
 use App\Models\ContractDocument;
 use App\Models\Customer;
 use App\Models\Opportunity;
+use App\Models\Order;
 use App\Models\Pipeline;
 use App\Models\Quote;
+use App\Models\Shipment;
 use App\Models\Stage;
 use App\Models\User;
 use App\Observers\OpportunityObserver;
+use App\Observers\OrderObserver;
 use App\Observers\QuoteObserver;
+use App\Observers\ShipmentObserver;
 use App\Policies\ContractDocumentPolicy;
 use App\Policies\CustomerPolicy;
 use App\Policies\OpportunityPolicy;
@@ -67,6 +71,10 @@ class AppServiceProvider extends ServiceProvider
         // Register CRM Observers
         Opportunity::observe(OpportunityObserver::class);
         Quote::observe(QuoteObserver::class);
+
+        // Buyer-facing order status notifications (email + in-app bell)
+        Order::observe(OrderObserver::class);
+        Shipment::observe(ShipmentObserver::class);
 
         CauserResolver::resolveUsing(\Closure::fromCallable(new ActivitylogCauserResolver));
 

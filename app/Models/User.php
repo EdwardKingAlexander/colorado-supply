@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailAddress;
+use App\Support\EmailVerificationSettings;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
@@ -65,6 +68,20 @@ class User extends Authenticatable
     public function hasTwoFactorEnabled(): bool
     {
         return $this->two_factor_confirmed_at !== null;
+    }
+
+    /**
+     * Send the email verification notification — unless verification is
+     * disabled via the admin toggle, in which case skip the send entirely
+     * (local Mailgun sends fail, and enforcement is off anyway).
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        if (! EmailVerificationSettings::isEnabled()) {
+            return;
+        }
+
+        $this->notify(new VerifyEmailAddress);
     }
 
     /**

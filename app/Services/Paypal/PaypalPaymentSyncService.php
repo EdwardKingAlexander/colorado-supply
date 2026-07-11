@@ -6,8 +6,8 @@ use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Notifications\OrderPaymentReceived;
+use App\Support\OrderNotifier;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 
 /**
  * Applies PayPal webhook event payloads to local Order/Payment records.
@@ -55,19 +55,8 @@ class PaypalPaymentSyncService
 
         if ($order && ! $order->isPaid()) {
             $order->markAsPaid();
-            $this->notifyOrder($order, new OrderPaymentReceived($order));
+            OrderNotifier::send($order, new OrderPaymentReceived($order));
         }
-    }
-
-    private function notifyOrder(Order $order, mixed $notification): void
-    {
-        $email = $order->customer_email;
-
-        if (! $email) {
-            return;
-        }
-
-        Notification::route('mail', $email)->notify($notification);
     }
 
     /**

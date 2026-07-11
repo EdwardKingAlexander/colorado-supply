@@ -4,6 +4,8 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
+import NotificationBell from '@/Components/NotificationBell.vue';
+import CookieConsentBanner from '@/Components/Privacy/CookieConsentBanner.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Dialog, DialogPanel } from '@headlessui/vue';
 import { Link, usePage } from '@inertiajs/vue3';
@@ -71,6 +73,10 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
                                     Reports
                                 </NavLink>
                             </div>
+                        </div>
+
+                        <div v-if="showProfileLink" class="ml-auto flex items-center">
+                            <NotificationBell />
                         </div>
 
                         <div class="hidden md:ms-6 md:flex md:items-center">
@@ -274,6 +280,8 @@ const canLogout = computed(() => showProfileLink.value || showAdminPanelLink.val
             <main>
                 <slot />
             </main>
+
+            <CookieConsentBanner />
         </div>
     </div>
 </template>

@@ -9,9 +9,12 @@ use App\Models\Vendor;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
@@ -27,23 +30,73 @@ class VendorResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->label('Vendor Name')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('phone')
-                    ->label('Phone')
-                    ->tel()
-                    ->maxLength(20),
-                Textarea::make('address')
-                    ->label('Address')
-                    ->rows(3)
-                    ->maxLength(500),
+                Section::make('Vendor Details')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Vendor Name')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('email')
+                            ->label('General Email')
+                            ->email()
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        TextInput::make('phone')
+                            ->label('General Phone')
+                            ->tel()
+                            ->maxLength(255),
+                        Textarea::make('address')
+                            ->label('Address')
+                            ->rows(3)
+                            ->maxLength(1000),
+                        Textarea::make('description')
+                            ->label('Description')
+                            ->rows(3)
+                            ->maxLength(2000)
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Contacts')
+                    ->description('Optional personal contacts for this vendor. Mark one contact as preferred when applicable.')
+                    ->schema([
+                        Repeater::make('contacts')
+                            ->relationship('contacts')
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label('Contact Name')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('job_title')
+                                    ->label('Job Title')
+                                    ->maxLength(255),
+                                TextInput::make('email')
+                                    ->email()
+                                    ->maxLength(255),
+                                TextInput::make('phone')
+                                    ->label('Work Phone')
+                                    ->tel()
+                                    ->maxLength(50),
+                                TextInput::make('mobile_phone')
+                                    ->label('Mobile Phone')
+                                    ->tel()
+                                    ->maxLength(50),
+                                Toggle::make('is_preferred')
+                                    ->label('Preferred Contact')
+                                    ->helperText('Selecting this contact clears the previous preferred contact.'),
+                                Textarea::make('notes')
+                                    ->rows(2)
+                                    ->maxLength(1000)
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(2)
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Contact')
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'New Contact')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -70,6 +123,22 @@ class VendorResource extends Resource
                     ->searchable()
                     ->placeholder('--')
                     ->sortable(),
+                TextColumn::make('preferredContact.name')
+                    ->label('Preferred Contact')
+                    ->placeholder('--')
+                    ->searchable(),
+                TextColumn::make('preferredContact.email')
+                    ->label('Contact Email')
+                    ->url(fn ($record) => filled($record->preferredContact?->email) ? "mailto:{$record->preferredContact->email}" : null)
+                    ->placeholder('--'),
+                TextColumn::make('preferred_contact_phone')
+                    ->label('Contact Phone')
+                    ->getStateUsing(fn (Vendor $record) => $record->preferredContact?->phone ?: $record->preferredContact?->mobile_phone)
+                    ->url(fn (Vendor $record) => filled($record->preferredContact?->phone ?: $record->preferredContact?->mobile_phone)
+                        ? 'tel:'.($record->preferredContact?->phone ?: $record->preferredContact?->mobile_phone)
+                        : null)
+                    ->fontFamily(FontFamily::Mono)
+                    ->placeholder('--'),
             ])
             ->filters([
                 //

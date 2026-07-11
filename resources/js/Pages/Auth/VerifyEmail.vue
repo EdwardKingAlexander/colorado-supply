@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import BrandedAuthLayout from '@/Layouts/BrandedAuthLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
@@ -22,17 +22,14 @@ const verificationLinkSent = computed(
 </script>
 
 <template>
-    <GuestLayout>
+    <BrandedAuthLayout
+        title="Verify your email address"
+        subtitle="Thanks for signing up! We've emailed you a verification link — click it to activate your account. If it hasn't arrived, we will gladly send you another."
+    >
         <Head title="Email Verification" />
 
-        <div class="mb-5 text-base leading-6 text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your
-            email address by clicking on the link we just emailed to you? If you
-            didn't receive the email, we will gladly send you another.
-        </div>
-
         <div
-            class="mb-4 text-base font-medium leading-6 text-green-700"
+            class="mb-4 rounded-md bg-green-50 px-4 py-3 text-base font-medium leading-6 text-green-800"
             role="status"
             v-if="verificationLinkSent"
         >
@@ -41,7 +38,7 @@ const verificationLinkSent = computed(
         </div>
 
         <form @submit.prevent="submit">
-            <div class="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <PrimaryButton
                     class="w-full sm:w-auto"
                     :class="{ 'opacity-25': form.processing }"
@@ -54,10 +51,10 @@ const verificationLinkSent = computed(
                     :href="route('logout')"
                     method="post"
                     as="button"
-                    class="inline-flex min-h-12 w-full items-center justify-center rounded-md px-4 py-3 text-base text-gray-700 underline hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+                    class="inline-flex min-h-12 w-full items-center justify-center rounded-md px-4 py-3 text-base text-gray-700 underline hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 sm:w-auto"
                     >Log Out</Link
                 >
             </div>
         </form>
-    </GuestLayout>
+    </BrandedAuthLayout>
 </template>

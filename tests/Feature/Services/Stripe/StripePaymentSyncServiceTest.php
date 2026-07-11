@@ -7,6 +7,7 @@ use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\User;
 use App\Notifications\OrderPaymentFailed;
 use App\Notifications\OrderPaymentReceived;
 use App\Services\Stripe\StripePaymentSyncService;
@@ -107,6 +108,29 @@ class StripePaymentSyncServiceTest extends TestCase
         $this->assertSame(PaymentStatus::Paid, $payment->status);
 
         Notification::assertSentOnDemandTimes(OrderPaymentReceived::class, 1);
+    }
+
+    public function test_payment_intent_succeeded_notifies_the_portal_user_on_both_channels(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $order = Order::factory()->create(['portal_user_id' => $user->id]);
+        $this->createPendingPayment($order, ['gateway_payment_intent_id' => 'pi_account_123']);
+
+        $intent = PaymentIntent::constructFrom([
+            'id' => 'pi_account_123',
+            'object' => 'payment_intent',
+            'metadata' => ['order_id' => (string) $order->id],
+        ]);
+
+        app(StripePaymentSyncService::class)->handlePaymentIntentSucceeded($intent);
+
+        Notification::assertSentTo(
+            $user,
+            OrderPaymentReceived::class,
+            fn (OrderPaymentReceived $notification, array $channels) => $channels === ['mail', 'database'],
+        );
     }
 
     public function test_payment_intent_failed_marks_failed_and_notifies(): void

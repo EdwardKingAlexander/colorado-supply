@@ -7,7 +7,7 @@ Thank you for partnering with Colorado Supply & Procurement. We received your qu
 
 - Company / Contact: {{ $order->company ?? $order->customer_name ?? 'Procurement Team' }}
 - Total: ${{ number_format($order->grand_total ?? 0, 2) }}
-- Status: {{ ucfirst($order->status) }}
+- Status: {{ $order->status->label() }}
 
 @if ($order->items?->count())
 | Item | Qty | Unit | Line Total |
@@ -16,6 +16,12 @@ Thank you for partnering with Colorado Supply & Procurement. We received your qu
 | {{ $item->name }} | {{ number_format($item->quantity, 2) }} | ${{ number_format($item->unit_price, 2) }} | ${{ number_format($item->line_total, 2) }} |
 @endforeach
 @endif
+
+<x-mail::button :url="\Illuminate\Support\Facades\URL::signedRoute('orders.track', ['order' => $order])">
+Track Your Order
+</x-mail::button>
+
+You can check your order status anytime using the button above — no sign-in required.
 
 If you have updates for PO or delivery instructions, reply to this email and our team will assist.
 

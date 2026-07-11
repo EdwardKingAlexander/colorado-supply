@@ -1,4 +1,5 @@
 <script setup>
+import CookieConsentBanner from '@/Components/Privacy/CookieConsentBanner.vue'
 import { Link } from '@inertiajs/vue3'
 import logo from '@images/logo-cleansed.svg'
 import logoLight from '@images/logo-cleansed-light.svg'
@@ -114,5 +115,7 @@ defineProps({
         </div>
       </section>
     </main>
+
+    <CookieConsentBanner />
   </div>
 </template>

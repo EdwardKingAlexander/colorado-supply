@@ -1,4 +1,5 @@
 <script setup>
+import CookieConsentBanner from '@/Components/Privacy/CookieConsentBanner.vue'
 import Navigation from '@/Components/Navigation.vue'
 
 defineProps({
@@ -15,5 +16,7 @@ defineProps({
     <main class="m-0 w-full min-w-0 p-0">
       <slot />
     </main>
+
+    <CookieConsentBanner />
   </div>
 </template>

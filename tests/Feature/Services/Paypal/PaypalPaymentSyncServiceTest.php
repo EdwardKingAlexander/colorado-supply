@@ -7,6 +7,7 @@ use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\User;
 use App\Notifications\OrderPaymentReceived;
 use App\Services\Paypal\PaypalPaymentSyncService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -88,6 +89,31 @@ class PaypalPaymentSyncServiceTest extends TestCase
 
         $this->assertSame(PaymentStatus::Paid, $payment->status);
         $this->assertSame('CAPTURE123', $payment->gateway_charge_id);
+    }
+
+    public function test_capture_completed_notifies_the_portal_user_on_both_channels(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $order = Order::factory()->create(['portal_user_id' => $user->id]);
+        $this->createPendingPayment($order);
+
+        app(PaypalPaymentSyncService::class)->handleCaptureCompleted([
+            'id' => 'CAPTURE-ACCOUNT',
+            'supplementary_data' => [
+                'related_ids' => [
+                    'order_id' => 'PAYPALORDER123',
+                ],
+            ],
+            'custom_id' => (string) $order->id,
+        ]);
+
+        Notification::assertSentTo(
+            $user,
+            OrderPaymentReceived::class,
+            fn (OrderPaymentReceived $notification, array $channels) => $channels === ['mail', 'database'],
+        );
     }
 
     public function test_capture_completed_is_idempotent_and_does_not_renotify(): void

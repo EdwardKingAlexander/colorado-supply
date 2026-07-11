@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -13,11 +14,14 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -111,6 +115,14 @@ class UserResource extends Resource
                     })
                     ->searchable(),
 
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->tooltip(fn (User $record) => $record->email_verified_at
+                        ? 'Verified '.$record->email_verified_at->diffForHumans()
+                        : 'Email not verified')
+                    ->sortable(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -127,8 +139,31 @@ class UserResource extends Resource
                     ->relationship('roles', 'name')
                     ->multiple()
                     ->preload(),
+
+                TernaryFilter::make('email_verified_at')
+                    ->label('Email verified')
+                    ->nullable(),
             ])
             ->recordActions([
+                Action::make('markVerified')
+                    ->label('Mark verified')
+                    ->icon('heroicon-o-check-badge')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Mark email as verified?')
+                    ->modalDescription(fn (User $record) => "Manually verify {$record->email}? Use this when a customer cannot receive the verification email.")
+                    ->visible(fn (User $record) => $record->email_verified_at === null
+                        && auth()->user()?->can('users.update'))
+                    ->action(function (User $record) {
+                        $record->forceFill(['email_verified_at' => now()])->save();
+
+                        Notification::make()
+                            ->title('Email verified')
+                            ->body("{$record->email} has been marked as verified.")
+                            ->success()
+                            ->send();
+                    }),
+
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make()

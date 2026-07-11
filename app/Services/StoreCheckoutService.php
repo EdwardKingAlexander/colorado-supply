@@ -5,11 +5,13 @@ namespace App\Services;
 use App\Enums\FulfillmentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Mail\OrderConfirmationMail;
 use App\Models\Admin;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\Orders\OrderNumberGenerator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class StoreCheckoutService
 {
@@ -27,7 +29,7 @@ class StoreCheckoutService
             return $carry + ($item['price'] * $item['quantity']);
         }, 0.0);
 
-        return DB::transaction(function () use ($user, $validated, $billingAddress, $shippingAddress, $subtotal) {
+        $order = DB::transaction(function () use ($user, $validated, $billingAddress, $shippingAddress, $subtotal) {
             $order = Order::create([
                 'order_number' => $this->orderNumberGenerator->next(),
                 'portal_user_id' => $user instanceof User ? $user->id : null,
@@ -67,5 +69,12 @@ class StoreCheckoutService
 
             return $order;
         });
+
+        if ($order->customer_email) {
+            Mail::to($order->customer_email)
+                ->send(new OrderConfirmationMail($order->load('items')));
+        }
+
+        return $order;
     }
 }

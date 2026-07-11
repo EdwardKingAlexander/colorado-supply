@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Privacy\ConsentCookie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -43,6 +44,15 @@ class HandleInertiaRequests extends Middleware
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
+            ],
+            // Read the header directly rather than the DetectGpcSignal request
+            // attribute: share() runs inside this middleware's handle(), so it
+            // must not depend on stack ordering.
+            'privacy' => [
+                'gpc' => $request->headers->get('Sec-GPC') === '1',
+                'consent' => ConsentCookie::fromRequest($request),
+                'policyVersion' => config('privacy.policy_version'),
+                'categories' => config('privacy.categories'),
             ],
         ];
     }

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Vendor extends Model
 {
@@ -16,6 +18,7 @@ class Vendor extends Model
         'name',
         'email',
         'phone',
+        'address',
         'slug',
         'description',
         'logo',
@@ -57,5 +60,35 @@ class Vendor extends Model
     public function product(): HasMany
     {
         return $this->hasMany(Product::class, 'product_id');
+    }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(VendorContact::class);
+    }
+
+    public function preferredContact(): HasOne
+    {
+        return $this->hasOne(VendorContact::class)->where('is_preferred', true);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Vendor $vendor): void {
+            if (filled($vendor->slug)) {
+                return;
+            }
+
+            $baseSlug = Str::slug($vendor->name) ?: 'vendor';
+            $slug = $baseSlug;
+            $suffix = 2;
+
+            while (static::query()->where('slug', $slug)->exists()) {
+                $slug = $baseSlug.'-'.$suffix;
+                $suffix++;
+            }
+
+            $vendor->slug = $slug;
+        });
     }
 }

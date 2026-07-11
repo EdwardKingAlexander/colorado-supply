@@ -23,15 +23,7 @@
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
         </noscript>
 
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-RZ06XS51X0"></script>
-        <script nonce="{{ $cspNonce }}">
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-RZ06XS51X0');
-        </script>
+        @include('partials.analytics')
 
         @if (config('services.google.recaptcha.site_key'))
             <script nonce="{{ $cspNonce }}">

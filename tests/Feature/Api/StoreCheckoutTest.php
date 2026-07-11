@@ -4,6 +4,7 @@ namespace Tests\Feature\Api;
 
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Mail\OrderConfirmationMail;
 use App\Models\Admin;
 use App\Models\Company;
 use App\Models\Location;
@@ -11,6 +12,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class StoreCheckoutTest extends TestCase
@@ -31,6 +33,8 @@ class StoreCheckoutTest extends TestCase
 
     public function test_user_can_checkout_their_cart(): void
     {
+        Mail::fake();
+
         $company = Company::create(['name' => 'Acme Co', 'slug' => 'acme-co']);
         $user = User::factory()->create(['company_id' => $company->id]);
         $product = Product::factory()->create();
@@ -82,6 +86,10 @@ class StoreCheckoutTest extends TestCase
 
         $this->assertEquals($this->billingAddress(), $order->shipping_address);
         $this->assertEquals($this->billingAddress(), $order->billing_address);
+
+        Mail::assertSent(OrderConfirmationMail::class, function (OrderConfirmationMail $mail) use ($order) {
+            return $mail->order->is($order) && $mail->hasTo('jane@example.com');
+        });
     }
 
     public function test_admin_can_checkout_a_test_cart_without_a_portal_user(): void
