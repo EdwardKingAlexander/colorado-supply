@@ -68,6 +68,14 @@ return [
             'report' => false,
         ],
 
+        'sam_documents' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

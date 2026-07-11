@@ -255,8 +255,14 @@ class ProductDataScraperTool extends Tool
     /**
      * Build JavaScript extraction script.
      */
-    protected function buildExtractionScript(?string $titleSelector, ?string $skuSelector, ?string $priceSelector, ?string $nsnSelector, ?string $cageSelector, ?string $milspecSelector): string
-    {
+    protected function buildExtractionScript(
+        ?string $titleSelector,
+        ?string $skuSelector,
+        ?string $priceSelector,
+        ?string $nsnSelector = null,
+        ?string $cageSelector = null,
+        ?string $milspecSelector = null,
+    ): string {
         // Build selector lists with custom selectors first, then auto-detection patterns
         $titleSelectors = $titleSelector
             ? "['".addslashes($titleSelector)."']"
