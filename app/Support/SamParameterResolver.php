@@ -129,42 +129,47 @@ class SamParameterResolver
     }
 
     /**
-     * Resolve PSC codes from override or database defaults (optional).
+     * Resolve PSC codes to filter on.
+     *
+     * Defaults to NO filter. config('sam_opportunities.psc_codes') is the list
+     * of codes the UI offers, not a set to apply automatically — these are now
+     * really applied post-fetch, and defaulting to all 30 would silently narrow
+     * every result set the moment filtering started working.
      */
     protected function resolvePscCodes(array $params): array
     {
-        // Check for override
         if (isset($params['psc_override']) && ! empty($params['psc_override'])) {
             $pscCodes = $params['psc_override'];
 
-            // Validate it's an array
             if (! is_array($pscCodes)) {
                 throw new InvalidArgumentException('psc_override must be an array');
             }
 
-            return $pscCodes;
+            return array_values(array_filter(array_map('trim', $pscCodes)));
         }
 
-        return $this->searchParams->psc_codes;
+        return [];
     }
 
     /**
-     * Resolve set-aside codes from override or defaults.
+     * Resolve set-aside codes to filter on.
+     *
+     * Defaults to NO filter, for the same reason as PSC codes: these are now
+     * genuinely applied (post-fetch, against the `typeOfSetAside` code SAM.gov
+     * returns on every record), so inheriting the six configured defaults would
+     * exclude every full-and-open solicitation without the operator asking.
      */
     protected function resolveSetAsides(array $params, bool $smallBusinessOnly): array
     {
-        // If explicitly requesting small business only, force SBA
         if ($smallBusinessOnly) {
             return ['SBA'];
         }
 
-        // Allow override of set_asides as array of strings
         if (isset($params['set_asides']) && is_array($params['set_asides'])) {
             return array_values(array_unique(array_filter(array_map([$this, 'normalizeSetAsideCode'], $params['set_asides']))));
         }
 
-        // Default from config
-        return array_values(array_unique(array_filter(array_map([$this, 'normalizeSetAsideCode'], $this->searchParams->set_asides))));
+        return [];
     }
 
     /**
@@ -328,30 +333,30 @@ class SamParameterResolver
     }
 
     /**
-     * Resolve keywords from parameters or defaults.
-     * Handles both array and comma-separated string formats.
+     * Resolve keywords to filter on.
+     *
+     * Defaults to NO filter. config('sam_opportunities.keywords') holds ~40
+     * suggested terms; applying them by default would hide any opportunity
+     * whose title happened not to contain one of them.
+     *
+     * Accepts an array or a comma-separated string.
      */
     protected function resolveKeywords(array $params): array
     {
-        $keywords = $params['keywords'] ?? $this->searchParams->keywords;
+        $keywords = $params['keywords'] ?? [];
 
-        // If it's already an array, return it
         if (is_array($keywords)) {
             return array_values(array_filter(array_map('trim', $keywords)));
         }
 
-        // If it's a string, split by comma
         if (is_string($keywords)) {
-            if (empty(trim($keywords))) {
+            if (trim($keywords) === '') {
                 return [];
             }
 
-            $keywordArray = array_map('trim', explode(',', $keywords));
-
-            return array_values(array_filter($keywordArray));
+            return array_values(array_filter(array_map('trim', explode(',', $keywords))));
         }
 
-        // Default to empty array
         return [];
     }
 }

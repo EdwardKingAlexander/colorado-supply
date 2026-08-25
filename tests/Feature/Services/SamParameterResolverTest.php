@@ -150,29 +150,19 @@ describe('PSC code resolution', function () {
             ->toBe(['5340', '5305']);
     });
 
-    test('loads PSC codes from database when no override provided', function () {
-        GsaFilter::create([
-            'type' => 'psc',
-            'code' => '5340',
-            'description' => 'Hardware',
-            'enabled' => true,
-        ]);
-
-        GsaFilter::create([
-            'type' => 'psc',
-            'code' => '5305',
-            'description' => 'Screws',
-            'enabled' => true,
-        ]);
-
+    test('defaults to NO PSC filter so real filtering cannot silently narrow results', function () {
+        // Previously this returned all 30 configured PSC codes. That was
+        // harmless only while applyFilters() was a no-op. Now that PSC codes are
+        // genuinely applied post-fetch, inheriting the config list by default
+        // would drop every opportunity outside those codes without anyone
+        // asking. The config list is the set of options the UI offers, not a
+        // filter to apply automatically.
         $resolver = new SamParameterResolver;
-        $resolved = $resolver->resolve([]);
 
-        expect($resolved['psc_codes'])
-            ->toContain('5340', '5305');
+        expect($resolver->resolve([])['psc_codes'])->toBe([]);
     });
 
-    test('does not let legacy database filters replace configured PSC codes', function () {
+    test('ignores legacy GsaFilter database rows', function () {
         GsaFilter::create([
             'type' => 'psc',
             'code' => '5340',
@@ -180,38 +170,11 @@ describe('PSC code resolution', function () {
             'enabled' => true,
         ]);
 
-        GsaFilter::create([
-            'type' => 'psc',
-            'code' => '5305',
-            'description' => 'Disabled PSC',
-            'enabled' => false,
-        ]);
-
         $resolver = new SamParameterResolver;
-        $resolved = $resolver->resolve([]);
 
-        expect($resolved['psc_codes'])->toBe(config('sam_opportunities.psc_codes'));
+        expect($resolver->resolve([])['psc_codes'])->toBe([]);
     });
 
-    test('uses configured PSC defaults when no database records or override exist', function () {
-        $resolver = new SamParameterResolver;
-        $resolved = $resolver->resolve([]);
-
-        $expectedDefaults = config('sam_opportunities.psc_codes');
-
-        expect($resolved['psc_codes'])
-            ->toBe($expectedDefaults);
-    });
-
-    test('throws exception when psc_override is not an array', function () {
-        $resolver = new SamParameterResolver;
-
-        $params = [
-            'psc_override' => '5340', // String instead of array
-        ];
-
-        $resolver->resolve($params);
-    })->throws(InvalidArgumentException::class, 'psc_override must be an array');
 });
 
 describe('notice type resolution', function () {
@@ -446,11 +409,14 @@ describe('limit resolution', function () {
 });
 
 describe('other parameters resolution', function () {
-    test('uses configured keywords when not provided', function () {
+    test('defaults to NO keyword filter when none are provided', function () {
+        // config('sam_opportunities.keywords') holds ~40 suggested terms. They
+        // are options, not an automatic filter: now that keywords are really
+        // matched against titles, defaulting to that list would hide any
+        // opportunity whose title happened to use none of those words.
         $resolver = new SamParameterResolver;
-        $resolved = $resolver->resolve([]);
 
-        expect($resolved['keywords'])->toBe(config('sam_opportunities.keywords'));
+        expect($resolver->resolve([])['keywords'])->toBe([]);
     });
 
     test('uses override keywords when provided', function () {
@@ -555,7 +521,7 @@ describe('complete resolution integration', function () {
 
         $params = [
             'naics_override' => ['999999'], // Override NAICS
-            // PSC will come from DB
+            // PSC not supplied -> no PSC filter
             'place' => 'tx',
             'days_back' => 60,
             'limit' => 75,
@@ -580,7 +546,7 @@ describe('complete resolution integration', function () {
             ->toHaveKey('posted_to')
             ->toHaveKey('query_metadata')
             ->and($resolved['naics_codes'])->toBe(['999999'])
-            ->and($resolved['psc_codes'])->toContain('5340')
+            ->and($resolved['psc_codes'])->toBe([]) // not supplied, so not filtered
             ->and($resolved['place'])->toBe('TX')
             ->and($resolved['days_back'])->toBe(60)
             ->and($resolved['limit'])->toBe(75)

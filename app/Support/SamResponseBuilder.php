@@ -95,6 +95,12 @@ class SamResponseBuilder
             'count_before_dedup' => $metadata['count_before_dedup'] ?? 0,
             'total_after_dedup' => $metadata['total_after_dedup'] ?? 0,
             'duplicates_removed' => $metadata['duplicates_removed'] ?? 0,
+            // This method whitelists keys, so anything omitted here is silently
+            // dropped on its way to the state file. These two were missing,
+            // which made the UI's "filtered out" count permanently 0 — harmless
+            // only while applyFilters() was a no-op, wrong the moment it wasn't.
+            'total_after_filters' => $metadata['total_after_filters'] ?? null,
+            'returned_count' => $metadata['returned_count'] ?? null,
         ];
 
         // Merge additional fields

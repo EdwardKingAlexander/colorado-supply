@@ -26,11 +26,6 @@ class FetchSamOpportunitiesTool extends Tool
     protected string $description = 'Fetch federal contract opportunities from SAM.gov with dynamic filtering by NAICS, PSC, keywords, location, and date ranges';
 
     /**
-     * SAM.gov API configuration - using v2 (v1 endpoint returns 404).
-     */
-    protected string $apiBaseUrl = 'https://api.sam.gov/opportunities/v2/search';
-
-    /**
      * Define the tool's input schema.
      */
     protected function inputSchema(): array
@@ -38,12 +33,12 @@ class FetchSamOpportunitiesTool extends Tool
         return [
             'naics_override' => [
                 'type' => 'array',
-                'description' => 'Override default NAICS codes (array of strings). Queries all NAICS codes sequentially with per-NAICS caching.',
+                'description' => 'NAICS codes to query (array of 6-digit strings). Each is queried separately with per-NAICS caching. Default: the configured primary + secondary lists.',
                 'required' => false,
             ],
             'psc_override' => [
                 'type' => 'array',
-                'description' => 'Override default PSC codes (array of strings).',
+                'description' => 'Filter results to these PSC codes (array of strings). Matched by prefix, since PSC codes are hierarchical. Default: no PSC filter.',
                 'required' => false,
             ],
             'notice_type' => [
@@ -68,12 +63,12 @@ class FetchSamOpportunitiesTool extends Tool
             ],
             'keywords' => [
                 'type' => 'string',
-                'description' => 'Free-text keyword filter to search in opportunity titles and descriptions',
+                'description' => 'Comma-separated keywords matched against opportunity titles and solicitation numbers (SAM.gov returns description as a URL, not text). Any match keeps the record. Default: no keyword filter.',
                 'required' => false,
             ],
             'small_business_only' => [
                 'type' => 'boolean',
-                'description' => 'When true, filters results to Small Business set-asides (setAsideCode=SBA)',
+                'description' => 'When true, keeps only Small Business (SBA) set-aside opportunities. Default: all set-asides and full-and-open.',
                 'required' => false,
             ],
             'clearCache' => [
@@ -318,7 +313,7 @@ class FetchSamOpportunitiesTool extends Tool
         return $this->runWorkflow($params);
     }
 
-    protected function runWorkflow(array $params = [], bool $isFallback = false): array
+    protected function runWorkflow(array $params = []): array
     {
         $startTime = microtime(true);
 
@@ -395,20 +390,19 @@ class FetchSamOpportunitiesTool extends Tool
             $limitedOpportunities = array_slice($filteredOpportunities, 0, $resolved['limit']);
             $returnedCount = count($limitedOpportunities);
 
-            // Fallback logic
-            // Only trigger fallback if user didn't explicitly provide NAICS override
-            // If they specified NAICS codes, respect their choice even with zero results
-            $hasExplicitNaicsOverride = isset($params['naics_override']) && ! empty($params['naics_override']);
-
-            if (empty($limitedOpportunities) && ! $isFallback && ! empty($resolved['keywords']) && ! $hasExplicitNaicsOverride) {
-                Log::info('Primary search yielded no results, triggering fallback search.');
-                $fallbackParams = $params;
-                $fallbackParams['place'] = null; // Nationwide
-                $fallbackParams['naics_override'] = []; // No NAICS
-                $fallbackParams['psc_override'] = []; // No PSC
-
-                return $this->runWorkflow($fallbackParams, true);
-            }
+            // The "nationwide keyword-only" fallback that used to live here has
+            // been removed. It never worked: it set naics_override => [], but
+            // empty([]) is true, so the resolver ignored the override and re-ran
+            // with the full default NAICS list — issuing a near-identical second
+            // query rather than a broader one. It also keyed off
+            // $resolved['keywords'], which defaulted to ~40 config terms, so it
+            // fired on any empty result even when nobody asked for a keyword
+            // search.
+            //
+            // Not repaired, removed: silently widening a query the operator
+            // explicitly narrowed (dropping their state filter, replacing their
+            // NAICS selection) returns results that do not match the form on
+            // screen. One request, one query is easier to reason about.
 
             // Calculate total duration
             $totalDuration = round((microtime(true) - $startTime) * 1000);
@@ -517,7 +511,17 @@ class FetchSamOpportunitiesTool extends Tool
     }
 
     /**
-     * Apply post-fetch filters for PSC, keywords, etc.
+     * Apply post-fetch filters for PSC, keywords, and set-asides.
+     *
+     * The division of labour: the API query handles what controls *volume*
+     * (NAICS, date range, state, notice type). Everything that merely *refines*
+     * a manageable result set is filtered here. That keeps one request per
+     * NAICS, keeps cached responses reusable across different refinements, and
+     * supports multi-value filters SAM.gov's single-valued parameters cannot.
+     *
+     * Every filter here defaults to off. An empty list means "no filter", never
+     * "match nothing" — see the resolver, which no longer inherits the config
+     * defaults for exactly this reason.
      *
      * @param  array  $opportunities  Deduplicated opportunities
      * @param  array  $params  Resolved query parameters
@@ -525,8 +529,116 @@ class FetchSamOpportunitiesTool extends Tool
      */
     protected function applyFilters(array $opportunities, array $params): array
     {
-        // PSC and keyword filtering disabled per request—return deduped results as-is.
-        return $opportunities;
+        $pscCodes = $params['psc_codes'] ?? [];
+        $keywords = $params['keywords'] ?? [];
+        $setAsides = $params['set_aside_codes'] ?? [];
+
+        if (empty($pscCodes) && empty($keywords) && empty($setAsides)) {
+            return $opportunities;
+        }
+
+        return array_values(array_filter($opportunities, function (array $opp) use ($pscCodes, $keywords, $setAsides) {
+            return $this->matchesPsc($opp, $pscCodes)
+                && $this->matchesKeywords($opp, $keywords)
+                && $this->matchesSetAside($opp, $setAsides);
+        }));
+    }
+
+    /**
+     * PSC codes are hierarchical and SAM.gov returns them at varying depth —
+     * the same query can yield "65" and "6515". Prefix matching keeps a
+     * configured "6515" from silently dropping a record classified as "65",
+     * and a configured "65" correctly matches the whole family.
+     */
+    protected function matchesPsc(array $opp, array $pscCodes): bool
+    {
+        if (empty($pscCodes)) {
+            return true;
+        }
+
+        $code = (string) ($opp['psc_code'] ?? '');
+
+        if ($code === '') {
+            return false;
+        }
+
+        foreach ($pscCodes as $wanted) {
+            $wanted = (string) $wanted;
+
+            if ($wanted !== '' && (str_starts_with($code, $wanted) || str_starts_with($wanted, $code))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Keywords match the title only.
+     *
+     * SAM.gov's `description` field is a URL to a separate description
+     * resource, not prose, so searching it would match link text rather than
+     * content. Fetching real descriptions would mean one extra HTTP request per
+     * opportunity; if that is ever wanted it belongs behind an explicit opt-in,
+     * not silently inside a filter.
+     *
+     * Multiple keywords are OR'd — an opportunity matching any term is kept.
+     */
+    protected function matchesKeywords(array $opp, array $keywords): bool
+    {
+        if (empty($keywords)) {
+            return true;
+        }
+
+        $haystack = mb_strtolower(trim(
+            ($opp['title'] ?? '').' '.($opp['solicitation_number'] ?? '')
+        ));
+
+        if ($haystack === '') {
+            return false;
+        }
+
+        foreach ($keywords as $keyword) {
+            $needle = mb_strtolower(trim((string) $keyword));
+
+            if ($needle !== '' && str_contains($haystack, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Match on the machine code SAM.gov returns (SBA, SDVOSBC, 8A, HUBZone…),
+     * falling back to the description only when a record omits the code.
+     */
+    protected function matchesSetAside(array $opp, array $setAsides): bool
+    {
+        if (empty($setAsides)) {
+            return true;
+        }
+
+        $code = strtoupper(trim((string) ($opp['set_aside_code'] ?? '')));
+        $description = mb_strtolower((string) ($opp['set_aside_type'] ?? ''));
+
+        foreach ($setAsides as $wanted) {
+            $wantedCode = strtoupper(trim((string) $wanted));
+
+            if ($wantedCode === '') {
+                continue;
+            }
+
+            if ($code !== '' && $code === $wantedCode) {
+                return true;
+            }
+
+            if ($code === '' && $description !== '' && str_contains($description, mb_strtolower($wantedCode))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

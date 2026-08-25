@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Jobs\FetchSamOpportunitiesJob;
 use App\Support\SamSearchParameters;
 use BackedEnum;
+use Carbon\Carbon;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -13,6 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use UnitEnum;
 
@@ -65,7 +67,7 @@ class FetchSamControlPanel extends Page
     protected function checkQueueStatus(): void
     {
         try {
-            $pendingJobs = \Illuminate\Support\Facades\DB::table('jobs')
+            $pendingJobs = DB::table('jobs')
                 ->where('queue', 'default')
                 ->count();
 
@@ -118,7 +120,7 @@ class FetchSamControlPanel extends Page
                             ->options($pscOptions)
                             ->multiple()
                             ->searchable()
-                            ->helperText('Leave empty to use default PSC codes')
+                            ->helperText('Optional. Filters results to these Product Service Codes, matched by prefix. Leave empty for no PSC filter.')
                             ->columnSpanFull(),
 
                         Select::make('place')
@@ -163,7 +165,7 @@ class FetchSamControlPanel extends Page
                             ->label('Keywords (optional)')
                             ->placeholder('Leave blank to see all opportunities')
                             ->default('')
-                            ->helperText('Enter comma-separated keywords to filter results (e.g., "supplies, equipment"). Leave blank to retrieve all matching opportunities.')
+                            ->helperText('Optional. Comma-separated terms matched against opportunity titles and solicitation numbers; any match is kept. Leave blank for no keyword filter.')
                             ->columnSpanFull(),
 
                         TextInput::make('limit')
@@ -182,7 +184,7 @@ class FetchSamControlPanel extends Page
 
                         Toggle::make('small_business_only')
                             ->label('Small Business Set-Asides Only')
-                            ->helperText('Filter to SBA set-aside opportunities')
+                            ->helperText('Keep only Small Business (SBA) set-asides. Off by default so full-and-open solicitations are still shown.')
                             ->default(false),
                     ])
                     ->columns([
@@ -260,6 +262,7 @@ class FetchSamControlPanel extends Page
 
         if (! $startedAt) {
             Log::debug('checkFetchStatus: No session timestamp found');
+
             return false;
         }
 
@@ -267,11 +270,12 @@ class FetchSamControlPanel extends Page
             Log::debug('checkFetchStatus: No lastResult data', [
                 'started_at' => $startedAt,
             ]);
+
             return false;
         }
 
         $fetchedAt = isset($this->lastResult['fetched_at'])
-            ? \Carbon\Carbon::parse($this->lastResult['fetched_at'])->timestamp
+            ? Carbon::parse($this->lastResult['fetched_at'])->timestamp
             : 0;
 
         Log::debug('checkFetchStatus: Comparing timestamps', [
@@ -300,7 +304,7 @@ class FetchSamControlPanel extends Page
             if ($error) {
                 Notification::make()
                     ->title('Fetch Failed')
-                    ->body('Error: ' . $error)
+                    ->body('Error: '.$error)
                     ->danger()
                     ->persistent()
                     ->send();
@@ -311,7 +315,7 @@ class FetchSamControlPanel extends Page
                         ? "Successfully fetched {$totalOpps} opportunities from SAM.gov."
                         : 'The fetch completed but encountered some warnings. Check the results below.')
                     ->success($success)
-                    ->warning(!$success)
+                    ->warning(! $success)
                     ->duration(8000)
                     ->send();
             }
@@ -355,7 +359,7 @@ class FetchSamControlPanel extends Page
 
             // Normalize legacy summaries so the UI numbers match what is displayed
             if (isset($this->lastResult['summary'])) {
-                $summary =& $this->lastResult['summary'];
+                $summary = &$this->lastResult['summary'];
                 $opportunities = $this->lastResult['opportunities'] ?? [];
                 $returned = $summary['returned'] ?? count($opportunities);
                 $dedup = $summary['total_after_dedup'] ?? $returned;
@@ -412,7 +416,7 @@ class FetchSamControlPanel extends Page
                 '$p = Get-CimInstance Win32_Process -Filter \'ProcessId=%d\'; if ($p -and $p.CommandLine -like \'*queue:work*\') { $true } else { $false }',
                 $pid
             );
-            $cmd = 'powershell -NoProfile -Command "' . $psInner . '"';
+            $cmd = 'powershell -NoProfile -Command "'.$psInner.'"';
 
             $result = trim((string) shell_exec($cmd));
 

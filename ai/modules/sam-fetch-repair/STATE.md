@@ -10,7 +10,7 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
 | 2 | API request contract correction | Awaiting Validation | 2026-08-24 | `ncode` + `typeOfSetAside` fixed and proven live; pagination done. Cache-key set-asides (2.4) still open |
 | 3 | Error semantics & diagnostics | Awaiting Validation | 2026-08-24 | 404 disambiguated; diagnostics now survive to the state file; failure alerting added |
 | 4 | Scheduler & persistence integrity | Awaiting Validation | 2026-08-24 | Scheduler crash + DB column mismatch + swallowed errors all fixed. State double-write (4.2) still open |
-| 5 | Filter fidelity | Not Started | 2026-08-24 | Open product question in 5.1 still needs the user |
+| 5 | Filter fidelity | Awaiting Validation | 2026-08-24 | Decided and implemented; both open questions resolved (see "Filter model") |
 | 6 | Operator visibility & regression suite | Not Started | 2026-08-24 | Queue-worker visibility + poll timeout still open |
 
 ## THE FEATURE NOW WORKS
@@ -187,14 +187,67 @@ the state file — never a single database row.
 | `tests/Feature/Schedule/SamScheduledFetchTest.php` | **New.** Runs the real registered schedule callback — the guard for Root cause B |
 | `tests/Feature/Services/SamApiClientTest.php` + 4 other SAM test files | Fake URL patterns rekeyed from `api.sam.gov`/`naics=` to the configured host/`ncode=` |
 
-## Open Questions (blocking Phase 5)
+## Filter model (both open questions resolved, 2026-08-24)
 
-1. **PSC and keyword filters.** `applyFilters()` is a no-op with the comment
-   "disabled per request", yet the panel still offers both fields and the state
-   file reports them as applied. Make them real, or remove the UI?
-2. **Multi-set-aside filtering.** Now that `typeOfSetAside` works but is
-   single-valued, do you want the six configured set-asides applied via
-   post-fetch filtering, or is no set-aside filter the desired default?
+Decided on the owner's instruction to optimise for long-term maintainability.
+Rather than answer the two questions separately, they are answered by one rule:
+
+> The API query handles what controls **volume** — NAICS (`ncode`), date range,
+> `state`, `ptype`. Everything that merely **refines** a manageable result set
+> is filtered post-fetch: PSC, keywords, set-asides. Every refining filter
+> defaults to off.
+
+Why this rule rather than case-by-case:
+
+- **One mental model.** "Volume at the source, refinement after" is a single
+  sentence a maintainer can apply to the next filter someone asks for, instead
+  of a per-field table of which mechanism applies.
+- **Multi-value works.** `typeOfSetAside` is single-valued server-side — six
+  codes comma-joined returns 0. Post-fetch filtering unions them correctly.
+- **The cache becomes correct by construction.** Set-asides are no longer sent
+  to the API, so a cached response is set-aside-agnostic and valid for *any*
+  set-aside refinement. This dissolves Phase 2.4 (cache key omitted set-asides)
+  rather than fixing it — there is no longer a field to remember.
+- **Volume does not justify server-side refinement.** A nationwide 2-NAICS
+  14-day query returns 82 records. Nothing here needs narrowing at the source.
+
+Three facts from the live API shaped the implementation, all verified 2026-08-24:
+
+| Observation | Consequence |
+|---|---|
+| Records carry the `typeOfSetAside` **code** (`SDVOSBC`), not just prose | Set-aside matching is exact, not description pattern-matching SAM can reword |
+| `description` is a **URL**, not text | Keywords match title + solicitation number only. Filtering the URL would match link text; fetching real descriptions is one HTTP request per record and belongs behind an explicit opt-in |
+| `classificationCode` varies in depth (`65` vs `6515`) | PSC matches by **prefix**, since PSC codes are hierarchical and exact match would silently miss |
+
+**Critical safety property:** the resolver no longer inherits config defaults
+for PSC (30 codes), keywords (~40 terms), or set-asides (6 codes). Those lists
+are the options the UI offers, not filters to apply. Had filtering been switched
+on while the defaults stood, every result set would have silently collapsed.
+Pinned by tests named for that risk.
+
+**The fallback was removed, not repaired.** It set `naics_override => []`, but
+`empty([])` is true, so the resolver ignored the override and re-ran with the
+full default NAICS list — a near-identical second query rather than a broader
+one. It also keyed off `$resolved['keywords']`, which defaulted to the config
+list, so it fired on any empty result even when nobody asked for keywords.
+Beyond being broken, silently widening a query the operator explicitly narrowed
+returns results that do not match the form on screen. One request, one query.
+
+Live verification (2 NAICS, 14 days):
+
+```
+no filters              returned=3  of 3   (filtered_out=0)
+keywords=medical        returned=0  of 3   (filtered_out=3)
+set_asides=SDVOSB       returned=1  of 3   (filtered_out=2)
+psc=6515                returned=1  of 3   (filtered_out=2)
+small_business_only     returned=2  of 3   (filtered_out=1)
+
+nationwide baseline     returned=82 of 82  — unchanged from before the refactor
+```
+
+Also fixed while here: `SamResponseBuilder::formatMetadata()` whitelists keys,
+and silently dropped `total_after_filters` / `returned_count`. That made the
+UI's "filtered out" count permanently 0 — invisible while filters were a no-op.
 
 ## Second pass, 2026-08-24 — monitoring, pagination, diagnostics
 
@@ -238,13 +291,15 @@ Tests: **291 SAM tests pass** (up from 270), full suite **707 passed**.
 
 ## Remaining Work
 
-- **Cache key ignores set-asides (Phase 2.4)** — now that `typeOfSetAside` is
-  functional, two queries differing only by set-aside share a cache key.
+- ~~Cache key ignores set-asides (Phase 2.4)~~ — **dissolved.** Set-asides are
+  no longer sent to the API, so cached responses are set-aside-agnostic.
+- ~~Filter fidelity (Phase 5)~~ — **done**, see "Filter model" above.
 - **State-file double write (Phase 4.2)** — job and tool both write it.
-- **Filter fidelity (Phase 5)** — `applyFilters()` is still a no-op while the
-  panel advertises PSC and keyword fields. Blocked on the two open questions.
+  `FetchSamControlPanel::persistLastResult()` is a third, unreachable writer.
+  Should collapse to `SamStateFileManager` alone, writing atomically.
 - **Queue-worker visibility + poll timeout (Phase 6)** — panel still polls
-  forever with no warning if no worker is running.
+  forever with no warning if no worker is running. `checkQueueStatus()` and
+  `isQueueWorkerRunning()` remain dead code.
 - **Report the `api.sam.gov` outage to the Federal Service Desk** so the
   workaround can eventually be reverted.
 - **Unrelated:** the suite has pre-existing test-isolation flakiness —

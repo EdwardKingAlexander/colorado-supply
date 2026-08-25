@@ -335,22 +335,18 @@ class SamApiClient
             $queryParams['state'] = $params['place'];
         }
 
-        // Set-aside filter. Previously sent as 'setAsideCode', which SAM.gov also
-        // ignores, so no set-aside filtering has ever actually been applied. The
-        // real parameter is 'typeOfSetAside' and it is SINGLE-VALUED: passing the
-        // six configured codes comma-joined returns 0 records, not their union.
-        // Measured 2026-08-24: setAsideCode=SBA -> 24084 (ignored),
-        // typeOfSetAside=SBA -> 7845, comma-joined six codes -> 0.
+        // Set-asides are deliberately NOT sent to the API.
         //
-        // To preserve today's effective behaviour (no set-aside narrowing) while
-        // making an explicit single-code request work, only send the parameter
-        // when exactly one code is requested. Broader multi-set-aside filtering
-        // needs post-fetch filtering — see ai/modules/sam-fetch-repair phase 5.
-        $setAsides = array_values(array_filter((array) ($params['set_aside_codes'] ?? [])));
-
-        if (count($setAsides) === 1) {
-            $queryParams['typeOfSetAside'] = $setAsides[0];
-        }
+        // SAM.gov's real parameter is 'typeOfSetAside' (the long-standing
+        // 'setAsideCode' was silently ignored), but it is single-valued —
+        // comma-joining the six configured codes returns 0 records rather than
+        // their union. Measured 2026-08-24 over 08/01-08/24: setAsideCode=SBA
+        // -> 24084 (ignored), typeOfSetAside=SBA -> 7845, six codes joined -> 0.
+        //
+        // Every record carries its `typeOfSetAside` code, so filtering happens
+        // post-fetch instead. That supports multiple codes, and it keeps cached
+        // responses set-aside-agnostic — the cache key cannot go stale on a
+        // dimension the request never varied by.
 
         return $queryParams;
     }
@@ -597,6 +593,10 @@ class SamApiClient
                 'state_code' => $this->extractStateCode($opp),
                 'agency_name' => $this->extractAgencyName($opp),
                 'set_aside_type' => $opp['typeOfSetAsideDescription'] ?? $opp['typeOfSetAside'] ?? null,
+                // The machine code (e.g. SDVOSBC) alongside the human
+                // description, so set-aside filtering matches exactly instead of
+                // pattern-matching prose that SAM.gov is free to reword.
+                'set_aside_code' => $opp['typeOfSetAside'] ?? null,
                 'sam_url' => $opp['url'] ?? $opp['uiLink'] ?? null,
                 'lastModifiedDate' => $opp['lastModifiedDate'] ?? null,
             ];
