@@ -4,10 +4,12 @@ namespace App\Jobs;
 
 use App\Mcp\Servers\Business\Tools\FetchSamOpportunitiesTool;
 use App\Models\SamOpportunity;
+use App\Notifications\SamFetchFailedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class FetchSamOpportunitiesJob implements ShouldQueue
 {
@@ -49,6 +51,12 @@ class FetchSamOpportunitiesJob implements ShouldQueue
             // Persist result to shared state file for UI/exports
             $this->persistState($result);
 
+            // Alert on failure. A successful fetch returning zero opportunities
+            // is a normal narrow-query outcome and deliberately does not alert.
+            if (! ($result['success'] ?? false)) {
+                $this->alertOnFailure($result);
+            }
+
             Log::info('FetchSamOpportunitiesJob completed', [
                 'job_id' => $this->job?->getJobId(),
                 'user_id' => $this->userId,
@@ -69,6 +77,42 @@ class FetchSamOpportunitiesJob implements ShouldQueue
             $this->persistErrorState($e->getMessage());
 
             throw $e;
+        }
+    }
+
+    /**
+     * Email an operator when a fetch fails.
+     *
+     * Alerting is best-effort: a mail transport problem must never turn a
+     * reported failure into a job crash that masks the original cause.
+     */
+    protected function alertOnFailure(array $result): void
+    {
+        $recipient = config('services.sam.alert_email');
+
+        if (empty($recipient)) {
+            Log::warning('SAM.gov fetch failed but no alert recipient is configured', [
+                'hint' => 'Set SAM_ALERT_EMAIL or BUSINESS_HUB_NOTIFICATION_EMAIL in .env',
+            ]);
+
+            return;
+        }
+
+        try {
+            Notification::route('mail', $recipient)->notify(
+                new SamFetchFailedNotification(
+                    reason: $result['error'] ?? 'The fetch reported failure without an error message.',
+                    failedNaics: $result['summary']['failed_naics'] ?? [],
+                    endpoint: config('services.sam.base_url'),
+                )
+            );
+
+            Log::info('SAM.gov fetch failure alert sent', ['recipient' => $recipient]);
+        } catch (\Throwable $e) {
+            Log::error('Failed to send SAM.gov fetch failure alert', [
+                'error' => $e->getMessage(),
+                'recipient' => $recipient,
+            ]);
         }
     }
 

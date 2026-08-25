@@ -67,6 +67,15 @@ class SamApiClient
     protected const DEFAULT_LIMIT = 1000;
 
     /**
+     * Default cap on pages fetched per NAICS code.
+     *
+     * At the 1000-record page size this is 10,000 records for a single NAICS,
+     * which is far beyond any realistic query. The cap exists so a runaway
+     * result set cannot stall the queue worker.
+     */
+    protected const DEFAULT_MAX_PAGES = 10;
+
+    /**
      * Fetch opportunities from SAM.gov v2 API for a single NAICS code.
      *
      * @param  string  $naicsCode  6-digit NAICS code
@@ -76,7 +85,97 @@ class SamApiClient
      */
     public function fetch(string $naicsCode, array $params, string $apiKey): array
     {
+        $maxPages = max(1, (int) (config('services.sam.max_pages') ?: self::DEFAULT_MAX_PAGES));
+
+        $opportunities = [];
+        $totalRecords = 0;
+        $pagesFetched = 0;
+        $truncated = false;
+        $noData = false;
+
+        while (true) {
+            $result = $this->fetchPage($naicsCode, $params, $apiKey, $pagesFetched * self::DEFAULT_LIMIT);
+
+            if (! ($result['success'] ?? false)) {
+                // Never discard pages already gathered because a later one
+                // failed — return them as a partial result instead.
+                if ($opportunities !== []) {
+                    return [
+                        'success' => true,
+                        'naics' => $naicsCode,
+                        'count' => count($opportunities),
+                        'total_records' => $totalRecords,
+                        'opportunities' => $opportunities,
+                        'cached' => false,
+                        'pages_fetched' => $pagesFetched,
+                        'truncated' => true,
+                        'page_error' => $result['error'] ?? 'Unknown error',
+                    ];
+                }
+
+                return $result;
+            }
+
+            $opportunities = array_merge($opportunities, $result['opportunities'] ?? []);
+            $totalRecords = $result['total_records'] ?? 0;
+            $pagesFetched++;
+
+            // Only meaningful when the very first page came back empty: it
+            // records that SAM.gov explicitly said "no records matched" rather
+            // than us having exhausted a larger set.
+            if ($pagesFetched === 1) {
+                $noData = (bool) ($result['no_data'] ?? false);
+            }
+
+            // No progress: stop rather than loop forever on an empty page.
+            if (empty($result['opportunities'])) {
+                break;
+            }
+
+            if (count($opportunities) >= $totalRecords) {
+                break;
+            }
+
+            if ($pagesFetched >= $maxPages) {
+                $truncated = true;
+
+                Log::warning('SAM.gov pagination cap reached, results truncated', [
+                    'service' => 'SamApiClient',
+                    'naics' => $naicsCode,
+                    'pages_fetched' => $pagesFetched,
+                    'fetched' => count($opportunities),
+                    'total_records' => $totalRecords,
+                ]);
+
+                break;
+            }
+
+            $this->addPageDelay();
+        }
+
+        return [
+            'success' => true,
+            'naics' => $naicsCode,
+            'count' => count($opportunities),
+            'total_records' => $totalRecords,
+            'opportunities' => $opportunities,
+            'cached' => false,
+            'pages_fetched' => $pagesFetched,
+            'truncated' => $truncated,
+            'no_data' => $noData,
+        ];
+    }
+
+    /**
+     * Fetch a single page of results for one NAICS code.
+     *
+     * @param  int  $offset  Record offset for pagination
+     * @return array Standardized per-page response
+     */
+    protected function fetchPage(string $naicsCode, array $params, string $apiKey, int $offset): array
+    {
         $queryParams = $this->buildQueryParams($naicsCode, $params, $apiKey);
+        $queryParams['offset'] = $offset;
 
         // Log query parameters for debugging (excluding API key)
         $debugParams = $queryParams;
@@ -108,6 +207,12 @@ class SamApiClient
                     }
                 }
 
+                // 404 is ambiguous on SAM.gov and must not be collapsed into one
+                // outcome — see handleNotFound().
+                if ($response->status() === 404) {
+                    return $this->handleNotFound($naicsCode, $response);
+                }
+
                 // Handle other HTTP errors
                 if (! $response->successful()) {
                     return $this->buildErrorResponse($naicsCode, $response);
@@ -129,6 +234,73 @@ class SamApiClient
             'error' => 'Query failed after retries',
             'status_code' => null,
         ];
+    }
+
+    /**
+     * Disambiguate SAM.gov's two very different 404s.
+     *
+     * GSA documents 404 as "no data" for the opportunities endpoint, so an
+     * empty result set legitimately arrives as a 404 with a JSON body. But the
+     * api.sam.gov gateway outage that began around 2026-07-09 also answered
+     * every path with 404 — with a zero-length body.
+     *
+     * Treating both as fatal reports "no matching opportunities" as a total
+     * system failure. Treating both as success hides a real outage behind a
+     * plausible-looking zero. The body is what separates them.
+     */
+    protected function handleNotFound(string $naicsCode, $response): array
+    {
+        $body = trim($response->body());
+
+        if ($body === '') {
+            Log::error('SAM.gov returned an empty-bodied 404 — endpoint unreachable', [
+                'service' => 'SamApiClient',
+                'naics' => $naicsCode,
+                'endpoint' => $this->baseUrl(),
+                'error_category' => 'endpoint_unreachable',
+            ]);
+
+            return [
+                'success' => false,
+                'naics' => $naicsCode,
+                'error' => 'SAM.gov returned 404 with an empty body for '.$this->baseUrl()
+                    .' — the endpoint is unreachable or has moved. Run: php artisan sam:diagnose',
+                'status_code' => 404,
+                'error_type' => 'endpoint_unreachable',
+                'response_body' => null,
+            ];
+        }
+
+        // A JSON body on a 404 is SAM.gov's documented "no records found".
+        if (json_decode($body, true) !== null || $body === 'null') {
+            Log::info('SAM.gov reported no matching records', [
+                'service' => 'SamApiClient',
+                'naics' => $naicsCode,
+            ]);
+
+            return [
+                'success' => true,
+                'naics' => $naicsCode,
+                'count' => 0,
+                'total_records' => 0,
+                'opportunities' => [],
+                'cached' => false,
+                'no_data' => true,
+            ];
+        }
+
+        // Non-empty but not JSON: genuinely unexpected, keep it loud.
+        return $this->buildErrorResponse($naicsCode, $response);
+    }
+
+    /**
+     * Small delay between pages of the same NAICS query.
+     */
+    protected function addPageDelay(): void
+    {
+        if (! app()->environment('testing')) {
+            usleep(250000);
+        }
     }
 
     /**

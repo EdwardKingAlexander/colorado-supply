@@ -6,9 +6,9 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
 | # | Phase | Status | Last Updated | Notes |
 |---|-------|--------|--------------|-------|
 | - | Module plan (`00-overview.md`) | In Progress | 2026-08-24 | Diagnosis revised after live evidence; see "Corrections" below |
-| 1 | Connectivity & credential verification | Awaiting Validation | 2026-08-24 | Working endpoint found and wired behind config. `sam:diagnose` command still to build (1.3) |
-| 2 | API request contract correction | Awaiting Validation | 2026-08-24 | `ncode` + `typeOfSetAside` fixed and proven live. Pagination (2.3) + cache-key set-asides (2.4) still open |
-| 3 | Error semantics & diagnostics | Not Started | 2026-08-24 | Unchanged. 404 still classified as fatal |
+| 1 | Connectivity & credential verification | Awaiting Validation | 2026-08-24 | Complete. Endpoint behind config; `sam:diagnose` built and verified live |
+| 2 | API request contract correction | Awaiting Validation | 2026-08-24 | `ncode` + `typeOfSetAside` fixed and proven live; pagination done. Cache-key set-asides (2.4) still open |
+| 3 | Error semantics & diagnostics | Awaiting Validation | 2026-08-24 | 404 disambiguated; diagnostics now survive to the state file; failure alerting added |
 | 4 | Scheduler & persistence integrity | Awaiting Validation | 2026-08-24 | Scheduler crash + DB column mismatch + swallowed errors all fixed. State double-write (4.2) still open |
 | 5 | Filter fidelity | Not Started | 2026-08-24 | Open product question in 5.1 still needs the user |
 | 6 | Operator visibility & regression suite | Not Started | 2026-08-24 | Queue-worker visibility + poll timeout still open |
@@ -196,19 +196,61 @@ the state file — never a single database row.
    single-valued, do you want the six configured set-asides applied via
    post-fetch filtering, or is no set-aside filter the desired default?
 
+## Second pass, 2026-08-24 — monitoring, pagination, diagnostics
+
+Shipped after the initial repair:
+
+- **404 disambiguation.** Empty body → `endpoint_unreachable`, hard failure with
+  a message naming the endpoint and `php artisan sam:diagnose`. JSON body →
+  GSA's documented "no data", reported as success with 0 results. Non-JSON body
+  → stays loud. The empty-body guard is what stops a real outage from being
+  laundered into a plausible "0 results".
+- **Failure alerting.** `SamFetchFailedNotification` emails
+  `config('services.sam.alert_email')` when a fetch fails. It deliberately does
+  **not** fire on a successful fetch returning zero opportunities — alerting on
+  a normal narrow-query outcome would train the recipient to ignore it.
+  Recipient set via `SAM_ALERT_EMAIL`, falling back to
+  `BUSINESS_HUB_NOTIFICATION_EMAIL`.
+- **Diagnostics preserved end to end.** `SamResponseBuilder::build()` routed its
+  first error through `failure()`, which flattens a string into
+  `['message' => …]` — dropping `naics`, `status_code`, and `error_type`. That
+  is why the state file read `{"message":"API endpoint not found","naics":null,
+  "status_code":null,"type":null}`. Now via `failureFromErrors()`:
+
+  ```
+  message     SAM.gov returned 404 with an empty body for https://api.sam.gov/... Run: php artisan sam:diagnose
+  naics       423840
+  type        endpoint_unreachable
+  status_code 404
+  ```
+
+- **Pagination.** `fetch()` now pages on `offset` until `totalRecords` is
+  satisfied, capped by `services.sam.max_pages` (default 10 = 10,000 records
+  per NAICS). A mid-pagination failure returns the pages already gathered as a
+  truncated partial rather than discarding them, and an empty page breaks the
+  loop so a bad `totalRecords` cannot spin forever.
+- **`sam:diagnose`.** Probes the endpoint with a key, without a key, and a
+  `sam.gov` control, then prints a verdict. `--json` for monitoring; exits
+  non-zero when unhealthy. Never prints the key (asserted by test). Verified
+  live: `with_key 200 / totalRecords 8906`, `without_key 500`, `control 200`.
+
+Tests: **291 SAM tests pass** (up from 270), full suite **707 passed**.
+
 ## Remaining Work
 
-- **Pagination (Phase 2.3)** — `limit` caps at 1000 with no `offset` loop.
-  `ncode=339113` alone returns 218, but a broad query will silently truncate.
-- **404 semantics (Phase 3)** — GSA documents 404 as "no data"; we still treat
-  it as fatal. Needs the empty-body discriminator so a real outage stays loud.
+- **Cache key ignores set-asides (Phase 2.4)** — now that `typeOfSetAside` is
+  functional, two queries differing only by set-aside share a cache key.
 - **State-file double write (Phase 4.2)** — job and tool both write it.
-- **`sam:diagnose` command (Phase 1.3)** — would have cut this investigation
-  from hours to one command.
+- **Filter fidelity (Phase 5)** — `applyFilters()` is still a no-op while the
+  panel advertises PSC and keyword fields. Blocked on the two open questions.
 - **Queue-worker visibility + poll timeout (Phase 6)** — panel still polls
   forever with no warning if no worker is running.
 - **Report the `api.sam.gov` outage to the Federal Service Desk** so the
   workaround can eventually be reverted.
+- **Unrelated:** the suite has pre-existing test-isolation flakiness —
+  `QuotePolicyTest > super_admins can access quotes` fails when run after
+  `VendorResourceTest` and passes alone, with or without any SAM change.
+  `VendorResourceTest` itself is separately flaky via `fake()->phoneNumber()`.
 
 ## Log
 

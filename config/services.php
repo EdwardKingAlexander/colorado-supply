@@ -66,6 +66,13 @@ return [
         'base_url' => env('SAM_API_BASE_URL', 'https://sam.gov/api/prod/opportunities/v2/search'),
 
         'timeout' => (int) env('SAM_API_TIMEOUT', 30),
+
+        // Cap on paginated requests per NAICS code (page size is 1000).
+        'max_pages' => (int) env('SAM_API_MAX_PAGES', 10),
+
+        // Where fetch-failure alerts go. Falls back to the Business Hub address
+        // so alerting works without additional configuration.
+        'alert_email' => env('SAM_ALERT_EMAIL', env('BUSINESS_HUB_NOTIFICATION_EMAIL')),
     ],
 
     'stripe' => [

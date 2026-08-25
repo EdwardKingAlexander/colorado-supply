@@ -162,12 +162,37 @@ class SamResponseBuilder
         return match ($status) {
             'success' => $this->success($opportunities, $metadata),
             'partial_success' => $this->partialSuccess($opportunities, $metadata, $errors),
-            'failure' => $this->failure(
-                $errors[0]['message'] ?? $errors[0]['error'] ?? 'All NAICS queries failed',
-                $metadata,
-                array_slice($errors, 1) // Skip first error as it's used as primary
-            ),
+            'failure' => $this->failureFromErrors($errors, $metadata),
         };
+    }
+
+    /**
+     * Build a failure response that preserves every diagnostic field.
+     *
+     * failure() takes a plain string and prepends it as a bare ['message' => …]
+     * entry, so routing build()'s first error through it flattened that error to
+     * a message and dropped its naics, status_code, and error_type. That is why
+     * the state file reported `{"message":"API endpoint not found","naics":null,
+     * "status_code":null,"type":null}` — the fields were populated upstream and
+     * discarded here, leaving the UI with nothing actionable.
+     *
+     * @param  array  $errors  Errors from extractErrors(), already field-rich
+     * @param  array  $metadata  Performance and query metadata
+     * @return array Standardized failure response
+     */
+    protected function failureFromErrors(array $errors, array $metadata = []): array
+    {
+        $formatted = $this->formatErrors($errors);
+
+        return [
+            'status' => 'failure',
+            'error' => $formatted[0]['message'] ?? 'All NAICS queries failed',
+            'metadata' => $this->formatMetadata($metadata, [
+                'total_count' => 0,
+                'errors_count' => count($formatted),
+            ]),
+            'errors' => $formatted,
+        ];
     }
 
     /**
