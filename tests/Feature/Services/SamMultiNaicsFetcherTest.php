@@ -16,7 +16,7 @@ beforeEach(function () {
 describe('sequential fetching', function () {
     test('fetches opportunities for multiple NAICS codes sequentially', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::sequence()
+            '*opportunities/v2/search*' => Http::sequence()
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'A', 'title' => 'NAICS 1']]], 200)
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'B', 'title' => 'NAICS 2']]], 200)
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'C', 'title' => 'NAICS 3']]], 200),
@@ -48,7 +48,7 @@ describe('sequential fetching', function () {
 
     test('returns results in same order as input NAICS codes', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::sequence()
+            '*opportunities/v2/search*' => Http::sequence()
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'FIRST']]], 200)
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'SECOND']]], 200)
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'THIRD']]], 200),
@@ -94,7 +94,7 @@ describe('cache integration', function () {
 
         // Only expect API call for second NAICS
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 1,
                 'opportunitiesData' => [['noticeId' => 'API']],
             ], 200),
@@ -114,7 +114,7 @@ describe('cache integration', function () {
 
     test('stores successful API responses in cache', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 1,
                 'opportunitiesData' => [['noticeId' => 'NEW']],
             ], 200),
@@ -140,7 +140,7 @@ describe('cache integration', function () {
 
     test('does not cache failed API responses', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response('Unauthorized', 401),
+            '*opportunities/v2/search*' => Http::response('Unauthorized', 401),
         ]);
 
         $cache = new SamOpportunitiesCache;
@@ -164,7 +164,7 @@ describe('cache integration', function () {
 describe('error tolerance', function () {
     test('continues fetching after one NAICS fails', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::sequence()
+            '*opportunities/v2/search*' => Http::sequence()
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'SUCCESS1']]], 200)
                 ->push('Unauthorized', 401) // Non-retryable failure
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'SUCCESS2']]], 200),
@@ -193,7 +193,7 @@ describe('error tolerance', function () {
         Log::shouldReceive('warning')->zeroOrMoreTimes();
 
         Http::fake([
-            'api.sam.gov/*' => Http::response('Unauthorized', 401),
+            '*opportunities/v2/search*' => Http::response('Unauthorized', 401),
         ]);
 
         $fetcher = new SamMultiNaicsFetcher;
@@ -214,7 +214,7 @@ describe('error tolerance', function () {
 
     test('returns all failed when all NAICS queries fail', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response('Server Error', 500),
+            '*opportunities/v2/search*' => Http::response('Server Error', 500),
         ]);
 
         $fetcher = new SamMultiNaicsFetcher;
@@ -237,7 +237,7 @@ describe('error tolerance', function () {
 describe('performance tracking', function () {
     test('tracks timing for each NAICS query', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 1,
                 'opportunitiesData' => [['noticeId' => 'TEST']],
             ], 200),
@@ -288,7 +288,7 @@ describe('performance tracking', function () {
         ]);
 
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 5,
                 'opportunitiesData' => [],
             ], 200),
@@ -310,7 +310,7 @@ describe('performance tracking', function () {
 describe('rate limiting delays', function () {
     test('adds delay between NAICS queries', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 0,
                 'opportunitiesData' => [],
             ], 200),
@@ -337,7 +337,7 @@ describe('rate limiting delays', function () {
 
     test('does not add delay after last NAICS query', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 0,
                 'opportunitiesData' => [],
             ], 200),
@@ -366,7 +366,7 @@ describe('rate limiting delays', function () {
 describe('summary statistics', function () {
     test('calculates summary statistics correctly', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::sequence()
+            '*opportunities/v2/search*' => Http::sequence()
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'A']]], 200)
                 ->push('Error', 500)
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'B']]], 200),
@@ -409,7 +409,7 @@ describe('summary statistics', function () {
         $cache->put('222222', $params, ['success' => true, 'naics' => '222222', 'count' => 1, 'opportunities' => []]);
 
         Http::fake([
-            'api.sam.gov/*' => Http::response(['totalRecords' => 1, 'opportunitiesData' => []], 200),
+            '*opportunities/v2/search*' => Http::response(['totalRecords' => 1, 'opportunitiesData' => []], 200),
         ]);
 
         $fetcher = new SamMultiNaicsFetcher($cache);
@@ -427,7 +427,7 @@ describe('failed NAICS extraction', function () {
         Log::shouldReceive('warning')->zeroOrMoreTimes();
 
         Http::fake([
-            'api.sam.gov/*' => Http::sequence()
+            '*opportunities/v2/search*' => Http::sequence()
                 ->push(['totalRecords' => 1, 'opportunitiesData' => []], 200) // 111111 success
                 ->push('Unauthorized', 401) // 222222 fail
                 ->push('Server Error', 500), // 333333 fail
@@ -454,7 +454,7 @@ describe('failed NAICS extraction', function () {
 
     test('returns empty array when no failures', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response(['totalRecords' => 0, 'opportunitiesData' => []], 200),
+            '*opportunities/v2/search*' => Http::response(['totalRecords' => 0, 'opportunitiesData' => []], 200),
         ]);
 
         $fetcher = new SamMultiNaicsFetcher;

@@ -6,6 +6,7 @@ use App\Mcp\Servers\Business\Tools\FetchSamOpportunitiesTool;
 use App\Models\SamOpportunity;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class FetchSamOpportunitiesJob implements ShouldQueue
@@ -131,46 +132,82 @@ class FetchSamOpportunitiesJob implements ShouldQueue
 
     /**
      * Save opportunities to database.
+     *
+     * Column names here must match the `sam_opportunities` schema. They did not
+     * for a long time (`department`, `classification_code`, `active`, `type`,
+     * and `links` do not exist), which made every insert throw. The throw was
+     * swallowed and the job still reported success, so the table stayed empty
+     * while the fetch looked healthy. Failures now propagate.
+     *
+     * @throws \Throwable when persistence fails
      */
     protected function saveOpportunitiesToDatabase(array $data): void
     {
+        if (empty($data['opportunities'])) {
+            Log::info('No opportunities to save to database');
+
+            return;
+        }
+
+        $received = count($data['opportunities']);
+
         try {
-            if (empty($data['opportunities'])) {
-                Log::info('No opportunities to save to database');
-                return;
-            }
+            $saved = DB::transaction(function () use ($data) {
+                $saved = 0;
 
-            $saved = 0;
-            foreach ($data['opportunities'] as $opp) {
-                SamOpportunity::updateOrCreate(
-                    ['notice_id' => $opp['notice_id']],
-                    [
-                        'solicitation_number' => $opp['solicitation_number'] ?? null,
-                        'title' => $opp['title'] ?? null,
-                        'department' => $opp['agency_name'] ?? null,
-                        'posted_date' => $opp['posted_date'] ?? null,
-                        'response_deadline' => $opp['response_deadline'] ?? null,
-                        'naics_code' => $opp['naics_code'] ?? null,
-                        'classification_code' => $opp['psc_code'] ?? null,
-                        'active' => true,
-                        'set_aside' => $opp['set_aside_type'] ?? null,
-                        'description' => $opp['description'] ?? null,
-                        'type' => $opp['notice_type'] ?? null,
-                        'links' => json_encode(['sam_url' => $opp['sam_url'] ?? null]),
-                    ]
-                );
-                $saved++;
-            }
+                foreach ($data['opportunities'] as $opp) {
+                    if (empty($opp['notice_id'])) {
+                        Log::warning('Skipping SAM opportunity without a notice_id', [
+                            'title' => $opp['title'] ?? 'Unknown',
+                        ]);
 
-            Log::info('Saved opportunities to database', [
-                'count' => $saved,
-                'total_in_result' => count($data['opportunities']),
-            ]);
+                        continue;
+                    }
+
+                    SamOpportunity::updateOrCreate(
+                        ['notice_id' => $opp['notice_id']],
+                        [
+                            'solicitation_number' => $opp['solicitation_number'] ?? null,
+                            'title' => $opp['title'] ?? 'Untitled',
+                            'agency' => $opp['agency_name'] ?? null,
+                            'posted_date' => $opp['posted_date'] ?? null,
+                            'response_deadline' => $opp['response_deadline'] ?? null,
+                            'last_modified_date' => $opp['lastModifiedDate'] ?? null,
+                            'naics_code' => $opp['naics_code'] ?? null,
+                            'psc_code' => $opp['psc_code'] ?? null,
+                            'set_aside' => $opp['set_aside_type'] ?? null,
+                            'description' => $opp['description'] ?? null,
+                            'notice_type' => $opp['notice_type'] ?? null,
+                            'place_of_performance' => $opp['state_code'] ?? null,
+                            'url' => $opp['sam_url'] ?? null,
+                        ]
+                    );
+
+                    $saved++;
+                }
+
+                return $saved;
+            });
         } catch (\Throwable $e) {
             Log::error('Failed to save opportunities to database', [
                 'error' => $e->getMessage(),
+                'received' => $received,
                 'trace' => $e->getTraceAsString(),
             ]);
+
+            throw $e;
         }
+
+        if ($saved !== $received) {
+            Log::warning('Saved fewer opportunities than received', [
+                'saved' => $saved,
+                'received' => $received,
+            ]);
+        }
+
+        Log::info('Saved opportunities to database', [
+            'count' => $saved,
+            'total_in_result' => $received,
+        ]);
     }
 }

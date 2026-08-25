@@ -23,7 +23,7 @@ test('job executes and persists results', function () {
 
     // Mock SAM.gov API responses
     Http::fake([
-        '*naics=423840*' => Http::response([
+        '*ncode=423840*' => Http::response([
             'opportunitiesData' => [
                 [
                     'noticeId' => 'test-001',

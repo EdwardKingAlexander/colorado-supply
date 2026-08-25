@@ -27,7 +27,7 @@ describe('complete success scenario', function () {
     test('fetches opportunities from multiple NAICS codes with deduplication', function () {
         // Mock SAM.gov API responses using pattern matching
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => [
                     [
                         'noticeId' => 'opp-001',
@@ -58,7 +58,7 @@ describe('complete success scenario', function () {
                     ],
                 ],
             ], 200),
-            '*naics=541330*' => Http::response([
+            '*ncode=541330*' => Http::response([
                 'opportunitiesData' => [
                     [
                         'noticeId' => 'opp-003',
@@ -80,7 +80,7 @@ describe('complete success scenario', function () {
                     ],
                 ],
             ], 200),
-            '*naics=562910*' => Http::response([
+            '*ncode=562910*' => Http::response([
                 'opportunitiesData' => [
                     [
                         'noticeId' => 'opp-004',
@@ -138,17 +138,17 @@ describe('complete success scenario', function () {
     test('uses cache on second identical request', function () {
         // First request - all cache misses
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-001', 'title' => 'Test', 'naicsCode' => '236220'],
                 ],
             ], 200),
-            '*naics=541330*' => Http::response([
+            '*ncode=541330*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-002', 'title' => 'Test 2', 'naicsCode' => '541330'],
                 ],
             ], 200),
-            '*naics=562910*' => Http::response([
+            '*ncode=562910*' => Http::response([
                 'opportunitiesData' => [],
             ], 200),
         ]);
@@ -179,11 +179,11 @@ describe('complete success scenario', function () {
     test('respects cache TTL', function () {
         // First request - cache miss
         Http::fake([
-            '*naics=236220*' => Http::response(['opportunitiesData' => [
+            '*ncode=236220*' => Http::response(['opportunitiesData' => [
                 ['noticeId' => 'opp-001', 'title' => 'Test', 'naicsCode' => '236220'],
             ]], 200),
-            '*naics=541330*' => Http::response(['opportunitiesData' => []], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=541330*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -211,18 +211,18 @@ describe('complete success scenario', function () {
 describe('partial success scenario', function () {
     test('returns results from successful NAICS when some fail', function () {
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-001', 'title' => 'Success 1', 'naicsCode' => '236220'],
                     ['noticeId' => 'opp-002', 'title' => 'Success 2', 'naicsCode' => '236220'],
                 ],
             ], 200),
-            '*naics=541330*' => Http::response([
+            '*ncode=541330*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-003', 'title' => 'Success 3', 'naicsCode' => '541330'],
                 ],
             ], 200),
-            '*naics=562910*' => Http::response([
+            '*ncode=562910*' => Http::response([
                 'error' => 'Unauthorized',
             ], 401),
         ]);
@@ -252,15 +252,15 @@ describe('partial success scenario', function () {
 
     test('handles network timeout for one NAICS', function () {
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-001', 'title' => 'Success', 'naicsCode' => '236220'],
                 ],
             ], 200),
-            '*naics=541330*' => function () {
+            '*ncode=541330*' => function () {
                 throw new ConnectionException('Connection timeout');
             },
-            '*naics=562910*' => Http::response([
+            '*ncode=562910*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-002', 'title' => 'Success 2', 'naicsCode' => '562910'],
                 ],
@@ -283,7 +283,7 @@ describe('partial success scenario', function () {
 describe('complete failure scenario', function () {
     test('returns failure response when all NAICS queries fail', function () {
         Http::fake([
-            '*naics=*' => Http::response([
+            '*ncode=*' => Http::response([
                 'error' => 'Invalid API key',
             ], 401),
         ]);
@@ -329,7 +329,7 @@ describe('complete failure scenario', function () {
 describe('parameter override scenarios', function () {
     test('uses overridden NAICS codes instead of database defaults', function () {
         Http::fake([
-            '*naics=999999*' => Http::response([
+            '*ncode=999999*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-custom', 'title' => 'Custom NAICS', 'naicsCode' => '999999'],
                 ],
@@ -350,7 +350,7 @@ describe('parameter override scenarios', function () {
 
     test('applies limit correctly', function () {
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => array_map(fn ($i) => [
                     'noticeId' => "opp-{$i}",
                     'title' => "Opportunity {$i}",
@@ -358,8 +358,8 @@ describe('parameter override scenarios', function () {
                     'postedDate' => '2025-01-10',
                 ], range(1, 100)),
             ], 200),
-            '*naics=541330*' => Http::response(['opportunitiesData' => []], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=541330*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -376,7 +376,7 @@ describe('parameter override scenarios', function () {
 
     test('applies place filter correctly', function () {
         Http::fake([
-            '*naics=*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -396,19 +396,19 @@ describe('parameter override scenarios', function () {
 describe('deduplication behavior', function () {
     test('removes exact duplicates by notice_id', function () {
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-001', 'title' => 'Test 1', 'naicsCode' => '236220'],
                     ['noticeId' => 'opp-002', 'title' => 'Test 2', 'naicsCode' => '236220'],
                 ],
             ], 200),
-            '*naics=541330*' => Http::response([
+            '*ncode=541330*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-001', 'title' => 'Test 1 Duplicate', 'naicsCode' => '541330'],
                     ['noticeId' => 'opp-003', 'title' => 'Test 3', 'naicsCode' => '541330'],
                 ],
             ], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -425,7 +425,7 @@ describe('deduplication behavior', function () {
 
     test('prefers most recent lastModifiedDate when deduplicating', function () {
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => [
                     [
                         'noticeId' => 'opp-001',
@@ -435,7 +435,7 @@ describe('deduplication behavior', function () {
                     ],
                 ],
             ], 200),
-            '*naics=541330*' => Http::response([
+            '*ncode=541330*' => Http::response([
                 'opportunitiesData' => [
                     [
                         'noticeId' => 'opp-001',
@@ -445,7 +445,7 @@ describe('deduplication behavior', function () {
                     ],
                 ],
             ], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -462,11 +462,11 @@ describe('deduplication behavior', function () {
 describe('performance metrics and warnings', function () {
     test('calculates performance metrics correctly', function () {
         Http::fake([
-            '*naics=236220*' => Http::response(['opportunitiesData' => [
+            '*ncode=236220*' => Http::response(['opportunitiesData' => [
                 ['noticeId' => 'opp-001', 'title' => 'Test', 'naicsCode' => '236220'],
             ]], 200),
-            '*naics=541330*' => Http::response(['opportunitiesData' => []], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=541330*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -488,12 +488,12 @@ describe('performance metrics and warnings', function () {
         );
 
         Http::fake([
-            '*naics=236220*' => Http::response(['opportunitiesData' => $opportunities], 200),
-            '*naics=541330*' => Http::response(['opportunitiesData' => array_map(
+            '*ncode=236220*' => Http::response(['opportunitiesData' => $opportunities], 200),
+            '*ncode=541330*' => Http::response(['opportunitiesData' => array_map(
                 fn ($i) => ['noticeId' => "dup-{$i}", 'title' => "Dup {$i}", 'naicsCode' => '541330'],
                 range(1, 40)
             )], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -510,11 +510,11 @@ describe('performance metrics and warnings', function () {
 describe('state file management', function () {
     test('saves state file after successful fetch', function () {
         Http::fake([
-            '*naics=236220*' => Http::response(['opportunitiesData' => [
+            '*ncode=236220*' => Http::response(['opportunitiesData' => [
                 ['noticeId' => 'opp-001', 'title' => 'Test', 'naicsCode' => '236220'],
             ]], 200),
-            '*naics=541330*' => Http::response(['opportunitiesData' => []], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=541330*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -538,7 +538,7 @@ describe('state file management', function () {
 
     test('rotates old state files', function () {
         Http::fake([
-            '*naics=*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;
@@ -561,15 +561,15 @@ describe('state file management', function () {
 describe('sorting and ordering', function () {
     test('sorts opportunities by posted_date descending', function () {
         Http::fake([
-            '*naics=236220*' => Http::response([
+            '*ncode=236220*' => Http::response([
                 'opportunitiesData' => [
                     ['noticeId' => 'opp-001', 'title' => 'Oldest', 'postedDate' => '2025-01-05', 'naicsCode' => '236220'],
                     ['noticeId' => 'opp-002', 'title' => 'Middle', 'postedDate' => '2025-01-10', 'naicsCode' => '236220'],
                     ['noticeId' => 'opp-003', 'title' => 'Newest', 'postedDate' => '2025-01-15', 'naicsCode' => '236220'],
                 ],
             ], 200),
-            '*naics=541330*' => Http::response(['opportunitiesData' => []], 200),
-            '*naics=562910*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=541330*' => Http::response(['opportunitiesData' => []], 200),
+            '*ncode=562910*' => Http::response(['opportunitiesData' => []], 200),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;

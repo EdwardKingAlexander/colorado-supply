@@ -18,7 +18,7 @@ beforeEach(function () {
 describe('successful API requests', function () {
     test('fetches opportunities successfully', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 2,
                 'opportunitiesData' => [
                     [
@@ -97,7 +97,7 @@ describe('successful API requests', function () {
 
     test('sends correct query parameters to API', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 0,
                 'opportunitiesData' => [],
             ], 200),
@@ -118,11 +118,11 @@ describe('successful API requests', function () {
             $url = $request->url();
 
             // Check base URL (without query params)
-            return str_contains($url, 'api.sam.gov/opportunities/v2/search')
+            return str_contains($url, 'opportunities/v2/search')
                 && $request['api_key'] === 'my-api-key'
                 && $request['postedFrom'] === '01/01/2025'
                 && $request['postedTo'] === '01/31/2025'
-                && $request['naics'] === '234567'
+                && $request['ncode'] === '234567'
                 && $request['ptype'] === 'o,p,k'
                 && $request['state'] === 'TX'
                 && $request['limit'] === 1000;
@@ -131,7 +131,7 @@ describe('successful API requests', function () {
 
     test('omits state parameter when place is null', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 0,
                 'opportunitiesData' => [],
             ], 200),
@@ -155,7 +155,7 @@ describe('successful API requests', function () {
 
     test('handles empty opportunities array', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 0,
                 'opportunitiesData' => [],
             ], 200),
@@ -218,7 +218,7 @@ describe('rate limiting', function () {
         Log::shouldReceive('error')->once(); // Final exhaustion error
 
         Http::fake([
-            'api.sam.gov/*' => Http::response('Rate limit exceeded', 429),
+            '*opportunities/v2/search*' => Http::response('Rate limit exceeded', 429),
         ]);
 
         $client = new SamApiClient;
@@ -255,7 +255,7 @@ describe('HTTP error handling', function () {
             });
 
         Http::fake([
-            'api.sam.gov/*' => Http::response('Unauthorized', 401),
+            '*opportunities/v2/search*' => Http::response('Unauthorized', 401),
         ]);
 
         $client = new SamApiClient;
@@ -283,7 +283,7 @@ describe('HTTP error handling', function () {
             });
 
         Http::fake([
-            'api.sam.gov/*' => Http::response('Not Found', 404),
+            '*opportunities/v2/search*' => Http::response('Not Found', 404),
         ]);
 
         $client = new SamApiClient;
@@ -310,7 +310,7 @@ describe('HTTP error handling', function () {
             });
 
         Http::fake([
-            'api.sam.gov/*' => Http::response('Internal Server Error', 500),
+            '*opportunities/v2/search*' => Http::response('Internal Server Error', 500),
         ]);
 
         $client = new SamApiClient;
@@ -337,7 +337,7 @@ describe('HTTP error handling', function () {
             });
 
         Http::fake([
-            'api.sam.gov/*' => Http::response('Service Unavailable', 503),
+            '*opportunities/v2/search*' => Http::response('Service Unavailable', 503),
         ]);
 
         $client = new SamApiClient;
@@ -396,7 +396,7 @@ describe('data validation', function () {
             });
 
         Http::fake([
-            'api.sam.gov/*' => Http::response('not-json-string', 200),
+            '*opportunities/v2/search*' => Http::response('not-json-string', 200),
         ]);
 
         $client = new SamApiClient;
@@ -416,7 +416,7 @@ describe('data validation', function () {
 
     test('handles missing opportunitiesData field', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 10,
                 // Missing opportunitiesData
             ], 200),
@@ -442,7 +442,7 @@ describe('data validation', function () {
 describe('opportunity mapping', function () {
     test('maps all 13 schema fields correctly', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 1,
                 'opportunitiesData' => [
                     [
@@ -496,7 +496,7 @@ describe('opportunity mapping', function () {
 
     test('uses default values for missing fields', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 1,
                 'opportunitiesData' => [
                     [
@@ -536,7 +536,7 @@ describe('opportunity mapping', function () {
 
     test('extracts state code from place string', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 1,
                 'opportunitiesData' => [
                     [
@@ -563,7 +563,7 @@ describe('opportunity mapping', function () {
 
     test('tries multiple agency name fields', function () {
         Http::fake([
-            'api.sam.gov/*' => Http::response([
+            '*opportunities/v2/search*' => Http::response([
                 'totalRecords' => 1,
                 'opportunitiesData' => [
                     [

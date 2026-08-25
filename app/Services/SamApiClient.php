@@ -21,15 +21,34 @@ use Illuminate\Support\Facades\Log;
 class SamApiClient
 {
     /**
-     * SAM.gov v2 API base URL.
+     * Fallback base URL, used only if config is missing.
+     *
+     * @see config('services.sam.base_url') for the authoritative value and the
+     *      reason it no longer points at api.sam.gov.
      */
-    protected const API_BASE_URL = 'https://api.sam.gov/opportunities/v2/search';
+    protected const API_BASE_URL = 'https://sam.gov/api/prod/opportunities/v2/search';
 
     /**
      * HTTP request timeout in seconds.
      * Increased to 30s to handle slow SAM.gov API responses.
      */
     protected const TIMEOUT = 30;
+
+    /**
+     * Resolve the SAM.gov search endpoint.
+     */
+    protected function baseUrl(): string
+    {
+        return config('services.sam.base_url') ?: self::API_BASE_URL;
+    }
+
+    /**
+     * Resolve the HTTP timeout.
+     */
+    protected function timeout(): int
+    {
+        return (int) (config('services.sam.timeout') ?: self::TIMEOUT);
+    }
 
     /**
      * Maximum retry attempts for rate limiting.
@@ -65,7 +84,7 @@ class SamApiClient
         Log::debug('SAM.gov API request', [
             'service' => 'SamApiClient',
             'naics' => $naicsCode,
-            'endpoint' => self::API_BASE_URL,
+            'endpoint' => $this->baseUrl(),
             'params' => $debugParams,
         ]);
 
@@ -73,9 +92,9 @@ class SamApiClient
 
         while ($retryCount <= self::MAX_RETRIES) {
             try {
-                $response = Http::timeout(self::TIMEOUT)
+                $response = Http::timeout($this->timeout())
                     ->withHeaders(['Accept' => 'application/json'])
-                    ->get(self::API_BASE_URL, $queryParams);
+                    ->get($this->baseUrl(), $queryParams);
 
                 // Handle rate limiting with retry logic
                 if ($response->status() === 429) {
@@ -126,10 +145,17 @@ class SamApiClient
             'api_key' => $apiKey,
             'postedFrom' => $params['posted_from'],
             'postedTo' => $params['posted_to'],
-            // SAM.gov v2 search expects "naics" for the NAICS filter (older docs show ncode, which returns empty)
-            'naics' => $naicsCode,
+            // NAICS filter. This was 'naics' for months, which SAM.gov silently
+            // ignores — it is not a recognised parameter, and unknown parameters
+            // are dropped rather than rejected. Every per-NAICS query therefore
+            // returned the same unfiltered result set, which is why a "working"
+            // run on 2026-06-12 pulled 9 x 1000 records and deduplicated 8000 of
+            // them down to the same 1000. Measured 2026-08-24 over 08/01-08/24:
+            //   (no filter) -> 24084 | naics=423840 -> 24084 | ncode=423840 -> 2
+            'ncode' => $naicsCode,
             'ptype' => implode(',', $params['notice_type_codes']),
             'limit' => self::DEFAULT_LIMIT,
+            'offset' => $params['offset'] ?? 0,
         ];
 
         // Add optional state filter
@@ -137,9 +163,21 @@ class SamApiClient
             $queryParams['state'] = $params['place'];
         }
 
-        // Add optional set-aside filter (supports multiple codes)
-        if (! empty($params['set_aside_codes']) && is_array($params['set_aside_codes'])) {
-            $queryParams['setAsideCode'] = implode(',', $params['set_aside_codes']);
+        // Set-aside filter. Previously sent as 'setAsideCode', which SAM.gov also
+        // ignores, so no set-aside filtering has ever actually been applied. The
+        // real parameter is 'typeOfSetAside' and it is SINGLE-VALUED: passing the
+        // six configured codes comma-joined returns 0 records, not their union.
+        // Measured 2026-08-24: setAsideCode=SBA -> 24084 (ignored),
+        // typeOfSetAside=SBA -> 7845, comma-joined six codes -> 0.
+        //
+        // To preserve today's effective behaviour (no set-aside narrowing) while
+        // making an explicit single-code request work, only send the parameter
+        // when exactly one code is requested. Broader multi-set-aside filtering
+        // needs post-fetch filtering — see ai/modules/sam-fetch-repair phase 5.
+        $setAsides = array_values(array_filter((array) ($params['set_aside_codes'] ?? [])));
+
+        if (count($setAsides) === 1) {
+            $queryParams['typeOfSetAside'] = $setAsides[0];
         }
 
         return $queryParams;
@@ -380,6 +418,10 @@ class SamApiClient
                 'response_deadline' => $this->formatDate($opp['responseDeadLine'] ?? null),
                 'naics_code' => $opp['naics'] ?? $opp['naicsCode'] ?? null,
                 'psc_code' => $opp['psc'] ?? $opp['classificationCode'] ?? null,
+                // SAM.gov v2 returns `description` as a link to the description
+                // resource rather than inline text; store whatever it gives us
+                // instead of dropping the field entirely as we used to.
+                'description' => $opp['description'] ?? null,
                 'state_code' => $this->extractStateCode($opp),
                 'agency_name' => $this->extractAgencyName($opp),
                 'set_aside_type' => $opp['typeOfSetAsideDescription'] ?? $opp['typeOfSetAside'] ?? null,

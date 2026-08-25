@@ -56,6 +56,16 @@ return [
 
     'sam' => [
         'api_key' => env('SAM_API_KEY'),
+
+        // The documented public host, https://api.sam.gov/opportunities/v2/search,
+        // began returning an empty-bodied 404 on every path between 2026-06-12
+        // and 2026-07-09 (GSA-side gateway fault, still unannounced). The
+        // sam.gov/api/prod host serves the identical v2 payload and is what the
+        // SAM.gov web UI itself consumes. Kept in config so we can switch back
+        // the moment GSA restores api.sam.gov.
+        'base_url' => env('SAM_API_BASE_URL', 'https://sam.gov/api/prod/opportunities/v2/search'),
+
+        'timeout' => (int) env('SAM_API_TIMEOUT', 30),
     ],
 
     'stripe' => [

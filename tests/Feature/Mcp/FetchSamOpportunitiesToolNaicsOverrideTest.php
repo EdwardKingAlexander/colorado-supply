@@ -14,9 +14,9 @@ test('tool respects naics_override parameter', function () {
 
     // Mock only 3 NAICS codes
     Http::fake([
-        '*naics=111111*' => Http::response(['opportunitiesData' => []], 200),
-        '*naics=222222*' => Http::response(['opportunitiesData' => []], 200),
-        '*naics=333333*' => Http::response(['opportunitiesData' => []], 200),
+        '*ncode=111111*' => Http::response(['opportunitiesData' => []], 200),
+        '*ncode=222222*' => Http::response(['opportunitiesData' => []], 200),
+        '*ncode=333333*' => Http::response(['opportunitiesData' => []], 200),
         '*' => function ($request) use (&$calledUrls) {
             $calledUrls[] = $request->url();
 
