@@ -100,7 +100,7 @@
                     @empty
                         <div class="t-empty" style="padding: 1.5rem 0;">
                             <div class="t-empty-title">NO PARTS YET</div>
-                            <div class="t-empty-text">Use NSN Query to fetch your first part.</div>
+                            <div class="t-empty-text">Search PUB LOG, then review and save a curated part.</div>
                         </div>
                     @endforelse
                 </div>
@@ -122,8 +122,8 @@
                                 <x-heroicon-o-magnifying-glass class="w-4 h-4" />
                             </div>
                             <div style="flex: 1; min-width: 0;">
-                                <div class="nsn-nav-item-title">NSN Query Terminal</div>
-                                <div class="nsn-nav-item-desc">Fetch part data from DLIS sources.</div>
+                                <div class="nsn-nav-item-title">PUB LOG Lookup</div>
+                                <div class="nsn-nav-item-desc">Review NSN, part and CAGE references.</div>
                             </div>
                             <span class="nsn-nav-item-cta">OPEN</span>
                         </a>

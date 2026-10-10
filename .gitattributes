@@ -8,3 +8,6 @@
 
 CHANGELOG.md export-ignore
 README.md export-ignore
+
+# Official DLA source samples: keep bytes exact (CRLF, Windows-1252).
+tests/Fixtures/publog/** -text

@@ -1,151 +1,160 @@
 <x-filament-panels::page>
-    @include('filament.pages.partials.terminal-theme')
-
-    <div class="t-terminal" x-data="{ showResult: {{ isset($this->result) ? 'true' : 'false' }} }">
-
-        {{-- Ambient grid background --}}
-        <div class="t-grid-bg"></div>
-
-        {{-- Classification banner --}}
-        <div class="t-classification-bar">
-            <span class="t-classification-dot"></span>
-            DEFENSE LOGISTICS INTELLIGENCE SYSTEM <span class="t-sep">//</span> NSN QUERY TERMINAL
-            <span class="t-classification-dot"></span>
-        </div>
-
-        {{-- Main query panel --}}
-        <div class="t-panel t-scanlines t-glow-hover" style="animation-delay: 0.1s">
-            <div class="t-panel-corner t-panel-corner--tl"></div>
-            <div class="t-panel-corner t-panel-corner--tr"></div>
-            <div class="t-panel-corner t-panel-corner--bl"></div>
-            <div class="t-panel-corner t-panel-corner--br"></div>
-
-            <div class="t-panel-header">
-                <div class="t-panel-header-icon">
-                    <x-heroicon-o-magnifying-glass class="w-5 h-5" />
-                </div>
-                <div>
-                    <h2 class="t-panel-title">NSN QUERY</h2>
-                    <p class="t-panel-subtitle">National Stock Number Lookup &mdash; Enter NSN to retrieve FLIS data, manufacturer CAGE, and part identification.</p>
-                </div>
+    <style>
+        .publog { display: grid; gap: 1.25rem; min-width: 0; }
+        .publog form, .publog-card { display: grid; gap: 1rem; }
+        .publog-actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+        .publog-card { padding: 1.25rem; border: 1px solid #cbd5e1; border-radius: .75rem; min-width: 0; overflow-wrap: anywhere; }
+        .dark .publog-card { border-color: #475569; }
+        .publog-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem; }
+        .publog h2 { font-size: 1.125rem; font-weight: 650; }
+        .publog h3 { font-weight: 650; }
+        .publog small, .publog dt { font-size: .875rem; opacity: .8; }
+        .publog dl { display: grid; gap: .5rem; }
+        .publog-warning { border-left: 4px solid #d97706; padding: .75rem; }
+        .publog summary { cursor: pointer; padding: .5rem 0; }
+        .publog code { overflow-wrap: anywhere; }
+        @media (max-width: 640px) { .publog-grid { grid-template-columns: minmax(0,1fr); } .publog-card { padding: 1rem; } }
+    </style>
+    <div class="publog">
+        <form wire:submit="fetchNsnData">
+            {{ $this->form }}
+            <div class="publog-actions">
+                <x-filament::button type="submit" wire:loading.attr="disabled" wire:target="fetchNsnData">Search PUB LOG</x-filament::button>
+                <span wire:loading role="status">Searching catalog…</span>
             </div>
-
-            <div class="t-divider"></div>
-
-            <div class="t-form-area">
-                {{ $this->form }}
-            </div>
-
-            <div class="t-actions">
-                @foreach($this->getFormActions() as $action)
-                    {{ $action }}
-                @endforeach
-            </div>
-
-            <div class="t-panel-footer">
-                <span>SRC: NSNDEPOT.COM</span>
-                <span class="t-sep">//</span>
-                <span>CAGE SUPP: NSNLOOKUP.COM</span>
-                <span class="t-sep">//</span>
-                <span>CRAWL4AI v0.8</span>
-            </div>
-        </div>
-
-        {{-- Results panel --}}
-        @if (isset($this->result))
-            <div class="t-panel {{ $this->result['success'] ? 't-panel--success' : 't-panel--error' }}" style="animation-delay: 0.25s">
-                <div class="t-panel-corner t-panel-corner--tl"></div>
-                <div class="t-panel-corner t-panel-corner--tr"></div>
-                <div class="t-panel-corner t-panel-corner--bl"></div>
-                <div class="t-panel-corner t-panel-corner--br"></div>
-
-                {{-- Status header --}}
-                <div class="t-status-bar">
-                    @if ($this->result['success'])
-                        <div class="t-status-indicator t-status-indicator--ok">
-                            <span class="t-status-pulse"></span>
-                            <x-heroicon-s-check-circle class="w-4 h-4" />
-                            <span>QUERY SUCCESSFUL</span>
-                        </div>
-                    @else
-                        <div class="t-status-indicator t-status-indicator--fail">
-                            <span class="t-status-pulse t-status-pulse--fail"></span>
-                            <x-heroicon-s-x-circle class="w-4 h-4" />
-                            <span>QUERY FAILED</span>
-                        </div>
+        </form>
+        @if (!$result)
+            <x-filament::section heading="From reference to verification">
+                <p>Search the catalog, review all part/CAGE references, then open CAGE Search to check the company. Contact its sales team to confirm production and authorized distributors before treating it as a current source.</p>
+                <p>No messages are sent by this lookup.</p>
+            </x-filament::section>
+        @else
+            <div role="status" aria-live="polite" class="publog-card">
+                <h2>{{ match ($result['status']) { 'match' => 'Catalog matches', 'no_match' => 'No catalog matches', 'catalog_unavailable' => 'Catalog not available', 'invalid_input' => 'Check your search', default => 'Lookup temporarily unavailable' } }}</h2>
+                <p>{{ $result['message'] }}</p>
+                @if ($source = $result['source'])
+                    <p>PUB LOG release <strong>{{ $source['release_date'] }}</strong> · {{ strtoupper($result['type']) }}: <code>{{ $result['query'] }}</code></p>
+                    @if ($source['stale'])
+                        <p class="publog-warning">This catalog is older than {{ config('nsn_lookup.stale_after_days') }} days. Verify current company and part status before sourcing.</p>
                     @endif
-                    <span class="t-timestamp">{{ now()->format('d M Y H:i:s') }} UTC</span>
-                </div>
-
-                <div class="t-divider"></div>
-
-                {{-- Message --}}
-                <p class="t-result-message">{{ $this->result['message'] }}</p>
-
-                {{-- Data readout --}}
-                @if (!empty($this->result['nsn']))
-                    <div class="t-readout">
-                        <div class="t-readout-header">
-                            <x-heroicon-o-document-magnifying-glass class="w-4 h-4" />
-                            <span>FLIS DATA READOUT</span>
-                        </div>
-
-                        <div class="t-data-grid">
-                            <div class="t-data-cell t-data-cell--highlight">
-                                <span class="t-data-label">NSN</span>
-                                <span class="t-data-value t-data-value--mono">{{ $this->result['nsn'] }}</span>
-                            </div>
-
-                            @if (!empty($this->result['description']))
-                                <div class="t-data-cell t-data-cell--wide">
-                                    <span class="t-data-label">ITEM DESCRIPTION</span>
-                                    <span class="t-data-value">{{ $this->result['description'] }}</span>
-                                </div>
-                            @endif
-
-                            @if (!empty($this->result['manufacturer']))
-                                <div class="t-data-cell">
-                                    <span class="t-data-label">MANUFACTURER / CAGE</span>
-                                    <span class="t-data-value">{{ $this->result['manufacturer'] }}</span>
-                                </div>
-                            @endif
-                        </div>
-
-                        @if (!empty($this->result['mil_spec_part_id']))
-                            <div class="t-action-link-wrapper">
-                                <a href="{{ \App\Filament\Resources\MilSpecParts\MilSpecPartResource::getUrl('edit', ['record' => $this->result['mil_spec_part_id']]) }}"
-                                   class="t-action-link">
-                                    <x-heroicon-o-arrow-top-right-on-square class="w-4 h-4" />
-                                    ACCESS PART RECORD
-                                    <span class="t-action-link-arrow">&rarr;</span>
-                                </a>
-                            </div>
-                        @endif
-                    </div>
-                @endif
-
-                {{-- Error detail --}}
-                @if ($this->result['error'])
-                    <div class="t-error-block">
-                        <div class="t-error-header">
-                            <x-heroicon-o-exclamation-triangle class="w-4 h-4" />
-                            DIAGNOSTIC
-                        </div>
-                        <p class="t-error-text">{{ $this->result['error'] }}</p>
-                    </div>
+                    <details>
+                        <summary>Release data quality</summary>
+                        <p>Unresolved CAGE references: {{ $source['warnings']['unresolved_cage_references'] ?? 'Not recorded' }}. Orphan item references: {{ $source['warnings']['orphan_references'] ?? 'Not recorded' }}.</p>
+                        <p>Nonstandard CAGE source rows: {{ array_sum($source['warnings']['invalid_cage_source_rows'] ?? []) }}. Source anomalies remain visible below.</p>
+                    </details>
                 @endif
             </div>
+            @if ($result['items'])
+                <h2>Item identification</h2>
+                <div class="publog-grid">
+                    @foreach ($result['items'] as $item)
+                        <article class="publog-card" wire:key="item-{{ $item['id'] }}">
+                            <h3>{{ $item['formatted_nsn'] }} · {{ $item['item_name'] }}</h3>
+                            <dl>
+                                <div><dt>NIIN / FSC / item name code</dt><dd>{{ $item['niin'] }} / {{ $item['fsc'] }} / {{ $item['inc'] ?: 'Not supplied' }}</dd></div>
+                                <div><dt>End item</dt><dd>{{ $item['end_item_name'] ?: 'Not supplied' }}</dd></div>
+                                <div><dt>Cancelled NIIN (source value)</dt><dd>{{ $item['cancelled_niin'] ?: 'Not supplied' }}</dd></div>
+                            </dl>
+                            @if (in_array($result['type'], ['part', 'cage']))
+                                <x-filament::button color="gray" wire:click="inspectItem('{{ $item['niin'] }}')">View all references and status for this item</x-filament::button>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+            @if ($result['companies'])
+                <h2>Company snapshots · not yet verified in CAGE Search</h2>
+                <div class="publog-grid">
+                    @foreach ($result['companies'] as $company)
+                        <article class="publog-card" wire:key="company-{{ $company['id'] }}">
+                            <h3>{{ $company['summary']['COMPANY'] ?? $company['address']['COMPANY_NAME'] ?? 'Company identity not supplied' }}</h3>
+                            <p>CAGE <code>{{ $company['cage_code'] }}</code> · status code {{ $company['summary']['CAGE_STATUS'] ?? 'Not supplied' }}</p>
+                            <p>{{ implode(', ', array_filter(array_intersect_key($company['address'] ?? [], array_flip(['STREET_ADDRESS_1', 'STREET_ADDRESS_2', 'STREET_ADDRESS_3', 'CITY', 'STATE', 'ZIP', 'COUNTRY'])))) }}</p>
+                            @if (!$company['code_valid'])
+                                <p class="publog-warning">Source anomaly: this is not a valid five-character CAGE code. Verify the source manually.</p>
+                            @else
+                                <x-filament::button tag="a" href="https://cage.dla.mil/Search" target="_blank" rel="noopener noreferrer" color="gray">Open CAGE Search</x-filament::button>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+            @if ($result['references'])
+                <h2>Part / CAGE references · page {{ $result['page'] }}</h2>
+                <p>Reference relationships do not confirm current manufacture, stock, or distributor authorization.</p>
+                @foreach ($result['references'] as $reference)
+                    @php($item = collect($result['items'])->firstWhere('niin', $reference['niin']))
+                    @php($company = collect($result['companies'])->firstWhere('cage_code', $reference['cage_code']))
+                    <article class="publog-card" wire:key="reference-{{ $reference['id'] }}">
+                        <h3>{{ $reference['part_number'] }}</h3>
+                        <p>NSN {{ $item['formatted_nsn'] ?? 'Item unresolved' }} · CAGE <code>{{ $reference['cage_code'] }}</code></p>
+                        @if (!$company || !$company['summary'])
+                            <p class="publog-warning">Company identity is unresolved in this release. The reference has been preserved.</p>
+                        @endif
+                        <div class="publog-actions">
+                            @if ($reference['cage_code_valid'])
+                                <x-filament::button tag="a" href="https://cage.dla.mil/Search" target="_blank" rel="noopener noreferrer" color="gray">Open CAGE Search</x-filament::button>
+                                <span x-data="{ copied: false, failed: false, code: @js($reference['cage_code']) }">
+                                    <x-filament::button color="gray" x-on:click="copied = false; failed = false; Promise.resolve().then(() => navigator.clipboard.writeText(code)).then(() => { copied = true }).catch(() => { failed = true })">Copy CAGE code</x-filament::button>
+                                    <small x-show="copied" x-cloak role="status">Copied</small>
+                                    <small x-show="failed" x-cloak role="status">Select and copy the code above.</small>
+                                </span>
+                            @else
+                                <p class="publog-warning">Source anomaly: invalid CAGE format. CAGE Search handoff is unavailable.</p>
+                            @endif
+                            @if ($item && $item['curated_id'])
+                                <x-filament::button tag="a" :href="\App\Filament\Resources\MilSpecParts\MilSpecPartResource::getUrl('edit', ['record' => $item['curated_id']])" color="gray">Review existing curated part</x-filament::button>
+                            @elseif ($item)
+                                <x-filament::button tag="a" :href="\App\Filament\Resources\MilSpecParts\MilSpecPartResource::getUrl('create', ['catalog_reference' => $reference['id']])" color="gray">Review as new curated part</x-filament::button>
+                            @endif
+                        </div>
+                        <details>
+                            <summary>Source codes and meanings</summary>
+                            <dl>
+                                @foreach ($reference['codes'] as $field => $code)
+                                    @if ($code !== '' && $code !== null)
+                                        <div><dt>{{ $field }}: {{ $code }}</dt>
+                                            <dd>
+                                                @forelse ($reference['code_meanings'][$field] as $meaning)
+                                                    <p><strong>{{ $meaning['literal'] }}</strong> {{ $meaning['description'] }}</p>
+                                                @empty
+                                                    Meaning not available in this release; code is not interpreted.
+                                                @endforelse
+                                            </dd>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </dl>
+                            <small>V_FLIS_PART.CSV · source row {{ $reference['source_row'] }}</small>
+                        </details>
+                    </article>
+                @endforeach
+            @endif
+            @if ($result['source'] && ($result['page'] > 1 || $result['has_more']))
+                <nav class="publog-actions" aria-label="Reference pages">
+                    <x-filament::button color="gray" wire:click="changePage(-1)" :disabled="$result['page'] <= 1" wire:loading.attr="disabled">Previous references</x-filament::button>
+                    <span>Page {{ $result['page'] }}</span>
+                    <x-filament::button color="gray" wire:click="changePage(1)" :disabled="!$result['has_more']" wire:loading.attr="disabled">Next references</x-filament::button>
+                </nav>
+            @endif
+            @if ($result['relationships'])
+                <details class="publog-card">
+                    <summary>Catalog status and replacement context · page {{ $result['relationship_page'] }}</summary>
+                    <p>Source status is catalog context, not confirmation of current production.</p>
+                    @foreach ($result['relationships'] as $relationship)
+                        <div wire:key="relationship-{{ $relationship['id'] }}">
+                            <h3>{{ ucfirst($relationship['kind']) }}</h3>
+                            @foreach ($relationship['data'] as $field => $value)
+                                @if ($value !== '' && $value !== null)<p>{{ $field }}: {{ $value }}</p>@endif
+                            @endforeach
+                        </div>
+                    @endforeach
+                    <nav class="publog-actions" aria-label="Status context pages">
+                        <x-filament::button color="gray" wire:click="changePage(-1, true)" :disabled="$result['relationship_page'] <= 1" wire:loading.attr="disabled">Previous status</x-filament::button>
+                        <x-filament::button color="gray" wire:click="changePage(1, true)" :disabled="!$result['relationships_have_more']" wire:loading.attr="disabled">Next status</x-filament::button>
+                    </nav>
+                </details>
+            @endif
         @endif
-
-        {{-- System info footer --}}
-        <div class="t-sys-footer">
-            <span>DLIS TERMINAL v2.1</span>
-            <span class="t-sep">&bull;</span>
-            <span>SESSION {{ strtoupper(substr(md5(session()->getId()), 0, 8)) }}</span>
-            <span class="t-sep">&bull;</span>
-            <span>OPERATOR: {{ auth()->user()?->name ?? 'UNKNOWN' }}</span>
-        </div>
     </div>
-
-    <x-filament-actions::modals />
 </x-filament-panels::page>

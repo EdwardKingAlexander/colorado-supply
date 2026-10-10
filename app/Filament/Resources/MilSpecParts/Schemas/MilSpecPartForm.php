@@ -50,7 +50,8 @@ class MilSpecPartForm
                                     ->maxLength(5)
                                     ->nullable(),
                             ])
-                            ->nullable(),
+                            ->required()
+                            ->helperText('Select a manufacturer you have verified. A PUB LOG reference alone does not confirm current production.'),
                     ]),
             ]);
     }

@@ -10,6 +10,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Metadata only; the operator reviews/downloads/imports releases explicitly.
+Schedule::command('publog:check --scheduled')
+    ->dailyAt('04:30')->withoutOverlapping()->onOneServer();
+
 /*
 |--------------------------------------------------------------------------
 | Business Hub Scheduled Tasks

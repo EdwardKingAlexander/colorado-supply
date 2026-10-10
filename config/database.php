@@ -62,6 +62,23 @@ return [
             ]) : [],
         ],
 
+        // PUB LOG catalog (see config/nsn_lookup.php). Binary collation keeps
+        // part-number and code comparisons exact.
+        'publog' => [
+            'driver' => 'mysql',
+            'host' => env('PUBLOG_DB_HOST', '127.0.0.1'),
+            'port' => env('PUBLOG_DB_PORT', '3306'),
+            'database' => env('PUBLOG_DB_DATABASE', 'publog'),
+            'username' => env('PUBLOG_DB_USERNAME', 'root'),
+            'password' => env('PUBLOG_DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_bin',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

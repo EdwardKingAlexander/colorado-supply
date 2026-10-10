@@ -44,7 +44,7 @@
 
             <div class="mspc-tip">
                 <x-heroicon-o-light-bulb class="w-4 h-4 mspc-tip-icon" />
-                <span>Use the <a href="{{ \App\Filament\Pages\FetchNsnData::getUrl() }}" class="t-action-link" style="display: inline; padding: 0; border: none; font-size: inherit; letter-spacing: inherit;">NSN Query Terminal</a> to auto-populate part data from DLIS sources.</span>
+                <span>Use the <a href="{{ \App\Filament\Pages\FetchNsnData::getUrl() }}" class="t-action-link" style="display: inline; padding: 0; border: none; font-size: inherit; letter-spacing: inherit;">PUB LOG Lookup</a> to review catalog references. Creating a part is an explicit save; select a verified manufacturer. Legacy scraped records remain unverified.</span>
             </div>
         </div>
 
@@ -80,12 +80,18 @@
             color: #6b7280;
         }
 
+        .mspc-tip > span {
+            min-width: 0;
+        }
+
         .dark .mspc-tip {
             color: var(--t-text-dim);
         }
 
         .mspc-tip-icon {
             flex-shrink: 0;
+            width: 1rem;
+            height: 1rem;
             color: var(--t-accent-light);
         }
 

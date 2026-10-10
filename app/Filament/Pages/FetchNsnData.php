@@ -2,17 +2,17 @@
 
 namespace App\Filament\Pages;
 
-use App\Jobs\FetchNsnDataJob;
+use App\Models\Admin;
 use App\Services\NsnLookupService;
 use BackedEnum;
-use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Locked;
 use UnitEnum;
 
 class FetchNsnData extends Page
@@ -23,178 +23,64 @@ class FetchNsnData extends Page
 
     protected static UnitEnum|string|null $navigationGroup = 'NSN Procurement';
 
-    protected static ?string $title = 'Fetch NSN Data';
+    protected static ?string $title = 'PUB LOG Lookup';
 
     protected static ?int $navigationSort = 1;
 
-    public ?array $formData = [];
+    public ?array $formData = ['type' => 'nsn', 'query' => ''];
 
+    #[Locked]
     public ?array $result = null;
 
-    public function mount(): void
+    public static function canAccess(): bool
     {
-        $this->formData = [
-            'nsn' => '',
-        ];
+        return Auth::guard('admin')->user() instanceof Admin;
     }
 
     public function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Section::make('NSN Lookup')
-                    ->description('Enter an NSN to fetch manufacturer, supplier, and procurement data from external sources.')
-                    ->schema([
-                        TextInput::make('nsn')
-                            ->label('National Stock Number (NSN)')
-                            ->required()
-                            ->placeholder('XXXX-XX-XXX-XXXX or 13 digits')
-                            ->helperText('Enter the NSN in format XXXX-XX-XXX-XXXX (with dashes) or as 13 consecutive digits.')
-                            ->maxLength(20)
-                            ->autofocus(),
-                    ]),
-            ])
-            ->statePath('formData');
-    }
-
-    public function getFormActions(): array
-    {
-        return [
-            Action::make('fetchNow')
-                ->label('Fetch NSN Data')
-                ->icon(Heroicon::OutlinedMagnifyingGlass)
-                ->action('fetchNsnData')
-                ->color('primary'),
-            Action::make('fetchInBackground')
-                ->label('Queue Fetch')
-                ->icon(Heroicon::OutlinedClock)
-                ->action('queueFetchNsnData')
-                ->color('gray'),
-        ];
+        return $schema->components([
+            Section::make('Search the PUB LOG catalog')
+                ->description('Find NSNs, part references and dated company snapshots. Searching does not save or change your curated parts.')
+                ->schema([
+                    Select::make('type')->label('Search by')->options(['nsn' => 'NSN', 'niin' => 'NIIN', 'part' => 'Part number', 'cage' => 'CAGE code'])->required()->native(),
+                    TextInput::make('query')->label('Number or code')->required()->maxLength(255)
+                        ->helperText('NSN: 13 digits; NIIN: 9 digits; CAGE: 5 letters/digits. Standard NSN/NIIN dashes are accepted. Part numbers match exactly apart from letter case and surrounding spaces.')
+                        ->autofocus(),
+                ])->columns(2),
+        ])->statePath('formData');
     }
 
     public function fetchNsnData(): void
     {
-        $nsn = trim($this->formData['nsn'] ?? '');
-
-        if (empty($nsn)) {
-            Notification::make()
-                ->title('Error')
-                ->body('Please enter an NSN.')
-                ->danger()
-                ->send();
-
-            return;
-        }
-
-        Log::info('FetchNsnData page - Starting immediate fetch', [
-            'nsn' => $nsn,
-            'user_id' => auth()->id(),
-        ]);
-
-        try {
-            $service = app(NsnLookupService::class);
-            $milSpecPart = $service->fetchAndPersistNsnData($nsn);
-
-            if ($milSpecPart) {
-                $this->result = [
-                    'success' => true,
-                    'message' => "Successfully fetched and saved data for NSN: {$milSpecPart->nsn}",
-                    'mil_spec_part_id' => $milSpecPart->id,
-                    'nsn' => $milSpecPart->nsn,
-                    'description' => $milSpecPart->description,
-                    'manufacturer' => $milSpecPart->manufacturer?->name,
-                    'error' => null,
-                ];
-
-                Notification::make()
-                    ->title('Success')
-                    ->body("NSN data fetched and saved: {$milSpecPart->nsn}. See results below for details.")
-                    ->success()
-                    ->send();
-            } else {
-                $this->result = [
-                    'success' => false,
-                    'message' => 'No data found for the provided NSN. The NSN may be invalid or not found in external sources.',
-                    'error' => 'No data returned from lookup service.',
-                ];
-
-                Notification::make()
-                    ->title('Not Found')
-                    ->body('No data found for the provided NSN.')
-                    ->warning()
-                    ->send();
-            }
-        } catch (\Exception $e) {
-            Log::error('FetchNsnData page - Fetch failed', [
-                'nsn' => $nsn,
-                'error' => $e->getMessage(),
-            ]);
-
-            $this->result = [
-                'success' => false,
-                'message' => 'An error occurred while fetching NSN data.',
-                'error' => $e->getMessage(),
-            ];
-
-            Notification::make()
-                ->title('Error')
-                ->body('Failed to fetch NSN data: '.$e->getMessage())
-                ->danger()
-                ->send();
-        }
+        abort_unless(static::canAccess(), 403);
+        $data = $this->form->getState();
+        $this->result = app(NsnLookupService::class)->lookup($data['type'], $data['query']);
     }
 
-    public function queueFetchNsnData(): void
+    public function changePage(int $direction, bool $relationships = false): void
     {
-        $nsn = trim($this->formData['nsn'] ?? '');
-
-        if (empty($nsn)) {
-            Notification::make()
-                ->title('Error')
-                ->body('Please enter an NSN.')
-                ->danger()
-                ->send();
-
+        abort_unless(static::canAccess(), 403);
+        if (! $this->result || ! $this->result['source'] || ! in_array($direction, [-1, 1], true)) {
             return;
         }
-
-        Log::info('FetchNsnData page - Dispatching background job', [
-            'nsn' => $nsn,
-            'user_id' => auth()->id(),
-        ]);
-
-        try {
-            FetchNsnDataJob::dispatch($nsn);
-
-            $this->result = [
-                'success' => true,
-                'message' => "NSN fetch job has been queued for: {$nsn}. Check the Mil-Spec Parts list for results.",
-                'error' => null,
-            ];
-
-            Notification::make()
-                ->title('Job Queued')
-                ->body("NSN fetch for {$nsn} has been queued. Results will appear in the Mil-Spec Parts list when ready.")
-                ->info()
-                ->send();
-        } catch (\Exception $e) {
-            Log::error('FetchNsnData page - Queue dispatch failed', [
-                'nsn' => $nsn,
-                'error' => $e->getMessage(),
-            ]);
-
-            $this->result = [
-                'success' => false,
-                'message' => 'Failed to queue the fetch job.',
-                'error' => $e->getMessage(),
-            ];
-
-            Notification::make()
-                ->title('Error')
-                ->body('Failed to queue fetch job: '.$e->getMessage())
-                ->danger()
-                ->send();
+        $key = $relationships ? 'relationship_page' : 'page';
+        $more = $relationships ? 'relationships_have_more' : 'has_more';
+        if (($direction === 1 && ! $this->result[$more]) || $this->result[$key] + $direction < 1) {
+            return;
         }
+        $pages = ['page' => $this->result['page'], 'relationship_page' => $this->result['relationship_page']];
+        $pages[$key] += $direction;
+        $this->result = app(NsnLookupService::class)->lookup($this->result['type'], $this->result['query'], $pages['page'], $this->result['source']['import_id'], $pages['relationship_page']);
+    }
+
+    public function inspectItem(string $niin): void
+    {
+        abort_unless(static::canAccess(), 403);
+        if (! $this->result || ! in_array($niin, array_column($this->result['items'], 'niin'), true)) {
+            return;
+        }
+        $this->formData = ['type' => 'niin', 'query' => $niin];
+        $this->result = app(NsnLookupService::class)->lookup('niin', $niin, snapshotId: $this->result['source']['import_id']);
     }
 }
