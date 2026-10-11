@@ -28,7 +28,8 @@ class StoreCheckoutPageTest extends TestCase
 
     private function createOrderForUser(User $user, Company $company): int
     {
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['price' => 10.50, 'is_active' => true, 'minimum_order_quantity' => 1]);
+        $company->products()->attach($product->id);
         $location = Location::create(['company_id' => $company->id, 'name' => 'Main', 'slug' => 'main-'.$company->id]);
 
         $validated = [

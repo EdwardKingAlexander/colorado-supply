@@ -25,7 +25,8 @@ class StoreCheckoutController extends Controller
             'items.*.product_id' => ['nullable', 'integer', 'exists:products,id'],
             'items.*.name' => ['required', 'string', 'max:255'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
-            'items.*.price' => ['required', 'numeric', 'min:0'],
+            // Ignored: StoreCheckoutService prices every line on the server.
+            'items.*.price' => ['nullable', 'numeric', 'min:0'],
             'items.*.slug' => ['nullable', 'string', 'max:255'],
             'items.*.location_id' => ['nullable', 'integer', $locationRule],
 

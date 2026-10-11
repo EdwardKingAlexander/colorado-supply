@@ -2,12 +2,14 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Models\Product;
+use App\Models\ProductAttribute;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
 /**
- * @mixin \App\Models\Product
+ * @mixin Product
  */
 class ProductResource extends JsonResource
 {
@@ -30,7 +32,9 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'image' => $this->image,
             'category_id' => $this->category_id,
-            'unit' => $this->resolveUnit(),
+            'unit' => $this->unit_of_measure ?: $this->resolveUnit(),
+            'unit_of_measure' => $this->unit_of_measure ?: 'EA',
+            'minimum_order_quantity' => max(1, (int) ($this->minimum_order_quantity ?: 1)),
             'specifications' => $this->resolvedSpecifications(),
             'is_active' => (bool) $this->is_active,
 
@@ -87,7 +91,7 @@ class ProductResource extends JsonResource
             return [];
         }
 
-        /** @var Collection<int, \App\Models\ProductAttribute>|null $attributes */
+        /** @var Collection<int, ProductAttribute>|null $attributes */
         $attributes = $this->resource->getRelationValue('attributes');
 
         if ($attributes === null) {

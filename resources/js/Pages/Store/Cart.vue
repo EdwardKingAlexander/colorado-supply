@@ -49,6 +49,10 @@ const groupedItems = computed(() => {
   return groups
 })
 
+// Older cart lines may predate stored URLs; rebuild the canonical one from id + slug.
+const productUrl = (item) => item.url
+  ?? route('store.product', { product: item.productId ?? item.id, slug: item.slug ?? undefined })
+
 const handleRemove = (id) => cartStore.removeItem(id)
 const handleClear = () => cartStore.clearCart()
 </script>
@@ -116,9 +120,17 @@ const handleClear = () => cartStore.clearCart()
                 class="grid grid-cols-1 gap-4 px-4 py-5 text-base text-st-ink sm:px-6 md:grid-cols-12 md:items-center md:text-sm"
               >
                 <div class="md:col-span-4">
-                  <p class="font-medium text-st-ink">{{ item.name }}</p>
-                  <p v-if="item.slug" class="text-xs text-st-muted mt-1">
-                    SKU: {{ item.slug }}
+                  <Link
+                    :href="productUrl(item)"
+                    class="font-medium text-st-ink hover:text-st-action hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+                  >
+                    {{ item.name }}
+                  </Link>
+                  <p v-if="item.sku" class="text-xs text-st-muted mt-1">
+                    SKU: {{ item.sku }}
+                  </p>
+                  <p v-if="item.minQuantity > 1" class="text-xs text-st-muted mt-1">
+                    Minimum order: {{ item.minQuantity }}
                   </p>
                 </div>
                 <div class="md:col-span-2 text-st-muted md:text-right">
@@ -129,14 +141,25 @@ const handleClear = () => cartStore.clearCart()
                     <button
                       type="button"
                       class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-st-line text-xl font-semibold text-st-ink/85 transition-colors hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action disabled:cursor-not-allowed disabled:opacity-50"
-                      :disabled="item.quantity <= 1"
+                      :disabled="item.quantity <= (item.minQuantity ?? 1)"
+                      :aria-label="`Decrease quantity of ${item.name}`"
                       @click="cartStore.decrementQuantity(item.id)"
                     >
                       &minus;
                     </button>
-                    <span class="w-10 text-center text-base font-semibold text-st-ink">{{ item.quantity }}</span>
+                    <label :for="`cart-qty-${item.id}`" class="sr-only">Quantity of {{ item.name }}</label>
+                    <input
+                      :id="`cart-qty-${item.id}`"
+                      :value="item.quantity"
+                      type="number"
+                      :min="item.minQuantity ?? 1"
+                      inputmode="numeric"
+                      class="st-num h-12 w-16 rounded-md border border-st-line bg-st-sunk px-1 text-center text-base font-semibold text-st-ink focus:border-st-action focus:outline-none focus:ring-2 focus:ring-st-action/40"
+                      @change="cartStore.setQuantity(item.id, $event.target.value); $event.target.value = item.quantity"
+                    />
                     <button
                       type="button"
+                      :aria-label="`Increase quantity of ${item.name}`"
                       class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-st-line text-xl font-semibold text-st-ink/85 transition-colors hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action"
                       @click="cartStore.incrementQuantity(item.id)"
                     >

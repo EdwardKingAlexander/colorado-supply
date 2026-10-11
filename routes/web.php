@@ -67,6 +67,7 @@ Route::get('/store/maintenance-preview', fn () => Inertia::render('Store/Unavail
     ->name('store.maintenance-preview');
 // Canonical product URL is id-based: slugs are only unique per vendor.
 Route::get('/store/product/{product}/{slug?}', [StoreController::class, 'product'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.product');
+Route::post('/store/product/{product}/quote-request', [StoreController::class, 'requestQuote'])->middleware(['auth.web_or_admin', 'store.enabled', 'throttle:10,1'])->name('store.product.quote');
 // Legacy slug URL: redirects when the slug is unambiguous, otherwise 404.
 Route::get('/store/{slug}', [StoreController::class, 'show'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.show');
 

@@ -1,6 +1,43 @@
 import { reactive, computed, watch } from 'vue'
+import { normalizeQuantity, unitPriceFor } from '@/Support/pricing'
 
 const STORAGE_KEY = 'colorado-supply.cart'
+
+// Display pricing kept per line so the price follows quantity tiers as the
+// quantity changes. Checkout re-prices every line on the server regardless.
+const linePricing = (pricing) => {
+  if (!pricing || typeof pricing !== 'object') {
+    return null
+  }
+
+  return {
+    company_price: typeof pricing.company_price === 'number' ? pricing.company_price : undefined,
+    base_price: typeof pricing.base_price === 'number' ? pricing.base_price : undefined,
+    tiers: Array.isArray(pricing.tiers) ? pricing.tiers : [],
+  }
+}
+
+const normalizeItem = (item) => {
+  const minQuantity = Math.max(1, Number(item.minQuantity) || 1)
+  const quantity = normalizeQuantity(item.quantity, minQuantity)
+  const pricing = linePricing(item.pricing)
+  const pricedFromTiers = pricing ? unitPriceFor(pricing, quantity) : null
+
+  return {
+    id: item.id,
+    productId: item.productId ?? item.id,
+    name: item.name ?? 'Unnamed Item',
+    sku: item.sku ?? null,
+    slug: item.slug ?? null,
+    url: item.url ?? null,
+    unit: item.unit ?? null,
+    minQuantity,
+    pricing,
+    price: pricedFromTiers ?? (Number(item.price) || 0),
+    quantity,
+    location_id: item.location_id ?? null,
+  }
+}
 
 const loadInitialItems = () => {
   if (typeof window === 'undefined') {
@@ -22,14 +59,7 @@ const loadInitialItems = () => {
 
     return parsed
       .filter((item) => item && typeof item.id !== 'undefined')
-      .map((item) => ({
-        id: item.id,
-        name: item.name ?? 'Unnamed Item',
-        price: Number(item.price) || 0,
-        quantity: Number(item.quantity) > 0 ? Number(item.quantity) : 1,
-        slug: item.slug ?? null,
-        location_id: item.location_id ?? null, // Add location_id here
-      }))
+      .map(normalizeItem)
   } catch (error) {
     console.warn('Failed to parse cart storage', error)
     return []
@@ -62,35 +92,54 @@ if (typeof window !== 'undefined') {
   )
 }
 
+const findItem = (id) => state.items.find((cartItem) => cartItem.id === id)
+
+// Quantity changes re-derive the unit price when the line carries tier pricing.
+const applyQuantity = (item, quantity) => {
+  item.quantity = normalizeQuantity(quantity, item.minQuantity ?? 1)
+
+  if (item.pricing) {
+    item.price = unitPriceFor(item.pricing, item.quantity) ?? item.price
+  }
+}
+
 export function useCartStore() {
-  const addItem = (product, quantity = 1, location_id = null) => { // Add location_id parameter
+  /**
+   * Add a product (catalog row or product page payload). Quantities above
+   * stock are allowed: they are backordered.
+   */
+  const addItem = (product, quantity = 1, location_id = null) => {
     if (!product || typeof product.id === 'undefined') {
       return
     }
 
-    const qty = Number(quantity) > 0 ? Number(quantity) : 1
-    const normalizedPrice = Number(product.price) || 0
-
-    const existing = state.items.find((item) => item.id === product.id)
+    const minQuantity = Math.max(1, Number(product.minimum_order_quantity) || 1)
+    const existing = findItem(product.id)
 
     if (existing) {
-      // If item exists, update quantity and ensure location_id is set if it was null
-      existing.quantity += qty
+      applyQuantity(existing, existing.quantity + normalizeQuantity(quantity, 1))
+
       if (!existing.location_id && location_id) {
-          existing.location_id = location_id;
+        existing.location_id = location_id
       }
+
       return
     }
 
-    state.items.push({
+    state.items.push(normalizeItem({
       id: product.id,
-      productId: product.id ?? null,
-      name: product.name ?? 'Unnamed Item',
-      price: normalizedPrice,
-      quantity: qty,
-      slug: product.slug ?? null,
-      location_id: location_id, // Store location_id here
-    })
+      productId: product.id,
+      name: product.name,
+      sku: product.sku,
+      slug: product.slug,
+      url: product.url,
+      unit: product.unit_of_measure ?? product.unit,
+      minQuantity,
+      pricing: product.pricing,
+      price: product.price,
+      quantity: normalizeQuantity(quantity, minQuantity),
+      location_id,
+    }))
   }
 
   const removeItem = (id) => {
@@ -111,28 +160,32 @@ export function useCartStore() {
     state.items.splice(0, state.items.length)
   }
 
-  const incrementQuantity = (id) => {
-    const item = state.items.find((cartItem) => cartItem.id === id)
+  const setQuantity = (id, quantity) => {
+    const item = findItem(id)
 
-    if (!item) {
-      return
+    if (item) {
+      applyQuantity(item, quantity)
     }
+  }
 
-    item.quantity += 1
+  const incrementQuantity = (id) => {
+    const item = findItem(id)
+
+    if (item) {
+      applyQuantity(item, item.quantity + 1)
+    }
   }
 
   const decrementQuantity = (id) => {
-    const item = state.items.find((cartItem) => cartItem.id === id)
+    const item = findItem(id)
 
-    if (!item || item.quantity <= 1) {
-      return
+    if (item && item.quantity > (item.minQuantity ?? 1)) {
+      applyQuantity(item, item.quantity - 1)
     }
-
-    item.quantity -= 1
   }
 
   const updateItemLocation = (id, newLocationId) => {
-    const item = state.items.find((cartItem) => cartItem.id === id)
+    const item = findItem(id)
 
     if (!item) {
       return
@@ -153,6 +206,7 @@ export function useCartStore() {
     addItem,
     removeItem,
     clearCart,
+    setQuantity,
     incrementQuantity,
     decrementQuantity,
     updateItemLocation,

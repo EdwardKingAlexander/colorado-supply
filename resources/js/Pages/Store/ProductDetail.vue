@@ -1,8 +1,10 @@
 <script setup>
-import { ref, computed, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { useCartStore } from '@/Stores/useCartStore';
+import ProductBuyBox from '@/Components/Store/ProductBuyBox.vue';
+import RequestQuoteModal from '@/Components/Store/RequestQuoteModal.vue';
+import { unitPriceFor } from '@/Support/pricing';
 
 // Server-built payload (App\Services\Store\ProductPageData). Every key is
 // optional: anything the product lacks is absent, so sections check presence.
@@ -21,7 +23,10 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-const unitPrice = computed(() => pricing.value.unit_price ?? null);
+// Shared with the buy box so the header price follows the chosen quantity.
+const quantity = ref(props.product.minimum_order_quantity ?? 1);
+
+const unitPrice = computed(() => unitPriceFor(pricing.value, quantity.value));
 
 const priceDisplay = computed(() => {
     if (unitPrice.value !== null) {
@@ -60,13 +65,13 @@ const stockStatus = computed(() => {
 
     if (!stock || typeof stock.in_stock === 'undefined') {
         return stock?.lead_time_days
-            ? { label: `Ships in ${stock.lead_time_days} days`, class: 'bg-st-warn/15 text-st-warn', icon: '⏱' }
+            ? { label: `Ships in ${stock.lead_time_days} ${stock.lead_time_days === 1 ? 'day' : 'days'}`, class: 'bg-st-warn/15 text-st-warn', icon: '⏱' }
             : null;
     }
 
     if (!stock.in_stock) {
         return {
-            label: stock.lead_time_days ? `Ships in ${stock.lead_time_days} days` : 'Out of Stock',
+            label: stock.lead_time_days ? `Ships in ${stock.lead_time_days} ${stock.lead_time_days === 1 ? 'day' : 'days'}` : 'Out of Stock',
             class: 'bg-st-warn/15 text-st-warn',
             icon: '⏱',
         };
@@ -79,38 +84,30 @@ const stockStatus = computed(() => {
     };
 });
 
-const cartStore = useCartStore();
-const justAdded = ref(false);
-let feedbackTimer;
+const quoteOpen = ref(false);
 
-const handleAddToCart = () => {
-    if (unitPrice.value === null) {
+// Mobile sticky bar: shown below lg once the buy box scrolls out of view.
+const buyBox = ref(null);
+const buyBoxVisible = ref(true);
+let buyBoxObserver;
+
+onMounted(() => {
+    if (!buyBox.value || typeof IntersectionObserver === 'undefined') {
         return;
     }
 
-    cartStore.addItem({
-        id: product.value.id,
-        name: product.value.name,
-        slug: product.value.slug,
-        price: unitPrice.value,
+    buyBoxObserver = new IntersectionObserver(([entry]) => {
+        buyBoxVisible.value = entry.isIntersecting;
     });
-    justAdded.value = true;
-
-    if (feedbackTimer) {
-        clearTimeout(feedbackTimer);
-    }
-
-    feedbackTimer = setTimeout(() => {
-        justAdded.value = false;
-        feedbackTimer = null;
-    }, 1500);
-};
-
-onBeforeUnmount(() => {
-    if (feedbackTimer) {
-        clearTimeout(feedbackTimer);
-    }
+    buyBoxObserver.observe(buyBox.value);
 });
+
+onBeforeUnmount(() => buyBoxObserver?.disconnect());
+
+const jumpToBuyBox = () => {
+    buyBox.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    buyBox.value?.querySelector('#buy-quantity')?.focus({ preventScroll: true });
+};
 </script>
 
 <template>
@@ -223,8 +220,12 @@ onBeforeUnmount(() => {
                             </div>
                         </div>
 
-                        <!-- Right: Specs & Actions -->
+                        <!-- Right: Buy box & specs -->
                         <div class="space-y-6">
+                            <div ref="buyBox">
+                                <ProductBuyBox v-model:quantity="quantity" :product="product" @request-quote="quoteOpen = true" />
+                            </div>
+
                             <!-- Description -->
                             <div v-if="product.description">
                                 <h3 class="text-sm font-semibold text-st-ink mb-2">
@@ -281,27 +282,41 @@ onBeforeUnmount(() => {
                                 </div>
                             </div>
 
-                            <!-- Actions (Request a Quote arrives in phase 3) -->
-                            <div class="pt-4">
-                                <button
-                                    v-if="unitPrice !== null"
-                                    type="button"
-                                    class="min-h-12 w-full rounded-md bg-st-fill px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-st-fill/85 focus:outline-none focus:ring-2 focus:ring-st-action focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-                                    @click="handleAddToCart"
-                                >
-                                    <span v-if="justAdded" class="inline-flex items-center gap-1">
-                                        Added <span aria-hidden="true">&check;</span>
-                                    </span>
-                                    <span v-else>Add to Cart</span>
-                                </button>
-                                <p class="mt-3 text-center text-sm leading-5 text-st-muted">
-                                    Questions? Contact our sales team for assistance.
-                                </p>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <RequestQuoteModal v-model:open="quoteOpen" :product="product" :quantity="quantity" />
+
+        <!-- Mobile sticky action bar -->
+        <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="translate-y-full"
+            leave-active-class="transition duration-150 ease-in"
+            leave-to-class="translate-y-full"
+        >
+            <div
+                v-if="!buyBoxVisible"
+                class="fixed inset-x-0 bottom-0 z-40 border-t border-st-line bg-st-panel/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden"
+            >
+                <div class="mx-auto flex max-w-7xl items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="truncate text-sm text-st-muted">{{ product.name }}</p>
+                        <p class="st-num text-lg font-bold text-st-ink">
+                            {{ priceDisplay }}<span v-if="unitPrice !== null" class="text-sm font-normal text-st-muted"> / {{ unitLabel }}</span>
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        class="min-h-12 shrink-0 rounded-md bg-st-fill px-5 py-3 text-base font-semibold text-white hover:bg-st-fill/85 focus:outline-none focus:ring-2 focus:ring-st-action focus:ring-offset-2"
+                        @click="unitPrice !== null ? jumpToBuyBox() : (quoteOpen = true)"
+                    >
+                        {{ unitPrice !== null ? 'Buy' : 'Request a Quote' }}
+                    </button>
+                </div>
+            </div>
+        </Transition>
     </StoreLayout>
 </template>

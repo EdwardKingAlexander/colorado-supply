@@ -2,6 +2,7 @@
 import { computed, ref, onBeforeUnmount } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { useCartStore } from '@/Stores/useCartStore'
+import { normalizeQuantity } from '@/Support/pricing'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -67,16 +68,17 @@ const availability = computed(() => {
 
 const cartStore = useCartStore()
 const justAdded = ref(false)
-const quantity = ref(1)
+const minQuantity = computed(() => Math.max(1, Number(props.product.minimum_order_quantity) || 1))
+const quantity = ref(minQuantity.value)
 let feedbackTimer
 
+// No upper bound: quantities above stock are backordered.
 const setQuantity = (value) => {
-  const parsed = Math.floor(Number(value))
-  quantity.value = Number.isFinite(parsed) && parsed > 0 ? Math.min(parsed, 9999) : 1
+  quantity.value = normalizeQuantity(value, minQuantity.value)
 }
 
 const handleAddToCart = () => {
-  cartStore.addItem(props.product, quantity.value)
+  cartStore.addItem({ ...props.product, url: productUrl.value }, quantity.value)
   justAdded.value = true
 
   clearTimeout(feedbackTimer)
@@ -157,14 +159,21 @@ onBeforeUnmount(() => clearTimeout(feedbackTimer))
     </div>
 
     <!-- Quantity + add -->
-    <div class="col-span-2 flex items-center gap-2 lg:col-span-1 lg:justify-end">
+    <div v-if="!priceDisplay" class="col-span-2 flex items-center lg:col-span-1 lg:justify-end">
+      <Link
+        :href="productUrl"
+        class="inline-flex h-11 flex-1 items-center justify-center rounded-md border border-st-line px-4 text-sm font-semibold text-st-ink transition-colors hover:bg-st-sunk focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action lg:h-10 lg:flex-none"
+      >
+        Request quote
+      </Link>
+    </div>
+    <div v-else class="col-span-2 flex items-center gap-2 lg:col-span-1 lg:justify-end">
       <label :for="`qty-${product.id}`" class="sr-only">Quantity for {{ product.name }}</label>
       <input
         :id="`qty-${product.id}`"
         :value="quantity"
         type="number"
-        min="1"
-        max="9999"
+        :min="minQuantity"
         inputmode="numeric"
         class="st-num h-11 w-20 rounded-md border border-st-line bg-st-sunk px-2 text-center text-base text-st-ink focus:border-st-action focus:outline-none focus:ring-2 focus:ring-st-action/40 lg:h-10 lg:w-16"
         @change="setQuantity($event.target.value)"

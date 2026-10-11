@@ -7,6 +7,8 @@ use App\Models\Location;
 use App\Models\Order;
 use App\Models\Product;
 use App\Services\Store\ProductPageData;
+use App\Services\Store\ProductQuoteRequestService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,6 +70,30 @@ class StoreController extends Controller
         return Inertia::render('Store/ProductDetail', [
             'product' => $pageData->build($product, $viewer),
         ]);
+    }
+
+    /**
+     * "Request a Quote" from the product page: creates a draft Quote that
+     * sales prices in Filament.
+     */
+    public function requestQuote(Request $request, Product $product, ProductQuoteRequestService $quotes): JsonResponse
+    {
+        $viewer = Auth::guard('web')->user() ?? Auth::guard('admin')->user();
+
+        abort_if(! $product->is_active && ! $viewer instanceof Admin, 404);
+
+        $minimum = max(1, (int) ($product->minimum_order_quantity ?: 1));
+
+        $validated = $request->validate([
+            'quantity' => ['required', 'integer', "min:{$minimum}"],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'quantity.min' => "The minimum order for this product is {$minimum}.",
+        ]);
+
+        $quote = $quotes->create($viewer, $product, (int) $validated['quantity'], $validated['note'] ?? null);
+
+        return response()->json(['quote_number' => $quote->quote_number], 201);
     }
 
     /**

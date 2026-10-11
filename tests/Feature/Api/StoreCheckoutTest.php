@@ -37,7 +37,8 @@ class StoreCheckoutTest extends TestCase
 
         $company = Company::create(['name' => 'Acme Co', 'slug' => 'acme-co']);
         $user = User::factory()->create(['company_id' => $company->id]);
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['price' => 10.50, 'is_active' => true, 'minimum_order_quantity' => 1]);
+        $company->products()->attach($product->id);
         $location = Location::create(['company_id' => $company->id, 'name' => 'Main', 'slug' => 'main']);
 
         $payload = [
@@ -95,7 +96,7 @@ class StoreCheckoutTest extends TestCase
     public function test_admin_can_checkout_a_test_cart_without_a_portal_user(): void
     {
         $admin = Admin::factory()->create();
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['price' => 10.50, 'is_active' => true, 'minimum_order_quantity' => 1]);
 
         $payload = [
             'items' => [
@@ -160,7 +161,9 @@ class StoreCheckoutTest extends TestCase
         $companyB = Company::create(['name' => 'Acme Co B', 'slug' => 'acme-co-b']);
         $userA = User::factory()->create(['company_id' => $companyA->id]);
         $userB = User::factory()->create(['company_id' => $companyB->id]);
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['price' => 5, 'is_active' => true, 'minimum_order_quantity' => 1]);
+        $companyA->products()->attach($product->id);
+        $companyB->products()->attach($product->id);
 
         $payload = [
             'items' => [
@@ -203,7 +206,8 @@ class StoreCheckoutTest extends TestCase
     {
         $company = Company::create(['name' => 'Acme Co', 'slug' => 'acme-co']);
         $user = User::factory()->create(['company_id' => $company->id]);
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['price' => 5, 'is_active' => true, 'minimum_order_quantity' => 1]);
+        $company->products()->attach($product->id);
 
         $payload = [
             'items' => [

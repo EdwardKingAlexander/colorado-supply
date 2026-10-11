@@ -102,7 +102,8 @@ class StoreCheckoutFlowTest extends TestCase
 
         $company = Company::create(['name' => 'Acme Co', 'slug' => 'acme-co-stripe-flow']);
         $user = User::factory()->create(['company_id' => $company->id]);
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['price' => 42, 'is_active' => true, 'minimum_order_quantity' => 1]);
+        $company->products()->attach($product->id);
         $location = Location::create(['company_id' => $company->id, 'name' => 'Main', 'slug' => 'main-stripe-flow']);
 
         $orderData = $this->checkoutCart($user, $product, $location);
@@ -137,7 +138,8 @@ class StoreCheckoutFlowTest extends TestCase
 
         $company = Company::create(['name' => 'Acme Co', 'slug' => 'acme-co-paypal-flow']);
         $user = User::factory()->create(['company_id' => $company->id]);
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['price' => 42, 'is_active' => true, 'minimum_order_quantity' => 1]);
+        $company->products()->attach($product->id);
         $location = Location::create(['company_id' => $company->id, 'name' => 'Main', 'slug' => 'main-paypal-flow']);
 
         $orderData = $this->checkoutCart($user, $product, $location);
