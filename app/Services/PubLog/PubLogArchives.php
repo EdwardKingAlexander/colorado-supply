@@ -35,11 +35,11 @@ class PubLogArchives
                 for ($i = 0; $i < $zip->numFiles; $i++) {
                     $entry = $zip->statIndex($i);
                     $member = $entry['name'];
-                    $allowed = array_merge(array_keys(PubLogSchema::members()), PubLogSchema::optionalMembers());
+                    $allowed = array_merge(array_keys(PubLogSchema::allMembers()), PubLogSchema::optionalMembers());
                     if (! in_array($member, $allowed, true) || isset($entries[$member]) || ($entry['encryption_method'] ?? 0) !== 0) {
                         throw new RuntimeException("Unexpected, duplicate or encrypted archive member: {$member}.");
                     }
-                    if (isset(PubLogSchema::members()[$member]) && PubLogSchema::members()[$member]['archive'] !== $name) {
+                    if (isset(PubLogSchema::allMembers()[$member]) && PubLogSchema::allMembers()[$member]['archive'] !== $name) {
                         throw new RuntimeException("Member {$member} is in the wrong archive.");
                     }
                     if ($entry['size'] > config('nsn_lookup.max_member_bytes') || $entry['size'] < 1) {
@@ -158,6 +158,20 @@ class PubLogArchives
         $free = disk_free_space($path);
         if ($free === false || $free < $additional + config('nsn_lookup.minimum_free_bytes')) {
             throw new RuntimeException('Insufficient staging disk space; the active catalog has not changed.');
+        }
+    }
+
+    /**
+     * Deletes the archive copies an import owns (never the operator's source
+     * files). Used once a release is replaced or abandoned.
+     */
+    public function removeOwnedDirectory(PubLogImport $import): void
+    {
+        $directory = $import->manifest['directory'] ?? null;
+        $root = realpath((string) config('nsn_lookup.directory'));
+        $real = $directory ? realpath($directory) : false;
+        if ($root && $real && str_starts_with($real, $root.DIRECTORY_SEPARATOR)) {
+            File::deleteDirectory($real);
         }
     }
 }

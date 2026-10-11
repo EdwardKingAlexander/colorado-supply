@@ -159,6 +159,7 @@ it('supports legacy MCP NSN inputs with truthful read-only output and retires ol
 });
 
 it('paginates status context separately and preserves the searched value while moving pages', function () {
+    config(['nsn_lookup.import_relationships' => true]);
     $import = activateLookupFixture($this);
     $template = DB::table('nsn_catalog_relationships')->where('niin', '000000012')->first();
     $row = (array) $template;
@@ -181,7 +182,8 @@ it('paginates status context separately and preserves the searched value while m
 
 it('rejects curated prefill from a release that was never activated', function () {
     PubLogFixtures::ready($this->directory.'/source');
-    $reference = NsnReference::first();
+    // A staged (never activated) release is not visible to the app.
+    $reference = (object) ['id' => DB::table('nsn_references_next')->value('id')];
     $this->actingAs(Admin::factory()->create(), 'admin');
     Livewire::withQueryParams(['catalog_reference' => (string) $reference->id])->test(CreateMilSpecPart::class)->assertNotFound();
     expect(MilSpecPart::count())->toBe(0);

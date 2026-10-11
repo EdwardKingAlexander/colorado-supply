@@ -12,6 +12,7 @@ class PubLogWriter
             return 0;
         }
         $table = PubLogSchema::members()[$member]['table'];
+        $physical = PubLogTables::staging($table);
         $key = match ($table) {
             'nsn_catalog_items' => 'niin',
             'cage_entities' => 'cage_code',
@@ -32,7 +33,7 @@ class PubLogWriter
         $identities = array_column($batch, $key);
         // Relationship identity is unique per (import_id, kind, row_hash); omitting
         // kind limits MySQL to the import_id prefix and scans the whole import.
-        $existing = PubLogDb::connection()->table($table)->where('import_id', $importId)
+        $existing = PubLogDb::connection()->table($physical)->where('import_id', $importId)
             ->when($table === 'nsn_catalog_relationships', fn ($query) => $query->where('kind', reset($batch)['kind']))
             ->whereIn($key, $identities)->get([$key, $hashKey])->keyBy($key);
         foreach ($batch as $identity => $row) {
@@ -49,9 +50,9 @@ class PubLogWriter
         if ($table === 'cage_entities') {
             // The address and summary are independent source facts on the same entity.
             $fields = $member === 'P_CAGE.CSV' ? ['summary', 'summary_row', 'summary_hash'] : ['address', 'address_row', 'address_hash'];
-            PubLogDb::connection()->table($table)->upsert(array_values($batch), ['import_id', 'cage_code'], $fields);
+            PubLogDb::connection()->table($physical)->upsert(array_values($batch), ['import_id', 'cage_code'], $fields);
         } else {
-            PubLogDb::connection()->table($table)->insert(array_values($batch));
+            PubLogDb::connection()->table($physical)->insert(array_values($batch));
         }
 
         return count($batch);

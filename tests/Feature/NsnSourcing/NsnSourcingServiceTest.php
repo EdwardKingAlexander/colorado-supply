@@ -15,6 +15,7 @@ use App\Services\NsnSourcing\NsnSourcingService;
 use App\Services\PubLog\PubLogCatalog;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -76,7 +77,7 @@ it('refuses references from a release that was never activated', function () {
     PubLogFixtures::ready($this->directory.'/source');
     $this->actingAs($this->admin, 'admin');
 
-    expect(fn () => $this->service->openFromReference(NsnReference::first()->id))->toThrow(HttpException::class);
+    expect(fn () => $this->service->openFromReference((int) DB::table('nsn_references_next')->value('id')))->toThrow(HttpException::class);
     expect(NsnSourcingCase::withoutGlobalScopes()->count())->toBe(0);
 });
 

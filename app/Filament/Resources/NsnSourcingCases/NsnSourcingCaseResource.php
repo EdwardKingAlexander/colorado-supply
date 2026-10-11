@@ -8,6 +8,7 @@ use App\Models\NsnCageVerification;
 use App\Models\NsnSourcingCase;
 use App\Models\NsnSourcingInquiry;
 use App\Models\NsnSourcingResponse;
+use App\Services\PubLog\PubLogCatalog;
 use BackedEnum;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -106,7 +107,8 @@ class NsnSourcingCaseResource extends Resource
                     TextEntry::make('cage_code')->label('CAGE')->fontFamily('mono')->copyable()
                         ->url('https://cage.dla.mil/Search', shouldOpenInNewTab: true)->helperText('Opens CAGE Search'),
                     TextEntry::make('item_name')->label('Item')->placeholder('—'),
-                    TextEntry::make('release_date')->label('PUB LOG release')->date('M j, Y'),
+                    TextEntry::make('release_date')->label('PUB LOG release')->date('M j, Y')
+                        ->helperText(fn (NsnSourcingCase $record) => (int) $record->pub_log_import_id !== app(PubLogCatalog::class)->activeId() ? 'Since replaced by a newer release. Values here are as of this release.' : 'Current release'),
                     TextEntry::make('created_at')->label('Opened')->dateTime('M j, Y')
                         ->helperText(fn (NsnSourcingCase $record) => 'by '.($record->openedBy?->name ?? 'unknown')),
                 ]),

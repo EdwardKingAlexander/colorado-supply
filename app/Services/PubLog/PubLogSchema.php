@@ -4,8 +4,16 @@ namespace App\Services\PubLog;
 
 class PubLogSchema
 {
-    /** October 2026 verified source contract. Older incompatible schemas fail closed. */
+    /** Members that are imported. The status/replacement history is optional (phase 5). */
     public static function members(): array
+    {
+        return array_diff_key(self::allMembers(), config('nsn_lookup.import_relationships') ? [] : array_flip(self::RELATIONSHIP_MEMBERS));
+    }
+
+    public const RELATIONSHIP_MEMBERS = ['V_FLIS_STANDARDIZATION.CSV', 'V_FLIS_CANCELLED_NIIN.CSV'];
+
+    /** October 2026 verified source contract. Older incompatible schemas fail closed. */
+    public static function allMembers(): array
     {
         return [
             'P_FLIS_NSN.CSV' => ['archive' => 'IDENTIFICATION', 'table' => 'nsn_catalog_items', 'encoding' => 'UTF-8', 'fields' => ['FSC', 'NIIN', 'INC', 'ITEM_NAME', 'SOS', 'END_ITEM_NAME', 'CANCELLED_NIIN']],

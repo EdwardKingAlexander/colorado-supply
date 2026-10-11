@@ -16,10 +16,43 @@ class PubLogImporter
         private PubLogCatalog $catalog,
     ) {}
 
-    public function prepare(string $directory, string $releaseDate): PubLogImport
+    public function prepare(string $directory, string $releaseDate, bool $reimport = false): PubLogImport
     {
-        return Cache::lock('publog:writer', 86400)->get(fn () => $this->archives->prepare($directory, $releaseDate))
-            ?: throw new RuntimeException('Another PUB LOG import is running.');
+        return Cache::lock('publog:writer', 86400)->get(function () use ($directory, $releaseDate, $reimport) {
+            $import = $this->archives->prepare($directory, $releaseDate);
+            // The same files were imported before but that copy is gone (replaced or
+            // abandoned), or --reimport rebuilds the live release: retire the old
+            // fingerprint so the release can be imported again.
+            if (in_array($import->status, ['replaced', 'abandoned'], true) || ($reimport && $import->activated_at)) {
+                $import->update(['fingerprint' => hash('sha256', $import->fingerprint.'#'.$import->id)]);
+                $import = $this->archives->prepare($directory, $releaseDate);
+            }
+
+            return $import;
+        }) ?: throw new RuntimeException('Another PUB LOG import is running.');
+    }
+
+    /**
+     * One import owns the staging tables at a time. Starting or resuming an
+     * import abandons any other staged one; an import whose staging was lost
+     * restarts from the beginning.
+     */
+    private function ensureStaging(PubLogImport $import): void
+    {
+        if ($import->activated_at) {
+            return;
+        }
+        foreach (PubLogImport::whereKeyNot($import->id)->whereNull('activated_at')->whereNotIn('status', ['abandoned', 'replaced'])->get() as $other) {
+            if ($other->manifest['staged'] ?? false) {
+                $other->update(['status' => 'abandoned', 'manifest' => [...$other->manifest, 'staged' => false]]);
+                $this->archives->removeOwnedDirectory($other);
+            }
+        }
+        if (($import->manifest['staged'] ?? false) && PubLogTables::stagingExists()) {
+            return;
+        }
+        PubLogTables::createStaging($import->id);
+        $import->update(['status' => 'pending', 'progress' => [], 'validation' => [], 'completed_at' => null, 'manifest' => [...$import->manifest, 'staged' => true]]);
     }
 
     /**
@@ -36,10 +69,16 @@ class PubLogImporter
         $budget = $maxSeconds > 0 ? min($maxSeconds, 82800) : 82800;
         try {
             $import->refresh();
-            if ($import->status === 'ready') {
+            if (in_array($import->status, ['replaced', 'abandoned'], true)) {
+                throw new RuntimeException('This import was '.$import->status.'; start a new import from the release files.');
+            }
+            if ($import->status === 'ready' && ($import->activated_at || (($import->manifest['staged'] ?? false) && PubLogTables::stagingExists()))) {
                 return $import;
             }
             $this->archives->verify($import);
+            PubLogDb::prepareForBulkWrite();
+            $this->ensureStaging($import);
+            $import->refresh();
             $import->update(['status' => 'importing', 'error' => null]);
             $progress = $import->progress ?? [];
             foreach (PubLogSchema::members() as $member => $schema) {

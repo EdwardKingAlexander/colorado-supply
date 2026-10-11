@@ -7,6 +7,7 @@ use App\Models\NsnReference;
 use App\Models\PubLogImport;
 use App\Services\PubLog\PubLogCatalog;
 use App\Services\PubLog\PubLogImporter;
+use App\Services\PubLog\PubLogTables;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -14,27 +15,45 @@ use Tests\Support\PubLogFixtures;
 
 beforeEach(function () {
     $this->directory = sys_get_temp_dir().'/publog-test-'.bin2hex(random_bytes(8));
-    config(['nsn_lookup.directory' => $this->directory.'/owned', 'nsn_lookup.batch_size' => 2, 'nsn_lookup.minimum_free_bytes' => 0]);
+    // History import on here so its parsing stays covered; production default is off.
+    config(['nsn_lookup.directory' => $this->directory.'/owned', 'nsn_lookup.batch_size' => 2, 'nsn_lookup.minimum_free_bytes' => 0, 'nsn_lookup.import_relationships' => true]);
     $this->travelTo(now()->setDate(2026, 10, 4));
 });
 afterEach(function () {
     File::deleteDirectory($this->directory);
 });
 
+/** Rows of a ready, not yet activated import live in the staging tables. */
+function staged(string $table)
+{
+    return DB::table(PubLogTables::staging($table));
+}
+
+function readyAndLive($test, string $directory, ?callable $change = null)
+{
+    $import = PubLogFixtures::ready($test->directory.'/'.$directory, change: $change);
+    app(PubLogCatalog::class)->activate($import->id, app(PubLogCatalog::class)->activeId());
+
+    return $import->fresh();
+}
+
 it('imports real cross references and statuses without changing curated records or activating implicitly', function () {
     $legacy = DB::table('mil_spec_parts')->count();
     $import = PubLogFixtures::ready($this->directory.'/source');
     expect($import->status)->toBe('ready')
         ->and(app(PubLogCatalog::class)->activeId())->toBeNull()
+        ->and(NsnCatalogItem::count())->toBe(0)
+        ->and(staged('nsn_catalog_items')->where('niin', '000000045')->value('nsn'))->toBe('5940000000045');
+    app(PubLogCatalog::class)->activate($import->id, null);
+    expect(app(PubLogCatalog::class)->snapshot()->id)->toBe($import->id)
         ->and(NsnCatalogItem::where('import_id', $import->id)->where('niin', '000000045')->value('nsn'))->toBe('5940000000045')
         ->and(NsnReference::where('import_id', $import->id)->where('niin', '000000045')->count())->toBe(2)
         ->and(NsnReference::where('part_search_key', 'BHMA-A156.4')->distinct()->count('niin'))->toBe(2)
         ->and(CageEntity::where('cage_code', '24039')->first()->summary['COMPANY'])->toBe('VARO LLC')
         ->and(CageEntity::where('cage_code', '0CEN3')->exists())->toBeTrue()
         ->and(DB::table('mil_spec_parts')->count())->toBe($legacy);
-    expect(DB::table('nsn_catalog_relationships')->where('niin', '000000012')->value('niin_stat_cd'))->toBe('4');
-    app(PubLogCatalog::class)->activate($import->id, null);
-    expect(app(PubLogCatalog::class)->snapshot()->id)->toBe($import->id);
+    expect(DB::table('nsn_catalog_relationships')->where('niin', '000000012')->value('niin_stat_cd'))->toBe('4')
+        ->and(PubLogTables::anyStagingExists())->toBeFalse();
 });
 
 it('is idempotent and retains exact reference differences and original punctuation', function () {
@@ -48,10 +67,10 @@ it('is idempotent and retains exact reference differences and original punctuati
     });
     $service = app(PubLogImporter::class);
     $first = $service->run($service->prepare($source, '2026-10-01'));
-    $count = NsnReference::count();
+    $count = staged('nsn_references')->count();
     $repeat = $service->run($service->prepare($source, '2026-10-01'));
-    expect($repeat->id)->toBe($first->id)->and(PubLogImport::count())->toBe(1)->and(NsnReference::count())->toBe($count);
-    expect(NsnReference::where('niin', '000000042')->where('part_number', 'UK 60A890216')->count())->toBe(2);
+    expect($repeat->id)->toBe($first->id)->and(PubLogImport::count())->toBe(1)->and(staged('nsn_references')->count())->toBe($count);
+    expect(staged('nsn_references')->where('niin', '000000042')->where('part_number', 'UK 60A890216')->count())->toBe(2);
     expect($first->progress['V_FLIS_PART.CSV']['rows'])->toBe($first->progress['V_FLIS_PART.CSV']['stored'] + 1);
 });
 
@@ -88,7 +107,7 @@ it('scopes relationship duplicate checks by kind so MySQL can use the full ident
 });
 
 it('preserves nonstandard source CAGE codes with explicit validity flags and counts', function () {
-    $import = PubLogFixtures::ready($this->directory.'/source', change: function ($files) {
+    $import = readyAndLive($this, 'source', function ($files) {
         foreach ($files as &$contents) {
             $contents = str_replace('"24039"', '"`Q9C4"', $contents);
         }
@@ -110,7 +129,7 @@ it('preserves nonstandard source CAGE codes with explicit validity flags and cou
 });
 
 it('handles quoted commas newlines and Windows-1252 definitions', function () {
-    $import = PubLogFixtures::ready($this->directory.'/source', change: function ($files) {
+    $import = readyAndLive($this, 'source', function ($files) {
         $files['P_FLIS_NSN.CSV'] = str_replace('"CK FILTER ASSEMBLY"', '"FILTER, ""SPECIAL""'."\n".'ASSEMBLY"', $files['P_FLIS_NSN.CSV']);
         $files['P_HELP.CSV'] .= '"TEST","LABEL","A'.chr(0x96).'B",""'."\r\n";
 
@@ -121,7 +140,7 @@ it('handles quoted commas newlines and Windows-1252 definitions', function () {
 });
 
 it('round trips every reference and relationship source field through compact columns', function () {
-    $import = PubLogFixtures::ready($this->directory.'/source');
+    $import = readyAndLive($this, 'source');
     foreach (['V_FLIS_PART.CSV', 'V_FLIS_STANDARDIZATION.CSV', 'V_FLIS_CANCELLED_NIIN.CSV'] as $member) {
         $stream = fopen(base_path('tests/Fixtures/publog/'.$member), 'rb');
         $header = fgetcsv($stream, escape: '');
@@ -148,7 +167,7 @@ it('round trips every reference and relationship source field through compact co
 });
 
 it('preserves and reports the short numeric item code observed in the official release', function () {
-    $import = PubLogFixtures::ready($this->directory.'/source', change: function ($files) {
+    $import = readyAndLive($this, 'source', function ($files) {
         $lines = explode("\r\n", trim($files['P_FLIS_NSN.CSV']));
         $row = str_getcsv($lines[1], escape: '');
         $row[2] = '7419';
@@ -175,9 +194,9 @@ it('resumes only committed batches after interruption without duplicating rows',
             throw new RuntimeException('Simulated worker interruption');
         }
     }))->toThrow(RuntimeException::class, 'Simulated');
-    expect($import->fresh()->status)->toBe('failed')->and(NsnCatalogItem::count())->toBe(2);
+    expect($import->fresh()->status)->toBe('failed')->and(staged('nsn_catalog_items')->count())->toBe(2);
     $result = $service->run($import);
-    expect($result->status)->toBe('ready')->and(NsnCatalogItem::count())->toBe(5)
+    expect($result->status)->toBe('ready')->and(staged('nsn_catalog_items')->count())->toBe(5)
         ->and($result->progress['P_FLIS_NSN.CSV']['rows'])->toBe(5);
 });
 
@@ -226,7 +245,7 @@ it('rejects conflicting item records rather than keeping the last value', functi
 });
 
 it('preserves references with unresolved CAGEs but rejects missing item joins', function () {
-    $import = PubLogFixtures::ready($this->directory.'/unresolved', change: function ($files) {
+    $import = readyAndLive($this, 'unresolved', function ($files) {
         $files['V_FLIS_PART.CSV'] = str_replace('"24039"', '"ZZZZZ"', $files['V_FLIS_PART.CSV']);
 
         return $files;
@@ -296,20 +315,22 @@ it('detects CRC failures and refuses competing import workers', function () {
     expect(fn () => $service->run($import))->toThrow(RuntimeException::class, 'CRC');
 });
 
-it('uses compare and swap for activation and supports explicit rollback while retaining snapshots', function () {
+it('uses compare and swap for activation and replaces the previous copy without rollback', function () {
     $catalog = app(PubLogCatalog::class);
     $one = PubLogFixtures::ready($this->directory.'/one');
     $catalog->activate($one->id, null);
-    $captured = $catalog->snapshot();
     $two = PubLogFixtures::ready($this->directory.'/two', '2026-10-02');
-    $three = PubLogFixtures::ready($this->directory.'/three', '2026-10-03');
+    expect(fn () => $catalog->activate($two->id, null))->toThrow(RuntimeException::class, 'changed');
     $catalog->activate($two->id, $one->id);
-    expect(fn () => $catalog->activate($three->id, $one->id))->toThrow(RuntimeException::class, 'changed');
-    expect($catalog->activeId())->toBe($two->id)->and(NsnCatalogItem::where('import_id', $captured->id)->count())->toBe(5);
-    expect(fn () => $catalog->activate($one->id, $two->id))->toThrow(RuntimeException::class, 'rollback');
-    $one->update(['pinned' => true]);
-    $catalog->activate($one->id, $two->id, rollback: true);
-    expect($catalog->activeId())->toBe($one->id)->and(PubLogImport::count())->toBe(3)->and($one->fresh()->pinned)->toBeTrue();
+
+    expect($catalog->activeId())->toBe($two->id)
+        ->and($one->fresh()->status)->toBe('replaced')
+        ->and(NsnCatalogItem::where('import_id', $one->id)->count())->toBe(0)
+        ->and(NsnCatalogItem::where('import_id', $two->id)->count())->toBe(5)
+        ->and(is_dir($one->manifest['directory']))->toBeFalse()
+        ->and(is_dir($two->manifest['directory']))->toBeTrue()
+        ->and(fn () => $catalog->activate($one->id, $two->id))->toThrow(RuntimeException::class, 'validated')
+        ->and(fn () => $catalog->activate($one->id, $two->id, rollback: true))->toThrow(RuntimeException::class, 'Rollback is not available');
 });
 
 it('guards activation on checkpoint counts and unexpected catalog shrink', function () {
@@ -317,7 +338,7 @@ it('guards activation on checkpoint counts and unexpected catalog shrink', funct
     $one = PubLogFixtures::ready($this->directory.'/one');
     $catalog->activate($one->id, null);
     $two = PubLogFixtures::ready($this->directory.'/two', '2026-10-02');
-    DB::table('nsn_references')->where('import_id', $two->id)->limit(1)->delete();
+    staged('nsn_references')->where('import_id', $two->id)->limit(1)->delete();
     expect(fn () => $catalog->validate($two))->toThrow(RuntimeException::class, 'count mismatch');
     $source = PubLogFixtures::archives($this->directory.'/shrink', function ($files) {
         $lines = explode("\r\n", trim($files['V_FLIS_PART.CSV']));

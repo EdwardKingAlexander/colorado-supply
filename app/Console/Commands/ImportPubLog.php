@@ -14,7 +14,8 @@ class ImportPubLog extends Command
         {--release= : Official release date, YYYY-MM-DD}
         {--resume= : Resume a previously prepared import ID}
         {--max-seconds=0 : Yield between batches after this many seconds; 0 runs to completion}
-        {--activate : Activate after validation if the baseline catalog is unchanged}';
+        {--activate : Activate after validation if the baseline catalog is unchanged}
+        {--reimport : Rebuild the live release from the same files (the live copy keeps serving until the swap)}';
 
     protected $description = 'Stage, validate and checkpoint a PUB LOG release without overwriting curated parts';
 
@@ -41,7 +42,7 @@ class ImportPubLog extends Command
 
                     return self::FAILURE;
                 }
-                $import = $importer->prepare($this->argument('directory'), $this->option('release'));
+                $import = $importer->prepare($this->argument('directory'), $this->option('release'), (bool) $this->option('reimport'));
             }
             $this->info("Import {$import->id}: {$import->status}");
             $lastReport = 0;

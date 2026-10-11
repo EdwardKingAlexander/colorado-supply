@@ -22,4 +22,22 @@ class PubLogDb
     {
         return DB::connection(self::name());
     }
+
+    /**
+     * Bulk catalog writes can skip MySQL's binary log (PUBLOG_SKIP_BINLOG): the
+     * catalog is always re-importable, and a 14 GB import would otherwise write
+     * ~14 GB of binlog kept for 30 days. Affects only this session.
+     */
+    public static function prepareForBulkWrite(): void
+    {
+        $connection = self::connection();
+        if (! config('nsn_lookup.skip_binlog') || $connection->getDriverName() !== 'mysql') {
+            return;
+        }
+        try {
+            $connection->statement('SET SESSION sql_log_bin = 0');
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('PUBLOG_SKIP_BINLOG is set but MySQL refused to skip the binary log for this session (the database user needs SESSION_VARIABLES_ADMIN). Grant it or unset PUBLOG_SKIP_BINLOG.', 0, $e);
+        }
+    }
 }

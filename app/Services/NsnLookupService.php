@@ -113,7 +113,7 @@ class NsnLookupService
             $result['companies'] = $companies->toArray();
             $result['has_more'] = $references->hasMorePages();
             // Item context has its own pagination, so large status histories are never silently truncated.
-            if (in_array($type, ['nsn', 'niin'], true) && $items->isNotEmpty()) {
+            if (config('nsn_lookup.import_relationships') && in_array($type, ['nsn', 'niin'], true) && $items->isNotEmpty()) {
                 $relationships = NsnCatalogRelationship::where('import_id', $id)->where('niin', $items->first()->niin)
                     ->orderBy('kind')->orderBy('id')->simplePaginate(self::PAGE_SIZE, ['*'], 'relationship_page', $relationshipPage);
                 $result['relationships'] = $relationships->getCollection()->toArray();

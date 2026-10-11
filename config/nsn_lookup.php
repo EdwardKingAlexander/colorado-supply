@@ -5,6 +5,12 @@ return [
     // Set to 'publog' to keep the multi-GB catalog in its own MySQL database.
     'connection' => env('PUBLOG_DB_CONNECTION'),
     'directory' => storage_path('app/private/publog'),
+    // Status and replacement history (V_FLIS_STANDARDIZATION, V_FLIS_CANCELLED_NIIN):
+    // ~6 GB per release and only shown in a collapsed lookup section. Off keeps
+    // production at one ~14 GB copy (phase 5).
+    'import_relationships' => (bool) env('PUBLOG_IMPORT_RELATIONSHIPS', false),
+    // Skip MySQL's binary log for catalog import/swap sessions (see PubLogDb).
+    'skip_binlog' => (bool) env('PUBLOG_SKIP_BINLOG', false),
     'batch_size' => 500,
     'max_archive_bytes' => 1073741824,
     'max_member_bytes' => 2147483648,

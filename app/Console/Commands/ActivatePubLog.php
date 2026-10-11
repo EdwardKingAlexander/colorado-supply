@@ -10,9 +10,9 @@ class ActivatePubLog extends Command
 {
     protected $signature = 'publog:activate {import : Validated import ID}
         {--expected-current= : Current active ID, or none for initial activation}
-        {--rollback : Explicitly allow an older validated release}';
+        {--rollback : Retired: only one catalog copy is kept}';
 
-    protected $description = 'Atomically activate a validated release, retaining the prior snapshot for rollback';
+    protected $description = 'Swap a validated, staged release in as the live catalog and drop the previous copy';
 
     public function handle(PubLogCatalog $catalog): int
     {
@@ -25,7 +25,7 @@ class ActivatePubLog extends Command
         }
         try {
             $catalog->activate((int) $this->argument('import'), $expected === 'none' ? null : (int) $expected, (bool) $this->option('rollback'));
-            $this->info('Catalog activated; all previous versions retained.');
+            $this->info('Catalog activated. The previous copy was removed.');
 
             return self::SUCCESS;
         } catch (Throwable $exception) {
