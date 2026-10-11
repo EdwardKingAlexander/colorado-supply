@@ -2,35 +2,33 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Actions\CreateAction;
-use Filament\Actions\Action;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\ProductResource\RelationManagers\AttributesRelationManager;
-use App\Filament\Resources\ProductResource\Pages\ListProducts;
 use App\Filament\Resources\ProductResource\Pages\CreateProduct;
 use App\Filament\Resources\ProductResource\Pages\EditProduct;
-use App\Filament\Resources\ProductResource\Pages;
+use App\Filament\Resources\ProductResource\Pages\ListProducts;
+use App\Filament\Resources\ProductResource\RelationManagers\AttributesRelationManager;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\Vendor;
-use Filament\Forms;
+use App\Services\Products\SampleProductCsvGenerator;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -43,8 +41,9 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Catalog';
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cube';
+    protected static string|\UnitEnum|null $navigationGroup = 'Catalog';
+
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube';
 
     public static function form(Schema $schema): Schema
     {
@@ -118,7 +117,7 @@ class ProductResource extends Resource
             return;
         }
 
-        $set('slug', Str::slug($vendorName . '-' . $sku));
+        $set('slug', Str::slug($vendorName.'-'.$sku));
     }
 
     public static function table(Table $table): Table
@@ -127,6 +126,30 @@ class ProductResource extends Resource
             ->modifyQueryUsing(fn (Builder $query) => $query->with(['vendor', 'category']))
             ->headerActions([
                 CreateAction::make(),
+                Action::make('downloadSampleProducts')
+                    ->label('Sample CSV (1,000)')
+                    ->icon('heroicon-m-arrow-down-tray')
+                    ->color('gray')
+                    ->tooltip('1,000 sample products across existing vendors and categories, ready for Import Products. Re-importing updates them instead of duplicating.')
+                    ->action(function () {
+                        try {
+                            $csv = app(SampleProductCsvGenerator::class)->generate(1000);
+                        } catch (RuntimeException $exception) {
+                            Notification::make()
+                                ->title('Cannot build sample CSV')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            return null;
+                        }
+
+                        return response()->streamDownload(
+                            fn () => print ($csv),
+                            'sample-products-1000.csv',
+                            ['Content-Type' => 'text/csv'],
+                        );
+                    }),
                 Action::make('importProducts')
                     ->label('Import Products')
                     ->icon('heroicon-m-arrow-up-tray')
@@ -290,7 +313,7 @@ class ProductResource extends Resource
                     $stats['attributes'] += $result['attributes'];
                 } catch (Throwable $rowException) {
                     $stats['skipped']++;
-                    $stats['errors'][] = 'Line ' . $lineNumber . ': ' . $rowException->getMessage();
+                    $stats['errors'][] = 'Line '.$lineNumber.': '.$rowException->getMessage();
                 }
             }
 
@@ -400,6 +423,31 @@ class ProductResource extends Resource
             'psc_fsc' => static::nullIfBlank($fields['psc_fsc'] ?? null),
             'country_of_origin' => static::nullIfBlank($fields['country_of_origin'] ?? null),
             'meta' => static::parseJson($fields['meta'] ?? null),
+            'standard_type' => static::parseStandardType($fields['standard_type'] ?? null),
+            'mil_spec_number' => static::nullIfBlank($fields['mil_spec_number'] ?? null),
+            'nsn' => static::parseNsn($fields['nsn'] ?? null),
+            'cage_code' => static::nullIfBlank($fields['cage_code'] ?? null),
+            'part_number' => static::nullIfBlank($fields['part_number'] ?? null),
+            'naics_code' => static::nullIfBlank($fields['naics_code'] ?? null),
+            'upc' => static::nullIfBlank($fields['upc'] ?? null),
+            'ean' => static::nullIfBlank($fields['ean'] ?? null),
+            'unit_of_measure' => static::nullIfBlank($fields['unit_of_measure'] ?? null),
+            'minimum_order_quantity' => static::parseInteger($fields['minimum_order_quantity'] ?? null),
+            'is_hazmat' => static::parseBoolean($fields['is_hazmat'] ?? null),
+            'export_controlled' => static::parseBoolean($fields['export_controlled'] ?? null),
+            'berry_compliant' => static::parseBoolean($fields['berry_compliant'] ?? null),
+            'taa_compliant' => static::parseBoolean($fields['taa_compliant'] ?? null),
+            'made_in_usa' => static::parseBoolean($fields['made_in_usa'] ?? null),
+            'gsa_approved' => static::parseBoolean($fields['gsa_approved'] ?? null),
+            'qpl_listed' => static::parseBoolean($fields['qpl_listed'] ?? null),
+            'material' => static::nullIfBlank($fields['material'] ?? null),
+            'finish' => static::nullIfBlank($fields['finish'] ?? null),
+            'specifications' => static::nullIfBlank($fields['specifications'] ?? null),
+            'datasheet_url' => static::nullIfBlank($fields['datasheet_url'] ?? null),
+            'msds_url' => static::nullIfBlank($fields['msds_url'] ?? null),
+            'gsa_price' => static::parseDecimal($fields['gsa_price'] ?? null),
+            'contract_price' => static::parseDecimal($fields['contract_price'] ?? null),
+            'search_keywords' => static::nullIfBlank($fields['search_keywords'] ?? null),
         ];
 
         $payload = array_filter(
@@ -432,7 +480,7 @@ class ProductResource extends Resource
             $vendor = Vendor::query()->find($vendorId);
 
             if (! $vendor) {
-                throw new RuntimeException('Vendor with ID ' . $vendorId . ' was not found.');
+                throw new RuntimeException('Vendor with ID '.$vendorId.' was not found.');
             }
 
             return $vendor->id;
@@ -447,7 +495,7 @@ class ProductResource extends Resource
         $vendor = Vendor::query()->where('name', $vendorName)->first();
 
         if (! $vendor) {
-            throw new RuntimeException('Vendor named ' . $vendorName . ' was not found.');
+            throw new RuntimeException('Vendor named '.$vendorName.' was not found.');
         }
 
         return $vendor->id;
@@ -461,7 +509,7 @@ class ProductResource extends Resource
             $category = Category::query()->find($categoryId);
 
             if (! $category) {
-                throw new RuntimeException('Category with ID ' . $categoryId . ' was not found.');
+                throw new RuntimeException('Category with ID '.$categoryId.' was not found.');
             }
 
             return $category->id;
@@ -476,7 +524,7 @@ class ProductResource extends Resource
         $category = Category::query()->where('name', $categoryName)->first();
 
         if (! $category) {
-            throw new RuntimeException('Category named ' . $categoryName . ' was not found.');
+            throw new RuntimeException('Category named '.$categoryName.' was not found.');
         }
 
         return $category->id;
@@ -594,8 +642,50 @@ class ProductResource extends Resource
         return match (true) {
             in_array($lower, ['1', 'true', 't', 'yes', 'y', 'on'], true) => true,
             in_array($lower, ['0', 'false', 'f', 'no', 'n', 'off'], true) => false,
-            default => throw new RuntimeException('Invalid boolean value [' . $value . '].'),
+            default => throw new RuntimeException('Invalid boolean value ['.$value.'].'),
         };
+    }
+
+    /**
+     * Allowed values mirror the products.standard_type enum column.
+     */
+    protected const STANDARD_TYPES = ['Commercial', 'AN', 'MS', 'NAS', 'MIL-DTL', 'MIL-PRF', 'MIL-C', 'MIL-R', 'MIL-T', 'MIL-W', 'Other'];
+
+    protected static function parseStandardType(mixed $value): ?string
+    {
+        $value = static::nullIfBlank($value);
+
+        if ($value === null) {
+            return null;
+        }
+
+        foreach (static::STANDARD_TYPES as $type) {
+            if (strcasecmp($type, (string) $value) === 0) {
+                return $type;
+            }
+        }
+
+        throw new RuntimeException('Invalid standard_type ['.$value.']. Allowed: '.implode(', ', static::STANDARD_TYPES).'.');
+    }
+
+    /**
+     * Accepts dashed (5305-00-269-3238) or plain NSNs; stores the 13 digits.
+     */
+    protected static function parseNsn(mixed $value): ?string
+    {
+        $value = static::nullIfBlank($value);
+
+        if ($value === null) {
+            return null;
+        }
+
+        $digits = preg_replace('/\D/', '', (string) $value);
+
+        if (strlen($digits) !== 13) {
+            throw new RuntimeException('Invalid NSN ['.$value.']. An NSN must have 13 digits.');
+        }
+
+        return $digits;
     }
 
     protected static function parseInteger(mixed $value): ?int
@@ -607,7 +697,7 @@ class ProductResource extends Resource
         }
 
         if (! is_numeric($value)) {
-            throw new RuntimeException('Invalid integer value [' . $value . '].');
+            throw new RuntimeException('Invalid integer value ['.$value.'].');
         }
 
         return (int) $value;
@@ -626,7 +716,7 @@ class ProductResource extends Resource
         }
 
         if (! is_numeric($value)) {
-            throw new RuntimeException('Invalid decimal value [' . $value . '].');
+            throw new RuntimeException('Invalid decimal value ['.$value.'].');
         }
 
         return (float) $value;
@@ -662,11 +752,11 @@ class ProductResource extends Resource
     protected static function formatImportSummary(array $result): string
     {
         $parts = [
-            'Created: ' . $result['created'],
-            'Updated: ' . $result['updated'],
-            'Unchanged: ' . $result['unchanged'],
-            'Skipped: ' . $result['skipped'],
-            'Attributes processed: ' . $result['attributes'],
+            'Created: '.$result['created'],
+            'Updated: '.$result['updated'],
+            'Unchanged: '.$result['unchanged'],
+            'Skipped: '.$result['skipped'],
+            'Attributes processed: '.$result['attributes'],
         ];
 
         return implode(' | ', $parts);
@@ -678,7 +768,7 @@ class ProductResource extends Resource
         $message = implode(PHP_EOL, $preview);
 
         if (count($errors) > 5) {
-            $message .= PHP_EOL . '...';
+            $message .= PHP_EOL.'...';
         }
 
         return $message;
