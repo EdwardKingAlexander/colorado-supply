@@ -155,6 +155,7 @@ const handleClear = () => cartStore.clearCart()
                       :min="item.minQuantity ?? 1"
                       inputmode="numeric"
                       class="st-num h-12 w-16 rounded-md border border-st-line bg-st-sunk px-1 text-center text-base font-semibold text-st-ink focus:border-st-action focus:outline-none focus:ring-2 focus:ring-st-action/40"
+                      @input="cartStore.previewQuantity(item.id, $event.target.value)"
                       @change="cartStore.setQuantity(item.id, $event.target.value); $event.target.value = item.quantity"
                     />
                     <button

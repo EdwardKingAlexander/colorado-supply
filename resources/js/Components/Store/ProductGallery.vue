@@ -33,6 +33,15 @@ const closeZoom = () => {
 }
 
 const onZoomKey = (event) => {
+  // Chrome may ignore Escape on a modal dialog without recent user
+  // activation, so close it explicitly.
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    closeZoom()
+
+    return
+  }
+
   if (!hasMany.value) {
     return
   }

@@ -54,11 +54,27 @@ const setQuantity = (value) => {
   quantity.value = normalizeQuantity(value, minQuantity.value)
 }
 
+// Live update while typing so the price and total change instantly. The
+// minimum order is only enforced when the field is left (or on add), so
+// typing "30" with a minimum of 5 isn't fought at the "3".
+const onQuantityInput = (event) => {
+  const typed = Math.floor(Number(event.target.value))
+
+  if (event.target.value !== '' && Number.isFinite(typed) && typed >= 1) {
+    quantity.value = typed
+  }
+}
+
+const belowMinimum = computed(() => quantity.value < minQuantity.value)
+
 const cartStore = useCartStore()
 const added = ref(null)
 let feedbackTimer
 
 const addToCart = () => {
+  // A quantity typed below the minimum is raised to it before adding.
+  setQuantity(quantity.value)
+
   if (!canBuy.value) {
     return
   }
@@ -126,6 +142,7 @@ onBeforeUnmount(() => clearTimeout(feedbackTimer))
         inputmode="numeric"
         aria-describedby="buy-quantity-help"
         class="st-num h-12 w-28 rounded-md border border-st-line bg-st-panel px-2 text-center text-lg font-semibold text-st-ink focus:border-st-action focus:outline-none focus:ring-2 focus:ring-st-action/40"
+        @input="onQuantityInput"
         @change="setQuantity($event.target.value); $event.target.value = quantity"
       />
       <button
@@ -138,7 +155,7 @@ onBeforeUnmount(() => clearTimeout(feedbackTimer))
       </button>
     </div>
     <div id="buy-quantity-help" class="mt-2 space-y-1 text-sm text-st-muted">
-      <p v-if="minQuantity > 1">Minimum order: {{ minQuantity.toLocaleString() }} {{ unit }}</p>
+      <p v-if="minQuantity > 1" :class="{ 'font-semibold text-st-warn': belowMinimum }">Minimum order: {{ minQuantity.toLocaleString() }} {{ unit }}</p>
       <p v-if="backorderQuantity > 0">
         {{ backorderQuantity.toLocaleString() }} will be backordered<span v-if="product.stock?.lead_time_days"> (ships in about {{ product.stock.lead_time_days }} {{ product.stock.lead_time_days === 1 ? 'day' : 'days' }})</span>.
       </p>

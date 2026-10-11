@@ -43,7 +43,7 @@ const groups = computed(() => {
         .map(([key, label, format]) => ({ label, value: format(dimensions[key]) })),
     },
     {
-      title: 'Specifications',
+      title: 'Technical details',
       rows: (specs.attributes ?? []).map((attribute) => ({ label: attribute.name, value: attribute.value })),
     },
     {

@@ -199,12 +199,17 @@ class ProductPageData
             'related' => $product->relatedProducts(),
         ];
 
-        return collect($groups)
-            ->map(fn ($relation) => $relation
-                ->where('products.is_active', true)
-                ->with('priceTiers')
-                ->orderBy('products.name')
-                ->get()
+        $groups = collect($groups)->map(fn ($relation) => $relation
+            ->where('products.is_active', true)
+            ->with('priceTiers')
+            ->orderBy('products.name')
+            ->get());
+
+        // One company-price query for every card instead of one per card.
+        $companyPrices = $this->prices->companyPricesFor($viewer, $groups->flatten()->pluck('id'));
+
+        return $groups
+            ->map(fn ($products) => $products
                 ->map(fn (Product $related) => $this->compact([
                     'id' => $related->id,
                     'name' => $related->name,
@@ -212,7 +217,7 @@ class ProductPageData
                     'url' => $this->url($related),
                     'image' => filled($related->image) ? $this->imageUrl($related->image) : null,
                     'unit_of_measure' => $related->unit_of_measure ?: 'EA',
-                    'pricing' => $this->prices->resolve($related, $viewer),
+                    'pricing' => $this->prices->resolve($related, $viewer, 1, $companyPrices),
                 ]))
                 ->all())
             ->all();

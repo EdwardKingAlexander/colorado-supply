@@ -19,13 +19,19 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class ProductPriceResolver
 {
     /**
+     * Stateless on purpose: Laravel reuses controller instances (and their
+     * injected services), so cached prices could go stale across requests.
+     *
+     * @param  array<int, ?float>|null  $companyPrices  preloaded via companyPricesFor() when resolving many products
      * @return array{priced: bool, unit_price: ?float, source: ?string, base_price: ?float, list_price: ?float, company_price: ?float, tiers: list<array{min_quantity: int, unit_price: float}>, gsa_price?: float, contract_price?: float}
      */
-    public function resolve(Product $product, ?Authenticatable $viewer, int $quantity = 1): array
+    public function resolve(Product $product, ?Authenticatable $viewer, int $quantity = 1, ?array $companyPrices = null): array
     {
         $quantity = max(1, $quantity);
         $base = $this->money($product->price);
-        $companyPrice = $this->companyPrice($product, $viewer);
+        $companyPrice = $companyPrices !== null
+            ? ($companyPrices[$product->id] ?? null)
+            : $this->companyPrice($product, $viewer);
 
         $tiers = $companyPrice === null
             ? $product->priceTiers
@@ -82,6 +88,27 @@ class ProductPriceResolver
         }
 
         return $match;
+    }
+
+    /**
+     * The viewer company's prices for many products in one query, to pass to
+     * resolve() when pricing a list (e.g. related product cards).
+     *
+     * @param  iterable<int>  $productIds
+     * @return array<int, ?float>|null product id => company price; null when the viewer has no company pricing
+     */
+    public function companyPricesFor(?Authenticatable $viewer, iterable $productIds): ?array
+    {
+        if (! $viewer instanceof User || ! $viewer->company_id) {
+            return null;
+        }
+
+        return CompanyProduct::query()
+            ->where('company_id', $viewer->company_id)
+            ->whereIn('product_id', collect($productIds)->unique()->values())
+            ->pluck('price', 'product_id')
+            ->map(fn ($price) => $this->money($price))
+            ->all();
     }
 
     private function companyPrice(Product $product, ?Authenticatable $viewer): ?float

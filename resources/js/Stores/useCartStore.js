@@ -95,8 +95,9 @@ if (typeof window !== 'undefined') {
 const findItem = (id) => state.items.find((cartItem) => cartItem.id === id)
 
 // Quantity changes re-derive the unit price when the line carries tier pricing.
-const applyQuantity = (item, quantity) => {
-  item.quantity = normalizeQuantity(quantity, item.minQuantity ?? 1)
+// clamp=false is for live typing: the minimum order is enforced on commit.
+const applyQuantity = (item, quantity, clamp = true) => {
+  item.quantity = clamp ? normalizeQuantity(quantity, item.minQuantity ?? 1) : quantity
 
   if (item.pricing) {
     item.price = unitPriceFor(item.pricing, item.quantity) ?? item.price
@@ -168,6 +169,16 @@ export function useCartStore() {
     }
   }
 
+  // While the shopper types: any whole number ≥ 1 updates prices instantly.
+  const previewQuantity = (id, value) => {
+    const item = findItem(id)
+    const typed = Math.floor(Number(value))
+
+    if (item && value !== '' && Number.isFinite(typed) && typed >= 1) {
+      applyQuantity(item, typed, false)
+    }
+  }
+
   const incrementQuantity = (id) => {
     const item = findItem(id)
 
@@ -207,6 +218,7 @@ export function useCartStore() {
     removeItem,
     clearCart,
     setQuantity,
+    previewQuantity,
     incrementQuantity,
     decrementQuantity,
     updateItemLocation,

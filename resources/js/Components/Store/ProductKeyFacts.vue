@@ -48,7 +48,7 @@ const copy = async (fact) => {
         <button
           v-if="fact.copy"
           type="button"
-          class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-st-muted hover:bg-st-sunk hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+          class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-st-muted hover:bg-st-sunk hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
           :aria-label="`Copy ${fact.label} ${fact.value}`"
           @click="copy(fact)"
         >

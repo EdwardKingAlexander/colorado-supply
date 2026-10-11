@@ -5,6 +5,7 @@ use App\Models\Company;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Vendor;
+use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -109,4 +110,47 @@ it('sends a bare product to the page without any empty sections', function () {
             ->missing('product.related')
             ->where('product.pricing', ['priced' => false])
         );
+});
+
+it('shows GSA and contract prices only to government-buyer companies', function () {
+    $this->product->update(['gsa_price' => 8.5, 'contract_price' => 8.25, 'price' => 10]);
+
+    $this->actingAs($this->buyer)
+        ->get(route('store.product', [$this->product, 'hex-bolt']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->missing('product.pricing.gsa_price')
+            ->missing('product.pricing.contract_price'));
+
+    $this->company->update(['is_government_buyer' => true]);
+
+    $this->actingAs($this->buyer->fresh())
+        ->get(route('store.product', [$this->product, 'hex-bolt']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('product.pricing.gsa_price', 8.5)
+            ->where('product.pricing.contract_price', 8.25));
+});
+
+it('loads related products without a query per card', function () {
+    $countQueries = function (int $relatedCount): int {
+        $product = Product::factory()->create(['is_active' => true]);
+        $this->company->products()->attach($product->id);
+
+        foreach (range(1, $relatedCount) as $index) {
+            $related = Product::factory()->create(['is_active' => true]);
+            $this->company->products()->attach($related->id, ['price' => 5 + $index]);
+            $product->productRelations()->create(['related_product_id' => $related->id, 'type' => 'related']);
+        }
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $this->actingAs($this->buyer)->get(route('store.product', [$product, $product->slug]))->assertOk();
+        $count = count(DB::getQueryLog());
+        DB::disableQueryLog();
+
+        return $count;
+    };
+
+    $countQueries(1); // warm one-time caches (session, permissions)
+
+    expect($countQueries(5))->toBe($countQueries(1));
 });
