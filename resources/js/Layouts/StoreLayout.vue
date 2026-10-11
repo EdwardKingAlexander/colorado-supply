@@ -3,7 +3,10 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import CookieConsentBanner from '@/Components/Privacy/CookieConsentBanner.vue'
+import NotificationBell from '@/Components/Notifications/NotificationBell.vue'
+import NotificationToasts from '@/Components/Notifications/NotificationToasts.vue'
 import { useCartStore } from '@/Stores/useCartStore'
+import { useNotifications } from '@/Stores/useNotifications'
 import logo from '@images/logo-cleansed.svg'
 import logoLight from '@images/logo-cleansed-light.svg'
 
@@ -35,6 +38,25 @@ const accountName = computed(() => page.props.auth?.user?.name ?? page.props.aut
 const accountEmail = computed(() => page.props.auth?.user?.email ?? page.props.auth?.admin?.email ?? null)
 const isCustomer = computed(() => Boolean(page.props.auth?.user))
 const isAdmin = computed(() => Boolean(page.props.auth?.admin))
+
+// Bell + live toasts for portal users (admins use the panel's bell).
+const notificationProps = computed(() => page.props.notificationBell ?? null)
+const notifications = useNotifications()
+onMounted(() => {
+  if (notificationProps.value && page.props.auth?.user?.id) {
+    notifications.start({
+      userId: page.props.auth.user.id,
+      unread: notificationProps.value.unread,
+      live: notificationProps.value.live,
+    })
+  }
+})
+// Each Inertia visit carries a fresh unread count.
+watch(() => notificationProps.value?.unread, (unread) => {
+  if (typeof unread === 'number') {
+    notifications.state.unread = unread
+  }
+})
 
 const query = ref(props.search ?? '')
 const searchInput = ref(null)
@@ -152,6 +174,8 @@ onBeforeUnmount(() => {
             </MenuItems>
           </Menu>
 
+          <NotificationBell v-if="notificationProps" />
+
           <Link
             :href="route('store.cart')"
             class="relative inline-flex min-h-11 items-center gap-2 rounded-md border border-st-line px-3 text-sm font-semibold text-st-ink hover:border-st-action focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
@@ -246,6 +270,7 @@ onBeforeUnmount(() => {
       </DialogPanel>
     </Dialog>
 
+    <NotificationToasts v-if="notificationProps" />
     <CookieConsentBanner />
   </div>
 </template>

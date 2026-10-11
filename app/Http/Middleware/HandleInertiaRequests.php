@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
+use App\Notifications\NotificationChannels;
 use App\Support\Privacy\ConsentCookie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +43,12 @@ class HandleInertiaRequests extends Middleware
                     'admin' => Auth::guard('admin')->check(),
                 ],
             ],
+            // Bell badge on first paint, and whether live updates are on
+            // (ai/modules/will-call-notifications). Portal users only.
+            'notificationBell' => fn (): ?array => $request->user() instanceof User ? [
+                'unread' => $request->user()->unreadNotifications()->count(),
+                'live' => NotificationChannels::broadcasting(),
+            ] : null,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

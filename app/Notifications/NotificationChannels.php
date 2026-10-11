@@ -73,8 +73,17 @@ class NotificationChannels
     {
         return match ($channel) {
             NotificationChannel::Email => ['mail'],
-            NotificationChannel::Bell => ['database'],
+            NotificationChannel::Bell => self::broadcasting() ? ['database', 'broadcast'] : ['database'],
             default => [],
         };
+    }
+
+    /**
+     * Live bell updates need a real broadcaster (Reverb). With `log`/`null`
+     * (tests, rollback) the bell still works by loading and polling.
+     */
+    public static function broadcasting(): bool
+    {
+        return in_array(config('broadcasting.default'), ['reverb', 'pusher', 'ably'], true);
     }
 }

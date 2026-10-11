@@ -47,6 +47,10 @@ class AdminPanelProvider extends PanelProvider
                 'danger' => '#ff1744', // terminal red
             ])
             ->darkMode(true)
+            // Staff alerts bell. Live over Reverb when configured
+            // (config/filament.php broadcasting.echo); polling is the fallback.
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('60s')
             ->maxContentWidth(Width::ScreenTwoExtraLarge)
             ->multiFactorAuthentication([
                 AppAuthentication::make()->recoverable(),

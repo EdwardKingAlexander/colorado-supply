@@ -5,7 +5,6 @@ return [
     'path' => 'admin',
 
     /**
-     * 
      * Admin Guard
      */
     'auth' => [
@@ -25,6 +24,20 @@ return [
     */
 
     'broadcasting' => [
+
+        // Live admin bell over Laravel Reverb (ai/modules/will-call-notifications,
+        // phase 3). Off when broadcasting isn't Reverb (tests, rollback), in
+        // which case the bell falls back to polling.
+        'echo' => env('BROADCAST_CONNECTION') === 'reverb' ? [
+            'broadcaster' => 'reverb',
+            'key' => env('VITE_REVERB_APP_KEY'),
+            'wsHost' => env('VITE_REVERB_HOST'),
+            'wsPort' => (int) env('VITE_REVERB_PORT', 80),
+            'wssPort' => (int) env('VITE_REVERB_PORT', 443),
+            'forceTLS' => env('VITE_REVERB_SCHEME', 'https') === 'https',
+            'enabledTransports' => ['ws', 'wss'],
+            'authEndpoint' => '/broadcasting/auth',
+        ] : null,
 
         // 'echo' => [
         //     'broadcaster' => 'pusher',
@@ -67,8 +80,6 @@ return [
 
     'assets_path' => null,
 
-    
-
     /*
     |--------------------------------------------------------------------------
     | Cache Path
@@ -97,7 +108,5 @@ return [
     */
 
     'livewire_loading_delay' => 'default',
-
-    
 
 ];

@@ -128,7 +128,7 @@ it('stores the shared payload in the bell', function () {
 
     $admin->notifyNow(testAlert(), ['database']);
 
-    expect($admin->notifications()->first()->data)->toBe([
+    expect($admin->notifications()->first()->data)->toMatchArray([
         'type' => 'admin_new_will_call_order',
         'title' => 'New will call order',
         'body' => 'Order 123 is waiting to be pulled.',

@@ -113,6 +113,11 @@ Route::middleware('auth')->group(function () {
     // unverified buyer can still receive and follow order updates.
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read', [NotificationController::class, 'markAllRead'])->name('notifications.read');
+    Route::middleware('throttle:60,1')->group(function () {
+        Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
+        Route::post('/notifications/{notification}/unread', [NotificationController::class, 'markUnread'])->name('notifications.mark-unread');
+        Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    });
 
     // SAM favorites page
     Route::get('/sam/opportunities/favorites', function () {

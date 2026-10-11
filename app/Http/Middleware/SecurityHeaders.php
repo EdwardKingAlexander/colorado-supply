@@ -50,6 +50,12 @@ class SecurityHeaders
         $scriptSrc = "'self'{$nonceSource} https://www.googletagmanager.com https://www.google.com https://www.gstatic.com";
         $connectSrc = "'self' https://www.google-analytics.com https://www.google.com https://www.gstatic.com";
 
+        // Live notifications connect to Reverb's websocket, which may run on
+        // its own host/port (ai/modules/will-call-notifications).
+        if ($reverbOrigin = $this->reverbOrigin()) {
+            $connectSrc .= ' '.$reverbOrigin;
+        }
+
         // Vite's dev server needs eval (HMR module reload) and a websocket
         // connection to itself; built assets served by PHP/Apache do not.
         if ($this->usesViteDevServer()) {
@@ -72,6 +78,20 @@ class SecurityHeaders
         ];
 
         return implode('; ', $directives);
+    }
+
+    protected function reverbOrigin(): ?string
+    {
+        $options = config('broadcasting.connections.reverb.options', []);
+
+        if (config('broadcasting.default') !== 'reverb' || blank($options['host'] ?? null)) {
+            return null;
+        }
+
+        $scheme = ($options['scheme'] ?? 'https') === 'https' ? 'wss' : 'ws';
+        $port = $options['port'] ?? null;
+
+        return "{$scheme}://{$options['host']}".($port ? ":{$port}" : '');
     }
 
     protected function shouldEnforceContentSecurityPolicy(Request $request): bool
