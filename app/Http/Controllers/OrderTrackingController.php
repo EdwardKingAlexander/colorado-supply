@@ -46,6 +46,7 @@ class OrderTrackingController extends Controller
                 'shipping_total' => (float) $order->shipping_total,
                 'tax_total' => (float) $order->tax_total,
                 'grand_total' => (float) $order->grand_total,
+                'pickup' => $order->pickupDetails(),
                 'shipments' => $order->shipments->map(fn ($shipment) => [
                     'carrier' => $shipment->carrier,
                     'tracking_number' => $shipment->tracking_number,

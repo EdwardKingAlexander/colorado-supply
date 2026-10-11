@@ -20,7 +20,34 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  pickupLocations: {
+    type: Array,
+    default: () => [],
+  },
 })
+
+const pickupLocations = computed(() => props.pickupLocations ?? [])
+const canWillCall = computed(() => pickupLocations.value.length > 0)
+
+// Remember the buyer's last fulfillment choice on this device only.
+const FULFILLMENT_KEY = 'colorado-supply.checkout.fulfillment'
+const readSavedFulfillment = () => {
+  try {
+    return JSON.parse(localStorage.getItem(FULFILLMENT_KEY) ?? 'null')
+  } catch {
+    return null
+  }
+}
+const saveFulfillment = () => {
+  try {
+    localStorage.setItem(FULFILLMENT_KEY, JSON.stringify({
+      method: form.fulfillment_method,
+      pickup_location_id: form.pickup_location_id,
+    }))
+  } catch {
+    // Storage blocked (private mode): the choice just isn't remembered.
+  }
+}
 
 const locations = computed(() => props.locations ?? [])
 
@@ -65,6 +92,8 @@ const form = reactive({
   po_number: '',
   job_number: '',
   notes: '',
+  fulfillment_method: 'ship',
+  pickup_location_id: null,
   billing_address: {
     line1: '',
     line2: '',
@@ -89,9 +118,27 @@ const submitting = ref(false)
 
 const fieldError = (path) => errors.value[path]?.[0]
 
+const isWillCall = computed(() => form.fulfillment_method === 'will_call')
+
+const chooseWillCall = () => {
+  form.fulfillment_method = 'will_call'
+  if (!form.pickup_location_id && pickupLocations.value.length === 1) {
+    form.pickup_location_id = pickupLocations.value[0].id
+  }
+}
+
 onMounted(() => {
   if (!hasItems.value) {
     router.visit(route('store.cart'))
+    return
+  }
+
+  const saved = readSavedFulfillment()
+  if (saved?.method === 'will_call' && canWillCall.value) {
+    chooseWillCall()
+    if (pickupLocations.value.some((location) => location.id === saved.pickup_location_id)) {
+      form.pickup_location_id = saved.pickup_location_id
+    }
   }
 })
 
@@ -120,10 +167,14 @@ const submit = async () => {
     po_number: form.po_number || null,
     job_number: form.job_number || null,
     notes: form.notes || null,
+    fulfillment_method: form.fulfillment_method,
+    pickup_location_id: isWillCall.value ? form.pickup_location_id : null,
     billing_address: form.billing_address,
-    shipping_same_as_billing: form.shipping_same_as_billing,
-    shipping_address: form.shipping_same_as_billing ? null : form.shipping_address,
+    shipping_same_as_billing: isWillCall.value ? true : form.shipping_same_as_billing,
+    shipping_address: isWillCall.value || form.shipping_same_as_billing ? null : form.shipping_address,
   }
+
+  saveFulfillment()
 
   try {
     const response = await axios.post('/api/v1/store/checkout', payload)
@@ -149,7 +200,7 @@ const submit = async () => {
     <div class="bg-st-bg min-h-screen">
       <div class="mobile-page-gutter mx-auto max-w-5xl space-y-6 py-6 sm:py-8 lg:px-8">
         <div>
-          <h1 class="st-display text-2xl font-extrabold text-st-ink sm:text-3xl">Shipping and billing</h1>
+          <h1 class="st-display text-2xl font-extrabold text-st-ink sm:text-3xl">Checkout</h1>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -203,6 +254,69 @@ const submit = async () => {
               </div>
             </div>
 
+            <!-- Delivery method -->
+            <fieldset v-if="canWillCall" class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
+              <legend class="sr-only">How do you want to get your order?</legend>
+              <h2 class="text-lg font-semibold text-st-ink" aria-hidden="true">How do you want to get your order?</h2>
+
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label
+                  class="flex min-h-14 cursor-pointer items-start gap-3 rounded-lg border-2 p-4 focus-within:ring-2 focus-within:ring-st-action"
+                  :class="!isWillCall ? 'border-st-action bg-st-action/5' : 'border-st-line hover:border-st-muted'"
+                >
+                  <input v-model="form.fulfillment_method" type="radio" name="fulfillment_method" value="ship" class="mt-1 h-5 w-5 border-st-line text-st-fill" />
+                  <span>
+                    <span class="block text-base font-semibold text-st-ink">Ship it</span>
+                    <span class="block text-sm text-st-muted">Delivered to your address.</span>
+                  </span>
+                </label>
+                <label
+                  class="flex min-h-14 cursor-pointer items-start gap-3 rounded-lg border-2 p-4 focus-within:ring-2 focus-within:ring-st-action"
+                  :class="isWillCall ? 'border-st-action bg-st-action/5' : 'border-st-line hover:border-st-muted'"
+                >
+                  <input
+                    :checked="isWillCall"
+                    type="radio"
+                    name="fulfillment_method"
+                    value="will_call"
+                    class="mt-1 h-5 w-5 border-st-line text-st-fill"
+                    @change="chooseWillCall"
+                  />
+                  <span>
+                    <span class="block text-base font-semibold text-st-ink">Will Call</span>
+                    <span class="block text-sm text-st-muted">Pick it up at one of our counters. No shipping.</span>
+                  </span>
+                </label>
+              </div>
+              <InputError class="mt-1" :message="fieldError('fulfillment_method')" />
+
+              <div v-if="isWillCall" role="radiogroup" aria-labelledby="pickup-location-label" class="space-y-3">
+                <p id="pickup-location-label" class="text-base font-semibold text-st-ink">Pickup location</p>
+                <label
+                  v-for="location in pickupLocations"
+                  :key="location.id"
+                  class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 focus-within:ring-2 focus-within:ring-st-action"
+                  :class="form.pickup_location_id === location.id ? 'border-st-action bg-st-action/5' : 'border-st-line hover:border-st-muted'"
+                >
+                  <input
+                    v-model="form.pickup_location_id"
+                    type="radio"
+                    name="pickup_location_id"
+                    :value="location.id"
+                    class="mt-1 h-5 w-5 border-st-line text-st-fill"
+                  />
+                  <span class="min-w-0 space-y-1">
+                    <span class="block text-base font-semibold text-st-ink">{{ location.name }}</span>
+                    <span v-if="location.address" class="block text-sm text-st-ink/85">{{ location.address }}</span>
+                    <span v-if="location.hours" class="block whitespace-pre-line text-sm text-st-muted">{{ location.hours }}</span>
+                    <span v-if="location.phone" class="block text-sm text-st-muted">{{ location.phone }}</span>
+                  </span>
+                </label>
+                <InputError class="mt-1" :message="fieldError('pickup_location_id')" />
+                <p class="text-sm text-st-muted">We'll email you when your order is ready. Please wait for that message before coming in.</p>
+              </div>
+            </fieldset>
+
             <!-- Billing Address -->
             <div class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
               <h2 class="text-lg font-semibold text-st-ink">Billing Address</h2>
@@ -242,7 +356,7 @@ const submit = async () => {
             </div>
 
             <!-- Shipping Address -->
-            <div class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
+            <div v-if="!isWillCall" class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h2 class="text-lg font-semibold text-st-ink">Shipping Address</h2>
                 <label class="flex min-h-12 cursor-pointer items-center gap-3 rounded-md px-2 text-base text-st-ink/85 hover:bg-st-sunk focus-within:ring-2 focus-within:ring-st-action">
@@ -318,6 +432,11 @@ const submit = async () => {
                     </div>
                   </div>
                 </template>
+              </div>
+
+              <div v-if="isWillCall" class="border-t border-st-line pt-4 text-sm">
+                <p class="font-semibold text-st-ink/85">Will Call pickup</p>
+                <p class="text-st-muted">{{ pickupLocations.find((location) => location.id === form.pickup_location_id)?.name ?? 'Choose a location' }}</p>
               </div>
 
               <div class="border-t border-st-line pt-4 flex items-center justify-between">

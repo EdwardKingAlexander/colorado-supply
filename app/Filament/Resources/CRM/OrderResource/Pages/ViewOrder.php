@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CRM\OrderResource\Pages;
 
 use App\Filament\Resources\CRM\OrderResource;
+use App\Filament\Resources\CRM\OrderResource\WillCallActions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewOrder extends ViewRecord
@@ -11,6 +12,6 @@ class ViewOrder extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return WillCallActions::make();
     }
 }

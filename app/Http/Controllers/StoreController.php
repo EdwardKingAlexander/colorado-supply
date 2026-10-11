@@ -150,8 +150,17 @@ class StoreController extends Controller
             $locations = $user->company?->locations ?? collect();
         }
 
+        $pickupLocations = Location::query()
+            ->pickupEnabled()
+            ->when(! $user instanceof Admin && $user->company_id, fn ($query) => $query->where('company_id', $user->company_id))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Location $location) => $location->toPickupArray())
+            ->values();
+
         return Inertia::render('Store/Checkout', [
             'locations' => $locations,
+            'pickupLocations' => $pickupLocations,
             'contact' => [
                 'name' => $user->name,
                 'email' => $user->email,
@@ -183,6 +192,7 @@ class StoreController extends Controller
                 'payment_status' => $order->payment_status->value,
                 'billing_address' => $order->billing_address,
                 'shipping_address' => $order->shipping_address,
+                'pickup' => $order->pickupDetails(),
                 'items' => $order->items->map(fn ($item) => [
                     'id' => $item->id,
                     'name' => $item->name,

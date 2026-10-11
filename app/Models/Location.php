@@ -22,7 +22,20 @@ class Location extends Model
         'parent_id',
         'name',
         'slug',
+        'pickup_enabled',
+        'address',
+        'phone',
+        'hours',
+        'pickup_instructions',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'pickup_enabled' => 'boolean',
+            'address' => 'array',
+        ];
+    }
 
     public function company(): BelongsTo
     {
@@ -59,6 +72,45 @@ class Location extends Model
         return $query->whereNull('parent_id');
     }
 
+    public function scopePickupEnabled(Builder $query): Builder
+    {
+        return $query->where('pickup_enabled', true);
+    }
+
+    /**
+     * Single-line street address for pickup instructions, or null.
+     */
+    public function formattedAddress(): ?string
+    {
+        $address = $this->address ?? [];
+        $cityLine = trim(implode(' ', array_filter([
+            filled($address['city'] ?? null) ? $address['city'].',' : null,
+            $address['state'] ?? null,
+            $address['postal_code'] ?? null,
+        ])), ' ,');
+
+        $parts = array_filter([$address['line1'] ?? null, $address['line2'] ?? null, $cityLine], 'filled');
+
+        return $parts === [] ? null : implode(', ', $parts);
+    }
+
+    /**
+     * Buyer-facing pickup details; blank fields are left out.
+     *
+     * @return array{id: int, name: string, address?: string, phone?: string, hours?: string, instructions?: string}
+     */
+    public function toPickupArray(): array
+    {
+        return array_filter([
+            'id' => $this->id,
+            'name' => $this->name,
+            'address' => $this->formattedAddress(),
+            'phone' => $this->phone,
+            'hours' => $this->hours,
+            'instructions' => $this->pickup_instructions,
+        ], 'filled');
+    }
+
     public function scopeForCompany(Builder $query, int $companyId): Builder
     {
         return $query->where('company_id', $companyId);
@@ -75,7 +127,7 @@ class Location extends Model
     {
         return LogOptions::defaults()
             ->useLogName('organization')
-            ->logOnly(['company_id', 'parent_id', 'name', 'slug', 'deleted_at'])
+            ->logOnly(['company_id', 'parent_id', 'name', 'slug', 'pickup_enabled', 'deleted_at'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }

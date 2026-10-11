@@ -4,6 +4,7 @@ import axios from 'axios'
 import StoreLayout from '@/Layouts/StoreLayout.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import InputError from '@/Components/InputError.vue'
+import PickupDetails from '@/Components/Store/PickupDetails.vue'
 import { Head, Link } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -128,7 +129,8 @@ const payWithPaypal = async () => {
                 <h3 class="mb-2 text-base font-semibold text-st-ink">Billing Address</h3>
                 <p class="whitespace-pre-line text-base leading-6 text-st-muted">{{ formatAddress(order.billing_address) }}</p>
               </div>
-              <div class="rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
+              <PickupDetails v-if="order.pickup" :pickup="order.pickup" />
+              <div v-else class="rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
                 <h3 class="mb-2 text-base font-semibold text-st-ink">Shipping Address</h3>
                 <p class="whitespace-pre-line text-base leading-6 text-st-muted">{{ formatAddress(order.shipping_address) }}</p>
               </div>

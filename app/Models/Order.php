@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\FulfillmentMethod;
 use App\Enums\FulfillmentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\PickupStatus;
 use App\Models\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -73,6 +75,20 @@ class Order extends Model
 
         'fulfillment_status',
 
+        'fulfillment_method',
+
+        'pickup_location_id',
+
+        'pickup_status',
+
+        'pickup_code',
+
+        'ready_for_pickup_at',
+
+        'picked_up_at',
+
+        'picked_up_by',
+
         'confirmed_at',
 
         'paid_at',
@@ -93,6 +109,10 @@ class Order extends Model
 
         'company_id',
 
+    ];
+
+    protected $attributes = [
+        'fulfillment_method' => 'ship',
     ];
 
     protected function casts(): array
@@ -121,6 +141,14 @@ class Order extends Model
             'payment_status' => PaymentStatus::class,
 
             'fulfillment_status' => FulfillmentStatus::class,
+
+            'fulfillment_method' => FulfillmentMethod::class,
+
+            'pickup_status' => PickupStatus::class,
+
+            'ready_for_pickup_at' => 'datetime',
+
+            'picked_up_at' => 'datetime',
 
             'confirmed_at' => 'datetime',
 
@@ -179,6 +207,35 @@ class Order extends Model
 
         return $this->hasMany(Shipment::class);
 
+    }
+
+    public function pickupLocation(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'pickup_location_id')->withTrashed();
+    }
+
+    public function isWillCall(): bool
+    {
+        return $this->fulfillment_method === FulfillmentMethod::WillCall;
+    }
+
+    /**
+     * Buyer-facing will-call details for store pages, or null for shipped
+     * orders. The pickup code only appears once the order is ready.
+     */
+    public function pickupDetails(): ?array
+    {
+        if (! $this->isWillCall()) {
+            return null;
+        }
+
+        return array_filter([
+            'status' => $this->pickup_status ? ['value' => $this->pickup_status->value, 'label' => $this->pickup_status->label()] : null,
+            'location' => $this->pickupLocation?->toPickupArray(),
+            'code' => $this->pickup_status === PickupStatus::ReadyForPickup ? $this->pickup_code : null,
+            'ready_at' => $this->ready_for_pickup_at?->format('F j, Y g:i A'),
+            'picked_up_at' => $this->picked_up_at?->format('F j, Y g:i A'),
+        ], fn ($value) => $value !== null);
     }
 
     public function creator(): BelongsTo
@@ -400,9 +457,12 @@ class Order extends Model
 
         static::addGlobalScope(new CompanyScope);
 
+        // created_by/updated_by reference users. In the admin panel the
+        // default guard is `admin`, whose ids are Admin ids, so only stamp
+        // when the actor really is a User.
         static::creating(function (Order $order) {
 
-            if (auth()->check()) {
+            if (auth()->user() instanceof User) {
 
                 $order->created_by = auth()->id();
 
@@ -412,7 +472,7 @@ class Order extends Model
 
         static::updating(function (Order $order) {
 
-            if (auth()->check()) {
+            if (auth()->user() instanceof User) {
 
                 $order->updated_by = auth()->id();
 

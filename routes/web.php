@@ -79,6 +79,7 @@ Route::get('/store/checkout/{order}/success', function (Order $order) {
             'order_number' => $order->order_number,
             'payment_status' => $order->payment_status->value,
             'grand_total' => (float) $order->grand_total,
+            'pickup' => $order->pickupDetails(),
         ],
     ]);
 })->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout.success');

@@ -8,6 +8,11 @@ Thank you for partnering with Colorado Supply & Procurement. We received your qu
 - Company / Contact: {{ $order->company ?? $order->customer_name ?? 'Procurement Team' }}
 - Total: ${{ number_format($order->grand_total ?? 0, 2) }}
 - Status: {{ $order->status->label() }}
+@if ($order->isWillCall() && $order->pickupLocation)
+- Pickup: Will Call at {{ $order->pickupLocation->name }}@if ($order->pickupLocation->formattedAddress()), {{ $order->pickupLocation->formattedAddress() }}@endif
+
+We'll let you know as soon as your order is ready to pick up. Please wait for that message before coming in.
+@endif
 
 @if ($order->items?->count())
 | Item | Qty | Unit | Line Total |

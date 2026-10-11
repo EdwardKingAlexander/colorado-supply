@@ -1,6 +1,7 @@
 <script setup>
 import { Head } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import PickupDetails from '@/Components/Store/PickupDetails.vue'
 
 const props = defineProps({
   order: {
@@ -18,6 +19,17 @@ const steps = computed(() => {
   const shipped = ['partially_fulfilled', 'fulfilled'].includes(props.order.fulfillment_status.value)
     || props.order.shipments.length > 0
   const fulfilled = props.order.fulfillment_status.value === 'fulfilled'
+
+  if (props.order.pickup) {
+    const pickupStatus = props.order.pickup.status?.value
+
+    return [
+      { label: 'Order placed', detail: props.order.placed_at, done: true },
+      { label: 'Payment received', detail: props.order.payment_status.label, done: paid },
+      { label: 'Ready for pickup', detail: props.order.pickup.ready_at ?? null, done: ['ready_for_pickup', 'picked_up'].includes(pickupStatus) },
+      { label: 'Picked up', detail: props.order.pickup.picked_up_at ?? null, done: pickupStatus === 'picked_up' },
+    ]
+  }
 
   return [
     { label: 'Order placed', detail: props.order.placed_at, done: true },
@@ -99,6 +111,8 @@ const isCancelled = computed(() => props.order.status.value === 'cancelled')
           This order has been cancelled. If you have questions, reply to your
           order email and our team will assist.
         </p>
+
+        <PickupDetails v-if="order.pickup && !isCancelled" :pickup="order.pickup" variant="plain" class="mt-8" />
 
         <!-- Shipments -->
         <div v-if="order.shipments.length" class="mt-8">

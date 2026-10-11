@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\FulfillmentMethod;
 use App\Http\Controllers\Controller;
 use App\Services\StoreCheckoutService;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,16 @@ class StoreCheckoutController extends Controller
                 ->whereNull('deleted_at')
                 ->when($request->user()?->company_id, fn ($query, $companyId) => $query->where('company_id', $companyId)));
 
+        $pickupLocationRule = Rule::exists('locations', 'id')
+            ->where(fn ($query) => $query
+                ->where('pickup_enabled', true)
+                ->whereNull('deleted_at')
+                ->when($request->user()?->company_id, fn ($query, $companyId) => $query->where('company_id', $companyId)));
+
         $validated = $request->validate([
+            'fulfillment_method' => ['nullable', Rule::enum(FulfillmentMethod::class)],
+            'pickup_location_id' => ['nullable', 'required_if:fulfillment_method,will_call', 'integer', $pickupLocationRule],
+
             'items' => ['required', 'array', 'min:1'],
             'items.*.id' => ['required'],
             'items.*.product_id' => ['nullable', 'integer', 'exists:products,id'],
@@ -54,6 +64,9 @@ class StoreCheckoutController extends Controller
             'shipping_address.state' => ['nullable', 'string', 'max:50'],
             'shipping_address.postal_code' => ['nullable', 'string', 'max:20'],
             'shipping_address.country' => ['nullable', 'string', 'max:2'],
+        ], [
+            'pickup_location_id.required_if' => 'Choose where you will pick up this order.',
+            'pickup_location_id.exists' => 'That pickup location is not available. Choose another.',
         ]);
 
         $order = $this->checkout->createFromCart($request->user(), $validated);
@@ -66,6 +79,7 @@ class StoreCheckoutController extends Controller
                 'grand_total' => (float) $order->grand_total,
                 'status' => $order->status->value,
                 'payment_status' => $order->payment_status->value,
+                'fulfillment_method' => $order->fulfillment_method->value,
             ],
         ], 201);
     }

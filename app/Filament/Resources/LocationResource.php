@@ -10,7 +10,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -68,6 +70,34 @@ class LocationResource extends Resource
                         ->helperText('Auto-generated from location name'),
                 ])
                 ->columns(2),
+
+            Section::make('Will call')
+                ->description('Let buyers choose this location for counter pickup at checkout. Everything except the toggle is optional; buyers see only what you fill in.')
+                ->schema([
+                    Toggle::make('pickup_enabled')
+                        ->label('Offer will call pickup here')
+                        ->live()
+                        ->columnSpanFull(),
+                    TextInput::make('address.line1')->label('Street address')->maxLength(255),
+                    TextInput::make('address.line2')->label('Suite / unit')->maxLength(255),
+                    TextInput::make('address.city')->label('City')->maxLength(255),
+                    TextInput::make('address.state')->label('State')->maxLength(50),
+                    TextInput::make('address.postal_code')->label('ZIP')->maxLength(20),
+                    TextInput::make('phone')->label('Counter phone')->tel()->maxLength(50),
+                    Textarea::make('hours')
+                        ->label('Pickup hours')
+                        ->placeholder("Mon–Fri 7am–5pm\nSat 8am–noon")
+                        ->rows(3)
+                        ->maxLength(1000),
+                    Textarea::make('pickup_instructions')
+                        ->label('Pickup instructions')
+                        ->placeholder('Use the will-call door on the north side and bring your pickup code.')
+                        ->rows(3)
+                        ->maxLength(1000),
+                ])
+                ->columns(2)
+                ->collapsible()
+                ->collapsed(fn (?Location $record) => ! $record?->pickup_enabled),
         ]);
     }
 
@@ -87,6 +117,11 @@ class LocationResource extends Resource
                     ->label('Parent')
                     ->placeholder('Primary')
                     ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\IconColumn::make('pickup_enabled')
+                    ->label('Will call')
+                    ->boolean()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('slug')
@@ -127,6 +162,9 @@ class LocationResource extends Resource
                     ->relationship('company', 'name')
                     ->searchable()
                     ->preload(),
+
+                Tables\Filters\TernaryFilter::make('pickup_enabled')
+                    ->label('Will call'),
 
                 Tables\Filters\SelectFilter::make('parent_id')
                     ->label('Parent Location')

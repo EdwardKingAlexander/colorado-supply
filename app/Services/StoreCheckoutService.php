@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Enums\FulfillmentMethod;
 use App\Enums\FulfillmentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\PickupStatus;
+use App\Events\WillCallOrderPlaced;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Admin;
 use App\Models\CompanyProduct;
@@ -28,16 +31,21 @@ class StoreCheckoutService
     public function createFromCart(User|Admin $user, array $validated): Order
     {
         $billingAddress = $validated['billing_address'];
+        $method = FulfillmentMethod::tryFrom($validated['fulfillment_method'] ?? '') ?? FulfillmentMethod::Ship;
+        $willCall = $method === FulfillmentMethod::WillCall;
         $shippingSameAsBilling = $validated['shipping_same_as_billing'] ?? true;
-        $shippingAddress = $shippingSameAsBilling || empty($validated['shipping_address'])
-            ? $billingAddress
-            : $validated['shipping_address'];
+        // Will call is collected at the counter: nothing is shipped anywhere.
+        $shippingAddress = match (true) {
+            $willCall => null,
+            $shippingSameAsBilling || empty($validated['shipping_address']) => $billingAddress,
+            default => $validated['shipping_address'],
+        };
 
         $lines = $this->priceLines($user, $validated['items']);
 
         $subtotal = array_reduce($lines, fn (float $carry, array $line) => $carry + $line['line_total'], 0.0);
 
-        $order = DB::transaction(function () use ($user, $validated, $billingAddress, $shippingAddress, $subtotal, $lines) {
+        $order = DB::transaction(function () use ($user, $validated, $billingAddress, $shippingAddress, $subtotal, $lines, $method, $willCall) {
             $order = Order::create([
                 'order_number' => $this->orderNumberGenerator->next(),
                 'portal_user_id' => $user instanceof User ? $user->id : null,
@@ -60,6 +68,9 @@ class StoreCheckoutService
                 'status' => OrderStatus::Draft,
                 'payment_status' => PaymentStatus::Unpaid,
                 'fulfillment_status' => FulfillmentStatus::Unfulfilled,
+                'fulfillment_method' => $method,
+                'pickup_location_id' => $willCall ? $validated['pickup_location_id'] : null,
+                'pickup_status' => $willCall ? PickupStatus::AwaitingPick : null,
             ]);
 
             foreach ($lines as $line) {
@@ -78,9 +89,13 @@ class StoreCheckoutService
             return $order;
         });
 
+        if ($willCall) {
+            WillCallOrderPlaced::dispatch($order);
+        }
+
         if ($order->customer_email) {
             Mail::to($order->customer_email)
-                ->send(new OrderConfirmationMail($order->load('items')));
+                ->send(new OrderConfirmationMail($order->load(['items', 'pickupLocation'])));
         }
 
         return $order;
