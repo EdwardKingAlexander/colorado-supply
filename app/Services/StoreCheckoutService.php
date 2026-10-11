@@ -7,7 +7,7 @@ use App\Enums\FulfillmentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\PickupStatus;
-use App\Events\WillCallOrderPlaced;
+use App\Events\StoreOrderPlaced;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Admin;
 use App\Models\CompanyProduct;
@@ -89,9 +89,7 @@ class StoreCheckoutService
             return $order;
         });
 
-        if ($willCall) {
-            WillCallOrderPlaced::dispatch($order);
-        }
+        StoreOrderPlaced::dispatch($order);
 
         if ($order->customer_email) {
             Mail::to($order->customer_email)

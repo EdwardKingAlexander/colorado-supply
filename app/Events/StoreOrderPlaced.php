@@ -7,10 +7,10 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Will-call pickup workflow event (ai/modules/will-call-notifications).
- * Notification listeners are attached in phase 4.
+ * A buyer placed an order at store checkout, shipped or will call
+ * (ai/modules/will-call-notifications).
  */
-class WillCallOrderPlaced
+class StoreOrderPlaced
 {
     use Dispatchable, SerializesModels;
 

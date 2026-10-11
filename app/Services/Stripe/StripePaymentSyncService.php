@@ -5,8 +5,10 @@ namespace App\Services\Stripe;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Notifications\Admin\PaymentAlert;
 use App\Notifications\OrderPaymentFailed;
 use App\Notifications\OrderPaymentReceived;
+use App\Support\AdminNotifier;
 use App\Support\OrderNotifier;
 use Illuminate\Support\Facades\Log;
 use Stripe\Charge;
@@ -67,6 +69,7 @@ class StripePaymentSyncService
         if ($order && ! $order->isPaid()) {
             $order->markAsPaid();
             OrderNotifier::send($order, new OrderPaymentReceived($order));
+            AdminNotifier::send(new PaymentAlert($order, succeeded: true));
         }
     }
 
@@ -91,6 +94,7 @@ class StripePaymentSyncService
         if ($order) {
             $order->markPaymentAsFailed();
             OrderNotifier::send($order, new OrderPaymentFailed($order, $error?->message));
+            AdminNotifier::send(new PaymentAlert($order, succeeded: false, reason: $error?->message));
         }
     }
 

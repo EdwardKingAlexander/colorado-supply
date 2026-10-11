@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Quote;
+use App\Notifications\QuoteReadyNotification;
 use Illuminate\Support\Facades\Log;
 
 class QuoteObserver
@@ -11,7 +12,7 @@ class QuoteObserver
     {
         // Auto-generate quote number if not set
         if (empty($quote->quote_number)) {
-            $quote->quote_number = 'Q-' . strtoupper(uniqid());
+            $quote->quote_number = 'Q-'.strtoupper(uniqid());
         }
 
         // Set sales_rep_id to current user if not set
@@ -36,5 +37,11 @@ class QuoteObserver
             'quote_number' => $quote->quote_number,
             'user_id' => auth()->id(),
         ]);
+
+        // Staff marked the quote as sent: tell the buyer's account
+        // (ai/modules/will-call-notifications, phase 4).
+        if ($quote->wasChanged('status') && $quote->status === 'sent' && $quote->portalUser) {
+            $quote->portalUser->notify(new QuoteReadyNotification($quote));
+        }
     }
 }

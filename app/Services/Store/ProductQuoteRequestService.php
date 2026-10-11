@@ -6,6 +6,8 @@ use App\Models\Admin;
 use App\Models\Product;
 use App\Models\Quote;
 use App\Models\User;
+use App\Notifications\Admin\QuoteRequestedAlert;
+use App\Support\AdminNotifier;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -25,7 +27,7 @@ class ProductQuoteRequestService
         $lineTotal = round($unitPrice * $quantity, 2);
         $portalUser = $requester instanceof User ? $requester : null;
 
-        return DB::transaction(function () use ($product, $quantity, $note, $unitPrice, $lineTotal, $portalUser) {
+        $quote = DB::transaction(function () use ($product, $quantity, $note, $unitPrice, $lineTotal, $portalUser) {
             $quote = Quote::query()->create([
                 'quote_number' => 'Q-'.Carbon::now()->format('Ymd').'-'.Str::upper(Str::random(4)),
                 'status' => 'draft',
@@ -59,6 +61,10 @@ class ProductQuoteRequestService
 
             return $quote;
         });
+
+        AdminNotifier::send(new QuoteRequestedAlert($quote));
+
+        return $quote;
     }
 
     /**

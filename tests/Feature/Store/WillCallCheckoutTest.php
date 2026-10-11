@@ -2,7 +2,7 @@
 
 use App\Enums\FulfillmentMethod;
 use App\Enums\PickupStatus;
-use App\Events\WillCallOrderPlaced;
+use App\Events\StoreOrderPlaced;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Admin;
 use App\Models\Company;
@@ -40,7 +40,7 @@ beforeEach(function () {
 });
 
 it('places a will call order at a pickup location with no shipping address', function () {
-    Event::fake([WillCallOrderPlaced::class]);
+    Event::fake([StoreOrderPlaced::class]);
 
     $this->actingAs($this->buyer, 'sanctum')
         ->postJson('/api/v1/store/checkout', willCallPayload($this->product, [
@@ -61,11 +61,11 @@ it('places a will call order at a pickup location with no shipping address', fun
         ->and($order->shipping_address)->toBeNull()
         ->and((float) $order->shipping_total)->toBe(0.0);
 
-    Event::assertDispatched(WillCallOrderPlaced::class, fn ($event) => $event->order->is($order));
+    Event::assertDispatched(StoreOrderPlaced::class, fn ($event) => $event->order->is($order));
 });
 
 it('keeps shipping orders unchanged when no method is sent', function () {
-    Event::fake([WillCallOrderPlaced::class]);
+    Event::fake([StoreOrderPlaced::class]);
 
     $this->actingAs($this->buyer, 'sanctum')
         ->postJson('/api/v1/store/checkout', willCallPayload($this->product))
@@ -78,7 +78,7 @@ it('keeps shipping orders unchanged when no method is sent', function () {
         ->and($order->pickup_status)->toBeNull()
         ->and($order->shipping_address['line1'])->toBe('123 Main St');
 
-    Event::assertNotDispatched(WillCallOrderPlaced::class);
+    Event::assertDispatched(StoreOrderPlaced::class);
 });
 
 it('ignores a pickup location on shipping orders', function () {

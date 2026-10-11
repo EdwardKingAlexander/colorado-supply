@@ -5,7 +5,9 @@ namespace App\Services\Paypal;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Notifications\Admin\PaymentAlert;
 use App\Notifications\OrderPaymentReceived;
+use App\Support\AdminNotifier;
 use App\Support\OrderNotifier;
 use Illuminate\Support\Facades\Log;
 
@@ -56,6 +58,7 @@ class PaypalPaymentSyncService
         if ($order && ! $order->isPaid()) {
             $order->markAsPaid();
             OrderNotifier::send($order, new OrderPaymentReceived($order));
+            AdminNotifier::send(new PaymentAlert($order, succeeded: true));
         }
     }
 

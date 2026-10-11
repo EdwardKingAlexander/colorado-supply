@@ -7,10 +7,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PickupStatus;
 use App\Events\OrderPickedUp;
 use App\Events\OrderReadyForPickup;
-use App\Models\LocationProduct;
 use App\Models\Order;
-use App\Models\Product;
-use App\Models\Scopes\CompanyScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -24,6 +21,11 @@ class WillCallPickupService
     private const CODE_ALPHABET = 'ACDEFGHJKMNPQRTUVWXY34679';
 
     private const CODE_LENGTH = 4;
+
+    /** orders.meta key recording which uncollected-pickup reminders went out. */
+    public const REMINDERS_META_KEY = 'pickup_reminders';
+
+    public function __construct(private StockShortfall $shortfall) {}
 
     public function canMarkReady(Order $order): bool
     {
@@ -45,10 +47,15 @@ class WillCallPickupService
         $this->guard($this->canMarkReady($order), 'This order is not waiting to be picked.');
 
         DB::transaction(function () use ($order) {
+            $meta = $order->meta ?? [];
+            // A fresh "ready" restarts the uncollected-pickup reminder clock.
+            unset($meta[self::REMINDERS_META_KEY]);
+
             $order->forceFill([
                 'pickup_status' => PickupStatus::ReadyForPickup,
                 'pickup_code' => $order->pickup_code ?? $this->uniqueCode(),
                 'ready_for_pickup_at' => now(),
+                'meta' => $meta,
             ])->save();
         });
 
@@ -118,29 +125,8 @@ class WillCallPickupService
      */
     public function shortLines(Order $order): array
     {
-        $order->loadMissing('items');
-        $short = [];
-
-        foreach ($order->items as $item) {
-            if (! $item->product_id) {
-                continue;
-            }
-
-            $onHand = $order->pickup_location_id
-                ? LocationProduct::query()
-                    ->where('location_id', $order->pickup_location_id)
-                    ->where('product_id', $item->product_id)
-                    ->value('on_hand')
-                : null;
-
-            $onHand ??= Product::query()->withoutGlobalScope(CompanyScope::class)->whereKey($item->product_id)->value('stock');
-
-            if ($onHand !== null && (int) $onHand < (int) $item->quantity) {
-                $short[] = ['name' => $item->name, 'ordered' => (int) $item->quantity, 'on_hand' => max(0, (int) $onHand)];
-            }
-        }
-
-        return $short;
+        // Everything is handed over at the pickup counter, so its stock counts.
+        return $this->shortfall->lines($order, $order->pickup_location_id);
     }
 
     private function isOpenWillCall(Order $order): bool

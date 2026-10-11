@@ -2,12 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Filament\Pages\MyNotifications;
 use App\Models\Admin;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -56,6 +58,49 @@ abstract class AppNotification extends Notification implements ShouldQueue
             // Read by the original order bell (NotificationController).
             'label' => $this->title($notifiable),
         ]);
+    }
+
+    /**
+     * Default email: headline, body lines, one button. Subclasses with richer
+     * emails override this or mailLines().
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        $mail = (new MailMessage)
+            ->subject($this->subject($notifiable))
+            ->greeting($this->title($notifiable));
+
+        foreach ($this->mailLines($notifiable) as $line) {
+            $mail->line($line);
+        }
+
+        if ($url = $this->url($notifiable)) {
+            $mail->action($this->actionLabel(), $url);
+        }
+
+        if ($notifiable instanceof Admin) {
+            $mail->line('You get this because store alerts are on for your admin account. Choose which alerts you get: '.MyNotifications::getUrl(panel: 'admin'));
+        }
+
+        return $mail;
+    }
+
+    protected function subject(object $notifiable): string
+    {
+        return $this->title($notifiable);
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function mailLines(object $notifiable): array
+    {
+        return [$this->body($notifiable)];
+    }
+
+    protected function actionLabel(): string
+    {
+        return 'View';
     }
 
     public function toDatabase(object $notifiable): array

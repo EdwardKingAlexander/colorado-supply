@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Enums\FulfillmentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\PickupStatus;
 use App\Models\Order;
 use App\Notifications\OrderStatusUpdated;
 use App\Support\OrderNotifier;
@@ -39,7 +40,9 @@ class OrderObserver
         }
 
         if ($order->wasChanged('fulfillment_status') && $order->fulfillment_status === FulfillmentStatus::Fulfilled) {
-            return 'fulfilled';
+            // A collected will call order gets its own "picked up" message
+            // (SendPickupNotifications) instead of the generic one.
+            return $order->pickup_status === PickupStatus::PickedUp ? null : 'fulfilled';
         }
 
         return null;
