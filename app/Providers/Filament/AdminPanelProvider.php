@@ -3,7 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Support\EmailVerificationSettings;
-use App\Support\McpSettings;
+use App\Support\StoreAvailability;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -89,7 +89,7 @@ class AdminPanelProvider extends PanelProvider
      */
     protected static function storeToggleUserMenuAction(): Action
     {
-        $isStoreEnabled = fn (): bool => McpSettings::for('store-settings', ['enabled' => true])['enabled'] ?? true;
+        $isStoreEnabled = fn (): bool => StoreAvailability::isEnabled();
 
         return Action::make('toggleStoreAvailability')
             ->label(fn () => $isStoreEnabled() ? 'Disable Store' : 'Enable Store')
@@ -98,13 +98,13 @@ class AdminPanelProvider extends PanelProvider
             ->requiresConfirmation()
             ->modalHeading(fn () => $isStoreEnabled() ? 'Disable Store?' : 'Enable Store?')
             ->modalDescription(fn () => $isStoreEnabled()
-                ? 'This will make the store inaccessible to all users except admins. Regular users will see a 403 error.'
+                ? 'This will make the store inaccessible to all users except admins. Customers will see the Under Maintenance page.'
                 : 'This will make the store accessible to all authenticated users again.')
             ->action(function () use ($isStoreEnabled) {
                 $storeEnabled = $isStoreEnabled();
 
                 try {
-                    McpSettings::put('store-settings', ['enabled' => ! $storeEnabled], 'Store availability settings');
+                    StoreAvailability::set(! $storeEnabled);
 
                     Notification::make()
                         ->title($storeEnabled ? 'Store Disabled' : 'Store Enabled')

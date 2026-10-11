@@ -13,7 +13,7 @@ const props = defineProps({
 <template>
   <AppLayout :appName="$page.props.appName">
     <Head>
-      <title>Store Temporarily Unavailable | Colorado Supply &amp; Procurement</title>
+      <title>Store Under Maintenance | Colorado Supply &amp; Procurement</title>
     </Head>
 
     <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 pb-16 pt-28 dark:bg-gray-900 sm:px-6">
@@ -28,7 +28,7 @@ const props = defineProps({
             </svg>
           </div>
           <h1 class="text-2xl font-bold text-white">
-            Our store is temporarily unavailable
+            Store Under Maintenance
           </h1>
           <p class="mt-1 text-sm font-medium" style="color: #e9c251;">
             We&rsquo;ll be back online soon
@@ -38,7 +38,7 @@ const props = defineProps({
         <!-- Body -->
         <div class="px-6 py-8 text-center sm:px-8">
           <p class="text-base leading-7 text-gray-600 dark:text-gray-300">
-            We&rsquo;re currently performing updates to serve you better and expect
+            We&rsquo;re currently performing scheduled maintenance to serve you better and expect
             to be back shortly. Thank you for your patience &mdash; your account and
             order history are safe and will be waiting for you when we return.
           </p>

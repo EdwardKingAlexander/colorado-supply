@@ -7,6 +7,7 @@ use App\Models\ScrapedProduct;
 use App\Support\EmailVerificationSettings;
 use App\Support\McpClient;
 use App\Support\McpSettings;
+use App\Support\StoreAvailability;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -156,8 +157,7 @@ class McpDashboard extends Page
     protected function getHeaderActions(): array
     {
         // Get current store status
-        $settings = McpSettings::for('store-settings', ['enabled' => true]);
-        $storeEnabled = $settings['enabled'] ?? true;
+        $storeEnabled = StoreAvailability::isEnabled();
         $verificationEnabled = EmailVerificationSettings::isEnabled();
 
         return [
@@ -202,11 +202,11 @@ class McpDashboard extends Page
                 ->requiresConfirmation()
                 ->modalHeading($storeEnabled ? 'Disable Store?' : 'Enable Store?')
                 ->modalDescription($storeEnabled
-                    ? 'This will make the store inaccessible to all users except admins. Regular users will see a 403 error.'
+                    ? 'This will make the store inaccessible to all users except admins. Customers will see the Under Maintenance page.'
                     : 'This will make the store accessible to all authenticated users again.')
                 ->action(function () use ($storeEnabled) {
                     try {
-                        McpSettings::put('store-settings', ['enabled' => ! $storeEnabled], 'Store availability settings');
+                        StoreAvailability::set(! $storeEnabled);
 
                         Notification::make()
                             ->title($storeEnabled ? 'Store Disabled' : 'Store Enabled')

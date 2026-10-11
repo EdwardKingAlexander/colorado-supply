@@ -19,6 +19,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StorePaypalReturnController;
 use App\Models\Order;
 use App\Models\ScrapedProduct;
+use App\Support\StoreAvailability;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -59,6 +60,11 @@ Route::get('/store/cart', [StoreController::class, 'cart'])->middleware(['auth.w
 Route::get('/store/checkout', [StoreController::class, 'checkout'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout');
 Route::get('/store/checkout/{order}/pay', [StoreController::class, 'checkoutPay'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout.pay');
 Route::get('/store/checkout/{order}/paypal/return', [StorePaypalReturnController::class, 'return'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.checkout.paypal.return');
+// Admin-only preview of the page customers see while the store is closed
+// (admins bypass store.enabled, so they can't otherwise see it).
+Route::get('/store/maintenance-preview', fn () => Inertia::render('Store/Unavailable', StoreAvailability::maintenancePageProps()))
+    ->middleware('auth:admin')
+    ->name('store.maintenance-preview');
 Route::get('/store/{slug}', [StoreController::class, 'show'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.show');
 
 // Stripe Checkout result pages
