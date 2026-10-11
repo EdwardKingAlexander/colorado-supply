@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/vue3'
 import { useCartStore } from '@/Stores/useCartStore'
 import { currency, normalizeQuantity, unitPriceFor } from '@/Support/pricing'
 
-// Buy box for the product page (ai/modules/product-detail-page, phase 3).
+// Buy box for the product page (ai/modules/product-detail-page-complete, phase 3).
 // Quantity has no upper bound: orders above stock are backordered.
 const props = defineProps({
   product: { type: Object, required: true },

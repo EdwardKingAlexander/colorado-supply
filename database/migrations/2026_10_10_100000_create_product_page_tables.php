@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Optional product-page data: quantity price breaks, gallery images, related
  * products/substitutes, and the government-buyer flag that gates GSA/contract
- * pricing (ai/modules/product-detail-page, Phase 1).
+ * pricing (ai/modules/product-detail-page-complete, Phase 1).
  */
 return new class extends Migration
 {

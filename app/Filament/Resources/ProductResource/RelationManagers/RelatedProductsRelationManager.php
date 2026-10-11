@@ -20,7 +20,7 @@ use Illuminate\Validation\Rules\Unique;
 
 /**
  * Substitutes, accessories and related products shown on the storefront
- * product page (ai/modules/product-detail-page).
+ * product page (ai/modules/product-detail-page-complete).
  */
 class RelatedProductsRelationManager extends RelationManager
 {

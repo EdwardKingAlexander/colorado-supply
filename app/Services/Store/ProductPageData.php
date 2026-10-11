@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
  *
  * Every field and section is optional: anything the product does not have is
  * left out of the payload entirely (no nulls, empty strings or empty lists),
- * so the page can render only what exists (ai/modules/product-detail-page).
+ * so the page can render only what exists (ai/modules/product-detail-page-complete).
  */
 class ProductPageData
 {

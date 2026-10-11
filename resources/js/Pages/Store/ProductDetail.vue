@@ -12,7 +12,7 @@ import { currency, unitPriceFor } from '@/Support/pricing';
 
 // Server-built payload (App\Services\Store\ProductPageData). Every key is
 // optional: anything the product lacks is absent, and every section below
-// renders only when its data exists (ai/modules/product-detail-page).
+// renders only when its data exists (ai/modules/product-detail-page-complete).
 const props = defineProps({
     product: {
         type: Object,

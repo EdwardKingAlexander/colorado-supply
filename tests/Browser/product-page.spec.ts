@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { expect, test, type Page } from '@playwright/test'
 
-// Product detail page QA (ai/modules/product-detail-page, phase 5).
+// Product detail page QA (ai/modules/product-detail-page-complete, phase 5).
 // The fixture creates a throwaway buyer and E2E-PDP-* products in the database
 // the Playwright server uses, and removes them afterwards. The password is
 // random per run and never stored.

@@ -99,7 +99,7 @@ class ProductResource extends Resource
             ]),
 
             // Everything below is optional: the storefront hides any section
-            // whose data is missing (ai/modules/product-detail-page).
+            // whose data is missing (ai/modules/product-detail-page-complete).
             Section::make('Ordering')->columns(4)->collapsed()->schema([
                 TextInput::make('unit_of_measure')
                     ->label('Unit of measure')
