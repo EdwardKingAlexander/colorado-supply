@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\VendorResource\Pages\CreateVendor;
 use App\Filament\Resources\VendorResource\Pages\EditVendor;
 use App\Filament\Resources\VendorResource\Pages\ListVendors;
+use App\Models\User;
 use App\Models\Vendor;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -51,6 +53,14 @@ class VendorResource extends Resource
                             ->label('Address')
                             ->rows(3)
                             ->maxLength(1000),
+                        Select::make('user_id')
+                            ->label('Portal User')
+                            ->relationship('user', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->name} ({$record->email})")
+                            ->searchable(['name', 'email'])
+                            ->preload()
+                            ->nullable()
+                            ->helperText('The storefront login linked to this vendor. Clear it when that person leaves the vendor.'),
                         Textarea::make('description')
                             ->label('Description')
                             ->rows(3)

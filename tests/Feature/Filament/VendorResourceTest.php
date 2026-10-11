@@ -4,6 +4,7 @@ use App\Filament\Resources\VendorResource\Pages\CreateVendor;
 use App\Filament\Resources\VendorResource\Pages\EditVendor;
 use App\Filament\Resources\VendorResource\Pages\ListVendors;
 use App\Models\Admin;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Vendor;
 use App\Models\VendorContact;
@@ -173,4 +174,40 @@ it('shows preferred contact columns in the vendor table', function () {
         ->assertTableColumnExists('preferredContact.name')
         ->assertTableColumnExists('preferredContact.email')
         ->assertTableColumnExists('preferred_contact_phone');
+});
+
+it('keeps the vendor and its products when the linked portal user is deleted', function () {
+    $portalUser = User::factory()->create();
+    $vendor = Vendor::factory()->for($portalUser)->create();
+    $product = Product::factory()->create(['vendor_id' => $vendor->id]);
+
+    $portalUser->delete();
+
+    expect($vendor->fresh())->not->toBeNull()
+        ->and($vendor->fresh()->user_id)->toBeNull()
+        ->and($product->fresh()->vendor_id)->toBe($vendor->id);
+});
+
+it('links, reassigns, and clears the portal user through the vendor edit form', function () {
+    $vendor = Vendor::factory()->create(['user_id' => null]);
+    $original = User::factory()->create();
+    $replacement = User::factory()->create();
+
+    Livewire::test(EditVendor::class, ['record' => $vendor->getRouteKey()])
+        ->fillForm(['user_id' => $original->id])
+        ->call('save')
+        ->assertHasNoFormErrors();
+    expect($vendor->fresh()->user_id)->toBe($original->id);
+
+    Livewire::test(EditVendor::class, ['record' => $vendor->getRouteKey()])
+        ->fillForm(['user_id' => $replacement->id])
+        ->call('save')
+        ->assertHasNoFormErrors();
+    expect($vendor->fresh()->user_id)->toBe($replacement->id);
+
+    Livewire::test(EditVendor::class, ['record' => $vendor->getRouteKey()])
+        ->fillForm(['user_id' => null])
+        ->call('save')
+        ->assertHasNoFormErrors();
+    expect($vendor->fresh()->user_id)->toBeNull();
 });
