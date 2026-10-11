@@ -3,22 +3,17 @@
 namespace App\Notifications;
 
 use App\Models\Order;
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
 
 /**
  * Single parameterized notification for buyer-facing order status
  * transitions (shipped / delivered / fulfilled / cancelled / refunded).
- * Payment received/failed keep their dedicated notifications.
+ * Payment received/failed keep their dedicated notifications. Account
+ * holders get email + bell; guest orders get email only (routed).
  */
-class OrderStatusUpdated extends Notification implements ShouldQueue
+class OrderStatusUpdated extends AppNotification
 {
-    use Queueable;
-
     /**
      * @param  string  $transition  One of: shipped, delivered, fulfilled, cancelled, refunded
      * @param  array{carrier?: ?string, tracking_number?: ?string}  $context
@@ -29,11 +24,30 @@ class OrderStatusUpdated extends Notification implements ShouldQueue
         public array $context = [],
     ) {}
 
-    public function via(object $notifiable): array
+    public function type(): NotificationType
     {
-        // The bell (database channel) only exists for account holders; guest
-        // orders are notified by email alone via Notification::route().
-        return $notifiable instanceof User ? ['mail', 'database'] : ['mail'];
+        return match ($this->transition) {
+            'shipped' => NotificationType::OrderShipped,
+            'delivered' => NotificationType::OrderDelivered,
+            'fulfilled' => NotificationType::OrderFulfilled,
+            'cancelled' => NotificationType::OrderCancelled,
+            'refunded' => NotificationType::OrderRefunded,
+        };
+    }
+
+    public function title(object $notifiable): string
+    {
+        return $this->headline();
+    }
+
+    public function body(object $notifiable): string
+    {
+        return implode(' ', $this->bodyLines());
+    }
+
+    public function url(object $notifiable): ?string
+    {
+        return $this->trackerUrl();
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -51,13 +65,12 @@ class OrderStatusUpdated extends Notification implements ShouldQueue
             ->line('You can check your order status anytime using the button above — no sign-in required.');
     }
 
-    public function toArray(object $notifiable): array
+    protected function extraData(object $notifiable): array
     {
         return [
             'order_id' => $this->order->id,
             'order_number' => $this->order->order_number,
             'transition' => $this->transition,
-            'label' => $this->headline(),
             'tracker_url' => $this->trackerUrl(),
             'timestamp' => now()->toIso8601String(),
         ];

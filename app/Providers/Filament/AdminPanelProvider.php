@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\MyNotifications;
 use App\Support\EmailVerificationSettings;
 use App\Support\StoreAvailability;
 use Filament\Actions\Action;
@@ -62,6 +63,10 @@ class AdminPanelProvider extends PanelProvider
                 // add more widgets here they show up on the dashboard
             ])
             ->userMenuItems([
+                'myNotifications' => Action::make('myNotifications')
+                    ->label('My notifications')
+                    ->icon('heroicon-o-bell')
+                    ->url(fn () => MyNotifications::getUrl()),
                 'toggleStoreAvailability' => static::storeToggleUserMenuAction(),
                 'toggleEmailVerification' => static::emailVerificationToggleUserMenuAction(),
             ])

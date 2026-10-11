@@ -3,26 +3,36 @@
 namespace App\Notifications;
 
 use App\Models\Order;
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
 
-class OrderPaymentFailed extends Notification implements ShouldQueue
+class OrderPaymentFailed extends AppNotification
 {
-    use Queueable;
-
     public function __construct(
         public Order $order,
         public ?string $failureMessage = null,
     ) {}
 
-    public function via(object $notifiable): array
+    public function type(): NotificationType
     {
-        // Account holders also get the in-app bell; guests are mail-only.
-        return $notifiable instanceof User ? ['mail', 'database'] : ['mail'];
+        return NotificationType::PaymentFailed;
+    }
+
+    public function title(object $notifiable): string
+    {
+        return "Payment failed for order {$this->order->order_number}";
+    }
+
+    public function body(object $notifiable): string
+    {
+        $reason = $this->failureMessage ? 'Reason: '.rtrim($this->failureMessage, '.').'. ' : '';
+
+        return $reason.'Please try again or use a different payment method.';
+    }
+
+    public function url(object $notifiable): ?string
+    {
+        return $this->trackerUrl();
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -42,14 +52,13 @@ class OrderPaymentFailed extends Notification implements ShouldQueue
             ->action('Track Your Order', $this->trackerUrl());
     }
 
-    public function toArray(object $notifiable): array
+    protected function extraData(object $notifiable): array
     {
         return [
             'order_id' => $this->order->id,
             'order_number' => $this->order->order_number,
             'failure_message' => $this->failureMessage,
             'transition' => 'payment_failed',
-            'label' => "Payment failed for order {$this->order->order_number}",
             'tracker_url' => $this->trackerUrl(),
             'timestamp' => now()->toIso8601String(),
         ];

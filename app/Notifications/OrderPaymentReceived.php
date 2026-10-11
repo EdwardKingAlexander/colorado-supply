@@ -3,23 +3,31 @@
 namespace App\Notifications;
 
 use App\Models\Order;
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
 
-class OrderPaymentReceived extends Notification implements ShouldQueue
+class OrderPaymentReceived extends AppNotification
 {
-    use Queueable;
-
     public function __construct(public Order $order) {}
 
-    public function via(object $notifiable): array
+    public function type(): NotificationType
     {
-        // Account holders also get the in-app bell; guests are mail-only.
-        return $notifiable instanceof User ? ['mail', 'database'] : ['mail'];
+        return NotificationType::PaymentReceived;
+    }
+
+    public function title(object $notifiable): string
+    {
+        return "Payment received for order {$this->order->order_number}";
+    }
+
+    public function body(object $notifiable): string
+    {
+        return 'Order total: $'.number_format((float) $this->order->grand_total, 2).'. Your order is confirmed and will be processed shortly.';
+    }
+
+    public function url(object $notifiable): ?string
+    {
+        return $this->trackerUrl();
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -32,19 +40,23 @@ class OrderPaymentReceived extends Notification implements ShouldQueue
             ->line('Your order is now confirmed and will be processed shortly.')
             // Signed tracker URL: works without login or email verification,
             // unlike the auth-gated checkout success page it used to link to.
-            ->action('Track Your Order', URL::signedRoute('orders.track', ['order' => $this->order]))
+            ->action('Track Your Order', $this->trackerUrl())
             ->line('You can check your order status anytime using the button above — no sign-in required.');
     }
 
-    public function toArray(object $notifiable): array
+    protected function extraData(object $notifiable): array
     {
         return [
             'order_id' => $this->order->id,
             'order_number' => $this->order->order_number,
             'transition' => 'payment_received',
-            'label' => "Payment received for order {$this->order->order_number}",
-            'tracker_url' => URL::signedRoute('orders.track', ['order' => $this->order]),
+            'tracker_url' => $this->trackerUrl(),
             'timestamp' => now()->toIso8601String(),
         ];
+    }
+
+    protected function trackerUrl(): string
+    {
+        return URL::signedRoute('orders.track', ['order' => $this->order]);
     }
 }
