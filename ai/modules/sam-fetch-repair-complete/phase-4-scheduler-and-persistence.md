@@ -1,9 +1,9 @@
 ---
-plan: sam-fetch-repair
+plan: sam-fetch-repair-complete
 phase: 4
 title: Scheduler & persistence integrity
-status: awaiting_validation
-last_updated: 2026-08-24
+status: completed
+last_updated: 2026-10-10
 depends_on: [phase-1]
 checkpoint: see STATE.md "Changes Made"
 ---

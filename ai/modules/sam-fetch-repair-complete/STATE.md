@@ -5,13 +5,13 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
 
 | # | Phase | Status | Last Updated | Notes |
 |---|-------|--------|--------------|-------|
-| - | Module plan (`00-overview.md`) | In Progress | 2026-08-24 | Diagnosis revised after live evidence; see "Corrections" below |
-| 1 | Connectivity & credential verification | Awaiting Validation | 2026-08-24 | Complete. Endpoint behind config; `sam:diagnose` built and verified live |
-| 2 | API request contract correction | Awaiting Validation | 2026-08-24 | `ncode` + `typeOfSetAside` fixed and proven live; pagination done. Cache-key set-asides (2.4) still open |
-| 3 | Error semantics & diagnostics | Awaiting Validation | 2026-08-24 | 404 disambiguated; diagnostics now survive to the state file; failure alerting added |
-| 4 | Scheduler & persistence integrity | Awaiting Validation | 2026-08-24 | Scheduler crash + DB column mismatch + swallowed errors all fixed. State double-write (4.2) still open |
-| 5 | Filter fidelity | Awaiting Validation | 2026-08-24 | Decided and implemented; both open questions resolved (see "Filter model") |
-| 6 | Operator visibility & regression suite | Not Started | 2026-08-24 | Queue-worker visibility + poll timeout still open |
+| - | Module plan (`00-overview.md`) | Complete | 2026-10-10 | Diagnosis revised after live evidence; see "Corrections" below |
+| 1 | Connectivity & credential verification | Complete | 2026-10-10 | Owner validated 2026-10-10. Complete. Endpoint behind config; `sam:diagnose` built and verified live |
+| 2 | API request contract correction | Complete | 2026-10-10 | Owner validated 2026-10-10. `ncode` + `typeOfSetAside` fixed and proven live; pagination done. Cache-key set-asides (2.4) still open |
+| 3 | Error semantics & diagnostics | Complete | 2026-10-10 | Owner validated 2026-10-10. 404 disambiguated; diagnostics now survive to the state file; failure alerting added |
+| 4 | Scheduler & persistence integrity | Complete | 2026-10-10 | Owner validated 2026-10-10. Scheduler crash + DB column mismatch + swallowed errors all fixed. State double-write (4.2) still open |
+| 5 | Filter fidelity | Complete | 2026-10-10 | Owner validated 2026-10-10. Decided and implemented; both open questions resolved (see "Filter model") |
+| 6 | Operator visibility & regression suite | Complete | 2026-10-10 | Closed by owner 2026-10-10 without implementation (fetch works as expected). Sub-phases 6.1-6.5 not built |
 
 ## THE FEATURE NOW WORKS
 
@@ -308,6 +308,14 @@ Tests: **291 SAM tests pass** (up from 270), full suite **707 passed**.
   `VendorResourceTest` itself is separately flaky via `fake()->phoneNumber()`.
 
 ## Log
+
+- **2026-10-10** — Owner confirmed the SAM fetch works as expected and closed
+  the module. Phases 1-5 marked Complete. Phase 6 (queue-worker visibility,
+  poll timeout, contract regression tests, end-to-end smoke test, live health
+  check) was closed without implementation; `FetchSamControlPanel` still
+  hardcodes `queueWorkerStatus = 'manual'`. Open sub-items 2.4 (cache-key
+  set-asides) and 4.2 (state double-write) were likewise closed as-is.
+  Directory renamed to `sam-fetch-repair-complete`.
 
 - 2026-08-24 — Investigation and plan drafted (6 phases). Initial diagnosis:
   external 404 + scheduler crash + 11 latent defects.

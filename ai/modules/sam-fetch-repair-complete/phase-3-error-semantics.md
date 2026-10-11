@@ -1,9 +1,9 @@
 ---
-plan: sam-fetch-repair
+plan: sam-fetch-repair-complete
 phase: 3
 title: Error semantics & diagnostics
-status: not_started
-last_updated: 2026-08-24
+status: completed
+last_updated: 2026-10-10
 depends_on: [phase-1]
 checkpoint: none
 ---

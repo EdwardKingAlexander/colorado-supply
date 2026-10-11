@@ -163,8 +163,22 @@ Workflow:
    **stop**.
 4. Do not begin the next phase until the orchestrator marks the current phase
    `Complete` in `STATE.md`.
+5. **When a module is complete, rename its directory by appending
+   `-complete`** (e.g. `ai/modules/stripe-integration` →
+   `ai/modules/stripe-integration-complete`). Do this without being asked,
+   in the same turn the last phase is marked `Complete`. A module is complete
+   only when every phase row in `STATE.md` is `Complete`; anything
+   `Awaiting Validation`, `Blocked`, `Not Started`, or deferred means it is
+   not. After renaming:
+   - Update every reference to the old path (`grep -r "<slug>" ai CLAUDE.md`),
+     including relative `../<slug>` links between modules.
+   - Move the module to the "Complete" section of `ai/reference/remaining.md`
+     and update the module counts there.
 
-See `ai/modules/stripe-integration/` for a reference example of this layout.
+`ai/reference/remaining.md` tracks which modules are complete and what is left
+on the rest. Update it whenever a module's phase status changes.
+
+See `ai/modules/stripe-integration-complete/` for a reference example of this layout.
 
 ## Filament v4 Notes
 

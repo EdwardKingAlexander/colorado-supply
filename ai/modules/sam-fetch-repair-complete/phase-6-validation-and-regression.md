@@ -1,9 +1,9 @@
 ---
-plan: sam-fetch-repair
+plan: sam-fetch-repair-complete
 phase: 6
 title: Operator visibility & regression suite
-status: not_started
-last_updated: 2026-08-24
+status: completed
+last_updated: 2026-10-10
 depends_on: [phase-2, phase-3, phase-4, phase-5]
 checkpoint: none
 ---
