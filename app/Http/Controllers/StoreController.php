@@ -6,6 +6,8 @@ use App\Models\Admin;
 use App\Models\Location;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\Store\ProductPageData;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -50,11 +52,39 @@ class StoreController extends Controller
         ]);
     }
 
-    public function show(string $slug): Response
+    public function product(Product $product, ProductPageData $pageData, ?string $slug = null): Response|RedirectResponse
     {
+        // CompanyScope already limited route binding to the buyer's company.
+        $viewer = Auth::guard('web')->user() ?? Auth::guard('admin')->user();
+
+        if (! $product->is_active && ! $viewer instanceof Admin) {
+            abort(404);
+        }
+
+        if ($slug !== $product->slug) {
+            return redirect()->to($pageData->url($product), 301);
+        }
+
         return Inertia::render('Store/ProductDetail', [
-            'slug' => $slug,
+            'product' => $pageData->build($product, $viewer),
         ]);
+    }
+
+    /**
+     * Legacy /store/{slug} links. Slugs are unique per vendor only, so redirect
+     * when exactly one visible product matches and refuse to guess otherwise.
+     */
+    public function show(string $slug, ProductPageData $pageData): RedirectResponse
+    {
+        $matches = Product::query()
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->limit(2)
+            ->get();
+
+        abort_unless($matches->count() === 1, 404);
+
+        return redirect()->to($pageData->url($matches->first()), 301);
     }
 
     public function cart(): Response

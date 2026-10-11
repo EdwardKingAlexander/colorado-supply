@@ -33,7 +33,8 @@ const specPreview = computed(() => {
   return props.product.specifications.slice(0, 3)
 })
 
-const productSlug = computed(() => props.product.slug ?? props.product.id)
+// Canonical id-based URL; slugs are only unique per vendor.
+const productUrl = computed(() => route('store.product', { product: props.product.id, slug: props.product.slug ?? undefined }))
 
 // Real product photo when one exists; otherwise the row shows a neutral part glyph.
 const productImage = computed(() => {
@@ -91,7 +92,7 @@ onBeforeUnmount(() => clearTimeout(feedbackTimer))
   <div class="grid grid-cols-[4rem_minmax(0,1fr)] gap-x-4 gap-y-3 px-4 py-4 hover:bg-st-sunk/60 sm:px-5 lg:grid-cols-[3.5rem_9rem_minmax(0,1fr)_8.5rem_7.5rem_12rem] lg:items-center lg:gap-y-0 lg:py-3">
     <!-- Thumbnail -->
     <Link
-      :href="route('store.show', productSlug)"
+      :href="productUrl"
       class="row-span-2 block h-16 w-16 overflow-hidden rounded-md border border-st-line bg-st-sunk focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action lg:row-span-1 lg:h-14 lg:w-14"
       tabindex="-1"
       aria-hidden="true"
@@ -118,7 +119,7 @@ onBeforeUnmount(() => clearTimeout(feedbackTimer))
     <!-- Product -->
     <div class="min-w-0">
       <Link
-        :href="route('store.show', productSlug)"
+        :href="productUrl"
         class="text-base font-semibold leading-snug text-st-ink hover:text-st-action hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action lg:text-[0.9375rem]"
       >
         {{ product.name }}

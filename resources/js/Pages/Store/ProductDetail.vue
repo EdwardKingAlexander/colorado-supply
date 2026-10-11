@@ -1,86 +1,77 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount } from 'vue';
 import StoreLayout from '@/Layouts/StoreLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { useCartStore } from '@/Stores/useCartStore';
 
+// Server-built payload (App\Services\Store\ProductPageData). Every key is
+// optional: anything the product lacks is absent, so sections check presence.
 const props = defineProps({
-    slug: {
-        type: String,
+    product: {
+        type: Object,
         required: true,
     },
 });
 
-const product = ref(null);
-const loading = ref(true);
-const error = ref(null);
+const product = computed(() => props.product);
+const pricing = computed(() => props.product.pricing ?? { priced: false });
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
 });
 
+const unitPrice = computed(() => pricing.value.unit_price ?? null);
+
 const priceDisplay = computed(() => {
-    if (!product.value?.price) {
-        return 'Call for pricing';
+    if (unitPrice.value !== null) {
+        return currencyFormatter.format(unitPrice.value);
     }
 
-    const price = Number(product.value.price);
+    // Tier-only pricing: no price below the first break.
+    const firstTier = pricing.value.tiers?.[0];
 
-    if (Number.isFinite(price)) {
-        return currencyFormatter.format(price);
-    }
-
-    return 'Call for pricing';
+    return firstTier ? `From ${currencyFormatter.format(firstTier.unit_price)}` : 'Call for pricing';
 });
 
-const partNumber = computed(() => {
-    if (!product.value) {
-        return '';
-    }
+const partNumber = computed(() => product.value.sku);
 
-    return product.value.sku ?? product.value.slug ?? `#${product.value.id}`;
-});
+const unitLabel = computed(() => product.value.unit_of_measure ?? 'EA');
 
-const unitLabel = computed(() => product.value?.unit ?? 'EA');
+const category = computed(() => product.value.breadcrumbs?.at(-1) ?? null);
 
-const specifications = computed(() => {
-    if (!product.value?.specifications || !Array.isArray(product.value.specifications)) {
-        return [];
-    }
+const specifications = computed(() => product.value.specs?.attributes ?? []);
 
-    return product.value.specifications;
-});
+const dimensions = computed(() => product.value.specs?.dimensions ?? null);
 
-const resolveImagePath = (image) => {
-    if (typeof image !== 'string' || image.length === 0) {
-        return null;
-    }
+// No stock-photo fallback: a missing image shows a neutral part glyph instead.
+const productImage = computed(() => product.value.images?.[0] ?? null);
 
-    if (image.startsWith('http://') || image.startsWith('https://')) {
-        return image;
-    }
+const productInfo = computed(() => ({
+    mpn: product.value.identifiers?.mpn,
+    gtin: product.value.identifiers?.gtin,
+    country: product.value.specs?.general?.country_of_origin,
+}));
 
-    return `/storage/${image.replace(/^\/+/, '')}`;
-};
-
-const productImage = computed(() => {
-    // No stock-photo fallback: a missing image shows a neutral part glyph instead.
-    return resolveImagePath(product.value?.image ?? '');
-});
+const hasProductInfo = computed(() => Object.values(productInfo.value).some(Boolean));
 
 const stockStatus = computed(() => {
-    if (!product.value) {
-        return null;
+    const stock = product.value.stock;
+
+    if (!stock || typeof stock.in_stock === 'undefined') {
+        return stock?.lead_time_days
+            ? { label: `Ships in ${stock.lead_time_days} days`, class: 'bg-st-warn/15 text-st-warn', icon: '⏱' }
+            : null;
     }
 
-    if (!product.value.in_stock) {
+    if (!stock.in_stock) {
         return {
-            label: product.value.lead_time_days ? `Ships in ${product.value.lead_time_days} days` : 'Out of Stock',
+            label: stock.lead_time_days ? `Ships in ${stock.lead_time_days} days` : 'Out of Stock',
             class: 'bg-st-warn/15 text-st-warn',
             icon: '⏱',
         };
     }
+
     return {
         label: 'In Stock',
         class: 'bg-st-ok/15 text-st-ok',
@@ -88,49 +79,21 @@ const stockStatus = computed(() => {
     };
 });
 
-const hasDimensions = computed(() => {
-    if (!product.value?.dimensions) {
-        return false;
-    }
-    const dims = product.value.dimensions;
-    return dims.length_mm || dims.width_mm || dims.height_mm || dims.weight_g;
-});
-
 const cartStore = useCartStore();
 const justAdded = ref(false);
 let feedbackTimer;
 
-const fetchProduct = async () => {
-    loading.value = true;
-    error.value = null;
-
-    try {
-        const response = await fetch(`/api/v1/store/products/${props.slug}`);
-
-        if (!response.ok) {
-            throw new Error('Product not found');
-        }
-
-        const data = await response.json();
-        product.value = data.data;
-    } catch (err) {
-        error.value = err.message;
-        console.error('Failed to fetch product:', err);
-    } finally {
-        loading.value = false;
-    }
-};
-
-onMounted(() => {
-    fetchProduct();
-});
-
 const handleAddToCart = () => {
-    if (!product.value) {
+    if (unitPrice.value === null) {
         return;
     }
 
-    cartStore.addItem(product.value);
+    cartStore.addItem({
+        id: product.value.id,
+        name: product.value.name,
+        slug: product.value.slug,
+        price: unitPrice.value,
+    });
     justAdded.value = true;
 
     if (feedbackTimer) {
@@ -151,7 +114,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <Head :title="product?.name ?? 'Product Details'" />
+    <Head :title="product.name" />
 
     <StoreLayout>
         <div class="bg-st-bg min-h-screen">
@@ -179,38 +142,8 @@ onBeforeUnmount(() => {
                     </Link>
                 </div>
 
-                <!-- Loading State -->
-                <div v-if="loading" class="bg-st-panel rounded-lg shadow-sm p-8">
-                    <div class="animate-pulse space-y-6">
-                        <div class="h-8 bg-st-sunk rounded w-1/3"></div>
-                        <div class="grid grid-cols-2 gap-8">
-                            <div class="space-y-4">
-                                <div class="h-64 bg-st-sunk rounded"></div>
-                            </div>
-                            <div class="space-y-4">
-                                <div class="h-4 bg-st-sunk rounded w-2/3"></div>
-                                <div class="h-4 bg-st-sunk rounded w-1/2"></div>
-                                <div class="h-32 bg-st-sunk rounded"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Error State -->
-                <div v-else-if="error" class="bg-st-panel rounded-lg shadow-sm p-8">
-                    <div class="text-center">
-                        <p class="text-red-400 font-medium">{{ error }}</p>
-                        <Link
-                            :href="route('store.index')"
-                            class="mt-4 inline-block text-sm text-st-muted hover:text-st-ink"
-                        >
-                            Return to catalog
-                        </Link>
-                    </div>
-                </div>
-
                 <!-- Product Details -->
-                <div v-else-if="product" class="bg-st-panel rounded-lg shadow-sm">
+                <div class="bg-st-panel rounded-lg shadow-sm">
                     <!-- Header -->
                     <div class="border-b border-st-line px-4 py-5 sm:px-8 sm:py-6">
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -230,8 +163,8 @@ onBeforeUnmount(() => {
                                         Vendor: {{ product.vendor.name }}
                                     </p>
                                 </div>
-                                <p v-if="product.category" class="text-sm text-st-muted mt-2">
-                                    Category: {{ product.category.name }}
+                                <p v-if="category" class="text-sm text-st-muted mt-2">
+                                    Category: {{ category.name }}
                                 </p>
                             </div>
                             <div class="flex-shrink-0 text-left sm:text-right">
@@ -241,8 +174,8 @@ onBeforeUnmount(() => {
                                 <p class="text-sm text-st-muted mt-1">
                                     per {{ unitLabel }}
                                 </p>
-                                <p v-if="product.list_price && product.list_price > product.price" class="text-sm text-st-muted line-through mt-1">
-                                    List: {{ currencyFormatter.format(product.list_price) }}
+                                <p v-if="pricing.list_price && unitPrice !== null && pricing.list_price > unitPrice" class="text-sm text-st-muted line-through mt-1">
+                                    List: {{ currencyFormatter.format(pricing.list_price) }}
                                 </p>
                             </div>
                         </div>
@@ -258,8 +191,8 @@ onBeforeUnmount(() => {
                             >
                                 <img
                                     v-if="productImage"
-                                    :src="productImage"
-                                    :alt="product.name"
+                                    :src="productImage.url"
+                                    :alt="productImage.alt"
                                     class="w-full h-full object-contain"
                                 />
                                 <svg v-else class="h-full w-full p-[22%] text-st-muted/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
@@ -269,22 +202,22 @@ onBeforeUnmount(() => {
                             </div>
 
                             <!-- Additional Product Info -->
-                            <div v-if="product.mpn || product.gtin || product.country_of_origin" class="bg-st-bg rounded-lg border border-st-line p-4">
+                            <div v-if="hasProductInfo" class="bg-st-bg rounded-lg border border-st-line p-4">
                                 <h3 class="text-xs font-semibold text-st-ink mb-2">
                                     Product Information
                                 </h3>
                                 <dl class="space-y-1 text-sm">
-                                    <div v-if="product.mpn" class="flex justify-between">
+                                    <div v-if="productInfo.mpn" class="flex justify-between">
                                         <dt class="text-st-muted">MPN:</dt>
-                                        <dd class="font-mono text-st-ink">{{ product.mpn }}</dd>
+                                        <dd class="font-mono text-st-ink">{{ productInfo.mpn }}</dd>
                                     </div>
-                                    <div v-if="product.gtin" class="flex justify-between">
+                                    <div v-if="productInfo.gtin" class="flex justify-between">
                                         <dt class="text-st-muted">GTIN:</dt>
-                                        <dd class="font-mono text-st-ink">{{ product.gtin }}</dd>
+                                        <dd class="font-mono text-st-ink">{{ productInfo.gtin }}</dd>
                                     </div>
-                                    <div v-if="product.country_of_origin" class="flex justify-between">
+                                    <div v-if="productInfo.country" class="flex justify-between">
                                         <dt class="text-st-muted">Country of Origin:</dt>
-                                        <dd class="text-st-ink">{{ product.country_of_origin }}</dd>
+                                        <dd class="text-st-ink">{{ productInfo.country }}</dd>
                                     </div>
                                 </dl>
                             </div>
@@ -293,36 +226,36 @@ onBeforeUnmount(() => {
                         <!-- Right: Specs & Actions -->
                         <div class="space-y-6">
                             <!-- Description -->
-                            <div>
+                            <div v-if="product.description">
                                 <h3 class="text-sm font-semibold text-st-ink mb-2">
                                     Description
                                 </h3>
-                                <p class="text-sm text-st-ink/85 leading-relaxed">
-                                    {{ product.description ?? 'No description available.' }}
+                                <p class="text-sm text-st-ink/85 leading-relaxed whitespace-pre-line">
+                                    {{ product.description }}
                                 </p>
                             </div>
 
                             <!-- Dimensions -->
-                            <div v-if="hasDimensions">
+                            <div v-if="dimensions">
                                 <h3 class="text-sm font-semibold text-st-ink mb-3">
                                     Physical Dimensions
                                 </h3>
                                 <div class="bg-st-bg rounded-lg border border-st-line divide-y divide-st-line">
-                                    <div v-if="product.dimensions.length_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
+                                    <div v-if="dimensions.length_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
                                         <dt class="text-sm font-medium text-st-ink/85">Length</dt>
-                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.length_mm }} mm</dd>
+                                        <dd class="text-sm text-st-ink font-mono">{{ dimensions.length_mm }} mm</dd>
                                     </div>
-                                    <div v-if="product.dimensions.width_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
+                                    <div v-if="dimensions.width_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
                                         <dt class="text-sm font-medium text-st-ink/85">Width</dt>
-                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.width_mm }} mm</dd>
+                                        <dd class="text-sm text-st-ink font-mono">{{ dimensions.width_mm }} mm</dd>
                                     </div>
-                                    <div v-if="product.dimensions.height_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
+                                    <div v-if="dimensions.height_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
                                         <dt class="text-sm font-medium text-st-ink/85">Height</dt>
-                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.height_mm }} mm</dd>
+                                        <dd class="text-sm text-st-ink font-mono">{{ dimensions.height_mm }} mm</dd>
                                     </div>
-                                    <div v-if="product.dimensions.weight_g" class="px-4 py-2.5 grid grid-cols-2 gap-4">
+                                    <div v-if="dimensions.weight_g" class="px-4 py-2.5 grid grid-cols-2 gap-4">
                                         <dt class="text-sm font-medium text-st-ink/85">Weight</dt>
-                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.weight_g }} g</dd>
+                                        <dd class="text-sm text-st-ink font-mono">{{ dimensions.weight_g }} g</dd>
                                     </div>
                                 </div>
                             </div>
@@ -348,15 +281,10 @@ onBeforeUnmount(() => {
                                 </div>
                             </div>
 
-                            <div v-else class="bg-st-bg rounded-lg border border-st-line p-6 text-center">
-                                <p class="text-sm text-st-muted">
-                                    No technical specifications available for this product.
-                                </p>
-                            </div>
-
-                            <!-- Actions -->
+                            <!-- Actions (Request a Quote arrives in phase 3) -->
                             <div class="pt-4">
                                 <button
+                                    v-if="unitPrice !== null"
                                     type="button"
                                     class="min-h-12 w-full rounded-md bg-st-fill px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-st-fill/85 focus:outline-none focus:ring-2 focus:ring-st-action focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                                     @click="handleAddToCart"

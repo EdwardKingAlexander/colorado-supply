@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductResource\Pages\CreateProduct;
 use App\Filament\Resources\ProductResource\Pages\EditProduct;
 use App\Filament\Resources\ProductResource\Pages\ListProducts;
 use App\Filament\Resources\ProductResource\RelationManagers\AttributesRelationManager;
+use App\Filament\Resources\ProductResource\RelationManagers\RelatedProductsRelationManager;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAttribute;
@@ -17,6 +18,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -94,6 +96,128 @@ class ProductResource extends Resource
             Section::make('Details')->columns(2)->schema([
                 FileUpload::make('image')->image()->directory('products')->imageEditor(),
                 Textarea::make('description')->rows(6),
+            ]),
+
+            // Everything below is optional: the storefront hides any section
+            // whose data is missing (ai/modules/product-detail-page).
+            Section::make('Ordering')->columns(4)->collapsed()->schema([
+                TextInput::make('unit_of_measure')
+                    ->label('Unit of measure')
+                    ->placeholder('EA')
+                    ->maxLength(20)
+                    ->helperText('EA, BX, PK, FT… Blank = EA.')
+                    ->dehydrateStateUsing(fn (?string $state) => filled($state) ? strtoupper(trim($state)) : 'EA'),
+                TextInput::make('minimum_order_quantity')
+                    ->label('Minimum order qty')
+                    ->integer()
+                    ->minValue(1)
+                    ->placeholder('1')
+                    ->dehydrateStateUsing(fn ($state) => filled($state) ? (int) $state : 1),
+                TextInput::make('reorder_point')->integer()->minValue(0),
+                TextInput::make('lead_time_days')->label('Lead time (days)')->integer()->minValue(0),
+            ]),
+
+            Section::make('Quantity pricing')->collapsed()
+                ->description('Optional price breaks. Buying the minimum quantity or more uses that unit price.')
+                ->schema([
+                    Repeater::make('priceTiers')
+                        ->hiddenLabel()
+                        ->relationship()
+                        ->schema([
+                            TextInput::make('min_quantity')
+                                ->label('Minimum quantity')
+                                ->integer()
+                                ->minValue(1)
+                                ->required()
+                                ->distinct(),
+                            TextInput::make('unit_price')
+                                ->numeric()
+                                ->minValue(0)
+                                ->prefix('$')
+                                ->required(),
+                        ])
+                        ->columns(2)
+                        ->defaultItems(0)
+                        ->addActionLabel('Add price break'),
+                ]),
+
+            Section::make('Gallery images')->collapsed()
+                ->description('Optional extra images. The Details image stays the primary image.')
+                ->schema([
+                    Repeater::make('images')
+                        ->hiddenLabel()
+                        ->relationship()
+                        ->orderColumn('sort_order')
+                        ->reorderable()
+                        ->schema([
+                            FileUpload::make('path')
+                                ->label('Image')
+                                ->image()
+                                ->directory('products/gallery')
+                                ->required(),
+                            TextInput::make('alt')
+                                ->label('Alt text')
+                                ->maxLength(255)
+                                ->helperText('Describes the image for screen readers. Blank = product name.'),
+                        ])
+                        ->columns(2)
+                        ->defaultItems(0)
+                        ->addActionLabel('Add image'),
+                ]),
+
+            Section::make('Identifiers')->columns(3)->collapsed()->schema([
+                TextInput::make('mpn')->label('MPN')->maxLength(255),
+                TextInput::make('part_number')->maxLength(255),
+                TextInput::make('gtin')->label('GTIN')->maxLength(255),
+                TextInput::make('upc')->label('UPC')->maxLength(255),
+                TextInput::make('ean')->label('EAN')->maxLength(255),
+            ]),
+
+            Section::make('Government')->columns(3)->collapsed()->schema([
+                Select::make('standard_type')
+                    ->options(array_combine(static::STANDARD_TYPES, static::STANDARD_TYPES))
+                    ->default('Commercial')
+                    ->selectablePlaceholder(false),
+                TextInput::make('mil_spec_number')->label('Mil-spec number')->maxLength(255),
+                TextInput::make('nsn')
+                    ->label('NSN')
+                    ->placeholder('5305-00-269-3238')
+                    ->regex('/^\d{4}-?\d{2}-?\d{3}-?\d{4}$/')
+                    ->validationMessages(['regex' => 'An NSN has 13 digits, e.g. 5305-00-269-3238.'])
+                    ->dehydrateStateUsing(fn (?string $state) => filled($state) ? preg_replace('/\D/', '', $state) : null),
+                TextInput::make('cage_code')->label('CAGE code')->maxLength(5),
+                TextInput::make('naics_code')->label('NAICS code')->maxLength(10),
+                TextInput::make('unspsc')->label('UNSPSC')->maxLength(255),
+                TextInput::make('psc_fsc')->label('PSC / FSC')->maxLength(255),
+                TextInput::make('gsa_price')->label('GSA price')->numeric()->minValue(0)->prefix('$')
+                    ->helperText('Shown only to government-buyer companies.'),
+                TextInput::make('contract_price')->numeric()->minValue(0)->prefix('$')
+                    ->helperText('Shown only to government-buyer companies.'),
+            ]),
+
+            Section::make('Compliance')->columns(4)->collapsed()->schema([
+                Toggle::make('berry_compliant')->label('Berry compliant'),
+                Toggle::make('taa_compliant')->label('TAA compliant'),
+                Toggle::make('made_in_usa')->label('Made in USA'),
+                Toggle::make('gsa_approved')->label('GSA approved'),
+                Toggle::make('qpl_listed')->label('QPL listed'),
+                Toggle::make('is_hazmat')->label('Hazmat'),
+                Toggle::make('export_controlled')->label('Export controlled'),
+                TextInput::make('country_of_origin')->maxLength(255),
+            ]),
+
+            Section::make('Specifications & documents')->columns(2)->collapsed()->schema([
+                TextInput::make('material')->maxLength(255),
+                TextInput::make('finish')->maxLength(255),
+                Textarea::make('specifications')->rows(4)->columnSpanFull(),
+                Textarea::make('search_keywords')->rows(2)->columnSpanFull()
+                    ->helperText('Extra terms buyers might search for.'),
+                TextInput::make('datasheet_url')->label('Datasheet URL')->url()->maxLength(255),
+                TextInput::make('msds_url')->label('SDS / MSDS URL')->url()->maxLength(255),
+                TextInput::make('weight_g')->label('Weight (g)')->integer()->minValue(0),
+                TextInput::make('length_mm')->label('Length (mm)')->integer()->minValue(0),
+                TextInput::make('width_mm')->label('Width (mm)')->integer()->minValue(0),
+                TextInput::make('height_mm')->label('Height (mm)')->integer()->minValue(0),
             ]),
         ]);
     }
@@ -195,6 +319,7 @@ class ProductResource extends Resource
     {
         return [
             AttributesRelationManager::class,
+            RelatedProductsRelationManager::class,
         ];
     }
 

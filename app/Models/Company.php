@@ -15,12 +15,14 @@ class Company extends Model
         'name',
         'slug',
         'domain_enforcement_enabled_at',
+        'is_government_buyer',
     ];
 
     protected function casts(): array
     {
         return [
             'domain_enforcement_enabled_at' => 'datetime',
+            'is_government_buyer' => 'boolean',
         ];
     }
 

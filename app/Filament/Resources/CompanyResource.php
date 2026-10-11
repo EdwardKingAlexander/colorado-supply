@@ -11,11 +11,14 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -46,6 +49,10 @@ class CompanyResource extends Resource
                         ->unique(ignoreRecord: true)
                         ->extraInputAttributes(['class' => 'font-mono'])
                         ->helperText('Auto-generated from company name'),
+
+                    Toggle::make('is_government_buyer')
+                        ->label('Government buyer')
+                        ->helperText('Users from this company see GSA and contract pricing on product pages.'),
                 ])
                 ->columns(2),
         ]);
@@ -98,6 +105,12 @@ class CompanyResource extends Resource
                     ->color(fn ($state) => $state ? 'success' : 'warning')
                     ->sortable(),
 
+                IconColumn::make('is_government_buyer')
+                    ->label('Gov buyer')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -109,7 +122,7 @@ class CompanyResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_government_buyer')->label('Government buyer'),
             ])
             ->actions([
                 EditAction::make(),

@@ -65,6 +65,9 @@ Route::get('/store/checkout/{order}/paypal/return', [StorePaypalReturnController
 Route::get('/store/maintenance-preview', fn () => Inertia::render('Store/Unavailable', StoreAvailability::maintenancePageProps()))
     ->middleware('auth:admin')
     ->name('store.maintenance-preview');
+// Canonical product URL is id-based: slugs are only unique per vendor.
+Route::get('/store/product/{product}/{slug?}', [StoreController::class, 'product'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.product');
+// Legacy slug URL: redirects when the slug is unambiguous, otherwise 404.
 Route::get('/store/{slug}', [StoreController::class, 'show'])->middleware(['auth.web_or_admin', 'store.enabled'])->name('store.show');
 
 // Stripe Checkout result pages
