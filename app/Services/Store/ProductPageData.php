@@ -75,7 +75,7 @@ class ProductPageData
     }
 
     /**
-     * @return list<array{id: int, name: string}>
+     * @return list<array{id: int, name: string, slug: ?string}>
      */
     private function breadcrumbs(Product $product): array
     {
@@ -85,7 +85,7 @@ class ProductPageData
 
         while ($category && ! isset($seen[$category->id]) && count($trail) < self::MAX_CATEGORY_DEPTH) {
             $seen[$category->id] = true;
-            array_unshift($trail, ['id' => $category->id, 'name' => $category->name]);
+            array_unshift($trail, ['id' => $category->id, 'name' => $category->name, 'slug' => $category->slug]);
             $category = $category->parent_id ? Category::query()->find($category->parent_id) : null;
         }
 

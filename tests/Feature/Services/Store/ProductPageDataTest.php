@@ -67,8 +67,8 @@ it('builds every section for a fully populated product', function () {
     $data = pageData($product, $this->admin);
 
     expect($data['breadcrumbs'])->toBe([
-        ['id' => $parent->id, 'name' => 'Fasteners'],
-        ['id' => $category->id, 'name' => 'Bolts'],
+        ['id' => $parent->id, 'name' => 'Fasteners', 'slug' => $parent->slug],
+        ['id' => $category->id, 'name' => 'Bolts', 'slug' => $category->slug],
     ])
         ->and($data['identifiers'])->toBe(['mpn' => 'M-1', 'part_number' => 'PN-1', 'nsn' => '5305002693238', 'cage_code' => '1ABC2'])
         ->and($data['government'])->toBe(['standard_type' => 'MS', 'mil_spec_number' => 'MS90725-60'])

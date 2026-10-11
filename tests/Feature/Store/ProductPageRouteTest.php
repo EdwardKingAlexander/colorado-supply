@@ -83,3 +83,30 @@ it('lets admins preview inactive products', function () {
 it('requires login', function () {
     $this->get(route('store.product', [$this->product, 'hex-bolt']))->assertRedirect();
 });
+
+it('sends a bare product to the page without any empty sections', function () {
+    $bare = Product::factory()->create([
+        'is_active' => true, 'description' => null, 'image' => null, 'price' => null, 'list_price' => null,
+        'stock' => null, 'lead_time_days' => null, 'mpn' => null, 'gtin' => null, 'country_of_origin' => null,
+        'weight_g' => null, 'length_mm' => null, 'width_mm' => null, 'height_mm' => null, 'category_id' => null,
+    ]);
+    $this->company->products()->attach($bare->id);
+
+    $this->actingAs($this->buyer)
+        ->get(route('store.product', [$bare, $bare->slug]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Store/ProductDetail')
+            ->missing('product.description')
+            ->missing('product.images')
+            ->missing('product.breadcrumbs')
+            ->missing('product.identifiers')
+            ->missing('product.compliance')
+            ->missing('product.warnings')
+            ->missing('product.specs')
+            ->missing('product.documents')
+            ->missing('product.stock')
+            ->missing('product.related')
+            ->where('product.pricing', ['priced' => false])
+        );
+});
