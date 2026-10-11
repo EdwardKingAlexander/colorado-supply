@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Category
+ * @mixin Category
  */
 class CategoryResource extends JsonResource
 {
@@ -22,6 +23,7 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'parent_id' => $this->parent_id,
+            'products_count' => $this->whenCounted('products'),
         ];
     }
 }

@@ -26,8 +26,23 @@ export default {
       },
        fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        catalog: ['Archivo', 'Inter', ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        // Store catalog tokens — values live in resources/css/app.css (.store-shell)
+        st: {
+          bg: 'rgb(var(--st-bg) / <alpha-value>)',
+          panel: 'rgb(var(--st-panel) / <alpha-value>)',
+          sunk: 'rgb(var(--st-sunk) / <alpha-value>)',
+          line: 'rgb(var(--st-line) / <alpha-value>)',
+          ink: 'rgb(var(--st-ink) / <alpha-value>)',
+          muted: 'rgb(var(--st-muted) / <alpha-value>)',
+          action: 'rgb(var(--st-action) / <alpha-value>)',
+          fill: 'rgb(var(--st-fill) / <alpha-value>)',
+          signal: 'rgb(var(--st-signal) / <alpha-value>)',
+          ok: 'rgb(var(--st-ok) / <alpha-value>)',
+          warn: 'rgb(var(--st-warn) / <alpha-value>)',
+        },
         primary: {
           50: '#eff6ff',
           100: '#dbeafe',

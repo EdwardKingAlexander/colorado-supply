@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import StoreLayout from '@/Layouts/StoreLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { useCartStore } from '@/Stores/useCartStore';
 
@@ -52,11 +52,6 @@ const specifications = computed(() => {
     return product.value.specifications;
 });
 
-const buildPlaceholderImage = (seed, width = 800, height = 800) => {
-    const safeSeed = encodeURIComponent(seed ?? 'product-detail');
-    return `https://picsum.photos/seed/${safeSeed}/${width}/${height}`;
-};
-
 const resolveImagePath = (image) => {
     if (typeof image !== 'string' || image.length === 0) {
         return null;
@@ -70,13 +65,8 @@ const resolveImagePath = (image) => {
 };
 
 const productImage = computed(() => {
-    const resolved = resolveImagePath(product.value?.image ?? '');
-    if (resolved) {
-        return resolved;
-    }
-
-    const seed = product.value?.slug ?? product.value?.id ?? props.slug;
-    return buildPlaceholderImage(seed, 800, 800);
+    // No stock-photo fallback: a missing image shows a neutral part glyph instead.
+    return resolveImagePath(product.value?.image ?? '');
 });
 
 const stockStatus = computed(() => {
@@ -87,13 +77,13 @@ const stockStatus = computed(() => {
     if (!product.value.in_stock) {
         return {
             label: product.value.lead_time_days ? `Ships in ${product.value.lead_time_days} days` : 'Out of Stock',
-            class: 'bg-yellow-100 text-yellow-800',
+            class: 'bg-st-warn/15 text-st-warn',
             icon: '⏱',
         };
     }
     return {
         label: 'In Stock',
-        class: 'bg-green-100 text-green-800',
+        class: 'bg-st-ok/15 text-st-ok',
         icon: '✓',
     };
 });
@@ -163,14 +153,14 @@ onBeforeUnmount(() => {
 <template>
     <Head :title="product?.name ?? 'Product Details'" />
 
-    <AuthenticatedLayout>
-        <div class="bg-gray-50 min-h-screen">
+    <StoreLayout>
+        <div class="bg-st-bg min-h-screen">
             <div class="mobile-page-gutter mx-auto max-w-7xl py-6 sm:py-8 lg:px-8">
                 <!-- Back to Catalog -->
                 <div class="mb-6">
                     <Link
                         :href="route('store.index')"
-                        class="inline-flex min-h-12 items-center rounded-md px-2 text-base text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="inline-flex min-h-12 items-center rounded-md px-2 text-base text-st-muted transition-colors hover:bg-st-sunk hover:text-st-ink focus:outline-none focus:ring-2 focus:ring-st-action"
                     >
                         <svg
                             class="w-4 h-4 mr-2"
@@ -190,29 +180,29 @@ onBeforeUnmount(() => {
                 </div>
 
                 <!-- Loading State -->
-                <div v-if="loading" class="bg-white rounded-lg shadow-sm p-8">
+                <div v-if="loading" class="bg-st-panel rounded-lg shadow-sm p-8">
                     <div class="animate-pulse space-y-6">
-                        <div class="h-8 bg-gray-200 rounded w-1/3"></div>
+                        <div class="h-8 bg-st-sunk rounded w-1/3"></div>
                         <div class="grid grid-cols-2 gap-8">
                             <div class="space-y-4">
-                                <div class="h-64 bg-gray-200 rounded"></div>
+                                <div class="h-64 bg-st-sunk rounded"></div>
                             </div>
                             <div class="space-y-4">
-                                <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                                <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-                                <div class="h-32 bg-gray-200 rounded"></div>
+                                <div class="h-4 bg-st-sunk rounded w-2/3"></div>
+                                <div class="h-4 bg-st-sunk rounded w-1/2"></div>
+                                <div class="h-32 bg-st-sunk rounded"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Error State -->
-                <div v-else-if="error" class="bg-white rounded-lg shadow-sm p-8">
+                <div v-else-if="error" class="bg-st-panel rounded-lg shadow-sm p-8">
                     <div class="text-center">
-                        <p class="text-red-600 font-medium">{{ error }}</p>
+                        <p class="text-red-400 font-medium">{{ error }}</p>
                         <Link
                             :href="route('store.index')"
-                            class="mt-4 inline-block text-sm text-gray-600 hover:text-gray-900"
+                            class="mt-4 inline-block text-sm text-st-muted hover:text-st-ink"
                         >
                             Return to catalog
                         </Link>
@@ -220,38 +210,38 @@ onBeforeUnmount(() => {
                 </div>
 
                 <!-- Product Details -->
-                <div v-else-if="product" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <div v-else-if="product" class="bg-st-panel rounded-lg shadow-sm">
                     <!-- Header -->
-                    <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-8 sm:py-6">
+                    <div class="border-b border-st-line px-4 py-5 sm:px-8 sm:py-6">
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div class="flex-1">
-                                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
+                                <h1 class="st-display text-2xl font-extrabold text-st-ink sm:text-3xl">
                                     {{ product.name }}
                                 </h1>
                                 <div class="flex flex-wrap items-center gap-3 mt-3">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 font-mono">
+                                    <p class="text-sm text-st-muted font-mono">
                                         Part #: {{ partNumber }}
                                     </p>
                                     <span v-if="stockStatus" :class="[stockStatus.class, 'inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full']">
                                         <span>{{ stockStatus.icon }}</span>
                                         {{ stockStatus.label }}
                                     </span>
-                                    <p v-if="product.vendor" class="text-sm text-gray-500 dark:text-gray-400">
+                                    <p v-if="product.vendor" class="text-sm text-st-muted">
                                         Vendor: {{ product.vendor.name }}
                                     </p>
                                 </div>
-                                <p v-if="product.category" class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                <p v-if="product.category" class="text-sm text-st-muted mt-2">
                                     Category: {{ product.category.name }}
                                 </p>
                             </div>
                             <div class="flex-shrink-0 text-left sm:text-right">
-                                <p class="text-3xl font-bold text-gray-900 dark:text-white">
+                                <p class="text-3xl font-bold text-st-ink">
                                     {{ priceDisplay }}
                                 </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                <p class="text-sm text-st-muted mt-1">
                                     per {{ unitLabel }}
                                 </p>
-                                <p v-if="product.list_price && product.list_price > product.price" class="text-sm text-gray-500 dark:text-gray-400 line-through mt-1">
+                                <p v-if="product.list_price && product.list_price > product.price" class="text-sm text-st-muted line-through mt-1">
                                     List: {{ currencyFormatter.format(product.list_price) }}
                                 </p>
                             </div>
@@ -263,33 +253,38 @@ onBeforeUnmount(() => {
                         <!-- Left: Image/Preview -->
                         <div class="space-y-4">
                             <div
-                                class="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden"
+                                class="bg-st-bg rounded-lg border border-st-line overflow-hidden"
                                 style="aspect-ratio: 1 / 1"
                             >
                                 <img
+                                    v-if="productImage"
                                     :src="productImage"
                                     :alt="product.name"
                                     class="w-full h-full object-contain"
                                 />
+                                <svg v-else class="h-full w-full p-[22%] text-st-muted/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                                    <path stroke-linejoin="round" d="M12 2.75 20 7.25v9.5l-8 4.5-8-4.5v-9.5l8-4.5Z" />
+                                    <path stroke-linejoin="round" d="m4 7.25 8 4.5 8-4.5M12 11.75v9.5" />
+                                </svg>
                             </div>
 
                             <!-- Additional Product Info -->
-                            <div v-if="product.mpn || product.gtin || product.country_of_origin" class="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 p-4">
-                                <h3 class="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-2">
+                            <div v-if="product.mpn || product.gtin || product.country_of_origin" class="bg-st-bg rounded-lg border border-st-line p-4">
+                                <h3 class="text-xs font-semibold text-st-ink mb-2">
                                     Product Information
                                 </h3>
                                 <dl class="space-y-1 text-sm">
                                     <div v-if="product.mpn" class="flex justify-between">
-                                        <dt class="text-gray-600 dark:text-gray-400">MPN:</dt>
-                                        <dd class="font-mono text-gray-900 dark:text-white">{{ product.mpn }}</dd>
+                                        <dt class="text-st-muted">MPN:</dt>
+                                        <dd class="font-mono text-st-ink">{{ product.mpn }}</dd>
                                     </div>
                                     <div v-if="product.gtin" class="flex justify-between">
-                                        <dt class="text-gray-600 dark:text-gray-400">GTIN:</dt>
-                                        <dd class="font-mono text-gray-900 dark:text-white">{{ product.gtin }}</dd>
+                                        <dt class="text-st-muted">GTIN:</dt>
+                                        <dd class="font-mono text-st-ink">{{ product.gtin }}</dd>
                                     </div>
                                     <div v-if="product.country_of_origin" class="flex justify-between">
-                                        <dt class="text-gray-600 dark:text-gray-400">Country of Origin:</dt>
-                                        <dd class="text-gray-900 dark:text-white">{{ product.country_of_origin }}</dd>
+                                        <dt class="text-st-muted">Country of Origin:</dt>
+                                        <dd class="text-st-ink">{{ product.country_of_origin }}</dd>
                                     </div>
                                 </dl>
                             </div>
@@ -299,62 +294,62 @@ onBeforeUnmount(() => {
                         <div class="space-y-6">
                             <!-- Description -->
                             <div>
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-2">
+                                <h3 class="text-sm font-semibold text-st-ink mb-2">
                                     Description
                                 </h3>
-                                <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                                <p class="text-sm text-st-ink/85 leading-relaxed">
                                     {{ product.description ?? 'No description available.' }}
                                 </p>
                             </div>
 
                             <!-- Dimensions -->
                             <div v-if="hasDimensions">
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-3">
+                                <h3 class="text-sm font-semibold text-st-ink mb-3">
                                     Physical Dimensions
                                 </h3>
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 divide-y divide-gray-200 dark:divide-gray-600">
+                                <div class="bg-st-bg rounded-lg border border-st-line divide-y divide-st-line">
                                     <div v-if="product.dimensions.length_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
-                                        <dt class="text-sm font-medium text-gray-700 dark:text-gray-300">Length</dt>
-                                        <dd class="text-sm text-gray-900 dark:text-white font-mono">{{ product.dimensions.length_mm }} mm</dd>
+                                        <dt class="text-sm font-medium text-st-ink/85">Length</dt>
+                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.length_mm }} mm</dd>
                                     </div>
                                     <div v-if="product.dimensions.width_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
-                                        <dt class="text-sm font-medium text-gray-700 dark:text-gray-300">Width</dt>
-                                        <dd class="text-sm text-gray-900 dark:text-white font-mono">{{ product.dimensions.width_mm }} mm</dd>
+                                        <dt class="text-sm font-medium text-st-ink/85">Width</dt>
+                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.width_mm }} mm</dd>
                                     </div>
                                     <div v-if="product.dimensions.height_mm" class="px-4 py-2.5 grid grid-cols-2 gap-4">
-                                        <dt class="text-sm font-medium text-gray-700 dark:text-gray-300">Height</dt>
-                                        <dd class="text-sm text-gray-900 dark:text-white font-mono">{{ product.dimensions.height_mm }} mm</dd>
+                                        <dt class="text-sm font-medium text-st-ink/85">Height</dt>
+                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.height_mm }} mm</dd>
                                     </div>
                                     <div v-if="product.dimensions.weight_g" class="px-4 py-2.5 grid grid-cols-2 gap-4">
-                                        <dt class="text-sm font-medium text-gray-700 dark:text-gray-300">Weight</dt>
-                                        <dd class="text-sm text-gray-900 dark:text-white font-mono">{{ product.dimensions.weight_g }} g</dd>
+                                        <dt class="text-sm font-medium text-st-ink/85">Weight</dt>
+                                        <dd class="text-sm text-st-ink font-mono">{{ product.dimensions.weight_g }} g</dd>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Specifications -->
                             <div v-if="specifications.length > 0">
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-3">
+                                <h3 class="text-sm font-semibold text-st-ink mb-3">
                                     Technical Specifications
                                 </h3>
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 divide-y divide-gray-200 dark:divide-gray-600">
+                                <div class="bg-st-bg rounded-lg border border-st-line divide-y divide-st-line">
                                     <div
                                         v-for="spec in specifications"
                                         :key="spec.name"
                                         class="px-4 py-2.5 grid grid-cols-2 gap-4"
                                     >
-                                        <dt class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <dt class="text-sm font-medium text-st-ink/85">
                                             {{ spec.name }}
                                         </dt>
-                                        <dd class="text-sm text-gray-900 dark:text-white font-mono">
+                                        <dd class="text-sm text-st-ink font-mono">
                                             {{ spec.value ?? '—' }}
                                         </dd>
                                     </div>
                                 </div>
                             </div>
 
-                            <div v-else class="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 p-6 text-center">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <div v-else class="bg-st-bg rounded-lg border border-st-line p-6 text-center">
+                                <p class="text-sm text-st-muted">
                                     No technical specifications available for this product.
                                 </p>
                             </div>
@@ -363,7 +358,7 @@ onBeforeUnmount(() => {
                             <div class="pt-4">
                                 <button
                                     type="button"
-                                    class="min-h-12 w-full rounded-md bg-gray-900 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                                    class="min-h-12 w-full rounded-md bg-st-fill px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-st-fill/85 focus:outline-none focus:ring-2 focus:ring-st-action focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                                     @click="handleAddToCart"
                                 >
                                     <span v-if="justAdded" class="inline-flex items-center gap-1">
@@ -371,7 +366,7 @@ onBeforeUnmount(() => {
                                     </span>
                                     <span v-else>Add to Cart</span>
                                 </button>
-                                <p class="mt-3 text-center text-sm leading-5 text-gray-600">
+                                <p class="mt-3 text-center text-sm leading-5 text-st-muted">
                                     Questions? Contact our sales team for assistance.
                                 </p>
                             </div>
@@ -380,5 +375,5 @@ onBeforeUnmount(() => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </StoreLayout>
 </template>

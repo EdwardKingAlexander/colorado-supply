@@ -179,3 +179,79 @@ textarea {
     padding: 1rem;
   }
 }
+
+/* Store catalog tokens (Layouts/StoreLayout.vue). RGB triplets for Tailwind alpha. */
+.store-shell {
+  --st-bg: 243 245 248;      /* #F3F5F8 */
+  --st-panel: 255 255 255;
+  --st-sunk: 233 237 242;
+  --st-line: 214 220 229;    /* #D6DCE5 */
+  --st-ink: 15 27 45;        /* #0F1B2D */
+  --st-muted: 86 99 119;     /* #566377 */
+  --st-action: 29 78 216;    /* brand blue #1D4ED8 */
+  --st-fill: 29 78 216;
+  --st-signal: 217 154 0;    /* safety yellow */
+  --st-ok: 21 128 61;
+  --st-warn: 180 83 9;
+  font-family: Archivo, Inter, ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: 'wdth' 100;
+}
+
+.dark .store-shell {
+  --st-bg: 14 22 36;         /* #0E1624 steel night */
+  --st-panel: 21 32 51;      /* #152033 */
+  --st-sunk: 11 18 30;
+  --st-line: 36 50 74;       /* #24324A */
+  --st-ink: 233 238 245;     /* #E9EEF5 */
+  --st-muted: 142 155 176;   /* #8E9BB0 */
+  --st-action: 110 160 255;  /* lifted brand blue for dark text links */
+  --st-fill: 29 78 216;      /* brand blue for filled buttons */
+  --st-signal: 242 183 5;    /* #F2B705 */
+  --st-ok: 74 222 128;
+  --st-warn: 251 191 36;
+}
+
+@layer components {
+  /* Expanded catalog headings — the printed-catalog voice of the store. */
+  .st-display {
+    font-variation-settings: 'wdth' 118;
+    letter-spacing: -0.01em;
+  }
+
+  .st-num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Leader dots between an index entry and its count. */
+  .st-leader {
+    flex: 1 1 auto;
+    min-width: 1.5rem;
+    margin-inline: 0.5rem;
+    border-bottom: 2px dotted rgb(var(--st-line));
+    transform: translateY(-0.3em);
+  }
+}
+
+/* Shared Breeze form controls (TextInput, InputLabel, InputError) inside the store shell. */
+.store-shell :is(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea) {
+  background-color: rgb(var(--st-sunk));
+  border-color: rgb(var(--st-line));
+  color: rgb(var(--st-ink));
+}
+
+.store-shell :is(input, select, textarea)::placeholder {
+  color: rgb(var(--st-muted));
+}
+
+.store-shell :is(input[type='checkbox'], input[type='radio']) {
+  background-color: rgb(var(--st-sunk));
+  border-color: rgb(var(--st-muted) / 0.7);
+}
+
+.store-shell label.text-gray-700 {
+  color: rgb(var(--st-ink) / 0.85);
+}
+
+.store-shell .text-red-700 {
+  color: rgb(248 113 113);
+}

@@ -1,136 +1,171 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import axios from 'axios'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import SearchBar from '@/Components/Store/SearchBar.vue'
+import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import { Dialog, DialogPanel } from '@headlessui/vue'
+import StoreLayout from '@/Layouts/StoreLayout.vue'
 import ParametricFilters from '@/Components/Store/ParametricFilters.vue'
 import ProductList from '@/Components/Store/ProductList.vue'
-import { Head, Link } from '@inertiajs/vue3'
-import { useCartStore } from '@/Stores/useCartStore'
-import { Dialog, DialogPanel } from '@headlessui/vue'
 
-// Navigation state
+const props = defineProps({
+  location: {
+    type: Object,
+    default: null,
+  },
+})
+
+const page = usePage()
+
+// Catalog tree
 const allCategories = ref([])
 const categoriesLoading = ref(true)
-const selectedParentCategory = ref(null)
-const selectedSubcategory = ref(null)
-const navigationLevel = ref('categories') // 'categories', 'subcategories', 'products'
 
-// Product state
-const products = ref([])
-const productsLoading = ref(true)
-const pagination = ref(null)
+// Where the shopper is. Derived from the URL (?department=, ?category=, ?q=)
+// so the back button and shared links land on the same view.
+const selectedDepartment = ref(null)
+const selectedCategory = ref(null)
 const searchTerm = ref('')
+const view = ref('index') // 'index' | 'department' | 'products'
+
+// Products + parametric filters for the current view
+const products = ref([])
+const productsLoading = ref(false)
+const pagination = ref(null)
 const currentPage = ref(1)
 const totalPages = ref(1)
 const availableFilters = ref([])
 const activeFilters = ref({})
 const filtersLoading = ref(false)
 const mobileFiltersOpen = ref(false)
+let loadedProductsKey = null
 
-const isSearching = computed(() => searchTerm.value.trim().length > 0)
-const showFilters = computed(() => navigationLevel.value === 'products' && Boolean(selectedSubcategory.value))
-const showingProductView = computed(() => navigationLevel.value === 'products' && (selectedSubcategory.value || isSearching.value))
-const isGlobalSearch = computed(() => navigationLevel.value === 'products' && !selectedSubcategory.value && isSearching.value)
-const cartStore = useCartStore()
-const cartItemCount = computed(() => cartStore.itemCount.value)
-const activeFilterCount = computed(() => Object.values(activeFilters.value).reduce((count, value) => {
-  return count + (Array.isArray(value) ? value.length : 1)
-}, 0))
+const isSearching = computed(() => searchTerm.value.length > 0)
+const isGlobalSearch = computed(() => view.value === 'products' && !selectedCategory.value && isSearching.value)
+const showFilters = computed(() => view.value === 'products' && Boolean(selectedCategory.value))
 
-// Computed: Get parent categories (top-level categories with no parent)
-const parentCategories = computed(() => {
-  return allCategories.value.filter(cat => !cat.parent_id)
-})
+const activeFilterCount = computed(() => Object.values(activeFilters.value).reduce(
+  (count, value) => count + (Array.isArray(value) ? value.length : 1),
+  0,
+))
 
-// Computed: Get subcategories for selected parent
-const subcategories = computed(() => {
-  if (!selectedParentCategory.value) return []
-  return allCategories.value.filter(cat => cat.parent_id === selectedParentCategory.value.id)
-})
+// --- Catalog tree -----------------------------------------------------------
 
-// Computed: Breadcrumb trail
-const activeFilterPills = computed(() => {
-  const pills = []
-  const trimmedSearch = searchTerm.value.trim()
+const byName = (a, b) => a.name.localeCompare(b.name)
 
-  if (trimmedSearch.length > 0) {
-    pills.push({
-      id: `search-${trimmedSearch}`,
-      type: 'search',
-      label: `Search: ${trimmedSearch}`,
-    })
+const childrenOf = (category) => allCategories.value
+  .filter(cat => cat.parent_id === category.id)
+  .sort(byName)
+
+const departments = computed(() => allCategories.value
+  .filter(cat => !cat.parent_id)
+  .map((department) => {
+    const children = childrenOf(department)
+    const total = (department.products_count ?? 0)
+      + children.reduce((sum, child) => sum + (child.products_count ?? 0), 0)
+
+    return { ...department, children, total }
+  })
+  .filter(department => department.total > 0)
+  .sort(byName))
+
+const catalogTotal = computed(() => departments.value.reduce((sum, d) => sum + d.total, 0))
+
+const findBySlug = (slug) => (slug ? allCategories.value.find(cat => cat.slug === slug) ?? null : null)
+const departmentFor = (category) => {
+  if (!category) {
+    return null
   }
 
-  Object.entries(activeFilters.value).forEach(([attribute, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((option, index) => {
-        pills.push({
-          id: `${attribute}-${option}-${index}`,
-          type: 'filter',
-          attribute,
-          value: option,
-          label: `${attribute}: ${option}`,
-        })
-      })
-    } else if (value !== undefined && value !== null && value !== '') {
-      pills.push({
-        id: `${attribute}-${value}`,
-        type: 'filter',
-        attribute,
-        value,
-        label: `${attribute}: ${value}`,
-      })
+  const rootId = category.parent_id ?? category.id
+
+  return departments.value.find(d => d.id === rootId) ?? null
+}
+
+const currentDepartment = computed(() => departmentFor(selectedCategory.value) ?? selectedDepartment.value)
+const siblingCategories = computed(() => currentDepartment.value?.children ?? [])
+
+// --- URL state ----------------------------------------------------------------
+
+const visit = (params, { replace = false } = {}) => {
+  const query = new URLSearchParams()
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) {
+      query.set(key, value)
     }
   })
 
-  return pills
-})
+  const qs = query.toString()
+  const url = window.location.pathname + (qs ? `?${qs}` : '')
+  const options = { url, preserveState: true, preserveScroll: replace }
 
-const hasRemovableFilters = computed(() => activeFilterPills.value.some(pill => pill.type === 'filter'))
+  if (replace) {
+    router.replace(options)
+  } else {
+    router.push(options)
+  }
+}
 
-const breadcrumbTrail = computed(() => {
-  const crumbs = [{
-    key: 'catalog',
-    label: 'Browse Catalog',
-    target: 'catalog',
-    clickable:
-      navigationLevel.value !== 'categories' ||
-      Boolean(selectedParentCategory.value) ||
-      Boolean(selectedSubcategory.value) ||
-      isSearching.value,
-  }]
+const openIndex = () => visit({})
+const openDepartment = (department) => {
+  // A department without subcategories goes straight to its products.
+  if (!department.children?.length) {
+    visit({ category: department.slug })
 
-  if (selectedParentCategory.value) {
-    crumbs.push({
-      key: `parent-${selectedParentCategory.value.id}`,
-      label: selectedParentCategory.value.name,
-      target: 'parent',
-      clickable: navigationLevel.value === 'products' && Boolean(selectedSubcategory.value),
-    })
+    return
   }
 
-  if (selectedSubcategory.value) {
-    crumbs.push({
-      key: `sub-${selectedSubcategory.value.id}`,
-      label: selectedSubcategory.value.name,
-      target: null,
-      clickable: false,
-    })
-  } else if (isGlobalSearch.value) {
-    crumbs.push({
-      key: 'search',
-      label: `Search: "${searchTerm.value.trim()}"`,
-      target: null,
-      clickable: false,
-    })
+  visit({ department: department.slug })
+}
+const openCategory = (category) => visit({ category: category.slug })
+
+const applyUrl = async () => {
+  if (categoriesLoading.value) {
+    return
   }
 
-  return crumbs
-})
+  const params = new URL(page.url, window.location.origin).searchParams
+  const category = findBySlug(params.get('category'))
+  const department = category ? departmentFor(category) : departments.value.find(d => d.slug === params.get('department')) ?? null
+  const term = (params.get('q') ?? '').trim()
+
+  selectedCategory.value = category
+  selectedDepartment.value = department
+  searchTerm.value = term
+
+  if (!category && !term) {
+    view.value = department ? 'department' : 'index'
+    loadedProductsKey = null
+    products.value = []
+    availableFilters.value = []
+    activeFilters.value = {}
+    mobileFiltersOpen.value = false
+
+    return
+  }
+
+  view.value = 'products'
+  const key = `${category?.id ?? ''}|${term}`
+
+  if (key === loadedProductsKey) {
+    return
+  }
+
+  loadedProductsKey = key
+  activeFilters.value = {}
+  currentPage.value = 1
+  availableFilters.value = []
+
+  await Promise.all([category ? fetchFilters() : Promise.resolve(), fetchProducts()])
+}
+
+watch(() => page.url, applyUrl)
+
+// --- Data -----------------------------------------------------------------------
 
 const fetchCategories = async () => {
   categoriesLoading.value = true
+
   try {
     const { data } = await axios.get('/api/v1/store/categories')
     allCategories.value = data.data ?? []
@@ -142,73 +177,21 @@ const fetchCategories = async () => {
   }
 }
 
-// Navigation: Reset to main categories view
-const resetToCategories = () => {
-  selectedParentCategory.value = null
-  selectedSubcategory.value = null
-  navigationLevel.value = 'categories'
-  searchTerm.value = ''
-  products.value = []
-  availableFilters.value = []
-  activeFilters.value = {}
-  pagination.value = null
-  currentPage.value = 1
-  totalPages.value = 1
-  productsLoading.value = false
-}
-
-const showParentCategoryList = () => {
-  if (!selectedParentCategory.value) {
+const fetchFilters = async () => {
+  if (!selectedCategory.value) {
     return
   }
 
-  selectedSubcategory.value = null
-  navigationLevel.value = 'subcategories'
-  products.value = []
-  availableFilters.value = []
-  activeFilters.value = {}
-  pagination.value = null
-  currentPage.value = 1
-  totalPages.value = 1
-  productsLoading.value = false
-}
-
-// Navigation: Select a parent category → show subcategories
-const selectParentCategory = (category) => {
-  selectedParentCategory.value = category
-  selectedSubcategory.value = null
-  navigationLevel.value = 'subcategories'
-  products.value = []
-  availableFilters.value = []
-  activeFilters.value = {}
-}
-
-// Navigation: Select a subcategory → show filters + products
-const selectSubcategory = async (subcategory) => {
-  selectedSubcategory.value = subcategory
-  navigationLevel.value = 'products'
-  activeFilters.value = {}
-  currentPage.value = 1
-
-  // Load filters and products for this subcategory
-  await Promise.all([
-    fetchFilters(),
-    fetchProducts()
-  ])
-}
-
-const fetchFilters = async () => {
-  if (!selectedSubcategory.value) return
-
   filtersLoading.value = true
-  const params = {
-    category_id: selectedSubcategory.value.id,
-    ...(Object.keys(activeFilters.value).length > 0 ? { filters: activeFilters.value } : {}),
-  }
 
   try {
-    const response = await axios.get('/api/v1/store/filters', { params })
-    availableFilters.value = response.data.data ?? []
+    const { data } = await axios.get('/api/v1/store/filters', {
+      params: {
+        category_id: selectedCategory.value.id,
+        ...(Object.keys(activeFilters.value).length > 0 ? { filters: activeFilters.value } : {}),
+      },
+    })
+    availableFilters.value = data.data ?? []
   } catch (error) {
     console.error('Failed to load filters', error)
     availableFilters.value = []
@@ -218,25 +201,19 @@ const fetchFilters = async () => {
 }
 
 const fetchProducts = async () => {
-  const trimmedQuery = searchTerm.value.trim()
-
-  if (!selectedSubcategory.value && trimmedQuery === '') {
+  if (!selectedCategory.value && !isSearching.value) {
     return
   }
 
   productsLoading.value = true
+  const params = { page: currentPage.value }
 
-  const endpoint = trimmedQuery.length ? '/api/v1/store/search' : '/api/v1/store/products'
-  const params = {
-    page: currentPage.value,
+  if (selectedCategory.value) {
+    params.category_id = selectedCategory.value.id
   }
 
-  if (selectedSubcategory.value) {
-    params.category_id = selectedSubcategory.value.id
-  }
-
-  if (trimmedQuery.length) {
-    params.query = trimmedQuery
+  if (isSearching.value) {
+    params.query = searchTerm.value
   }
 
   if (Object.keys(activeFilters.value).length > 0) {
@@ -244,11 +221,12 @@ const fetchProducts = async () => {
   }
 
   try {
-    const response = await axios.get(endpoint, { params })
-    products.value = response.data.data ?? []
-    pagination.value = response.data.meta ?? null
-    currentPage.value = response.data.meta?.current_page ?? 1
-    totalPages.value = response.data.meta?.last_page ?? 1
+    const endpoint = isSearching.value ? '/api/v1/store/search' : '/api/v1/store/products'
+    const { data } = await axios.get(endpoint, { params })
+    products.value = data.data ?? []
+    pagination.value = data.meta ?? null
+    currentPage.value = data.meta?.current_page ?? 1
+    totalPages.value = data.meta?.last_page ?? 1
   } catch (error) {
     console.error('Failed to load products', error)
     products.value = []
@@ -260,334 +238,363 @@ const fetchProducts = async () => {
   }
 }
 
-// listens to debounced search events from the search bar
-const handleSearch = async (term) => {
-  searchTerm.value = term
-  currentPage.value = 1
+// --- Interactions ---------------------------------------------------------------
 
-  const trimmedQuery = term.trim()
+// Header search: typing refines in place (replace), a new search adds history.
+const handleSearch = (term) => {
+  const trimmed = term.trim()
 
-  if (trimmedQuery === '') {
-    if (!selectedSubcategory.value) {
-      navigationLevel.value = 'categories'
-      products.value = []
-      pagination.value = null
-      totalPages.value = 1
-      productsLoading.value = false
-      return
-    }
-
-    await fetchProducts()
+  if (trimmed === searchTerm.value) {
     return
   }
 
-  if (navigationLevel.value !== 'products') {
-    navigationLevel.value = 'products'
-  }
-
-  await fetchProducts()
+  visit(
+    { category: selectedCategory.value?.slug, q: trimmed },
+    { replace: isSearching.value && trimmed.length > 0 },
+  )
 }
 
-// Handle parametric filter changes
-const handleFiltersUpdate = async (newFilters) => {
-  activeFilters.value = newFilters
-  currentPage.value = 1
-  // Refetch filters to show only attributes available on filtered products
-  await Promise.all([
-    fetchFilters(),
-    fetchProducts()
-  ])
-}
-
-const removeFilterPill = async (pill) => {
-  if (pill.type === 'search') {
-    await handleSearch('')
-
-    return
-  }
-
-  const updatedFilters = { ...activeFilters.value }
-  const currentValue = updatedFilters[pill.attribute]
-
-  if (Array.isArray(currentValue)) {
-    const nextValues = currentValue.filter((value) => value !== pill.value)
-
-    if (nextValues.length > 0) {
-      updatedFilters[pill.attribute] = nextValues
-    } else {
-      delete updatedFilters[pill.attribute]
-    }
-  } else {
-    delete updatedFilters[pill.attribute]
-  }
-
-  activeFilters.value = updatedFilters
+const refreshFiltersAndProducts = () => {
   currentPage.value = 1
 
-  await Promise.all([
-    fetchFilters(),
-    fetchProducts()
-  ])
+  return Promise.all([fetchFilters(), fetchProducts()])
 }
 
-const handleClearFilters = async () => {
+const handleFiltersUpdate = (filters) => {
+  activeFilters.value = filters
+
+  return refreshFiltersAndProducts()
+}
+
+const handleClearFilters = () => {
   activeFilters.value = {}
-  currentPage.value = 1
-  // Refetch filters to show all available attributes
-  await Promise.all([
-    fetchFilters(),
-    fetchProducts()
-  ])
+
+  return refreshFiltersAndProducts()
 }
 
-const goToPreviousPage = () => {
-  if (currentPage.value <= 1) return
-  currentPage.value -= 1
-  fetchProducts()
-}
+const removeFilterValue = (attribute, value) => {
+  const next = { ...activeFilters.value }
+  const current = next[attribute]
 
-const goToNextPage = () => {
-  if (currentPage.value >= totalPages.value) return
-  currentPage.value += 1
-  fetchProducts()
-}
-
-const handleBreadcrumbClick = (crumb) => {
-  if (!crumb.clickable || !crumb.target) {
-    return
+  if (Array.isArray(current) && current.length > 1) {
+    next[attribute] = current.filter(v => v !== value)
+  } else {
+    delete next[attribute]
   }
 
-  if (crumb.target === 'catalog') {
-    resetToCategories()
-    return
-  }
-
-  if (crumb.target === 'parent') {
-    showParentCategoryList()
-  }
+  return handleFiltersUpdate(next)
 }
 
-onMounted(() => {
-  fetchCategories()
+const filterPills = computed(() => Object.entries(activeFilters.value).flatMap(([attribute, value]) => {
+  const values = Array.isArray(value) ? value : [value]
+
+  return values.map(v => ({
+    key: `${attribute}:${v}`,
+    attribute,
+    value: v,
+    label: `${attribute}: ${v === 'true' ? 'Yes' : v === 'false' ? 'No' : v}`,
+  }))
+}))
+
+const scrollToResults = () => {
+  document.getElementById('catalog-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+const goToPage = async (pageNumber) => {
+  currentPage.value = pageNumber
+  await fetchProducts()
+  scrollToResults()
+}
+
+const pageTitle = computed(() => {
+  if (view.value === 'products') {
+    if (selectedCategory.value) {
+      return selectedCategory.value.name
+    }
+
+    return `Results for “${searchTerm.value}”`
+  }
+
+  if (view.value === 'department') {
+    return currentDepartment.value?.name ?? 'Catalog'
+  }
+
+  return 'Catalog'
+})
+
+onMounted(async () => {
+  await fetchCategories()
+  await applyUrl()
 })
 </script>
 
 <template>
-  <Head title="Store" />
+  <Head :title="view === 'index' ? 'Store' : `${pageTitle} – Store`" />
 
-  <AuthenticatedLayout>
-    <div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <div class="mobile-page-gutter mx-auto max-w-7xl py-6 sm:py-8 lg:px-8">
-        <!-- Header with Cart CTA -->
-        <div class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div class="space-y-2">
-            <p class="text-sm font-semibold uppercase text-gray-600 dark:text-gray-300">Industrial Supply Catalog</p>
-            <h1 class="text-3xl font-bold leading-10 text-gray-900 dark:text-white">Browse products & build your cart</h1>
-            <p class="text-base leading-6 text-gray-600 dark:text-gray-300">
-              Use the search bar and filters below to zero in on the exact specs you need.
+  <StoreLayout
+    :search="searchTerm"
+    live-search
+    :searching="productsLoading && isSearching"
+    @search="handleSearch"
+  >
+    <div class="mx-auto max-w-screen-2xl px-4 pb-20 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+      <!-- Breadcrumb -->
+      <nav v-if="view !== 'index'" aria-label="Breadcrumb" class="mb-3 text-sm">
+        <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-st-muted">
+          <li>
+            <button type="button" class="rounded hover:text-st-action hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action" @click="openIndex">Catalog</button>
+          </li>
+          <template v-if="currentDepartment && (view === 'products' || view === 'department')">
+            <li aria-hidden="true">/</li>
+            <li>
+              <button
+                v-if="view === 'products' && currentDepartment.children.length"
+                type="button"
+                class="rounded hover:text-st-action hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+                @click="openDepartment(currentDepartment)"
+              >
+                {{ currentDepartment.name }}
+              </button>
+              <span v-else aria-current="page" class="text-st-ink">{{ currentDepartment.name }}</span>
+            </li>
+          </template>
+          <template v-if="selectedCategory && selectedCategory.parent_id">
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="text-st-ink">{{ selectedCategory.name }}</li>
+          </template>
+        </ol>
+      </nav>
+
+      <!-- ============ CATALOG INDEX (home) ============ -->
+      <template v-if="view === 'index'">
+        <div class="mb-8 flex flex-col gap-3 border-b border-st-line pb-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <h1 class="st-display text-4xl font-extrabold leading-none text-st-ink sm:text-5xl">Catalog</h1>
+            <p class="mt-3 max-w-2xl text-base text-st-muted">
+              <template v-if="!categoriesLoading && departments.length">
+                <span class="st-num">{{ catalogTotal }}</span> products across
+                <span class="st-num">{{ departments.length }}</span> departments.
+              </template>
+              Pick a category to filter by spec, or search by part number above.
             </p>
           </div>
-          <Link
-            :href="route('store.cart')"
-            class="inline-flex min-h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-4 py-3 text-base font-semibold text-gray-800 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:w-auto dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-          >
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75h-9A2.25 2.25 0 005.25 6v12a2.25 2.25 0 002.25 2.25h9A2.25 2.25 0 0018.75 18V6a2.25 2.25 0 00-2.25-2.25z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5h7.5M8.25 12h7.5M8.25 16.5h4.5" />
-            </svg>
-            <span>View Cart</span>
-            <span
-              v-if="cartItemCount"
-              class="ml-1 inline-flex items-center justify-center rounded-full bg-gray-900 dark:bg-blue-600 px-2 py-0.5 text-xs font-bold text-white"
-            >
-              {{ cartItemCount }}
-            </span>
-          </Link>
-        </div>
-
-        <!-- Sticky Search + Context Bar -->
-        <div class="sticky top-16 z-20 -mx-4 mb-6 sm:-mx-6 lg:-mx-8 lg:mb-8">
-          <div class="space-y-3 border-y border-gray-200 bg-gray-50/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6 lg:rounded-b-lg lg:border-x lg:px-8 dark:border-gray-700 dark:bg-gray-900/95">
-            <SearchBar
-              v-model="searchTerm"
-              variant="inline"
-              :loading="navigationLevel === 'products' ? productsLoading : false"
-              placeholder="Search by product, SKU, or spec"
-              @search="handleSearch"
-            />
-
-            <div
-              v-if="breadcrumbTrail.length"
-              class="flex flex-wrap items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-300"
-            >
-              <template v-for="(crumb, index) in breadcrumbTrail" :key="crumb.key">
-                <button
-                  v-if="crumb.clickable"
-                  type="button"
-                  class="inline-flex min-h-12 items-center rounded-md px-2 text-blue-700 hover:bg-blue-50 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-300 dark:hover:bg-white/10"
-                  @click="handleBreadcrumbClick(crumb)"
-                >
-                  {{ crumb.label }}
-                </button>
-                <span
-                  v-else
-                  :class="index === breadcrumbTrail.length - 1 ? 'text-gray-900 dark:text-gray-100 font-semibold' : ''"
-                >
-                  {{ crumb.label }}
-                </span>
-                <span
-                  v-if="index < breadcrumbTrail.length - 1"
-                  class="text-gray-400 dark:text-gray-500 mx-1"
-                >
-                  /
-                </span>
-              </template>
-            </div>
-
-            <div v-if="activeFilterPills.length" class="flex flex-wrap items-center gap-2">
-              <button
-                v-for="pill in activeFilterPills"
-                :key="pill.id"
-                type="button"
-                class="inline-flex min-h-12 items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-blue-500 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:border-blue-400 dark:hover:text-blue-300"
-                @click="removeFilterPill(pill)"
-              >
-                <span>{{ pill.label }}</span>
-                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-
-              <button
-                v-if="hasRemovableFilters"
-                type="button"
-                class="ml-auto inline-flex min-h-12 items-center rounded-md px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-300 dark:hover:bg-white/10"
-                @click="handleClearFilters"
-              >
-                Clear filters
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Breadcrumb Navigation (McMaster-Carr style) -->
-        <!-- VIEW 1: Main Categories (like McMaster homepage) -->
-        <div v-if="navigationLevel === 'categories'" class="max-w-5xl">
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Browse Catalog</h1>
-
-          <div v-if="categoriesLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-for="i in 6" :key="i" class="animate-pulse">
-              <div class="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-            </div>
-          </div>
-
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <button
-              v-for="category in parentCategories"
-              :key="category.id"
-              @click="selectParentCategory(category)"
-              class="text-left p-6 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition-all"
-            >
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                {{ category.name }}
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                {{ category.description }}
-              </p>
-            </button>
-          </div>
-        </div>
-
-        <!-- VIEW 2: Subcategories (after selecting main category) -->
-        <div v-if="navigationLevel === 'subcategories'" class="max-w-5xl">
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {{ selectedParentCategory?.name }}
-          </h1>
-          <p class="text-gray-600 dark:text-gray-400 mb-8">
-            {{ selectedParentCategory?.description }}
+          <p v-if="location" class="text-sm text-st-muted">
+            Stock shown for <span class="font-semibold text-st-ink">{{ location.name }}</span>
           </p>
+        </div>
 
-          <div class="space-y-3">
+        <div v-if="categoriesLoading" class="columns-1 gap-x-12 sm:columns-2 lg:columns-3 2xl:columns-4" aria-busy="true">
+          <div v-for="i in 8" :key="i" class="mb-10 break-inside-avoid border-t-2 border-st-line pt-3">
+            <div class="mb-4 h-5 w-2/3 animate-pulse rounded bg-st-panel" />
+            <div v-for="j in 4" :key="j" class="mb-3 h-3.5 w-full animate-pulse rounded bg-st-panel" />
+          </div>
+        </div>
+
+        <div v-else-if="departments.length" class="columns-1 gap-x-12 sm:columns-2 lg:columns-3 2xl:columns-4">
+          <section
+            v-for="department in departments"
+            :key="department.id"
+            class="mb-10 break-inside-avoid border-t-2 border-st-ink pt-3"
+            :aria-labelledby="`dept-${department.id}`"
+          >
+            <h2 :id="`dept-${department.id}`" class="mb-2">
+              <button
+                type="button"
+                class="group flex w-full items-baseline justify-between gap-3 rounded text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+                @click="openDepartment(department)"
+              >
+                <span class="st-display text-lg font-extrabold leading-tight text-st-ink group-hover:text-st-action">{{ department.name }}</span>
+                <span class="st-num shrink-0 text-sm text-st-muted">{{ department.total }}</span>
+              </button>
+            </h2>
+            <ul>
+              <li v-for="category in department.children" :key="category.id">
+                <button
+                  type="button"
+                  class="group flex min-h-11 w-full items-baseline rounded py-1.5 text-left text-[0.9375rem] text-st-ink/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action sm:min-h-0"
+                  @click="openCategory(category)"
+                >
+                  <span class="group-hover:text-st-action group-hover:underline">{{ category.name }}</span>
+                  <span class="st-leader" aria-hidden="true" />
+                  <span class="st-num text-sm text-st-muted">
+                    {{ category.products_count ?? '' }}<span class="sr-only"> products</span>
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </section>
+        </div>
+
+        <div v-else class="max-w-xl rounded-lg border border-st-line bg-st-panel p-6">
+          <p class="text-lg font-bold">The catalog is empty right now</p>
+          <p class="mt-1 text-st-muted">Products will show here as soon as they're added. You can still search by part number above.</p>
+        </div>
+
+        <!-- Beyond the catalog -->
+        <div class="mt-6 grid gap-8 border-t border-st-line pt-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <h2 class="text-base font-bold text-st-ink">Can't find a part?</h2>
+            <p class="mt-1 text-[0.9375rem] text-st-muted">Send us the part number, NSN, or spec sheet and we'll source it for you.</p>
+            <a href="/#contact" class="mt-2 inline-flex min-h-11 items-center font-semibold text-st-action hover:underline sm:min-h-0">Request a sourcing quote</a>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-st-ink">Need equipment repaired?</h2>
+            <p class="mt-1 text-[0.9375rem] text-st-muted">Tell us what broke and we will follow up with next steps.</p>
+            <Link :href="route('repair-services.index')" class="mt-2 inline-flex min-h-11 items-center font-semibold text-st-action hover:underline sm:min-h-0">Start a repair request</Link>
+          </div>
+          <div v-if="$page.props.auth?.user">
+            <h2 class="text-base font-bold text-st-ink">Reordering?</h2>
+            <p class="mt-1 text-[0.9375rem] text-st-muted">See what your company has bought before and export it for your records.</p>
+            <Link :href="route('dashboard.reports')" class="mt-2 inline-flex min-h-11 items-center font-semibold text-st-action hover:underline sm:min-h-0">View order history</Link>
+          </div>
+        </div>
+      </template>
+
+      <!-- ============ DEPARTMENT ============ -->
+      <template v-else-if="view === 'department' && currentDepartment">
+        <div class="mb-8 border-b border-st-line pb-6">
+          <h1 class="st-display text-3xl font-extrabold leading-tight text-st-ink sm:text-4xl">{{ currentDepartment.name }}</h1>
+          <p class="mt-2 text-base text-st-muted">
+            <span class="st-num">{{ currentDepartment.total }}</span> products in
+            <span class="st-num">{{ currentDepartment.children.length }}</span> categories
+          </p>
+        </div>
+
+        <ul class="grid max-w-5xl gap-x-12 sm:grid-cols-2">
+          <li v-for="category in currentDepartment.children" :key="category.id" class="border-b border-st-line">
             <button
-              v-for="subcategory in subcategories"
-              :key="subcategory.id"
-              @click="selectSubcategory(subcategory)"
-              class="w-full text-left px-6 py-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition-all group"
+              type="button"
+              class="group flex min-h-14 w-full items-baseline py-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+              @click="openCategory(category)"
             >
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 mb-1">
-                    {{ subcategory.name }}
-                  </h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    {{ subcategory.description }}
-                  </p>
-                </div>
-                <svg class="w-6 h-6 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
+              <span class="text-lg font-semibold text-st-ink group-hover:text-st-action group-hover:underline">{{ category.name }}</span>
+              <span class="st-leader" aria-hidden="true" />
+              <span class="st-num text-st-muted">{{ category.products_count }}<span class="sr-only"> products</span></span>
+            </button>
+          </li>
+        </ul>
+      </template>
+
+      <!-- ============ PRODUCTS ============ -->
+      <template v-else-if="view === 'products'">
+        <div class="mb-5 flex flex-col gap-1">
+          <h1 class="st-display text-2xl font-extrabold leading-tight text-st-ink sm:text-3xl">{{ pageTitle }}</h1>
+          <p v-if="isGlobalSearch" class="text-base text-st-muted">Searching every department.</p>
+          <p v-else-if="isSearching" class="text-base text-st-muted">
+            Matching “{{ searchTerm }}” in {{ selectedCategory?.name }}.
+            <button type="button" class="font-semibold text-st-action hover:underline" @click="handleSearch('')">Show all {{ selectedCategory?.name }}</button>
+          </p>
+        </div>
+
+        <!-- Sibling categories as chips on small screens -->
+        <div v-if="showFilters && siblingCategories.length > 1" class="-mx-4 mb-4 overflow-x-auto px-4 lg:hidden">
+          <div class="flex gap-2 pb-1">
+            <button
+              v-for="category in siblingCategories"
+              :key="category.id"
+              type="button"
+              class="inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-medium"
+              :class="category.id === selectedCategory?.id ? 'border-st-signal bg-st-signal/10 text-st-ink' : 'border-st-line text-st-muted hover:text-st-ink'"
+              :aria-current="category.id === selectedCategory?.id ? 'page' : undefined"
+              @click="openCategory(category)"
+            >
+              {{ category.name }}
             </button>
           </div>
         </div>
 
-        <!-- VIEW 3: Products with Filters (McMaster-Carr layout) -->
-        <div v-if="showingProductView" class="grid grid-cols-12 gap-6">
-          <div v-if="showFilters" class="col-span-12 lg:hidden">
-            <button type="button" class="inline-flex min-h-12 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-3 text-base font-semibold text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-white" @click="mobileFiltersOpen = true">
-              <span>Filters</span>
-              <span v-if="activeFilterCount" class="rounded-full bg-blue-700 px-2.5 py-1 text-sm font-bold text-white">{{ activeFilterCount }}</span>
-            </button>
-          </div>
-          <!-- Left Sidebar: Parametric Filters (McMaster-Carr style) -->
-          <div v-if="showFilters" class="hidden lg:col-span-3 lg:block">
-            <ParametricFilters
-              :filters="availableFilters"
-              :active-filters="activeFilters"
-              :loading="filtersLoading"
-              @update:active-filters="handleFiltersUpdate"
-              @clear="handleClearFilters"
-            />
-          </div>
+        <div class="grid gap-6 xl:gap-8" :class="{ 'lg:grid-cols-[16rem_minmax(0,1fr)]': showFilters }">
+          <!-- Left rail -->
+          <aside v-if="showFilters" class="hidden lg:block" aria-label="Refine products">
+            <div class="sticky top-24 max-h-[calc(100vh-7rem)] space-y-6 overflow-y-auto overflow-x-hidden pb-6 pr-1">
+              <nav v-if="siblingCategories.length > 1" :aria-label="`${currentDepartment?.name} categories`">
+                <h2 class="mb-1 text-base font-bold text-st-ink">{{ currentDepartment?.name }}</h2>
+                <ul>
+                  <li v-for="category in siblingCategories" :key="category.id">
+                    <button
+                      type="button"
+                      class="flex min-h-9 w-full items-baseline border-l-2 py-1 pl-3 text-left text-[0.9375rem] focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+                      :class="category.id === selectedCategory?.id ? 'border-st-signal font-semibold text-st-ink' : 'border-transparent text-st-muted hover:text-st-ink'"
+                      :aria-current="category.id === selectedCategory?.id ? 'page' : undefined"
+                      @click="openCategory(category)"
+                    >
+                      <span>{{ category.name }}</span>
+                      <span class="st-num ml-auto pl-2 text-sm text-st-muted">{{ category.products_count }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
 
-          <!-- Right Side: Products -->
-          <div :class="['col-span-12', showFilters ? 'lg:col-span-9' : 'lg:col-span-12']">
-            <div v-if="isGlobalSearch" class="mb-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-              Showing results across all categories for "<span class="font-semibold text-gray-900 dark:text-white">{{ searchTerm }}</span>".
+              <ParametricFilters
+                :filters="availableFilters"
+                :active-filters="activeFilters"
+                :loading="filtersLoading"
+                @update:active-filters="handleFiltersUpdate"
+                @clear="handleClearFilters"
+              />
             </div>
+          </aside>
+
+          <div id="catalog-results" class="min-w-0 scroll-mt-28">
+            <div v-if="showFilters || filterPills.length" class="mb-3 flex flex-wrap items-center gap-2">
+              <button
+                v-if="showFilters"
+                type="button"
+                class="inline-flex min-h-11 items-center gap-2 rounded-md border border-st-line bg-st-panel px-4 text-sm font-semibold text-st-ink lg:hidden"
+                @click="mobileFiltersOpen = true"
+              >
+                Filter by spec
+                <span v-if="activeFilterCount" class="st-num rounded bg-st-fill px-1.5 text-xs text-white">{{ activeFilterCount }}</span>
+              </button>
+              <button
+                v-for="pill in filterPills"
+                :key="pill.key"
+                type="button"
+                class="inline-flex min-h-9 items-center gap-2 rounded-full border border-st-line bg-st-panel px-3 text-sm text-st-ink hover:border-st-action focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+                :aria-label="`Remove filter ${pill.label}`"
+                @click="removeFilterValue(pill.attribute, pill.value)"
+              >
+                {{ pill.label }}
+                <svg class="h-3.5 w-3.5 text-st-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" /></svg>
+              </button>
+            </div>
+
             <ProductList
               :products="products"
               :loading="productsLoading"
               :meta="pagination"
               :is-search="isSearching"
+              :has-filters="activeFilterCount > 0"
               :current-page="currentPage"
               :total-pages="totalPages"
-              @previous="goToPreviousPage"
-              @next="goToNextPage"
+              @previous="goToPage(currentPage - 1)"
+              @next="goToPage(currentPage + 1)"
               @clear-filters="handleClearFilters"
-              @reset-navigation="resetToCategories"
+              @reset-navigation="openIndex"
             />
           </div>
         </div>
-      </div>
-
-      <Dialog class="lg:hidden" :open="mobileFiltersOpen" @close="mobileFiltersOpen = false">
-        <div class="fixed inset-0 z-40 bg-gray-950/55" aria-hidden="true" />
-        <DialogPanel class="safe-y fixed inset-y-0 right-0 z-50 flex w-full max-w-drawer flex-col bg-gray-50 shadow-2xl dark:bg-gray-900">
-          <div class="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-700">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Filter products</h2>
-            <button type="button" class="inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-gray-200 dark:hover:bg-white/10" aria-label="Close filters" @click="mobileFiltersOpen = false">
-              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" /></svg>
-            </button>
-          </div>
-          <div class="min-h-0 flex-1 overflow-y-auto p-4">
-            <ParametricFilters :filters="availableFilters" :active-filters="activeFilters" :loading="filtersLoading" @update:active-filters="handleFiltersUpdate" @clear="handleClearFilters" />
-          </div>
-          <div class="safe-bottom shrink-0 border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-            <button type="button" class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-blue-700 px-4 py-3 text-base font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" @click="mobileFiltersOpen = false">Show products</button>
-          </div>
-        </DialogPanel>
-      </Dialog>
+      </template>
     </div>
-  </AuthenticatedLayout>
+
+    <Dialog class="lg:hidden" :open="mobileFiltersOpen" @close="mobileFiltersOpen = false">
+      <div class="fixed inset-0 z-40 bg-black/60" aria-hidden="true" />
+      <DialogPanel class="store-shell safe-y fixed inset-y-0 right-0 z-50 flex w-full max-w-drawer flex-col bg-st-panel text-st-ink shadow-2xl">
+        <div class="flex h-16 shrink-0 items-center justify-between border-b border-st-line px-4">
+          <h2 class="text-lg font-bold">Filter {{ selectedCategory?.name }}</h2>
+          <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md text-st-muted hover:text-st-ink" aria-label="Close filters" @click="mobileFiltersOpen = false">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+        </div>
+        <div class="min-h-0 flex-1 overflow-y-auto px-4 py-2">
+          <ParametricFilters :filters="availableFilters" :active-filters="activeFilters" :loading="filtersLoading" @update:active-filters="handleFiltersUpdate" @clear="handleClearFilters" />
+        </div>
+        <div class="safe-bottom shrink-0 border-t border-st-line p-4">
+          <button type="button" class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-st-fill px-4 text-base font-semibold text-white hover:bg-st-fill/85" @click="mobileFiltersOpen = false">
+            Show {{ pagination?.total ?? products.length }} products
+          </button>
+        </div>
+      </DialogPanel>
+    </Dialog>
+  </StoreLayout>
 </template>

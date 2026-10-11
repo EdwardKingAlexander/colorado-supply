@@ -13,14 +13,14 @@
         <!-- Fonts: Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link id="google-fonts-stylesheet" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print">
+        <link id="google-fonts-stylesheet" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Inter:wght@400;500;600;700&display=swap" media="print">
         <script nonce="{{ $cspNonce }}">
             document.getElementById('google-fonts-stylesheet')?.addEventListener('load', function () {
                 this.media = 'all';
             });
         </script>
         <noscript>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Inter:wght@400;500;600;700&display=swap">
         </noscript>
 
         @include('partials.analytics')

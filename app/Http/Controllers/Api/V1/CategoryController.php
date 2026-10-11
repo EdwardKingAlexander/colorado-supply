@@ -13,7 +13,8 @@ class CategoryController extends Controller
     {
         $categories = Category::query()
             ->select(['id', 'name', 'slug', 'parent_id'])
-            ->withCount('products')
+            // Only active products are listed, so only they count toward visibility and totals.
+            ->withCount(['products' => fn ($query) => $query->where('is_active', true)])
             ->orderBy('name')
             ->get();
 

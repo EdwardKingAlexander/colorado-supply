@@ -13,7 +13,7 @@ it('lists only categories that contain products', function (): void {
     $visibleCategory = Category::factory()->create();
     $hiddenCategory = Category::factory()->create();
 
-    Product::factory()->for($visibleCategory)->create();
+    Product::factory()->for($visibleCategory)->create(['is_active' => true]);
 
     $response = $this->getJson('/api/v1/store/categories');
 
@@ -36,7 +36,7 @@ it('includes parent categories when children have products', function (): void {
         'parent_id' => $parentCategory->id,
     ]);
 
-    Product::factory()->for($childCategory)->create();
+    Product::factory()->for($childCategory)->create(['is_active' => true]);
 
     $response = $this->getJson('/api/v1/store/categories');
 
@@ -50,6 +50,21 @@ it('includes parent categories when children have products', function (): void {
         ->assertJsonFragment(['id' => $parentCategory->id, 'parent_id' => null])
         ->assertJsonFragment(['id' => $childCategory->id, 'parent_id' => $parentCategory->id])
         ->assertJsonMissing(['id' => $emptyChild->id]);
+});
+
+it('reports active product counts and hides categories with only inactive products', function (): void {
+    $category = Category::factory()->create();
+    $inactiveOnly = Category::factory()->create();
+
+    Product::factory()->for($category)->count(2)->create(['is_active' => true]);
+    Product::factory()->for($category)->create(['is_active' => false]);
+    Product::factory()->for($inactiveOnly)->create(['is_active' => false]);
+
+    $this->getJson('/api/v1/store/categories')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $category->id)
+        ->assertJsonPath('data.0.products_count', 2);
 });
 
 it('paginates active products for the catalog', function (): void {

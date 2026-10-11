@@ -19,6 +19,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  hasFilters: {
+    type: Boolean,
+    default: false,
+  },
   currentPage: {
     type: Number,
     default: 1,
@@ -31,20 +35,19 @@ const props = defineProps({
 
 const emit = defineEmits(['previous', 'next', 'clear-filters', 'reset-navigation'])
 
-const headerSubtitle = computed(() => {
+const rangeLabel = computed(() => {
   if (props.loading) {
-    return 'Loading catalog data...'
+    return 'Loading products'
   }
 
-  if (!props.products.length) {
-    return props.isSearch ? 'No products found. Adjust your filters or search term.' : 'Products will appear here once available.'
-  }
-
-  const from = props.meta?.from ?? 1
-  const to = props.meta?.to ?? props.products.length
   const total = props.meta?.total ?? props.products.length
+  const noun = total === 1 ? 'product' : 'products'
 
-  return `Showing ${from}-${to} of ${total} ${props.isSearch ? 'results' : 'items'}`
+  if (props.totalPages <= 1) {
+    return `${total} ${noun}`
+  }
+
+  return `${props.meta?.from ?? 1}–${props.meta?.to ?? props.products.length} of ${total} ${noun}`
 })
 
 const canGoPrevious = computed(() => props.currentPage > 1)
@@ -53,100 +56,91 @@ const showPagination = computed(() => props.totalPages > 1)
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-lg bg-white/95 shadow-xl ring-1 ring-gray-100 dark:bg-gray-900/90 dark:ring-gray-800">
-    <div class="p-5 border-b border-gray-100 dark:border-gray-800">
-      <h1 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Products</h1>
-      <p class="mt-1 text-base leading-6 text-gray-600 dark:text-gray-300">
-        {{ headerSubtitle }}
-      </p>
+  <section class="overflow-hidden rounded-lg border border-st-line bg-st-panel" aria-label="Products">
+    <div class="flex items-center justify-between gap-4 border-b border-st-line px-4 py-3 sm:px-5">
+      <p class="st-num text-sm text-st-muted" aria-live="polite">{{ rangeLabel }}</p>
+      <p v-if="showPagination" class="st-num text-sm text-st-muted">Page {{ currentPage }} of {{ totalPages }}</p>
     </div>
 
+    <!-- Column headings (desktop table) -->
     <div
-      class="hidden lg:grid lg:grid-cols-12 gap-4 px-5 py-3 bg-gray-50/90 dark:bg-gray-800/90 border-b border-gray-100 dark:border-gray-800 text-[11px] font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-[0.2em]"
+      class="hidden border-b border-st-line bg-st-sunk/70 px-5 py-2 text-sm font-medium text-st-muted lg:grid lg:grid-cols-[3.5rem_9rem_minmax(0,1fr)_8.5rem_7.5rem_12rem] lg:gap-x-4"
+      aria-hidden="true"
     >
-      <div class="col-span-1">Image</div>
-      <div class="col-span-2">Part Number</div>
-      <div class="col-span-3">Name</div>
-      <div class="col-span-2">Description</div>
-      <div class="col-span-2">Price</div>
-      <div class="col-span-2 text-right">Cart</div>
+      <span />
+      <span>Part number</span>
+      <span>Product</span>
+      <span>Availability</span>
+      <span class="text-right">Price</span>
+      <span class="text-right">Quantity</span>
     </div>
 
-    <div v-if="loading" class="grid grid-cols-1 gap-4 px-4 py-6 sm:grid-cols-2">
-      <div
-        v-for="row in 4"
-        :key="`skeleton-${row}`"
-        class="border border-dashed border-gray-200 dark:border-gray-700 rounded-xl p-4 space-y-4 animate-pulse bg-gray-50/60 dark:bg-gray-700/40"
-      >
-        <div class="flex items-center gap-3">
-          <div class="w-16 h-16 rounded bg-gray-200 dark:bg-gray-600"></div>
-          <div class="flex-1 space-y-2">
-            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
-            <div class="h-3 bg-gray-100 dark:bg-gray-500 rounded w-1/2"></div>
-          </div>
+    <div v-if="loading" class="divide-y divide-st-line" aria-busy="true">
+      <div v-for="row in 6" :key="`skeleton-${row}`" class="flex items-center gap-4 px-5 py-4">
+        <div class="h-14 w-14 shrink-0 animate-pulse rounded-md bg-st-sunk" />
+        <div class="flex-1 space-y-2">
+          <div class="h-4 w-2/5 animate-pulse rounded bg-st-sunk" />
+          <div class="h-3 w-3/5 animate-pulse rounded bg-st-sunk" />
         </div>
-        <div class="h-3 bg-gray-100 dark:bg-gray-500 rounded w-full"></div>
-        <div class="flex items-center justify-between">
-          <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-20"></div>
-          <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-24"></div>
-        </div>
+        <div class="hidden h-10 w-44 animate-pulse rounded bg-st-sunk sm:block" />
       </div>
     </div>
+
     <template v-else>
-      <div v-if="products.length" class="divide-y divide-gray-100 dark:divide-gray-800">
+      <div v-if="products.length" class="divide-y divide-st-line">
         <ProductRow v-for="product in products" :key="product.id" :product="product" />
       </div>
-      <div v-else class="p-4 text-center text-base text-gray-500 sm:p-10">
-        <div class="inline-flex w-full flex-col items-center gap-2 rounded-lg border border-dashed border-gray-300 px-4 py-6 shadow-sm sm:w-auto sm:px-8 dark:border-gray-600">
-          <p class="font-semibold text-lg text-gray-800 dark:text-gray-100">No products match your filters</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            Try removing a filter, widening the search term, or browsing categories.
-          </p>
-          <div class="mt-4 flex flex-wrap justify-center gap-2">
-            <button
-              type="button"
-              class="inline-flex min-h-12 items-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
-              @click="$emit('clear-filters')"
-            >
-              Clear filters
-            </button>
-            <button
-              type="button"
-              class="inline-flex min-h-12 items-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
-              @click="$emit('reset-navigation')"
-            >
-              Browse categories
-            </button>
-          </div>
+
+      <div v-else class="px-6 py-14 text-center">
+        <p class="st-display text-lg font-bold text-st-ink">
+          {{ isSearch ? 'No parts match that search' : 'No parts match these specs' }}
+        </p>
+        <p class="mx-auto mt-2 max-w-md text-base text-st-muted">
+          {{ isSearch
+            ? 'Check the part number, try a shorter term, or browse the catalog by department.'
+            : 'Remove a filter to widen the results, or go back to the catalog.' }}
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <button
+            v-if="hasFilters"
+            type="button"
+            class="inline-flex min-h-11 items-center rounded-md border border-st-line px-4 text-sm font-semibold text-st-ink hover:border-st-action focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+            @click="emit('clear-filters')"
+          >
+            Clear filters
+          </button>
+          <button
+            type="button"
+            class="inline-flex min-h-11 items-center rounded-md bg-st-fill px-4 text-sm font-semibold text-white hover:bg-st-fill/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
+            @click="emit('reset-navigation')"
+          >
+            Browse the catalog
+          </button>
         </div>
       </div>
     </template>
 
-    <div
+    <nav
       v-if="showPagination"
-      class="flex items-center justify-between gap-2 border-t border-gray-100 bg-gray-50/60 px-4 py-4 text-base dark:border-gray-800 dark:bg-gray-900/60 sm:px-5"
+      class="flex items-center justify-between gap-2 border-t border-st-line px-4 py-3 sm:px-5"
+      aria-label="Pagination"
     >
       <button
         type="button"
-        class="inline-flex min-h-12 min-w-12 items-center justify-center rounded-md border px-3 py-3 font-medium transition sm:px-4"
-        :class="canGoPrevious ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 cursor-not-allowed'"
+        class="inline-flex min-h-11 items-center rounded-md border border-st-line px-4 text-sm font-semibold text-st-ink hover:border-st-action focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-st-line"
         :disabled="!canGoPrevious"
         @click="emit('previous')"
       >
-        Previous
+        Previous page
       </button>
-      <p class="text-sm text-gray-600">
-        Page {{ currentPage }} of {{ totalPages }}
-      </p>
       <button
         type="button"
-        class="inline-flex min-h-12 min-w-12 items-center justify-center rounded-md border px-3 py-3 font-medium transition sm:px-4"
-        :class="canGoNext ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 cursor-not-allowed'"
+        class="inline-flex min-h-11 items-center rounded-md border border-st-line px-4 text-sm font-semibold text-st-ink hover:border-st-action focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-st-line"
         :disabled="!canGoNext"
         @click="emit('next')"
       >
-        Next
+        Next page
       </button>
-    </div>
-  </div>
+    </nav>
+  </section>
 </template>

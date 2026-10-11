@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import StoreLayout from '@/Layouts/StoreLayout.vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { useCartStore } from '@/Stores/useCartStore'
 
@@ -56,18 +56,17 @@ const handleClear = () => cartStore.clearCart()
 <template>
   <Head title="Cart" />
 
-  <AuthenticatedLayout>
-    <div class="bg-gray-50 min-h-screen">
+  <StoreLayout>
+    <div class="bg-st-bg min-h-screen">
       <div class="mobile-page-gutter mx-auto max-w-5xl space-y-6 py-6 sm:py-8 lg:px-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-sm text-gray-500 uppercase tracking-wide">Cart Summary</p>
-            <h1 class="text-2xl font-semibold text-gray-900">Your Cart</h1>
+            <h1 class="st-display text-2xl font-extrabold text-st-ink sm:text-3xl">Your cart</h1>
           </div>
           <div class="grid grid-cols-1 gap-2 xs:grid-cols-2 sm:flex sm:items-center sm:gap-3">
             <button
               type="button"
-              class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60"
+              class="inline-flex min-h-12 items-center justify-center rounded-md border border-st-line px-4 py-3 text-base font-semibold text-st-ink/85 transition-colors hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action disabled:opacity-60"
               :disabled="!hasItems"
               @click="handleClear"
             >
@@ -75,7 +74,7 @@ const handleClear = () => cartStore.clearCart()
             </button>
             <Link
               href="/store/checkout"
-              class="inline-flex min-h-12 items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              class="inline-flex min-h-12 items-center justify-center rounded-md bg-st-fill px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-st-fill/85 focus:outline-none focus:ring-2 focus:ring-st-action focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               :class="{ 'pointer-events-none opacity-60': !hasItems }"
               :tabindex="!hasItems ? -1 : undefined"
               :aria-disabled="!hasItems"
@@ -85,20 +84,20 @@ const handleClear = () => cartStore.clearCart()
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div class="flex items-center justify-between border-b border-gray-200 px-4 py-4 sm:px-6">
+        <div class="bg-st-panel rounded-lg shadow-sm border border-st-line">
+          <div class="flex items-center justify-between border-b border-st-line px-4 py-4 sm:px-6">
             <div>
-              <p class="text-sm text-gray-500">Items</p>
-              <p class="text-lg font-semibold text-gray-900">{{ itemCount }} total</p>
+              <p class="text-sm text-st-muted">Items</p>
+              <p class="text-lg font-semibold text-st-ink">{{ itemCount }} total</p>
             </div>
             <div class="text-right">
-              <p class="text-sm text-gray-500">Cart Total</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ totalDisplay }}</p>
+              <p class="text-sm text-st-muted">Cart Total</p>
+              <p class="text-2xl font-semibold text-st-ink">{{ totalDisplay }}</p>
             </div>
           </div>
 
-          <div v-if="hasItems" class="divide-y divide-gray-100">
-            <div class="hidden md:grid md:grid-cols-12 px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <div v-if="hasItems" class="divide-y divide-st-line">
+            <div class="hidden md:grid md:grid-cols-12 px-6 py-3 text-sm font-medium text-st-muted">
               <div class="col-span-4">Item</div>
               <div class="col-span-2 text-right">Unit Price</div>
               <div class="col-span-2 text-right">Quantity</div>
@@ -108,44 +107,44 @@ const handleClear = () => cartStore.clearCart()
             </div>
 
             <template v-for="(group, locationId) in groupedItems" :key="locationId">
-              <div class="col-span-full bg-gray-50 px-4 py-3 text-base font-semibold text-gray-700 sm:px-6">
+              <div class="col-span-full bg-st-bg px-4 py-3 text-base font-semibold text-st-ink/85 sm:px-6">
                 {{ locationNameById[locationId] }}
               </div>
               <div
                 v-for="item in group"
                 :key="item.id"
-                class="grid grid-cols-1 gap-4 px-4 py-5 text-base text-gray-800 sm:px-6 md:grid-cols-12 md:items-center md:text-sm"
+                class="grid grid-cols-1 gap-4 px-4 py-5 text-base text-st-ink sm:px-6 md:grid-cols-12 md:items-center md:text-sm"
               >
                 <div class="md:col-span-4">
-                  <p class="font-medium text-gray-900">{{ item.name }}</p>
-                  <p v-if="item.slug" class="text-xs text-gray-500 mt-1">
+                  <p class="font-medium text-st-ink">{{ item.name }}</p>
+                  <p v-if="item.slug" class="text-xs text-st-muted mt-1">
                     SKU: {{ item.slug }}
                   </p>
                 </div>
-                <div class="md:col-span-2 text-gray-600 md:text-right">
+                <div class="md:col-span-2 text-st-muted md:text-right">
                   {{ formatCurrency(item.price) }}
                 </div>
                 <div class="md:col-span-2 md:text-right">
                   <div class="flex items-center gap-2 md:justify-end">
                     <button
                       type="button"
-                      class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-gray-300 text-xl font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-st-line text-xl font-semibold text-st-ink/85 transition-colors hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action disabled:cursor-not-allowed disabled:opacity-50"
                       :disabled="item.quantity <= 1"
                       @click="cartStore.decrementQuantity(item.id)"
                     >
                       &minus;
                     </button>
-                    <span class="w-10 text-center text-base font-semibold text-gray-900">{{ item.quantity }}</span>
+                    <span class="w-10 text-center text-base font-semibold text-st-ink">{{ item.quantity }}</span>
                     <button
                       type="button"
-                      class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-gray-300 text-xl font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      class="inline-flex h-12 w-12 items-center justify-center rounded-md border border-st-line text-xl font-semibold text-st-ink/85 transition-colors hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action"
                       @click="cartStore.incrementQuantity(item.id)"
                     >
                       +
                     </button>
                   </div>
                 </div>
-                <div class="md:col-span-2 font-semibold text-gray-900 md:text-right">
+                <div class="md:col-span-2 font-semibold text-st-ink md:text-right">
                   {{ formatCurrency(item.price * item.quantity) }}
                 </div>
                 <!-- Location Selector -->
@@ -153,7 +152,7 @@ const handleClear = () => cartStore.clearCart()
                   <select
                     v-model="item.location_id"
                     @change="cartStore.updateItemLocation(item.id, item.location_id)"
-                    class="block min-h-12 w-full rounded-md border-gray-300 text-base shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="block min-h-12 w-full rounded-md border-st-line text-base shadow-sm focus:border-st-action focus:ring-st-action"
                   >
                     <option :value="null">Main Store</option>
                     <option v-for="loc in locations" :key="loc.id" :value="loc.id">
@@ -164,7 +163,7 @@ const handleClear = () => cartStore.clearCart()
                 <div class="md:col-span-1 md:text-right">
                   <button
                     type="button"
-                    class="inline-flex min-h-12 w-full items-center justify-center rounded-md px-3 py-2 text-base font-semibold text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-600 md:w-auto"
+                    class="inline-flex min-h-12 w-full items-center justify-center rounded-md px-3 py-2 text-base font-semibold text-red-400 hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-red-600 md:w-auto"
                     @click="handleRemove(item.id)"
                   >
                     Remove
@@ -174,12 +173,12 @@ const handleClear = () => cartStore.clearCart()
             </template>
           </div>
 
-          <div v-else class="px-6 py-16 text-center text-sm text-gray-500">
-            <p class="font-medium text-gray-700">Your cart is empty.</p>
+          <div v-else class="px-6 py-16 text-center text-sm text-st-muted">
+            <p class="font-medium text-st-ink/85">Your cart is empty.</p>
             <p class="mt-2">Browse the catalog and add items to your cart.</p>
             <Link
               :href="route('store.index')"
-              class="mt-6 inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-5 py-3 text-base font-semibold text-gray-900 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="mt-6 inline-flex min-h-12 items-center justify-center rounded-md border border-st-line px-5 py-3 text-base font-semibold text-st-ink transition-colors hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action"
             >
               Return to Store
             </Link>
@@ -187,5 +186,5 @@ const handleClear = () => cartStore.clearCart()
         </div>
       </div>
     </div>
-  </AuthenticatedLayout>
+  </StoreLayout>
 </template>

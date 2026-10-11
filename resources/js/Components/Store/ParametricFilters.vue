@@ -77,6 +77,14 @@ const isValueSelected = (attributeName, value) => {
 
 const isProductTypeFilter = (filter) => filter.name === PRODUCT_TYPE_FILTER
 
+const optionsFor = (filter) => {
+  if (filter.type === 'boolean') {
+    return [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }]
+  }
+
+  return (filter.values ?? []).map(value => ({ value, label: value }))
+}
+
 const clearAllFilters = () => {
   emit('clear')
 }
@@ -103,124 +111,56 @@ const activeFilterCount = computed(() => {
 </script>
 
 <template>
-  <div class="rounded-lg bg-white/95 p-4 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900/90 dark:ring-gray-800">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-base font-semibold tracking-tight text-gray-900 dark:text-white">
-        Filter by Specs
-      </h2>
+  <div>
+    <div class="mb-1 flex min-h-11 items-center justify-between">
+      <h2 class="text-base font-bold text-st-ink">Filter by spec</h2>
       <button
         v-if="hasActiveFilters"
         type="button"
-        class="inline-flex min-h-12 items-center rounded-md px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-300 dark:hover:bg-white/10"
+        class="inline-flex min-h-11 items-center rounded-md px-2 text-sm font-semibold text-st-action hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
         @click="clearAllFilters"
       >
-        Clear All ({{ activeFilterCount }})
+        Clear all ({{ activeFilterCount }})
       </button>
     </div>
 
-    <div v-if="loading" class="space-y-4">
-      <div v-for="i in 4" :key="i" class="rounded-lg border border-dashed border-gray-200 dark:border-gray-700 p-3">
-        <div class="flex items-center justify-between mb-3">
-          <div class="h-3 w-24 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"></div>
-          <div class="h-3 w-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"></div>
-        </div>
-        <div class="space-y-2">
-          <div v-for="j in 3" :key="`skeleton-${i}-${j}`" class="h-4 bg-gray-50 dark:bg-gray-600/70 rounded animate-pulse"></div>
-        </div>
+    <div v-if="loading" class="space-y-5 py-2" aria-busy="true">
+      <div v-for="i in 3" :key="i" class="space-y-2">
+        <div class="h-3.5 w-24 animate-pulse rounded bg-st-sunk" />
+        <div v-for="j in 3" :key="`skeleton-${i}-${j}`" class="h-3 w-full animate-pulse rounded bg-st-sunk" />
       </div>
     </div>
 
-    <div v-else-if="filters.length === 0" class="text-center py-6">
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        No filters available for this category yet. Try selecting a different category or broadening your search.
-      </p>
-    </div>
+    <p v-else-if="filters.length === 0" class="py-2 text-sm text-st-muted">
+      This category has no spec filters yet.
+    </p>
 
-    <div v-else class="space-y-4">
+    <div v-else class="divide-y divide-st-line">
       <div
-        v-for="filter in orderedFilters"
+        v-for="(filter, index) in orderedFilters"
         :key="filter.name"
-        class="pb-4 border-b border-gray-100 dark:border-gray-800 last:border-0"
+        role="group"
+        :aria-labelledby="`spec-filter-${index}`"
+        class="py-3"
       >
-        <h3 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white mb-2">
-          {{ filter.name }}
-        </h3>
-
-        <!-- Product Type multi-select -->
-        <div v-if="isProductTypeFilter(filter)" class="space-y-1">
-          <label
-            v-for="value in filter.values"
-            :key="value"
-            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
-          >
-            <input
-              type="checkbox"
-              :name="`filter-${filter.name}-${value}`"
-              :value="value"
-              :checked="isValueSelected(filter.name, value)"
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-              @change="toggleFilter(filter.name, value, true)"
-            />
-            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value }}</span>
-          </label>
-        </div>
-
-        <!-- String/Select type filters -->
-        <div v-else-if="filter.type === 'string' || filter.type === 'select'" class="space-y-1">
-          <label
-            v-for="value in filter.values"
-            :key="value"
-            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
-          >
-            <input
-              type="radio"
-              :name="`filter-${filter.name}`"
-              :value="value"
-              :checked="isValueSelected(filter.name, value)"
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-              @change="toggleFilter(filter.name, value)"
-            />
-            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value }}</span>
-          </label>
-        </div>
-
-        <!-- Boolean type filters -->
-        <div v-else-if="filter.type === 'boolean'" class="space-y-1">
-          <label
-            v-for="value in ['true', 'false']"
-            :key="value"
-            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
-          >
-            <input
-              type="radio"
-              :name="`filter-${filter.name}`"
-              :value="value"
-              :checked="isValueSelected(filter.name, value)"
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-              @change="toggleFilter(filter.name, value)"
-            />
-            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value === 'true' ? 'Yes' : 'No' }}</span>
-          </label>
-        </div>
-
-        <!-- Numeric type filters (integer/float) -->
-        <div v-else-if="filter.type === 'integer' || filter.type === 'float'" class="space-y-1">
-          <label
-            v-for="value in filter.values"
-            :key="value"
-            class="flex min-h-12 cursor-pointer items-center rounded px-2 py-2 transition hover:bg-gray-50 dark:hover:bg-gray-800"
-          >
-            <input
-              type="radio"
-              :name="`filter-${filter.name}`"
-              :value="value"
-              :checked="isValueSelected(filter.name, value)"
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-              @change="toggleFilter(filter.name, value)"
-            />
-            <span class="ml-3 text-base leading-6 text-gray-700 dark:text-gray-300">{{ value }}</span>
-          </label>
-        </div>
+        <p :id="`spec-filter-${index}`" class="mb-1 text-sm font-semibold text-st-ink">{{ filter.name }}</p>
+        <label
+          v-for="option in optionsFor(filter)"
+          :key="option.value"
+          class="flex min-h-11 cursor-pointer items-center gap-3 rounded px-2 text-[0.9375rem] text-st-ink/85 hover:bg-st-sunk lg:min-h-9"
+        >
+          <input
+            :type="isProductTypeFilter(filter) ? 'checkbox' : 'radio'"
+            :name="isProductTypeFilter(filter) ? `filter-${filter.name}-${option.value}` : `filter-${filter.name}`"
+            :value="option.value"
+            :checked="isValueSelected(filter.name, option.value)"
+            class="h-4 w-4 border-st-muted/70 bg-st-sunk text-st-fill focus:ring-st-action focus:ring-offset-st-panel"
+            :class="isProductTypeFilter(filter) ? 'rounded' : ''"
+            @click="!isProductTypeFilter(filter) && isValueSelected(filter.name, option.value) && toggleFilter(filter.name, option.value)"
+            @change="toggleFilter(filter.name, option.value, isProductTypeFilter(filter))"
+          />
+          <span>{{ option.label }}</span>
+        </label>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import axios from 'axios'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import StoreLayout from '@/Layouts/StoreLayout.vue'
 import InputError from '@/Components/InputError.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -145,19 +145,18 @@ const submit = async () => {
 <template>
   <Head title="Checkout" />
 
-  <AuthenticatedLayout>
-    <div class="bg-gray-50 min-h-screen">
+  <StoreLayout>
+    <div class="bg-st-bg min-h-screen">
       <div class="mobile-page-gutter mx-auto max-w-5xl space-y-6 py-6 sm:py-8 lg:px-8">
         <div>
-          <p class="text-sm text-gray-500 uppercase tracking-wide">Checkout</p>
-          <h1 class="text-2xl font-semibold text-gray-900">Shipping & Billing Details</h1>
+          <h1 class="st-display text-2xl font-extrabold text-st-ink sm:text-3xl">Shipping and billing</h1>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <form class="checkout-form space-y-6 lg:col-span-2" @submit.prevent="submit">
             <!-- Contact Info -->
-            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-              <h2 class="text-lg font-semibold text-gray-900">Contact Information</h2>
+            <div class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
+              <h2 class="text-lg font-semibold text-st-ink">Contact Information</h2>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -198,15 +197,15 @@ const submit = async () => {
                   id="notes"
                   v-model="form.notes"
                   rows="3"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  class="mt-1 block w-full rounded-md border-st-line shadow-sm focus:border-st-action focus:ring-st-action"
                 ></textarea>
                 <InputError class="mt-1" :message="fieldError('notes')" />
               </div>
             </div>
 
             <!-- Billing Address -->
-            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-              <h2 class="text-lg font-semibold text-gray-900">Billing Address</h2>
+            <div class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
+              <h2 class="text-lg font-semibold text-st-ink">Billing Address</h2>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
@@ -243,11 +242,11 @@ const submit = async () => {
             </div>
 
             <!-- Shipping Address -->
-            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+            <div class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <h2 class="text-lg font-semibold text-gray-900">Shipping Address</h2>
-                <label class="flex min-h-12 cursor-pointer items-center gap-3 rounded-md px-2 text-base text-gray-700 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-500">
-                  <input type="checkbox" v-model="form.shipping_same_as_billing" class="h-5 w-5 rounded border-gray-300" />
+                <h2 class="text-lg font-semibold text-st-ink">Shipping Address</h2>
+                <label class="flex min-h-12 cursor-pointer items-center gap-3 rounded-md px-2 text-base text-st-ink/85 hover:bg-st-sunk focus-within:ring-2 focus-within:ring-st-action">
+                  <input type="checkbox" v-model="form.shipping_same_as_billing" class="h-5 w-5 rounded border-st-line" />
                   Same as billing address
                 </label>
               </div>
@@ -289,7 +288,7 @@ const submit = async () => {
             <InputError :message="fieldError('items')" />
 
             <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <Link :href="route('store.cart')" class="inline-flex min-h-12 items-center justify-center rounded-md px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <Link :href="route('store.cart')" class="inline-flex min-h-12 items-center justify-center rounded-md px-4 py-3 text-base font-semibold text-st-ink/85 hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action">
                 &larr; Back to Cart
               </Link>
               <PrimaryButton class="w-full sm:w-auto" :disabled="submitting || !hasItems">
@@ -301,34 +300,34 @@ const submit = async () => {
 
           <!-- Order Summary -->
           <div class="lg:col-span-1">
-            <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-20">
-              <h2 class="text-lg font-semibold text-gray-900">Order Summary</h2>
+            <div class="space-y-4 rounded-lg border border-st-line bg-st-panel p-4 shadow-sm sm:p-6 lg:sticky lg:top-20">
+              <h2 class="text-lg font-semibold text-st-ink">Order Summary</h2>
 
-              <div class="space-y-4 divide-y divide-gray-100">
+              <div class="space-y-4 divide-y divide-st-line">
                 <template v-for="(group, locationId) in groupedItems" :key="locationId">
                   <div class="pt-2 first:pt-0">
-                    <p class="mb-2 text-sm font-semibold uppercase text-gray-600">
+                    <p class="mb-2 text-sm font-semibold text-st-muted">
                       {{ locationNameById[locationId] }}
                     </p>
                     <div v-for="item in group" :key="item.id" class="flex items-start justify-between gap-3 py-2 text-base">
                       <div>
-                        <p class="font-medium text-gray-900">{{ item.name }}</p>
-                        <p class="text-sm text-gray-600">Qty {{ item.quantity }} &times; {{ formatCurrency(item.price) }}</p>
+                        <p class="font-medium text-st-ink">{{ item.name }}</p>
+                        <p class="text-sm text-st-muted">Qty {{ item.quantity }} &times; {{ formatCurrency(item.price) }}</p>
                       </div>
-                      <p class="font-semibold text-gray-900">{{ formatCurrency(item.price * item.quantity) }}</p>
+                      <p class="font-semibold text-st-ink">{{ formatCurrency(item.price * item.quantity) }}</p>
                     </div>
                   </div>
                 </template>
               </div>
 
-              <div class="border-t border-gray-200 pt-4 flex items-center justify-between">
-                <p class="text-sm font-semibold text-gray-700">Total</p>
-                <p class="text-xl font-bold text-gray-900">{{ totalDisplay }}</p>
+              <div class="border-t border-st-line pt-4 flex items-center justify-between">
+                <p class="text-sm font-semibold text-st-ink/85">Total</p>
+                <p class="text-xl font-bold text-st-ink">{{ totalDisplay }}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </AuthenticatedLayout>
+  </StoreLayout>
 </template>
