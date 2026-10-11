@@ -46,3 +46,19 @@ it('uses the default connection when none is configured', function () {
         ->and(PubLogDb::connection()->getName())->toBe(DB::getDefaultConnection())
         ->and((new NsnReference)->getConnectionName())->toBeNull();
 });
+
+it('never recreates or drops tables in a separately configured catalog database', function () {
+    $migration = require base_path('database/migrations/2026_10_05_100000_create_pub_log_catalog_tables.php');
+    PubLogDb::connection()->table('pub_log_catalog_state')->where('id', 1)->update(['check_status' => 'kept']);
+    $default = DB::getDefaultConnection();
+    DB::setDefaultConnection('publog_test');
+    try {
+        $migration->up();
+        $migration->down();
+    } finally {
+        DB::setDefaultConnection($default);
+    }
+
+    expect(PubLogDb::connection()->getSchemaBuilder()->hasTable('nsn_references'))->toBeTrue()
+        ->and(PubLogDb::connection()->table('pub_log_catalog_state')->value('check_status'))->toBe('kept');
+});

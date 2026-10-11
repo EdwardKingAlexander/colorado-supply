@@ -15,6 +15,12 @@ return new class extends Migration
 
     public function up(): void
     {
+        // A separate catalog database may already hold these tables (created
+        // by this migration from another app database). Never recreate them.
+        if (Schema::hasTable('pub_log_imports')) {
+            return;
+        }
+
         Schema::create('pub_log_imports', function (Blueprint $table) {
             $table->id();
             $table->date('release_date');
@@ -124,6 +130,12 @@ return new class extends Migration
 
     public function down(): void
     {
+        // A separately configured catalog database is managed on its own;
+        // rolling back the app must never drop a multi-GB catalog.
+        if (config('nsn_lookup.connection')) {
+            return;
+        }
+
         foreach (['pub_log_definitions', 'nsn_catalog_relationships', 'cage_entities', 'nsn_references', 'nsn_catalog_items', 'pub_log_catalog_state', 'pub_log_imports'] as $table) {
             Schema::dropIfExists($table);
         }

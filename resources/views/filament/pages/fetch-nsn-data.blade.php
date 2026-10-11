@@ -107,7 +107,25 @@
                             @elseif ($item)
                                 <x-filament::button tag="a" :href="\App\Filament\Resources\MilSpecParts\MilSpecPartResource::getUrl('create', ['catalog_reference' => $reference['id']])" color="gray">Review as new curated part</x-filament::button>
                             @endif
+                            @php($sourcing = $this->sourcingCases[$reference['id']] ?? null)
+                            @if ($sourcing)
+                                <x-filament::button tag="a" :href="$sourcing['url']" color="primary">{{ $sourcing['open'] ? 'Open sourcing case' : 'View closed case' }}</x-filament::button>
+                            @elseif ($item && $reference['cage_code_valid'])
+                                <x-filament::button color="primary" wire:click="startSourcingCase({{ $reference['id'] }})" wire:loading.attr="disabled" wire:target="startSourcingCase({{ $reference['id'] }})">Start sourcing case</x-filament::button>
+                            @endif
                         </div>
+                        @if ($sourcing)
+                            <p class="publog-sourcing" data-state="{{ $sourcing['state'] }}">
+                                Sourcing case: {{ $sourcing['status'] }} ·
+                                @if ($sourcing['answered_on'] && $sourcing['state'] !== 'unknown')
+                                    <strong>{{ $sourcing['production'] }}</strong> - recorded response {{ $sourcing['answered_on'] }}
+                                @elseif ($sourcing['state'] === 'conflicting')
+                                    <strong>{{ $sourcing['production'] }}</strong>
+                                @else
+                                    No confirmation yet
+                                @endif
+                            </p>
+                        @endif
                         <details>
                             <summary>Source codes and meanings</summary>
                             <dl>

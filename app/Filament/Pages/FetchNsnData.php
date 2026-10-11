@@ -2,16 +2,22 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\NsnSourcingCases\NsnSourcingCaseResource;
 use App\Models\Admin;
+use App\Models\NsnSourcingCase;
 use App\Services\NsnLookupService;
+use App\Services\NsnSourcing\NsnSourcingService;
 use BackedEnum;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use UnitEnum;
 
@@ -82,5 +88,62 @@ class FetchNsnData extends Page
         }
         $this->formData = ['type' => 'niin', 'query' => $niin];
         $this->result = app(NsnLookupService::class)->lookup('niin', $niin, snapshotId: $this->result['source']['import_id']);
+    }
+
+    /**
+     * Opens (or reuses) the company's sourcing case for a reference shown in
+     * the current result, then goes to it.
+     */
+    public function startSourcingCase(int $referenceId): mixed
+    {
+        abort_unless(static::canAccess(), 403);
+        if (! $this->result || ! in_array($referenceId, array_column($this->result['references'], 'id'), true)) {
+            return null;
+        }
+        try {
+            $case = app(NsnSourcingService::class)->openFromReference($referenceId);
+        } catch (AuthorizationException) {
+            Notification::make()->title('Cannot open a sourcing case')->body('No operating company is set up for sourcing cases.')->danger()->send();
+
+            return null;
+        }
+
+        return $this->redirect(NsnSourcingCaseResource::getUrl('view', ['record' => $case]));
+    }
+
+    /**
+     * The company's case per displayed reference (open first, else newest),
+     * with its latest recorded answer.
+     *
+     * @return array<int, array{id: int, url: string, status: string, open: bool, production: string, state: string, answered_on: ?string, channel: ?string}>
+     */
+    #[Computed]
+    public function sourcingCases(): array
+    {
+        $references = $this->result['references'] ?? [];
+        if ($references === []) {
+            return [];
+        }
+        $cases = NsnSourcingCase::with('latestResponse')->whereIn('niin', array_unique(array_column($references, 'niin')))->orderByDesc('id')->get();
+        $found = [];
+        foreach ($references as $reference) {
+            $matches = $cases->filter(fn (NsnSourcingCase $c) => $c->niin === $reference['niin'] && $c->cage_code === $reference['cage_code']
+                && strtoupper(trim($c->part_number)) === strtoupper(trim($reference['part_number'])));
+            $case = $matches->first(fn (NsnSourcingCase $c) => $c->isOpen()) ?? $matches->first();
+            if ($case) {
+                $found[$reference['id']] = [
+                    'id' => $case->id,
+                    'url' => NsnSourcingCaseResource::getUrl('view', ['record' => $case]),
+                    'status' => NsnSourcingCase::STATUSES[$case->status] ?? $case->status,
+                    'open' => $case->isOpen(),
+                    'production' => NsnSourcingCase::PRODUCTION_STATES[$case->production_state] ?? $case->production_state,
+                    'state' => $case->production_state,
+                    'answered_on' => $case->latestResponse?->received_on?->format('Y-m-d'),
+                    'channel' => $case->latestResponse?->channel,
+                ];
+            }
+        }
+
+        return $found;
     }
 }
