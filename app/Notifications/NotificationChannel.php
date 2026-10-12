@@ -25,14 +25,18 @@ enum NotificationChannel: string
 
     /**
      * Whether this channel can deliver anything on this install. Push needs
-     * VAPID keys; SMS is wired in phase 6.
+     * VAPID keys; SMS needs SMS_ENABLED (off until the Twilio A2P 10DLC
+     * registration is approved) plus Twilio credentials and a sender.
      */
     public function isReady(): bool
     {
         return match ($this) {
             self::Email, self::Bell => true,
             self::Push => filled(config('webpush.vapid.public_key')) && filled(config('webpush.vapid.private_key')),
-            self::Sms => false,
+            self::Sms => (bool) config('sms.enabled')
+                && filled(config('twilio-notification-channel.account_sid'))
+                && (filled(config('twilio-notification-channel.auth_token')) || filled(config('twilio-notification-channel.password')))
+                && (filled(config('twilio-notification-channel.from')) || filled(config('twilio-notification-channel.sms_service_sid'))),
         };
     }
 }

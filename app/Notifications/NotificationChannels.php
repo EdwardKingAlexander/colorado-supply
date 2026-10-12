@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\AdminNotificationPreference;
 use App\Models\User;
 use Illuminate\Notifications\AnonymousNotifiable;
+use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\WebPush\WebPushChannel;
 
 /**
@@ -66,7 +67,9 @@ class NotificationChannels
             // Only people who turned push on for at least one device.
             NotificationChannel::Push => ($notifiable instanceof User || $notifiable instanceof Admin)
                 && $notifiable->pushSubscriptions()->exists(),
-            default => false,
+            // Verified, consented and not opted out (STOP).
+            NotificationChannel::Sms => ($notifiable instanceof User || $notifiable instanceof Admin)
+                && $notifiable->routeNotificationForTwilio() !== null,
         };
     }
 
@@ -79,7 +82,7 @@ class NotificationChannels
             NotificationChannel::Email => ['mail'],
             NotificationChannel::Bell => self::broadcasting() ? ['database', 'broadcast'] : ['database'],
             NotificationChannel::Push => [WebPushChannel::class],
-            default => [],
+            NotificationChannel::Sms => [TwilioChannel::class],
         };
     }
 

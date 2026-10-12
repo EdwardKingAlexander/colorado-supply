@@ -45,6 +45,11 @@ class PickupReminderNotification extends AppNotification
         ];
     }
 
+    protected function smsText(object $notifiable): string
+    {
+        return "Reminder: order {$this->order->order_number} is waiting at {$this->pickupName($this->order)}. Pickup code {$this->order->pickup_code}.";
+    }
+
     protected function actionLabel(): string
     {
         return 'View pickup details';

@@ -51,6 +51,8 @@ class HandleInertiaRequests extends Middleware
                 'live' => NotificationChannels::broadcasting(),
                 // Public VAPID key for "turn on notifications on this device".
                 'pushKey' => NotificationChannel::Push->isReady() ? config('webpush.vapid.public_key') : null,
+                // Text alerts: the exact consent wording, only once SMS is live.
+                'smsConsent' => NotificationChannel::Sms->isReady() ? config('sms.consent_text') : null,
             ] : null,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

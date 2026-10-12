@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Filament\Pages\MyNotifications;
 use App\Models\Admin;
+use App\Support\SmsQuietHours;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -11,6 +12,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
+use NotificationChannels\Twilio\TwilioChannel;
+use NotificationChannels\Twilio\TwilioSmsMessage;
 use NotificationChannels\WebPush\WebPushMessage;
 
 /**
@@ -137,6 +141,41 @@ abstract class AppNotification extends Notification implements ShouldQueue
             ->tag($this->type()->value.':'.$this->id)
             ->data(['url' => $this->url($notifiable) ?? ($notifiable instanceof Admin ? '/admin' : '/notifications')])
             ->options(['TTL' => 86400, 'urgency' => 'normal']);
+    }
+
+    /**
+     * Text message. Plain ASCII (so it stays one 160-character segment
+     * instead of 70-character Unicode ones), always branded and ending with
+     * the opt-out instruction carriers require.
+     */
+    public function toTwilio(object $notifiable): TwilioSmsMessage
+    {
+        $suffix = ' Reply STOP to opt out.';
+        $text = 'Colorado Supply: '.$this->smsText($notifiable);
+        $text = strtr($text, ['·' => '-', '–' => '-', '—' => '-', '’' => "'", '‘' => "'", '“' => '"', '”' => '"', '×' => 'x', '…' => '...']);
+        $text = preg_replace('/[^\x20-\x7E]/', '', $text);
+
+        return (new TwilioSmsMessage)->content(Str::limit($text, 160 - strlen($suffix), '...').$suffix);
+    }
+
+    /**
+     * The words of the text; the headline by default.
+     */
+    protected function smsText(object $notifiable): string
+    {
+        return rtrim($this->title($notifiable), '.').'.';
+    }
+
+    /**
+     * Hold texts during quiet hours; other channels go immediately.
+     *
+     * @return array<string, \DateTimeInterface>
+     */
+    public function withDelay(object $notifiable): array
+    {
+        $sendAt = SmsQuietHours::sendAt();
+
+        return $sendAt ? [TwilioChannel::class => $sendAt] : [];
     }
 
     /**

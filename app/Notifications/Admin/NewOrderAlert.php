@@ -45,6 +45,14 @@ class NewOrderAlert extends AppNotification
         return $this->adminOrderUrl($this->order);
     }
 
+    protected function smsText(object $notifiable): string
+    {
+        $this->order->loadMissing('items');
+        $count = $this->order->items->count();
+
+        return "{$this->title($notifiable)} from {$this->buyerName($this->order)}, {$count} ".($count === 1 ? 'item' : 'items').'.';
+    }
+
     protected function actionLabel(): string
     {
         return 'Open order';

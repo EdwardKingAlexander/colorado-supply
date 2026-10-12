@@ -45,6 +45,11 @@ class ReadyForPickupNotification extends AppNotification
         ];
     }
 
+    protected function smsText(object $notifiable): string
+    {
+        return "Order {$this->order->order_number} is ready at {$this->pickupName($this->order)}. Pickup code {$this->order->pickup_code}.";
+    }
+
     protected function actionLabel(): string
     {
         return 'View pickup details';

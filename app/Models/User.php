@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ReceivesTextMessages;
 use App\Notifications\VerifyEmailAddress;
 use App\Services\Organizations\CompanyDomainService;
 use App\Support\EmailVerificationSettings;
@@ -19,7 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasPushSubscriptions, HasRoles, Notifiable;
+    use HasFactory, HasPushSubscriptions, HasRoles, Notifiable, ReceivesTextMessages;
 
     protected string $guard_name = 'web';
 

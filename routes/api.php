@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\SamOpportunityRagController;
 use App\Http\Controllers\Api\V1\StoreCheckoutController;
 use App\Http\Controllers\Api\V1\StripeCheckoutController;
 use App\Http\Controllers\Api\V1\StripeWebhookController;
+use App\Http\Controllers\Api\V1\TwilioSmsWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -30,6 +31,11 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/paypal/webhook', [PaypalWebhookController::class, 'handle'])
         ->middleware('throttle:120,1');
+
+    // Inbound texts (STOP/HELP/START) from Twilio.
+    Route::post('/twilio/sms', [TwilioSmsWebhookController::class, 'handle'])
+        ->middleware('throttle:120,1')
+        ->name('webhooks.twilio.sms');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/sam-opportunities/favorites', [SamOpportunityFavoritesController::class, 'index']);

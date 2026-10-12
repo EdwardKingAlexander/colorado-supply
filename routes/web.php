@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardReportExportController;
 use App\Http\Controllers\MilSpecPartsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PushSubscriptionController;
+use App\Http\Controllers\SmsSubscriptionController;
 use App\Http\Controllers\OrderTrackingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepairServiceController;
@@ -33,6 +34,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+// Text message program terms (ai/modules/will-call-notifications, phase 6). Public.
+Route::view('/sms-terms', 'legal.sms-terms')->name('sms-terms');
 
 Route::post('/privacy/consent', [ConsentController::class, 'store'])
     ->middleware('throttle:30,1')
@@ -123,6 +127,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/push-subscriptions', [PushSubscriptionController::class, 'index'])->name('push-subscriptions.index');
         Route::post('/push-subscriptions', [PushSubscriptionController::class, 'store'])->name('push-subscriptions.store');
         Route::delete('/push-subscriptions', [PushSubscriptionController::class, 'destroy'])->name('push-subscriptions.destroy');
+        Route::get('/sms-subscription', [SmsSubscriptionController::class, 'show'])->name('sms-subscription.show');
+        Route::post('/sms-subscription', [SmsSubscriptionController::class, 'store'])->name('sms-subscription.store');
+        Route::post('/sms-subscription/verify', [SmsSubscriptionController::class, 'verify'])->name('sms-subscription.verify');
+        Route::delete('/sms-subscription', [SmsSubscriptionController::class, 'destroy'])->name('sms-subscription.destroy');
     });
 
     // SAM favorites page

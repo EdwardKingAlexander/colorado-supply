@@ -10,6 +10,55 @@
         <x-filament::button type="submit" icon="heroicon-o-check">Save</x-filament::button>
     </form>
 
+    @if ($this->smsReady())
+        {{-- Text alerts (ai/modules/will-call-notifications, phase 6). --}}
+        @php($sms = $this->getSmsStatus())
+        <x-filament::section heading="Text alerts" icon="heroicon-o-chat-bubble-left-ellipsis">
+            <div class="space-y-3 text-sm">
+                @if ($sms['state'] === 'on')
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="font-semibold">On for {{ $sms['phone'] }}</span>
+                        <x-filament::button wire:click="stopSms" color="gray">Stop texts</x-filament::button>
+                    </div>
+                @elseif ($sms['state'] === 'pending')
+                    <form wire:submit="verifySms" class="space-y-3">
+                        <p>We texted a 6-digit code to {{ $sms['phone'] }}.</p>
+                        <label class="block max-w-xs">
+                            <span class="font-semibold">Code</span>
+                            <x-filament::input.wrapper :valid="! $errors->has('code')" class="mt-1">
+                                <x-filament::input type="text" wire:model="smsCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
+                            </x-filament::input.wrapper>
+                            @error('code') <span class="mt-1 block text-danger-600 dark:text-danger-400">{{ $message }}</span> @enderror
+                        </label>
+                        <div class="flex flex-wrap gap-2">
+                            <x-filament::button type="submit">Verify</x-filament::button>
+                            <x-filament::button wire:click="stopSms" color="gray">Start over</x-filament::button>
+                        </div>
+                    </form>
+                @else
+                    @if ($sms['state'] === 'opted_out')
+                        <p>You replied STOP from {{ $sms['phone'] }}. Text START to our number to resume, or verify a different number.</p>
+                    @endif
+                    <form wire:submit="startSms" class="space-y-3">
+                        <label class="block max-w-xs">
+                            <span class="font-semibold">Mobile number</span>
+                            <x-filament::input.wrapper :valid="! $errors->has('phone')" class="mt-1">
+                                <x-filament::input type="tel" wire:model="smsPhone" autocomplete="tel-national" placeholder="(303) 555-0100" />
+                            </x-filament::input.wrapper>
+                            @error('phone') <span class="mt-1 block text-danger-600 dark:text-danger-400">{{ $message }}</span> @enderror
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <x-filament::input.checkbox wire:model="smsConsent" class="mt-0.5" />
+                            <span>{{ config('sms.consent_text') }} <a href="{{ route('sms-terms') }}" target="_blank" rel="noopener" class="font-semibold text-primary-600 underline">Text message terms</a></span>
+                        </label>
+                        @error('consent') <span class="block text-danger-600 dark:text-danger-400">{{ $message }}</span> @enderror
+                        <x-filament::button type="submit" icon="heroicon-o-chat-bubble-left-ellipsis">Text me a code</x-filament::button>
+                    </form>
+                @endif
+            </div>
+        </x-filament::section>
+    @endif
+
     @if ($publicKey = $this->pushPublicKey())
         {{-- Push on this device (ai/modules/will-call-notifications, phase 5). Permission is only asked on click. --}}
         <x-filament::section heading="Push on this device" icon="heroicon-o-device-phone-mobile">

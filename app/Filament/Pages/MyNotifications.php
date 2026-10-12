@@ -7,6 +7,7 @@ use App\Models\AdminNotificationPreference;
 use App\Notifications\NotificationChannel;
 use App\Notifications\NotificationType;
 use App\Support\PushDevices;
+use App\Support\SmsSubscriptions;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Toggle;
@@ -34,6 +35,13 @@ class MyNotifications extends Page
     protected string $view = 'filament.pages.my-notifications';
 
     public ?array $prefs = [];
+
+    // Text alerts sign-up (phase 6).
+    public string $smsPhone = '';
+
+    public bool $smsConsent = false;
+
+    public string $smsCode = '';
 
     public static function canAccess(): bool
     {
@@ -68,6 +76,7 @@ class MyNotifications extends Page
                             ->helperText(match (true) {
                                 ! $channel->isReady() => 'Coming soon',
                                 $channel === NotificationChannel::Push => 'On devices you turn on below',
+                                $channel === NotificationChannel::Sms => 'To the number you verify below',
                                 default => null,
                             }))
                         ->all()))
@@ -148,6 +157,47 @@ class MyNotifications extends Page
     /**
      * Called from the browser after it subscribed (see the page view).
      */
+    public function smsReady(): bool
+    {
+        return NotificationChannel::Sms->isReady();
+    }
+
+    /**
+     * @return array{state: string, phone?: string}
+     */
+    public function getSmsStatus(): array
+    {
+        return SmsSubscriptions::status($this->admin());
+    }
+
+    public function startSms(): void
+    {
+        abort_unless($this->smsReady(), 404);
+
+        SmsSubscriptions::start($this->admin(), $this->smsPhone, $this->smsConsent, request()->ip());
+        $this->reset('smsCode');
+
+        Notification::make()->title('Code sent')->body('Enter the 6-digit code we texted you.')->success()->send();
+    }
+
+    public function verifySms(): void
+    {
+        abort_unless($this->smsReady(), 404);
+
+        SmsSubscriptions::verify($this->admin(), $this->smsCode);
+        $this->reset('smsCode', 'smsPhone', 'smsConsent');
+
+        Notification::make()->title('Text alerts are on')->success()->send();
+    }
+
+    public function stopSms(): void
+    {
+        SmsSubscriptions::stop($this->admin());
+        $this->reset('smsCode', 'smsPhone', 'smsConsent');
+
+        Notification::make()->title('Text alerts are off')->success()->send();
+    }
+
     public function savePushSubscription(array $subscription): void
     {
         PushDevices::save($this->admin(), PushDevices::validate($subscription));
