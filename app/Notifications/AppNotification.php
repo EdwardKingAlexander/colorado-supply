@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\WebPush\WebPushMessage;
 
 /**
  * Base for every store notification (ai/modules/will-call-notifications).
@@ -119,6 +120,23 @@ abstract class AppNotification extends Notification implements ShouldQueue
         }
 
         return new BroadcastMessage($this->toArray($notifiable));
+    }
+
+    /**
+     * Lock-screen / desktop notification. The service worker (public/sw.js)
+     * opens `data.url` when it is clicked. A per-notification tag keeps
+     * separate alerts from replacing each other on the device.
+     */
+    public function toWebPush(object $notifiable, Notification $notification): WebPushMessage
+    {
+        return (new WebPushMessage)
+            ->title($this->title($notifiable))
+            ->body($this->body($notifiable))
+            ->icon('/apple-touch-icon.png')
+            ->badge('/apple-touch-icon.png')
+            ->tag($this->type()->value.':'.$this->id)
+            ->data(['url' => $this->url($notifiable) ?? ($notifiable instanceof Admin ? '/admin' : '/notifications')])
+            ->options(['TTL' => 86400, 'urgency' => 'normal']);
     }
 
     /**

@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import PickupDetails from '@/Components/Store/PickupDetails.vue'
+import PushOptIn from '@/Components/Notifications/PushOptIn.vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 
@@ -44,6 +45,11 @@ const isPaid = computed(() => props.order.payment_status === 'paid')
         </p>
 
         <PickupDetails v-if="order.pickup" :pickup="order.pickup" variant="plain" class="mb-6" />
+
+        <!-- store-shell supplies the st-* colour tokens outside StoreLayout. -->
+        <div v-if="order.pickup && $page.props.notificationBell?.pushKey" class="store-shell mb-6">
+          <PushOptIn compact />
+        </div>
 
         <Link href="/store" class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-blue-700 px-6 py-3 text-base font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
           Continue Shopping

@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { computed, onMounted } from 'vue'
 import StoreLayout from '@/Layouts/StoreLayout.vue'
 import NotificationIcon from '@/Components/Notifications/NotificationIcon.vue'
+import PushOptIn from '@/Components/Notifications/PushOptIn.vue'
 import { useNotifications } from '@/Stores/useNotifications'
 
 // Full notifications list (ai/modules/will-call-notifications, phase 3).
@@ -64,6 +65,8 @@ const tabClass = (name) => (props.filter === name
           @click="markAllRead"
         >Mark all read</button>
       </div>
+
+      <PushOptIn />
 
       <nav aria-label="Filter notifications" class="flex gap-4 border-b border-st-line">
         <Link

@@ -15,6 +15,8 @@ beforeEach(function () {
 });
 
 it('starts with every live channel on', function () {
+    config(['webpush.vapid.public_key' => null, 'webpush.vapid.private_key' => null]);
+
     Livewire::test(MyNotifications::class)
         ->assertOk()
         ->assertSee('New will call order')

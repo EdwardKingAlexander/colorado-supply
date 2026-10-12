@@ -7,6 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="icon" type="image/svg+xml" href="{{ asset("favicon.svg") }}">
+        {{-- Installable web app: needed for push notifications on iPhone/iPad (Add to Home Screen). --}}
+        <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+        <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+        <meta name="theme-color" content="#111827">
 
         <title inertia>{{ config('app.name', 'Colorado Supply & Procurement LLC') }}</title>
 

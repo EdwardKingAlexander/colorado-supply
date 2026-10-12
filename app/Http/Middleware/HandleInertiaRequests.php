@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\User;
+use App\Notifications\NotificationChannel;
 use App\Notifications\NotificationChannels;
 use App\Support\Privacy\ConsentCookie;
 use Illuminate\Http\Request;
@@ -48,6 +49,8 @@ class HandleInertiaRequests extends Middleware
             'notificationBell' => fn (): ?array => $request->user() instanceof User ? [
                 'unread' => $request->user()->unreadNotifications()->count(),
                 'live' => NotificationChannels::broadcasting(),
+                // Public VAPID key for "turn on notifications on this device".
+                'pushKey' => NotificationChannel::Push->isReady() ? config('webpush.vapid.public_key') : null,
             ] : null,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

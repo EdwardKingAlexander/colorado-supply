@@ -12,6 +12,7 @@
         "chrome-php/chrome": "^1.14",
         "filament/filament": "^4.1",
         "inertiajs/inertia-laravel": "^3.0",
+        "laravel-notification-channels/webpush": "^13.0",
         "laravel/framework": "^13.12",
         "laravel/mcp": "^0.8.0",
         "laravel/reverb": "^1.0",

@@ -14,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication
 {
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasPushSubscriptions, HasRoles, Notifiable;
 
     protected string $guard_name = 'web';
 

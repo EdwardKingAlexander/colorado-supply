@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardReportController;
 use App\Http\Controllers\DashboardReportExportController;
 use App\Http\Controllers\MilSpecPartsController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\OrderTrackingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepairServiceController;
@@ -117,6 +118,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
         Route::post('/notifications/{notification}/unread', [NotificationController::class, 'markUnread'])->name('notifications.mark-unread');
         Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    });
+    Route::middleware('throttle:20,1')->group(function () {
+        Route::get('/push-subscriptions', [PushSubscriptionController::class, 'index'])->name('push-subscriptions.index');
+        Route::post('/push-subscriptions', [PushSubscriptionController::class, 'store'])->name('push-subscriptions.store');
+        Route::delete('/push-subscriptions', [PushSubscriptionController::class, 'destroy'])->name('push-subscriptions.destroy');
     });
 
     // SAM favorites page

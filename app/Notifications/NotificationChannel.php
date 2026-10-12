@@ -24,14 +24,15 @@ enum NotificationChannel: string
     }
 
     /**
-     * Whether this channel can deliver anything yet. Push and SMS are wired
-     * in phases 5 and 6; until then they are offered nowhere.
+     * Whether this channel can deliver anything on this install. Push needs
+     * VAPID keys; SMS is wired in phase 6.
      */
     public function isReady(): bool
     {
         return match ($this) {
             self::Email, self::Bell => true,
-            self::Push, self::Sms => false,
+            self::Push => filled(config('webpush.vapid.public_key')) && filled(config('webpush.vapid.private_key')),
+            self::Sms => false,
         };
     }
 }

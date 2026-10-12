@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\AdminNotificationPreference;
 use App\Models\User;
 use Illuminate\Notifications\AnonymousNotifiable;
+use NotificationChannels\WebPush\WebPushChannel;
 
 /**
  * Decides the Laravel channels for one notification to one recipient:
@@ -62,6 +63,9 @@ class NotificationChannels
                 ? filled($notifiable->routes['mail'] ?? null)
                 : filled($notifiable->email ?? null),
             NotificationChannel::Bell => $notifiable instanceof User || $notifiable instanceof Admin,
+            // Only people who turned push on for at least one device.
+            NotificationChannel::Push => ($notifiable instanceof User || $notifiable instanceof Admin)
+                && $notifiable->pushSubscriptions()->exists(),
             default => false,
         };
     }
@@ -74,6 +78,7 @@ class NotificationChannels
         return match ($channel) {
             NotificationChannel::Email => ['mail'],
             NotificationChannel::Bell => self::broadcasting() ? ['database', 'broadcast'] : ['database'],
+            NotificationChannel::Push => [WebPushChannel::class],
             default => [],
         };
     }

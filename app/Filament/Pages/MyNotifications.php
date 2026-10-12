@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\AdminNotificationPreference;
 use App\Notifications\NotificationChannel;
 use App\Notifications\NotificationType;
+use App\Support\PushDevices;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Toggle;
@@ -64,7 +65,11 @@ class MyNotifications extends Page
                         ->map(fn (NotificationChannel $channel) => Toggle::make(self::key($type, $channel))
                             ->label($channel->label())
                             ->disabled(! $channel->isReady())
-                            ->helperText($channel->isReady() ? null : 'Coming soon'))
+                            ->helperText(match (true) {
+                                ! $channel->isReady() => 'Coming soon',
+                                $channel === NotificationChannel::Push => 'On devices you turn on below',
+                                default => null,
+                            }))
                         ->all()))
                 ->all())
             ->statePath('prefs');
@@ -123,6 +128,36 @@ class MyNotifications extends Page
         });
 
         Notification::make()->title('Notification choices saved')->success()->send();
+    }
+
+    /**
+     * Devices this admin turned push on for (shown under the form).
+     *
+     * @return list<array{id: int, label: string, endpoint: string, added: ?string}>
+     */
+    public function getPushDevices(): array
+    {
+        return PushDevices::list($this->admin());
+    }
+
+    public function pushPublicKey(): ?string
+    {
+        return NotificationChannel::Push->isReady() ? config('webpush.vapid.public_key') : null;
+    }
+
+    /**
+     * Called from the browser after it subscribed (see the page view).
+     */
+    public function savePushSubscription(array $subscription): void
+    {
+        PushDevices::save($this->admin(), PushDevices::validate($subscription));
+
+        Notification::make()->title('Notifications turned on for this device')->success()->send();
+    }
+
+    public function removePushDevice(?int $id = null, ?string $endpoint = null): void
+    {
+        PushDevices::remove($this->admin(), $id, $endpoint);
     }
 
     /**
