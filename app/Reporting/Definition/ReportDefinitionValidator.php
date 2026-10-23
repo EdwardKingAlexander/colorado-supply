@@ -2,19 +2,26 @@
 
 namespace App\Reporting\Definition;
 
+use App\Reporting\Aggregate;
 use App\Reporting\DatasetRegistry;
 use App\Reporting\Datasets\Dataset;
 use App\Reporting\DateBucket;
 use App\Reporting\Fields\Field;
 use App\Reporting\FieldType;
+use App\Reporting\Formula\AggregateNode;
+use App\Reporting\Formula\FormulaException;
+use App\Reporting\Formula\Node;
+use App\Reporting\Formula\Parser;
+use App\Reporting\Formula\ReferenceNode;
 use App\Reporting\Limits;
 use App\Reporting\Operator;
 use App\Reporting\RelativeDate;
 
 /**
  * Checks a raw definition against the dataset's field catalog. Everything a
- * definition can name (dataset, field, operator, bucket, sort column) must be
- * on a whitelist here; values are type-checked before they are ever bound.
+ * definition can name (dataset, field, operator, aggregate, function, bucket,
+ * column key) must be on a whitelist here; values are type-checked before
+ * they are ever bound.
  */
 class ReportDefinitionValidator
 {
@@ -22,6 +29,15 @@ class ReportDefinitionValidator
     private array $errors = [];
 
     private int $ruleCount = 0;
+
+    private string $mode = 'table';
+
+    /**
+     * Every key a later section may refer to, with what it is.
+     *
+     * @var array<string, array{kind: 'dimension'|'measure'|'raw'|'calculated'|'post', numeric: bool}>
+     */
+    private array $keys = [];
 
     public function __construct(private DatasetRegistry $registry) {}
 
@@ -46,6 +62,7 @@ class ReportDefinitionValidator
     {
         $this->errors = [];
         $this->ruleCount = 0;
+        $this->keys = [];
 
         if (! is_array($input)) {
             return ['definition' => 'The report definition must be an object.'];
@@ -61,41 +78,49 @@ class ReportDefinitionValidator
             return ['dataset' => 'Choose a data source.'] + $this->errors;
         }
 
-        $mode = $input['mode'] ?? 'table';
-        if (! in_array($mode, ReportDefinition::MODES, true)) {
-            $this->fail('mode', 'This report type is not available.');
+        $this->mode = $input['mode'] ?? 'table';
+        if (! in_array($this->mode, ReportDefinition::MODES, true)) {
+            $this->fail('mode', 'Choose a table, summary or pivot report.');
+
+            return $this->errors;
         }
 
-        $keys = $this->validateColumns($dataset, $input['columns'] ?? null);
+        $this->validateColumns($dataset, $input['columns'] ?? null);
+        $this->validateCalculated($dataset, $input['calculated'] ?? []);
+        $this->validatePost($input['post'] ?? []);
 
         if (isset($input['filters'])) {
             $this->validateGroup($dataset, $input['filters'], 'filters', 1);
         }
 
-        $this->validateSort($input['sort'] ?? [], $keys);
+        $this->validatePivot($input['pivot'] ?? null);
+        $this->validateSort($input['sort'] ?? []);
         $this->validateLimit($input['limit'] ?? null);
+        $this->validateTotals($input['totals'] ?? null);
+        $this->validateFormatting($input['formatting'] ?? []);
 
         return $this->errors;
     }
 
-    /**
-     * @return list<string> the column keys, for sort validation
-     */
-    private function validateColumns(Dataset $dataset, mixed $columns): array
+    private function validateColumns(Dataset $dataset, mixed $columns): void
     {
         if (! is_array($columns) || ! array_is_list($columns) || $columns === []) {
             $this->fail('columns', 'Add at least one column.');
 
-            return [];
+            return;
         }
 
         if (count($columns) > Limits::MAX_COLUMNS) {
             $this->fail('columns', 'A report can have at most '.Limits::MAX_COLUMNS.' columns.');
 
-            return [];
+            return;
         }
 
         $keys = ColumnSpec::keysFor($columns);
+
+        if (count(array_unique($keys)) !== count($keys)) {
+            $this->fail('columns', 'Column keys must be unique.');
+        }
 
         foreach ($columns as $index => $column) {
             $path = "columns.{$index}";
@@ -122,28 +147,315 @@ class ReportDefinitionValidator
                 $this->fail("{$path}.label", 'Column labels must be text of at most 120 characters.');
             }
 
+            if (isset($column['format']) && ! in_array($column['format'], ColumnSpec::FORMATS, true)) {
+                $this->fail("{$path}.format", 'Unknown format.');
+            }
+
+            $aggregate = $this->validateAggregate($field, $column, $path);
+
             if (isset($column['bucket'])) {
                 if (! is_string($column['bucket']) || DateBucket::tryFrom($column['bucket']) === null) {
                     $this->fail("{$path}.bucket", 'Unknown date grouping.');
                 } elseif (! $field->type->isTemporal()) {
                     $this->fail("{$path}.bucket", 'Only date fields can be grouped by period.');
+                } elseif (isset($column['aggregate'])) {
+                    $this->fail("{$path}.bucket", 'A column is either grouped by period or totalled, not both.');
                 }
             }
 
-            if (isset($column['format']) && ! in_array($column['format'], ColumnSpec::FORMATS, true)) {
+            $resultType = $aggregate?->resultType($field->type) ?? (isset($column['bucket']) ? FieldType::String : $field->type);
+
+            $this->keys[$keys[$index]] = [
+                'kind' => $aggregate !== null ? 'measure' : ($this->mode === 'table' ? 'raw' : 'dimension'),
+                'numeric' => $resultType->isNumeric(),
+            ];
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $column
+     */
+    private function validateAggregate(Field $field, array $column, string $path): ?Aggregate
+    {
+        if (! isset($column['aggregate'])) {
+            return null;
+        }
+
+        $aggregate = is_string($column['aggregate']) ? Aggregate::tryFrom($column['aggregate']) : null;
+
+        if ($aggregate === null) {
+            $this->fail("{$path}.aggregate", 'Unknown total.');
+
+            return null;
+        }
+
+        if ($this->mode === 'table') {
+            $this->fail("{$path}.aggregate", 'Totals need a summary or pivot report.');
+
+            return null;
+        }
+
+        if (! $aggregate->allows($field->type)) {
+            $this->fail("{$path}.aggregate", "{$field->label} can't be totalled that way.");
+
+            return null;
+        }
+
+        return $aggregate;
+    }
+
+    private function validateCalculated(Dataset $dataset, mixed $calculated): void
+    {
+        if (! $this->isList($calculated, 'calculated', 'Calculated fields must be a list.', Limits::MAX_CALCULATED)) {
+            return;
+        }
+
+        $calculatedKeys = [];
+
+        // Register every key first so formulas can refer to later fields.
+        foreach ($calculated as $index => $field) {
+            $key = is_array($field) ? ($field['key'] ?? null) : null;
+
+            if (! is_string($key) || ! preg_match(ColumnSpec::KEY_PATTERN, $key)) {
+                $this->fail("calculated.{$index}.key", 'Give the field a key of lowercase letters, digits and underscores.');
+
+                continue;
+            }
+
+            if (isset($this->keys[$key])) {
+                $this->fail("calculated.{$index}.key", 'That key is already used by another column.');
+
+                continue;
+            }
+
+            $this->keys[$key] = ['kind' => 'calculated', 'numeric' => true];
+            $calculatedKeys[$index] = $key;
+        }
+
+        $dependencies = [];
+
+        foreach ($calculatedKeys as $index => $key) {
+            $field = $calculated[$index];
+            $path = "calculated.{$index}";
+
+            if (isset($field['label']) && (! is_string($field['label']) || mb_strlen($field['label']) > 120)) {
+                $this->fail("{$path}.label", 'Labels must be text of at most 120 characters.');
+            }
+
+            if (isset($field['format']) && ! in_array($field['format'], ColumnSpec::FORMATS, true)) {
                 $this->fail("{$path}.format", 'Unknown format.');
             }
 
-            if (isset($column['aggregate'])) {
-                $this->fail("{$path}.aggregate", 'Totals are not available in table reports.');
+            if (! is_string($field['formula'] ?? null)) {
+                $this->fail("{$path}.formula", 'Enter a formula.');
+
+                continue;
+            }
+
+            try {
+                $ast = Parser::parse($field['formula']);
+            } catch (FormulaException $exception) {
+                $this->fail("{$path}.formula", $exception->describe().'.');
+
+                continue;
+            }
+
+            $dependencies[$key] = [];
+            $error = $this->formulaError($dataset, $ast, $key, $dependencies[$key]);
+
+            if ($error !== null) {
+                $this->fail("{$path}.formula", $error);
             }
         }
 
-        if (count(array_unique($keys)) !== count($keys)) {
-            $this->fail('columns', 'Column keys must be unique.');
+        if (($cycle = $this->findCycle($dependencies)) !== null) {
+            $index = array_search($cycle[0], $calculatedKeys, true);
+            $this->fail("calculated.{$index}.formula", 'These formulas refer to each other in a loop: '.implode(' → ', $cycle).'.');
+        }
+    }
+
+    /**
+     * @param  list<string>  $dependencies  calculated keys this formula uses (filled in)
+     */
+    private function formulaError(Dataset $dataset, Node $node, string $self, array &$dependencies): ?string
+    {
+        if ($node instanceof AggregateNode) {
+            $field = $dataset->field($node->field);
+
+            return match (true) {
+                $this->mode === 'table' => "{$node->aggregate->formulaName()}() needs a summary or pivot report.",
+                $field === null => "Unknown field {$node->field}.",
+                ! $node->aggregate->allows($field->type) => "{$field->label} can't be used in {$node->aggregate->formulaName()}().",
+                default => null,
+            };
         }
 
-        return $keys;
+        if ($node instanceof ReferenceNode) {
+            if ($node->isField()) {
+                $field = $dataset->field($node->name);
+
+                return match (true) {
+                    $field === null || ! $field->selectable => "Unknown field {$node->name}.",
+                    $this->mode !== 'table' => "Wrap {$node->name} in SUM(), AVG(), COUNT() or another total.",
+                    default => null,
+                };
+            }
+
+            if ($node->name === $self) {
+                return 'A formula cannot refer to itself.';
+            }
+
+            $kind = $this->keys[$node->name]['kind'] ?? null;
+
+            if ($kind === null || $kind === 'post') {
+                return "Unknown column {$node->name}.";
+            }
+
+            if ($kind === 'calculated') {
+                $dependencies[] = $node->name;
+            }
+
+            return null;
+        }
+
+        foreach ($node->children() as $child) {
+            if (($error = $this->formulaError($dataset, $child, $self, $dependencies)) !== null) {
+                return $error;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<string, list<string>>  $graph
+     * @return ?list<string>
+     */
+    private function findCycle(array $graph): ?array
+    {
+        $state = [];
+
+        $visit = function (string $key, array $path) use (&$visit, &$state, $graph): ?array {
+            if (($state[$key] ?? null) === 'done') {
+                return null;
+            }
+
+            if (($state[$key] ?? null) === 'visiting') {
+                return [...array_slice($path, (int) array_search($key, $path, true)), $key];
+            }
+
+            $state[$key] = 'visiting';
+
+            foreach ($graph[$key] ?? [] as $next) {
+                if (($cycle = $visit($next, [...$path, $key])) !== null) {
+                    return $cycle;
+                }
+            }
+
+            $state[$key] = 'done';
+
+            return null;
+        };
+
+        foreach (array_keys($graph) as $key) {
+            if (($cycle = $visit($key, [])) !== null) {
+                return $cycle;
+            }
+        }
+
+        return null;
+    }
+
+    private function validatePost(mixed $post): void
+    {
+        if (! $this->isList($post, 'post', 'Extra columns must be a list.', Limits::MAX_POST_PROCESSORS)) {
+            return;
+        }
+
+        if ($post !== [] && $this->mode === 'pivot') {
+            $this->fail('post', 'Running totals and % of total are not available in pivot reports.');
+
+            return;
+        }
+
+        foreach ($post as $index => $item) {
+            $path = "post.{$index}";
+            $column = is_array($item) ? ($item['column'] ?? null) : null;
+
+            if (! is_string($column) || ! ($this->keys[$column]['numeric'] ?? false) || $this->keys[$column]['kind'] === 'post') {
+                $this->fail("{$path}.column", 'Choose a number column.');
+
+                continue;
+            }
+
+            $operation = $item['op'] ?? null;
+
+            if (! is_string($operation) || ! array_key_exists($operation, PostProcessorSpec::OPERATIONS)) {
+                $this->fail("{$path}.op", 'Unknown calculation.');
+
+                continue;
+            }
+
+            if (isset($item['label']) && (! is_string($item['label']) || mb_strlen($item['label']) > 120)) {
+                $this->fail("{$path}.label", 'Labels must be text of at most 120 characters.');
+            }
+
+            $key = $item['key'] ?? PostProcessorSpec::defaultKey($column, $operation);
+
+            if (! is_string($key) || ! preg_match(ColumnSpec::KEY_PATTERN, $key)) {
+                $this->fail("{$path}.key", 'Keys must be lowercase letters, digits and underscores.');
+            } elseif (isset($this->keys[$key])) {
+                $this->fail("{$path}.key", 'That key is already used by another column.');
+            } else {
+                $this->keys[$key] = ['kind' => 'post', 'numeric' => true];
+            }
+        }
+    }
+
+    private function validatePivot(mixed $pivot): void
+    {
+        if ($this->mode !== 'pivot') {
+            if ($pivot !== null) {
+                $this->fail('pivot', 'Pivot settings need a pivot report.');
+            }
+
+            return;
+        }
+
+        if (! is_array($pivot)) {
+            $this->fail('pivot', 'Choose the rows, the column and the values of the pivot.');
+
+            return;
+        }
+
+        $dimensions = array_keys(array_filter($this->keys, fn (array $key) => $key['kind'] === 'dimension'));
+        $rows = $pivot['rows'] ?? [];
+        $column = $pivot['column'] ?? null;
+        $values = $pivot['values'] ?? null;
+
+        if (! is_array($rows) || ! array_is_list($rows) || count($rows) > Limits::MAX_PIVOT_ROW_FIELDS
+            || array_diff($rows, $dimensions) !== [] || count(array_unique($rows)) !== count($rows)) {
+            $this->fail('pivot.rows', 'Rows must be up to '.Limits::MAX_PIVOT_ROW_FIELDS.' grouping columns.');
+
+            return;
+        }
+
+        if (! is_string($column) || ! in_array($column, $dimensions, true) || in_array($column, $rows, true)) {
+            $this->fail('pivot.column', 'Choose one grouping column to spread across the top.');
+
+            return;
+        }
+
+        if (array_diff($dimensions, [...$rows, $column]) !== []) {
+            $this->fail('pivot.rows', 'Every grouping column must be a pivot row or the pivot column.');
+        }
+
+        $measures = array_keys(array_filter($this->keys, fn (array $key) => in_array($key['kind'], ['measure', 'calculated'], true)));
+
+        if (! is_array($values) || ! array_is_list($values) || $values === [] || count($values) > Limits::MAX_PIVOT_VALUES
+            || array_diff($values, $measures) !== [] || count(array_unique($values)) !== count($values)) {
+            $this->fail('pivot.values', 'Choose 1 to '.Limits::MAX_PIVOT_VALUES.' totalled or calculated columns for the cells.');
+        }
     }
 
     private function validateGroup(Dataset $dataset, mixed $group, string $path, int $depth): void
@@ -281,34 +593,26 @@ class ReportDefinitionValidator
             },
             FieldType::Enum => (is_string($value) || is_int($value)) && array_key_exists((string) $value, $field->options)
                 ? null : 'Choose one of the listed values.',
-            FieldType::Number, FieldType::Money => (is_int($value) || is_float($value) || (is_string($value) && is_numeric($value)))
-                && is_finite((float) $value) ? null : 'Enter a number.',
+            FieldType::Number, FieldType::Money => $this->isNumber($value) ? null : 'Enter a number.',
             FieldType::Date, FieldType::DateTime => DateValue::parse($value) !== null ? null : 'Enter a date as YYYY-MM-DD.',
             FieldType::Location => (is_int($value) && $value > 0) || (is_string($value) && ctype_digit($value) && (int) $value > 0)
                 ? null : 'Choose a location.',
-            FieldType::Boolean => null,
+            FieldType::Boolean, FieldType::Id => null,
         };
     }
 
-    /**
-     * @param  list<string>  $keys
-     */
-    private function validateSort(mixed $sort, array $keys): void
+    private function validateSort(mixed $sort): void
     {
-        if (! is_array($sort) || ! array_is_list($sort)) {
-            $this->fail('sort', 'Sort must be a list.');
-
+        if (! $this->isList($sort, 'sort', 'Sort must be a list.', Limits::MAX_SORTS)) {
             return;
         }
 
-        if (count($sort) > Limits::MAX_SORTS) {
-            $this->fail('sort', 'Sort by at most '.Limits::MAX_SORTS.' columns.');
-
-            return;
-        }
+        $sortable = array_keys(array_filter($this->keys, fn (array $key) => $this->mode === 'pivot'
+            ? $key['kind'] !== 'post'
+            : in_array($key['kind'], ['dimension', 'measure', 'raw', 'calculated'], true)));
 
         foreach ($sort as $index => $item) {
-            if (! is_array($item) || ! in_array($item['column'] ?? null, $keys, true)) {
+            if (! is_array($item) || ! in_array($item['column'] ?? null, $sortable, true)) {
                 $this->fail("sort.{$index}.column", 'Sort by one of the report columns.');
 
                 continue;
@@ -322,9 +626,105 @@ class ReportDefinitionValidator
 
     private function validateLimit(mixed $limit): void
     {
-        if ($limit !== null && (! is_int($limit) || $limit < 1 || $limit > Limits::MAX_ROW_LIMIT)) {
-            $this->fail('limit', 'The row limit must be between 1 and '.number_format(Limits::MAX_ROW_LIMIT).'.');
+        $max = $this->mode === 'table' ? Limits::MAX_ROW_LIMIT : Limits::MAX_GROUPS;
+
+        if ($limit !== null && (! is_int($limit) || $limit < 1 || $limit > $max)) {
+            $this->fail('limit', 'The row limit must be between 1 and '.number_format($max).'.');
         }
+    }
+
+    private function validateTotals(mixed $totals): void
+    {
+        if ($totals === null) {
+            return;
+        }
+
+        if (! is_array($totals) || array_diff(array_keys($totals), ['grand', 'subtotals']) !== []
+            || array_filter($totals, fn ($value) => ! is_bool($value)) !== []) {
+            $this->fail('totals', 'Totals settings must be yes/no switches for grand totals and subtotals.');
+
+            return;
+        }
+
+        if (($totals['subtotals'] ?? false) === true) {
+            $dimensions = array_filter($this->keys, fn (array $key) => $key['kind'] === 'dimension');
+
+            if ($this->mode !== 'summary' || count($dimensions) < 2) {
+                $this->fail('totals.subtotals', 'Subtotals need a summary report with at least two grouping columns.');
+            }
+        }
+    }
+
+    private function validateFormatting(mixed $formatting): void
+    {
+        if (! $this->isList($formatting, 'formatting', 'Formatting rules must be a list.', Limits::MAX_FORMAT_RULES)) {
+            return;
+        }
+
+        foreach ($formatting as $index => $rule) {
+            $path = "formatting.{$index}";
+            $column = is_array($rule) ? ($rule['column'] ?? null) : null;
+
+            if (! is_string($column) || ! isset($this->keys[$column])) {
+                $this->fail("{$path}.column", 'Choose one of the report columns.');
+
+                continue;
+            }
+
+            if (! in_array($rule['style'] ?? null, FormatRule::STYLES, true)) {
+                $this->fail("{$path}.style", 'Choose a style.');
+            }
+
+            $operator = $rule['when']['op'] ?? null;
+            $value = $rule['when']['value'] ?? null;
+
+            if (! in_array($operator, FormatRule::OPERATORS, true)) {
+                $this->fail("{$path}.when.op", 'Choose a condition.');
+
+                continue;
+            }
+
+            if (in_array($operator, FormatRule::NUMERIC_OPERATORS, true) && ! $this->keys[$column]['numeric']) {
+                $this->fail("{$path}.when.op", 'That condition needs a number column.');
+
+                continue;
+            }
+
+            $error = match ($operator) {
+                'negative', 'is_null' => null,
+                'top_n', 'bottom_n' => is_int($value) && $value >= 1 && $value <= Limits::MAX_TOP_N ? null : 'Enter how many rows, from 1 to '.Limits::MAX_TOP_N.'.',
+                'between' => is_array($value) && array_is_list($value) && count($value) === 2 && $this->isNumber($value[0]) && $this->isNumber($value[1])
+                    ? null : 'Enter a lower and an upper number.',
+                'eq', 'neq' => is_string($value) || $this->isNumber($value) ? null : 'Enter a value.',
+                default => $this->isNumber($value) ? null : 'Enter a number.',
+            };
+
+            if ($error !== null) {
+                $this->fail("{$path}.when.value", $error);
+            }
+        }
+    }
+
+    private function isList(mixed $value, string $path, string $message, int $max): bool
+    {
+        if (! is_array($value) || ! array_is_list($value)) {
+            $this->fail($path, $message);
+
+            return false;
+        }
+
+        if (count($value) > $max) {
+            $this->fail($path, "At most {$max} allowed.");
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isNumber(mixed $value): bool
+    {
+        return (is_int($value) || is_float($value) || (is_string($value) && is_numeric($value))) && is_finite((float) $value);
     }
 
     private function fail(string $path, string $message): void

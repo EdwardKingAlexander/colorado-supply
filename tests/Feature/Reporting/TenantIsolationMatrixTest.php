@@ -3,6 +3,7 @@
 use App\Models\Location;
 use App\Models\Order;
 use App\Models\User;
+use App\Reporting\Aggregate;
 use App\Reporting\DatasetRegistry;
 use App\Reporting\Definition\InvalidReportDefinition;
 use App\Reporting\Fields\Field;
@@ -90,11 +91,11 @@ test('every field of every dataset, as a column and as a filter, stays inside th
                     $dataset->fields(), fn (Field $candidate) => $candidate->selectable,
                 ));
 
-                $result = F::run($user, [
+                $result = F::run($user, array_filter([
                     'dataset' => $key,
                     'columns' => [['field' => $column]],
-                    'filters' => matchEverything($field),
-                ]);
+                    'filters' => $field->filterable ? matchEverything($field) : null,
+                ]));
 
                 expect($result->rowCount)->toBe($expected, "{$who} / {$key} / {$field->key}");
                 $checked++;
@@ -103,6 +104,54 @@ test('every field of every dataset, as a column and as a filter, stays inside th
     }
 
     expect($checked)->toBeGreaterThan(200);
+});
+
+test('grouping by any field and totalling with any aggregate stays inside the tenant', function () {
+    $world = seedTenants();
+    $roots = ['orders' => 'order.id', 'order_lines' => 'line.id', 'payments' => 'payment.id', 'shipments' => 'shipment.id', 'quotes' => 'quote.id', 'quote_lines' => 'line.id'];
+
+    foreach (app(DatasetRegistry::class)->all() as $key => $dataset) {
+        $measures = [];
+        foreach ($dataset->fields() as $field) {
+            foreach (Aggregate::allowedFor($field->type) as $aggregate) {
+                if ($field->selectable && count($measures) < 38) {
+                    $measures[] = ['field' => $field->key, 'aggregate' => $aggregate->value];
+                }
+            }
+        }
+
+        foreach (['a', 'b', 'solo'] as $who) {
+            $expected = $world['expected'][$who][$key];
+
+            foreach ($dataset->fields() as $field) {
+                if (! $field->selectable) {
+                    continue;
+                }
+
+                $result = F::run($world[$who], [
+                    'dataset' => $key,
+                    'mode' => 'summary',
+                    'columns' => [['field' => $field->key, 'key' => 'dim'], ['field' => $roots[$key], 'aggregate' => 'count', 'key' => 'records']],
+                    'totals' => ['grand' => true],
+                ]);
+
+                expect(array_sum(F::column($result, 'records')))->toBe($expected, "{$who} / {$key} / grouped by {$field->key}")
+                    ->and($result->totals['records'])->toBe($expected);
+            }
+
+            $everything = F::run($world[$who], ['dataset' => $key, 'mode' => 'summary', 'columns' => $measures]);
+            expect($everything->rows)->toHaveCount(1);
+
+            $pivot = F::run($world[$who], [
+                'dataset' => $key,
+                'mode' => 'pivot',
+                'columns' => [['field' => $roots[$key] === 'line.id' ? 'line.sku' : array_key_first($dataset->fields()), 'key' => 'across'], ['field' => $roots[$key], 'aggregate' => 'count', 'key' => 'records']],
+                'pivot' => ['rows' => [], 'column' => 'across', 'values' => ['records']],
+                'totals' => ['grand' => true],
+            ]);
+            expect($pivot->totals['records__total'])->toBe($expected, "{$who} / {$key} pivot");
+        }
+    }
 });
 
 test('a company user sees colleagues and their own company-less orders but nothing else', function () {

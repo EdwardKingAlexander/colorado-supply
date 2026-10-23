@@ -58,6 +58,7 @@ class OrderLinesDataset extends Dataset
         );
 
         return [
+            new Field('line.id', 'Line ID', 'Line item', FieldType::Id, 'li.id', filterable: false),
             $line('sku', 'SKU', FieldType::String, 'li.sku'),
             $line('name', 'Item name', FieldType::String, 'li.name'),
             $line('quantity', 'Quantity', FieldType::Number, 'li.quantity'),

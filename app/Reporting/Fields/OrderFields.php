@@ -28,6 +28,7 @@ final class OrderFields
         );
 
         return [
+            new Field('order.id', 'Order ID', 'Order', FieldType::Id, 'o.id', $via, filterable: false),
             $field('order_number', 'Order number', FieldType::String, 'o.order_number'),
             $field('po_number', 'PO number', FieldType::String, 'o.po_number'),
             $field('job_number', 'Job number', FieldType::String, 'o.job_number'),

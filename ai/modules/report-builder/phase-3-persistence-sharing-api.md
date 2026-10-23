@@ -2,7 +2,7 @@
 plan: report-builder
 phase: 3
 title: Saved reports, sharing, preview API, templates
-status: not_started
+status: in_progress
 last_updated: 2026-10-23
 depends_on: [phase-2]
 checkpoint: none

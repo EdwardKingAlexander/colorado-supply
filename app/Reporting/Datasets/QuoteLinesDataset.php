@@ -58,6 +58,7 @@ class QuoteLinesDataset extends Dataset
         );
 
         return [
+            new Field('line.id', 'Line ID', 'Line item', FieldType::Id, 'qi.id', filterable: false),
             $line('sku', 'SKU', FieldType::String, 'qi.sku'),
             $line('name', 'Item name', FieldType::String, 'qi.name'),
             $line('quantity', 'Quantity', FieldType::Number, 'qi.qty'),

@@ -36,6 +36,7 @@ final class QuoteFields
         );
 
         return [
+            new Field('quote.id', 'Quote ID', 'Quote', FieldType::Id, 'q.id', $via, filterable: false),
             $field('quote_number', 'Quote number', FieldType::String, 'q.quote_number'),
             $field('status', 'Quote status', FieldType::Enum, 'q.status', self::STATUSES),
             $field('created_at', 'Quote date', FieldType::DateTime, 'q.created_at'),

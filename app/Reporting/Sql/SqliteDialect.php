@@ -28,4 +28,9 @@ class SqliteDialect extends SqlDialect
     {
         return '(? + 0)';
     }
+
+    public function castText(string $expression): string
+    {
+        return "CAST({$expression} AS TEXT)";
+    }
 }

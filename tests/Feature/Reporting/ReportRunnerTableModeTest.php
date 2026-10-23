@@ -229,7 +229,7 @@ test('order lines expose location names and a location filter that includes subl
 test('order lines join product attributes and order fields', function () {
     ['user' => $user, 'location' => $hq] = F::tenant('Acme');
     $category = Category::factory()->create(['name' => 'Fasteners']);
-    $product = Product::factory()->create(['category_id' => $category->id, 'berry_compliant' => true, 'nsn' => '1234-00-111-2222']);
+    $product = Product::factory()->create(['category_id' => $category->id, 'berry_compliant' => true, 'nsn' => '5305001112222']);
     $order = F::order($user, 40, ['po_number' => 'PO-1']);
     F::line($order, $hq, 20, 2, $product);
     F::line($order, $hq, 5);
@@ -247,7 +247,7 @@ test('order lines join product attributes and order fields', function () {
 
     expect($result->rows)->toHaveCount(1)
         ->and($result->rows[0]['qty'])->toEqual(2)
-        ->and($result->rows[0]['nsn'])->toBe('1234-00-111-2222')
+        ->and($result->rows[0]['nsn'])->toBe('5305001112222')
         ->and($result->rows[0]['category'])->toBe('Fasteners')
         ->and($result->rows[0]['po'])->toBe('PO-1');
 });

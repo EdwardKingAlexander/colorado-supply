@@ -37,4 +37,9 @@ abstract class SqlDialect
      * and SQLite never coerces a string compared with a computed expression.
      */
     abstract public function numericPlaceholder(): string;
+
+    /**
+     * The expression as text, so values of any type compare as strings.
+     */
+    abstract public function castText(string $expression): string;
 }

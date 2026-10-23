@@ -26,4 +26,9 @@ class MySqlDialect extends SqlDialect
     {
         return '?';
     }
+
+    public function castText(string $expression): string
+    {
+        return "CAST({$expression} AS CHAR)";
+    }
 }

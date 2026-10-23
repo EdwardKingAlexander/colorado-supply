@@ -1,5 +1,6 @@
 <?php
 
+use App\Reporting\Aggregate;
 use App\Reporting\DatasetRegistry;
 use App\Reporting\DateBucket;
 use App\Reporting\Definition\ColumnSpec;
@@ -90,7 +91,7 @@ test('structural errors are reported by path', function (mixed $input, string $p
     'missing dataset' => [['columns' => []], 'dataset'],
     'unknown dataset' => [definitionWith(['dataset' => 'users']), 'dataset'],
     'future version' => [definitionWith(['version' => 2]), 'version'],
-    'unsupported mode' => [definitionWith(['mode' => 'summary']), 'mode'],
+    'unsupported mode' => [definitionWith(['mode' => 'chart']), 'mode'],
     'no columns' => [definitionWith(['columns' => []]), 'columns'],
     'columns as a map' => [definitionWith(['columns' => ['a' => ['field' => 'order.order_number']]]), 'columns'],
     'too many columns' => [definitionWith(['columns' => array_fill(0, Limits::MAX_COLUMNS + 1, ['field' => 'order.order_number'])]), 'columns'],
@@ -158,4 +159,97 @@ test('validated() throws with the errors', function () {
     } catch (InvalidReportDefinition $exception) {
         expect($exception->errors())->toBe(['columns.0.field' => 'Unknown field.']);
     }
+});
+
+function summaryWith(array $overrides = []): array
+{
+    return array_merge([
+        'dataset' => 'order_lines',
+        'mode' => 'summary',
+        'columns' => [
+            ['field' => 'location.parent_name', 'key' => 'location'],
+            ['field' => 'line.line_total', 'aggregate' => 'sum', 'key' => 'spend'],
+            ['field' => 'line.sku', 'aggregate' => 'count', 'key' => 'lines'],
+        ],
+    ], $overrides);
+}
+
+test('summary definitions with every section validate and round-trip', function () {
+    $raw = summaryWith([
+        'version' => 1,
+        'calculated' => [['key' => 'avg_line', 'label' => 'Average line', 'formula' => 'spend / lines', 'format' => 'currency']],
+        'post' => [['key' => 'share', 'column' => 'spend', 'op' => 'percent_of_total']],
+        'sort' => [['column' => 'avg_line', 'dir' => 'desc']],
+        'limit' => 100,
+        'totals' => ['grand' => true, 'subtotals' => false],
+        'formatting' => [['column' => 'share', 'when' => ['op' => 'gt', 'value' => 0.5], 'style' => 'positive']],
+    ]);
+
+    $definition = definitionValidator()->validated($raw);
+
+    expect($definition->isGrouped())->toBeTrue()
+        ->and($definition->dimensions())->toHaveCount(1)
+        ->and($definition->columns[1]->aggregate)->toBe(Aggregate::Sum)
+        ->and($definition->toArray())->toBe([
+            'version' => 1,
+            'dataset' => 'order_lines',
+            'mode' => 'summary',
+            'columns' => [
+                ['key' => 'location', 'field' => 'location.parent_name'],
+                ['key' => 'spend', 'field' => 'line.line_total', 'aggregate' => 'sum'],
+                ['key' => 'lines', 'field' => 'line.sku', 'aggregate' => 'count'],
+            ],
+            'calculated' => $raw['calculated'],
+            'post' => $raw['post'],
+            'filters' => null,
+            'sort' => $raw['sort'],
+            'limit' => 100,
+            'totals' => ['grand' => true, 'subtotals' => false],
+            'formatting' => $raw['formatting'],
+        ]);
+});
+
+test('summary, formula, post, totals and formatting errors are reported by path', function (array $definition, string $path) {
+    expect(definitionValidator()->validate($definition))->toHaveKey($path);
+})->with([
+    'unknown aggregate' => [summaryWith(['columns' => [['field' => 'line.line_total', 'aggregate' => 'median']]]), 'columns.0.aggregate'],
+    'sum of text' => [summaryWith(['columns' => [['field' => 'line.sku', 'aggregate' => 'sum']]]), 'columns.0.aggregate'],
+    'avg of a date' => [summaryWith(['columns' => [['field' => 'order.created_at', 'aggregate' => 'avg']]]), 'columns.0.aggregate'],
+    'bucket and aggregate' => [summaryWith(['columns' => [['field' => 'order.created_at', 'bucket' => 'month', 'aggregate' => 'max']]]), 'columns.0.bucket'],
+    'group limit' => [summaryWith(['limit' => Limits::MAX_GROUPS + 1]), 'limit'],
+    'calculated key clash' => [summaryWith(['calculated' => [['key' => 'spend', 'formula' => '1']]]), 'calculated.0.key'],
+    'calculated bad key' => [summaryWith(['calculated' => [['key' => 'Bad', 'formula' => '1']]]), 'calculated.0.key'],
+    'formula syntax' => [summaryWith(['calculated' => [['key' => 'x', 'formula' => 'spend +']]]), 'calculated.0.formula'],
+    'formula unknown column' => [summaryWith(['calculated' => [['key' => 'x', 'formula' => 'nope * 2']]]), 'calculated.0.formula'],
+    'formula unknown field' => [summaryWith(['calculated' => [['key' => 'x', 'formula' => 'SUM(order.cost)']]]), 'calculated.0.formula'],
+    'formula bare field in summary' => [summaryWith(['calculated' => [['key' => 'x', 'formula' => 'line.quantity * 2']]]), 'calculated.0.formula'],
+    'formula aggregate not allowed' => [summaryWith(['calculated' => [['key' => 'x', 'formula' => 'SUM(line.sku)']]]), 'calculated.0.formula'],
+    'formula refers to itself' => [summaryWith(['calculated' => [['key' => 'x', 'formula' => 'x + 1']]]), 'calculated.0.formula'],
+    'formula cycle' => [summaryWith(['calculated' => [['key' => 'x', 'formula' => 'y + 1'], ['key' => 'y', 'formula' => 'x + 1']]]), 'calculated.0.formula'],
+    'formula uses post column' => [summaryWith(['post' => [['column' => 'spend', 'op' => 'rank', 'key' => 'r']], 'calculated' => [['key' => 'x', 'formula' => 'r + 1']]]), 'calculated.0.formula'],
+    'post on text' => [summaryWith(['post' => [['column' => 'location', 'op' => 'rank']]]), 'post.0.column'],
+    'post unknown op' => [summaryWith(['post' => [['column' => 'spend', 'op' => 'median']]]), 'post.0.op'],
+    'post key clash' => [summaryWith(['post' => [['column' => 'spend', 'op' => 'rank', 'key' => 'lines']]]), 'post.0.key'],
+    'sort by post column' => [summaryWith(['post' => [['column' => 'spend', 'op' => 'rank', 'key' => 'r']], 'sort' => [['column' => 'r']]]), 'sort.0.column'],
+    'totals not booleans' => [summaryWith(['totals' => ['grand' => 'yes']]), 'totals'],
+    'totals unknown key' => [summaryWith(['totals' => ['grand' => true, 'average' => true]]), 'totals'],
+    'subtotals need two groups' => [summaryWith(['totals' => ['subtotals' => true]]), 'totals.subtotals'],
+    'format unknown column' => [summaryWith(['formatting' => [['column' => 'nope', 'when' => ['op' => 'gt', 'value' => 1], 'style' => 'bold']]]), 'formatting.0.column'],
+    'format unknown style' => [summaryWith(['formatting' => [['column' => 'spend', 'when' => ['op' => 'gt', 'value' => 1], 'style' => 'red']]]), 'formatting.0.style'],
+    'format number op on text' => [summaryWith(['formatting' => [['column' => 'location', 'when' => ['op' => 'gt', 'value' => 1], 'style' => 'bold']]]), 'formatting.0.when.op'],
+    'format bad value' => [summaryWith(['formatting' => [['column' => 'spend', 'when' => ['op' => 'gt', 'value' => 'big'], 'style' => 'bold']]]), 'formatting.0.when.value'],
+    'format top n zero' => [summaryWith(['formatting' => [['column' => 'spend', 'when' => ['op' => 'top_n', 'value' => 0], 'style' => 'bold']]]), 'formatting.0.when.value'],
+    'pivot without mode' => [summaryWith(['pivot' => ['rows' => [], 'column' => 'location', 'values' => ['spend']]]), 'pivot'],
+    'pivot without settings' => [summaryWith(['mode' => 'pivot']), 'pivot'],
+    'post in pivot' => [summaryWith(['mode' => 'pivot', 'post' => [['column' => 'spend', 'op' => 'rank']], 'pivot' => ['rows' => [], 'column' => 'location', 'values' => ['spend']]]), 'post'],
+]);
+
+test('a two-dimension summary may have subtotals', function () {
+    $definition = summaryWith(['columns' => [
+        ['field' => 'location.parent_name'],
+        ['field' => 'location.sublocation_name'],
+        ['field' => 'line.line_total', 'aggregate' => 'sum'],
+    ], 'totals' => ['subtotals' => true]]);
+
+    expect(definitionValidator()->validate($definition))->toBe([]);
 });

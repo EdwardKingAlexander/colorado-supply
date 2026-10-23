@@ -2,10 +2,10 @@
 plan: report-builder
 phase: 2
 title: Aggregation, calculated fields, post-processing, pivots
-status: in_progress
+status: completed
 last_updated: 2026-10-23
 depends_on: [phase-1]
-checkpoint: none
+checkpoint: parity
 ---
 
 # Phase 2 — Aggregation, Formulas, Pivots

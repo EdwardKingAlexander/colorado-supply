@@ -57,6 +57,7 @@ class PaymentsDataset extends Dataset
         );
 
         return [
+            new Field('payment.id', 'Payment ID', 'Payment', FieldType::Id, 'pay.id', filterable: false),
             $payment('method', 'Payment method', FieldType::Enum, 'pay.method', Field::enumOptions(PaymentMethod::class)),
             $payment('status', 'Payment status', FieldType::Enum, 'pay.status', Field::enumOptions(PaymentStatus::class)),
             $payment('amount', 'Amount', FieldType::Money, 'pay.amount'),

@@ -2,6 +2,7 @@
 
 namespace App\Reporting\Definition;
 
+use App\Reporting\Aggregate;
 use App\Reporting\DateBucket;
 
 final class ColumnSpec
@@ -16,12 +17,22 @@ final class ColumnSpec
         public readonly ?string $label = null,
         public readonly ?DateBucket $bucket = null,
         public readonly ?string $format = null,
+        public readonly ?Aggregate $aggregate = null,
     ) {}
 
     /**
+     * A grouping column in summary and pivot reports (anything not aggregated).
+     */
+    public function isDimension(): bool
+    {
+        return $this->aggregate === null;
+    }
+
+    /**
      * Keys for raw column arrays: the explicit `key` when given, otherwise one
-     * derived from field and bucket (order.created_at + month →
-     * order_created_at_month), de-duplicated with a numeric suffix.
+     * derived from field, bucket and aggregate (order.created_at + month →
+     * order_created_at_month, line.line_total + sum → line_line_total_sum),
+     * de-duplicated with a numeric suffix.
      *
      * @param  array<int, mixed>  $columns
      * @return list<string>
@@ -43,13 +54,16 @@ final class ColumnSpec
             }
 
             $field = is_string($column['field'] ?? null) ? $column['field'] : "column_{$index}";
-            $bucket = is_string($column['bucket'] ?? null) ? '_'.$column['bucket'] : '';
-            $base = substr(strtolower((string) preg_replace('/[^a-z0-9]+/i', '_', $field.$bucket)), 0, 60);
+            $suffix = implode('', array_map(
+                fn (string $part) => is_string($column[$part] ?? null) ? '_'.$column[$part] : '',
+                ['bucket', 'aggregate'],
+            ));
+            $base = substr(strtolower((string) preg_replace('/[^a-z0-9]+/i', '_', $field.$suffix)), 0, 60);
             $base = preg_match('/^[a-z]/', $base) ? $base : 'c_'.$base;
 
             $key = $base;
-            for ($suffix = 2; isset($seen[$key]); $suffix++) {
-                $key = "{$base}_{$suffix}";
+            for ($number = 2; isset($seen[$key]); $number++) {
+                $key = "{$base}_{$number}";
             }
 
             $keys[] = $key;
@@ -70,6 +84,7 @@ final class ColumnSpec
             label: $data['label'] ?? null,
             bucket: isset($data['bucket']) ? DateBucket::from($data['bucket']) : null,
             format: $data['format'] ?? null,
+            aggregate: isset($data['aggregate']) ? Aggregate::from($data['aggregate']) : null,
         );
     }
 
@@ -83,6 +98,7 @@ final class ColumnSpec
             'field' => $this->field,
             'label' => $this->label,
             'bucket' => $this->bucket?->value,
+            'aggregate' => $this->aggregate?->value,
             'format' => $this->format,
         ], fn ($value) => $value !== null);
     }

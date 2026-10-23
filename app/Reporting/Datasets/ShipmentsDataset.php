@@ -61,6 +61,7 @@ class ShipmentsDataset extends Dataset
         );
 
         return [
+            new Field('shipment.id', 'Shipment ID', 'Shipment', FieldType::Id, 'sh.id', filterable: false),
             $shipment('carrier', 'Carrier', FieldType::String, 'sh.carrier'),
             $shipment('service', 'Service', FieldType::String, 'sh.service'),
             $shipment('tracking_number', 'Tracking number', FieldType::String, 'sh.tracking_number'),

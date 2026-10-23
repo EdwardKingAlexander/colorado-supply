@@ -18,6 +18,9 @@ enum FieldType: string
      */
     case Location = 'location';
 
+    /** A record id: only counted, never filtered or summed. */
+    case Id = 'id';
+
     /**
      * @return list<Operator>
      */
@@ -44,6 +47,7 @@ enum FieldType: string
             ],
             self::Boolean => [Operator::IsTrue, Operator::IsFalse],
             self::Location => [Operator::In, Operator::NotIn, Operator::IsNull, Operator::NotNull],
+            self::Id => [],
         };
     }
 
