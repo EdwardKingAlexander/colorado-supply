@@ -2,7 +2,7 @@
 plan: report-builder
 phase: 2
 title: Aggregation, calculated fields, post-processing, pivots
-status: not_started
+status: in_progress
 last_updated: 2026-10-23
 depends_on: [phase-1]
 checkpoint: none

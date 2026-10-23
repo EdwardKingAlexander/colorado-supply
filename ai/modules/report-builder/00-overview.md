@@ -115,14 +115,14 @@ today.
   "dataset": "order_lines",
   "mode": "summary",
   "columns": [
-    {"field": "order.created_at", "bucket": "month", "label": "Month"},
-    {"field": "location.parent_name"},
-    {"field": "line.line_total", "aggregate": "sum", "label": "Spend", "format": "currency"}
+    {"key": "month", "field": "order.created_at", "bucket": "month", "label": "Month"},
+    {"key": "location", "field": "location.parent_name"},
+    {"key": "spend", "field": "line.line_total", "aggregate": "sum", "label": "Spend", "format": "currency"}
   ],
   "calculated": [
     {"key": "avg_unit", "label": "Avg unit price", "formula": "SUM(line.line_total) / SUM(line.quantity)", "format": "currency"}
   ],
-  "post": [{"column": "Spend", "op": "percent_of_total"}],
+  "post": [{"column": "spend", "op": "percent_of_total"}],
   "filters": {"logic": "and", "rules": [
     {"field": "order.created_at", "op": "relative", "value": "last_90_days"},
     {"logic": "or", "rules": [
@@ -131,13 +131,16 @@ today.
     ]}
   ]},
   "pivot": null,
-  "sort": [{"column": "Spend", "dir": "desc"}],
+  "sort": [{"column": "spend", "dir": "desc"}],
   "limit": 1000,
   "totals": {"grand": true, "subtotals": false},
-  "formatting": [{"column": "Spend", "when": {"op": "gt", "value": 10000}, "style": "positive"}],
-  "chart": {"type": "bar", "x": "Month", "series": ["Spend"], "stacked": false}
+  "formatting": [{"column": "spend", "when": {"op": "gt", "value": 10000}, "style": "positive"}],
+  "chart": {"type": "bar", "x": "month", "series": ["spend"], "stacked": false}
 }
 ```
+
+Columns are referenced by `key`, never by label. A key is either explicit or
+derived from field + bucket, e.g. `order_created_at_month` (phase 1).
 
 Modes:
 - **table** has no aggregates and returns raw rows.

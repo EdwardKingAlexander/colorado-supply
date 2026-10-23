@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Location;
 use App\Models\Order;
 use App\Models\User;
+use App\Reporting\TenantScope;
 use App\Support\Dashboard\DashboardDateRange;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -60,16 +61,7 @@ class UserDashboardDataService
         return Order::withoutGlobalScopes()
             ->whereNull('deleted_at')
             ->whereBetween('created_at', [$dateRange->start, $dateRange->end])
-            ->where(function (Builder $query) use ($user) {
-                if ($user->company_id) {
-                    $query->where('company_id', $user->company_id)
-                        ->orWhere('portal_user_id', $user->id);
-
-                    return;
-                }
-
-                $query->where('portal_user_id', $user->id);
-            })
+            ->tap(fn (Builder $query) => TenantScope::apply($query, $user))
             ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
             ->when($filters['payment_status'] ?? null, fn (Builder $query, string $status) => $query->where('payment_status', $status))
             ->when($filters['location_id'] ?? null, function (Builder $query, int|string $locationId) {
@@ -258,16 +250,7 @@ class UserDashboardDataService
     {
         return Order::withoutGlobalScopes()
             ->whereNull('deleted_at')
-            ->where(function (Builder $query) use ($user) {
-                if ($user->company_id) {
-                    $query->where('company_id', $user->company_id)
-                        ->orWhere('portal_user_id', $user->id);
-
-                    return;
-                }
-
-                $query->where('portal_user_id', $user->id);
-            })
+            ->tap(fn (Builder $query) => TenantScope::apply($query, $user))
             ->latest()
             ->limit(8)
             ->get()

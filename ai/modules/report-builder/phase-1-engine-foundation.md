@@ -2,10 +2,10 @@
 plan: report-builder
 phase: 1
 title: Engine foundation — datasets, tenant scope, query compiler, filters
-status: not_started
+status: completed
 last_updated: 2026-10-23
 depends_on: []
-checkpoint: none
+checkpoint: security-tests
 ---
 
 # Phase 1 — Engine Foundation
