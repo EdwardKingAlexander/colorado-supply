@@ -2,10 +2,10 @@
 plan: report-builder
 phase: 3
 title: Saved reports, sharing, preview API, templates
-status: in_progress
+status: completed
 last_updated: 2026-10-23
 depends_on: [phase-2]
-checkpoint: none
+checkpoint: admin
 ---
 
 # Phase 3 — Persistence, Sharing, API

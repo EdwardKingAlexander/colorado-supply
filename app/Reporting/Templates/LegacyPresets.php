@@ -47,9 +47,11 @@ final class LegacyPresets
     }
 
     /**
+     * The grouping's columns and sort, without filters.
+     *
      * @return array<string, mixed>
      */
-    private static function shape(string $groupBy): array
+    public static function shape(string $groupBy): array
     {
         $orders = ['field' => 'order.id', 'aggregate' => 'count_distinct', 'key' => 'orders', 'label' => 'Orders'];
         $quantity = ['field' => 'line.quantity', 'aggregate' => 'sum', 'key' => 'quantity', 'label' => 'Quantity'];
