@@ -10,7 +10,7 @@ use InvalidArgumentException;
 /**
  * Sends a staff alert to every admin. Each admin's muted types/channels are
  * applied per recipient by AppNotification::via(); portal users never
- * receive admin alerts (ai/modules/will-call-notifications, phase 2).
+ * receive admin alerts (ai/modules/will-call-notifications-complete, phase 2).
  */
 class AdminNotifier
 {

@@ -10,7 +10,7 @@ use App\Support\OrderNotifier;
 
 /**
  * Tells the buyer when their will call order is ready and when it was
- * collected (ai/modules/will-call-notifications, phase 4).
+ * collected (ai/modules/will-call-notifications-complete, phase 4).
  */
 class SendPickupNotifications
 {

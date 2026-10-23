@@ -25,7 +25,7 @@ return [
 
     'broadcasting' => [
 
-        // Live admin bell over Laravel Reverb (ai/modules/will-call-notifications,
+        // Live admin bell over Laravel Reverb (ai/modules/will-call-notifications-complete,
         // phase 3). Off when broadcasting isn't Reverb (tests, rollback), in
         // which case the bell falls back to polling.
         'echo' => env('BROADCAST_CONNECTION') === 'reverb' ? [

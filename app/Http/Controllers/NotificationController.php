@@ -9,7 +9,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * The buyer's bell and notifications page (ai/modules/will-call-notifications,
+ * The buyer's bell and notifications page (ai/modules/will-call-notifications-complete,
  * phase 3). Everything is scoped to the signed-in user's own notifications.
  */
 class NotificationController extends Controller

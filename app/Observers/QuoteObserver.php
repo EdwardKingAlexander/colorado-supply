@@ -39,7 +39,7 @@ class QuoteObserver
         ]);
 
         // Staff marked the quote as sent: tell the buyer's account
-        // (ai/modules/will-call-notifications, phase 4).
+        // (ai/modules/will-call-notifications-complete, phase 4).
         if ($quote->wasChanged('status') && $quote->status === 'sent' && $quote->portalUser) {
             $quote->portalUser->notify(new QuoteReadyNotification($quote));
         }

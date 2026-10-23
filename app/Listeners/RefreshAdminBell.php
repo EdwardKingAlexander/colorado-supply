@@ -11,7 +11,7 @@ use Illuminate\Notifications\Events\NotificationSent;
 /**
  * After a staff alert is stored, tell that admin's open panel tabs to
  * reload the bell so it appears immediately rather than on the next poll
- * (ai/modules/will-call-notifications, phase 3).
+ * (ai/modules/will-call-notifications-complete, phase 3).
  */
 class RefreshAdminBell
 {

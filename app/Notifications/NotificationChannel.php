@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 /**
- * The delivery channels people choose between (ai/modules/will-call-notifications).
+ * The delivery channels people choose between (ai/modules/will-call-notifications-complete).
  * Case order is the canonical delivery order.
  */
 enum NotificationChannel: string

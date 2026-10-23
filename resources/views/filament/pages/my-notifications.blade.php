@@ -11,7 +11,7 @@
     </form>
 
     @if ($this->smsReady())
-        {{-- Text alerts (ai/modules/will-call-notifications, phase 6). --}}
+        {{-- Text alerts (ai/modules/will-call-notifications-complete, phase 6). --}}
         @php($sms = $this->getSmsStatus())
         <x-filament::section heading="Text alerts" icon="heroicon-o-chat-bubble-left-ellipsis">
             <div class="space-y-3 text-sm">
@@ -60,7 +60,7 @@
     @endif
 
     @if ($publicKey = $this->pushPublicKey())
-        {{-- Push on this device (ai/modules/will-call-notifications, phase 5). Permission is only asked on click. --}}
+        {{-- Push on this device (ai/modules/will-call-notifications-complete, phase 5). Permission is only asked on click. --}}
         <x-filament::section heading="Push on this device" icon="heroicon-o-device-phone-mobile">
             <div
                 x-data="{

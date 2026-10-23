@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * An admin's choice for one notification type on one channel. No row means
- * the channel is on (ai/modules/will-call-notifications, phase 2).
+ * the channel is on (ai/modules/will-call-notifications-complete, phase 2).
  */
 class AdminNotificationPreference extends Model
 {

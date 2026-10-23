@@ -1,5 +1,5 @@
 // Laravel Echo over Reverb for live notifications
-// (ai/modules/will-call-notifications, phase 3). Created lazily in the
+// (ai/modules/will-call-notifications-complete, phase 3). Created lazily in the
 // browser only (never during SSR), and only when Reverb is configured.
 let echo = null
 let attempted = false

@@ -4,7 +4,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline'
 import NotificationIcon from '@/Components/Notifications/NotificationIcon.vue'
 import { useNotifications } from '@/Stores/useNotifications'
 
-// Live notification pop-ups (ai/modules/will-call-notifications, phase 3).
+// Live notification pop-ups (ai/modules/will-call-notifications-complete, phase 3).
 // Announced politely to screen readers; each one dismisses itself after
 // 6 seconds unless the pointer or keyboard focus is on it.
 const { state, dismissToast, markRead } = useNotifications()

@@ -12,7 +12,7 @@ use NotificationChannels\WebPush\WebPushChannel;
 /**
  * Decides the Laravel channels for one notification to one recipient:
  * the type's defaults, minus channels the recipient can't receive, minus
- * channels an admin muted (ai/modules/will-call-notifications, phase 2).
+ * channels an admin muted (ai/modules/will-call-notifications-complete, phase 2).
  */
 class NotificationChannels
 {

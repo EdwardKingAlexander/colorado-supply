@@ -1,7 +1,7 @@
 <?php
 
 /*
-| Text message alerts (ai/modules/will-call-notifications, phase 6).
+| Text message alerts (ai/modules/will-call-notifications-complete, phase 6).
 | Off until the Twilio A2P 10DLC registration is approved: nothing is ever
 | texted while SMS_ENABLED is false. Twilio credentials live in
 | config/twilio-notification-channel.php.

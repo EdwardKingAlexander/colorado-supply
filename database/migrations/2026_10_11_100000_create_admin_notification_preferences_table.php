@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Per-admin notification choices (ai/modules/will-call-notifications, phase 2).
+ * Per-admin notification choices (ai/modules/will-call-notifications-complete, phase 2).
  * A missing row means "on": admins are subscribed to everything by default.
  */
 return new class extends Migration

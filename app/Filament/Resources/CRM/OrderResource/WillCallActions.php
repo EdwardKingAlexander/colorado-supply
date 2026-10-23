@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * One-click will-call pickup actions for the order list and order view
- * (ai/modules/will-call-notifications, phase 1). Visibility mirrors
+ * (ai/modules/will-call-notifications-complete, phase 1). Visibility mirrors
  * WillCallPickupService, which enforces the transitions server-side.
  */
 class WillCallActions

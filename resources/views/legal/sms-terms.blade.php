@@ -9,7 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css'])
 </head>
-{{-- Text message program terms (ai/modules/will-call-notifications, phase 6). Reviewed by carriers for A2P 10DLC. --}}
+{{-- Text message program terms (ai/modules/will-call-notifications-complete, phase 6). Reviewed by carriers for A2P 10DLC. --}}
 <body class="bg-white text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100">
     <main class="mx-auto max-w-2xl space-y-6 px-4 py-10 text-base leading-7">
         <a href="{{ url('/') }}" class="text-sm font-semibold text-blue-700 underline dark:text-blue-300">Colorado Supply &amp; Procurement</a>

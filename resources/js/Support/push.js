@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// Browser push helpers (ai/modules/will-call-notifications, phase 5).
+// Browser push helpers (ai/modules/will-call-notifications-complete, phase 5).
 // Permission is only ever requested from a click, never on page load.
 
 const SW_URL = '/sw.js'

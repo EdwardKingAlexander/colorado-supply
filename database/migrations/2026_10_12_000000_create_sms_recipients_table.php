@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Text message recipients (ai/modules/will-call-notifications, phase 6):
+ * Text message recipients (ai/modules/will-call-notifications-complete, phase 6):
  * one verified, consented phone number per user or admin, with the consent
  * record and any STOP opt-out.
  */

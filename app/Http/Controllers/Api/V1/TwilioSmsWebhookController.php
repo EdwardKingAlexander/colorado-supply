@@ -9,7 +9,7 @@ use Illuminate\Http\Response;
 use Twilio\Security\RequestValidator;
 
 /**
- * Replies to our Twilio number (ai/modules/will-call-notifications, phase 6).
+ * Replies to our Twilio number (ai/modules/will-call-notifications-complete, phase 6).
  * STOP-type words opt the number out of every text right away; HELP gets
  * help; START-type words opt back in. Requests must carry a valid Twilio
  * signature.

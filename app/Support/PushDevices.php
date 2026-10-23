@@ -10,7 +10,7 @@ use NotificationChannels\WebPush\PushSubscription;
 /**
  * Saving, listing and removing a person's push devices, shared by the buyer
  * endpoints and the admin My notifications page
- * (ai/modules/will-call-notifications, phase 5).
+ * (ai/modules/will-call-notifications-complete, phase 5).
  */
 class PushDevices
 {

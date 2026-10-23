@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Will call (ai/modules/will-call-notifications, phase 1): pickup details on
+ * Will call (ai/modules/will-call-notifications-complete, phase 1): pickup details on
  * locations and the pickup method/workflow on orders.
  */
 return new class extends Migration

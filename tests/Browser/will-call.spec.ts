@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { expect, test, type Browser, type Page } from '@playwright/test'
 
-// Will call and live notifications QA (ai/modules/will-call-notifications,
+// Will call and live notifications QA (ai/modules/will-call-notifications-complete,
 // phase 7). The fixture creates a throwaway buyer, an MFA-enrolled admin, a
 // pickup counter and a product in the database the Playwright server uses,
 // and removes them, their orders and the alerts about those orders afterwards.

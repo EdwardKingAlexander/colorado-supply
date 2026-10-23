@@ -15,7 +15,7 @@ use Minishlink\WebPush\WebPush;
 use NotificationChannels\WebPush\ReportHandler;
 use NotificationChannels\WebPush\WebPushChannel;
 
-// Phase 7 hardening (ai/modules/will-call-notifications).
+// Phase 7 hardening (ai/modules/will-call-notifications-complete).
 
 function seedNotifications(User $user, int $count): void
 {

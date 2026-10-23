@@ -18,7 +18,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Each admin's own staff-alert choices (ai/modules/will-call-notifications,
+ * Each admin's own staff-alert choices (ai/modules/will-call-notifications-complete,
  * phase 2). Everything is on until an admin turns it off. Reached from the
  * user menu, not the sidebar.
  */

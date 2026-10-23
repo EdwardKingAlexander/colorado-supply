@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * Signing a user or admin up for text alerts: consent, phone verification
- * by code, and stopping (ai/modules/will-call-notifications, phase 6). Shared
+ * by code, and stopping (ai/modules/will-call-notifications-complete, phase 6). Shared
  * by the buyer endpoints and the admin My notifications page.
  */
 class SmsSubscriptions

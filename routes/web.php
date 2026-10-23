@@ -35,7 +35,7 @@ Route::get('/', function () {
     ]);
 });
 
-// Text message program terms (ai/modules/will-call-notifications, phase 6). Public.
+// Text message program terms (ai/modules/will-call-notifications-complete, phase 6). Public.
 Route::view('/sms-terms', 'legal.sms-terms')->name('sms-terms');
 
 Route::post('/privacy/consent', [ConsentController::class, 'store'])

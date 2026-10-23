@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * A user's or admin's phone for text alerts (ai/modules/will-call-notifications,
+ * A user's or admin's phone for text alerts (ai/modules/will-call-notifications-complete,
  * phase 6). Texts go out only when the number is verified, consented to and
  * not opted out (STOP).
  */

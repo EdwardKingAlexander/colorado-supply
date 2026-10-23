@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/outline'
 
-// Text alerts for ready-for-pickup and reminders (ai/modules/will-call-notifications,
+// Text alerts for ready-for-pickup and reminders (ai/modules/will-call-notifications-complete,
 // phase 6). Shown only once SMS is live on the server. Consent is an
 // unchecked box with the exact wording that gets recorded.
 const page = usePage()

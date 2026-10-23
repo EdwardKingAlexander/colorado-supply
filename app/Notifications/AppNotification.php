@@ -18,7 +18,7 @@ use NotificationChannels\Twilio\TwilioSmsMessage;
 use NotificationChannels\WebPush\WebPushMessage;
 
 /**
- * Base for every store notification (ai/modules/will-call-notifications).
+ * Base for every store notification (ai/modules/will-call-notifications-complete).
  *
  * The type decides who may receive it and on which channels
  * (NotificationChannels); subclasses supply the words and the link. Every

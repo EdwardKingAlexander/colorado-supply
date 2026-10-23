@@ -1,7 +1,7 @@
 <?php
 
 /*
-| Will call pickup reminders (ai/modules/will-call-notifications, phase 4).
+| Will call pickup reminders (ai/modules/will-call-notifications-complete, phase 4).
 | Days are counted from when the order was marked ready for pickup.
 */
 

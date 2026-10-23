@@ -3,7 +3,7 @@ import { computed, reactive } from 'vue'
 import { getEcho } from '@/Support/echo'
 
 // One shared notification state for the bell, toasts and the notifications
-// page (ai/modules/will-call-notifications, phase 3). Live over Reverb when
+// page (ai/modules/will-call-notifications-complete, phase 3). Live over Reverb when
 // available; otherwise the unread count is refreshed every minute.
 const POLL_MS = 60_000
 const MAX_TOASTS = 3

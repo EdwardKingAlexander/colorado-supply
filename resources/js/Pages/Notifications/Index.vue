@@ -7,7 +7,7 @@ import PushOptIn from '@/Components/Notifications/PushOptIn.vue'
 import SmsOptIn from '@/Components/Notifications/SmsOptIn.vue'
 import { useNotifications } from '@/Stores/useNotifications'
 
-// Full notifications list (ai/modules/will-call-notifications, phase 3).
+// Full notifications list (ai/modules/will-call-notifications-complete, phase 3).
 const props = defineProps({
   notifications: { type: Array, default: () => [] },
   unread_count: { type: Number, default: 0 },

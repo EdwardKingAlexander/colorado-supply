@@ -13,7 +13,7 @@ use App\Support\OrderNotifier;
 /**
  * A store order was placed: confirm it in the buyer's bell, alert admins
  * (will call orders as their own type), and flag any backordered lines
- * (ai/modules/will-call-notifications, phase 4).
+ * (ai/modules/will-call-notifications-complete, phase 4).
  */
 class SendOrderPlacedNotifications
 {

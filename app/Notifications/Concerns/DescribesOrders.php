@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\URL;
 
 /**
  * Shared wording and links for order notifications
- * (ai/modules/will-call-notifications, phase 4).
+ * (ai/modules/will-call-notifications-complete, phase 4).
  */
 trait DescribesOrders
 {

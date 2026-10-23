@@ -5,7 +5,7 @@ import { usePage } from '@inertiajs/vue3'
 import { DevicePhoneMobileIcon } from '@heroicons/vue/24/outline'
 import { disablePush, enablePush, isIos, pushStatus } from '@/Support/push'
 
-// "Turn on notifications on this device" (ai/modules/will-call-notifications,
+// "Turn on notifications on this device" (ai/modules/will-call-notifications-complete,
 // phase 5). `compact` is the one-line prompt shown after a will call order.
 const props = defineProps({
   compact: { type: Boolean, default: false },

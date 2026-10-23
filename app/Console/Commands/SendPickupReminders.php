@@ -15,7 +15,7 @@ use Illuminate\Console\Command;
 
 /**
  * Reminds buyers about will call orders still waiting at the counter and
- * alerts admins about long-uncollected ones (ai/modules/will-call-notifications,
+ * alerts admins about long-uncollected ones (ai/modules/will-call-notifications-complete,
  * phase 4). Each reminder is sent once per "ready" (recorded in orders.meta),
  * so running it more than once a day is harmless.
  */

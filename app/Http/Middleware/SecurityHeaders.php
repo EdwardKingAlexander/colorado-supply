@@ -51,7 +51,7 @@ class SecurityHeaders
         $connectSrc = "'self' https://www.google-analytics.com https://www.google.com https://www.gstatic.com";
 
         // Live notifications connect to Reverb's websocket, which may run on
-        // its own host/port (ai/modules/will-call-notifications).
+        // its own host/port (ai/modules/will-call-notifications-complete).
         if ($reverbOrigin = $this->reverbOrigin()) {
             $connectSrc .= ' '.$reverbOrigin;
         }

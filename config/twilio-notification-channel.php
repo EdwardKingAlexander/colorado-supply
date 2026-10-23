@@ -34,6 +34,6 @@ return [
         21211, // Invalid 'To' Phone Number
         21614, // 'To' number is not a valid mobile number
         21408, // Permission to send an SMS has not been enabled for the region indicated by the 'To' number
-        21610, // Recipient replied STOP; our webhook records the opt-out (ai/modules/will-call-notifications)
+        21610, // Recipient replied STOP; our webhook records the opt-out (ai/modules/will-call-notifications-complete)
     ],
 ];

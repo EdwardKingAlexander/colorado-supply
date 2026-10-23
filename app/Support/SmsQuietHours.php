@@ -5,7 +5,7 @@ namespace App\Support;
 use Illuminate\Support\Carbon;
 
 /**
- * No texts overnight (ai/modules/will-call-notifications, phase 6). A text
+ * No texts overnight (ai/modules/will-call-notifications-complete, phase 6). A text
  * due in the quiet window (default 9pm–8am Denver time) waits until it ends.
  */
 class SmsQuietHours

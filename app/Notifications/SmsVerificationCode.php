@@ -8,7 +8,7 @@ use NotificationChannels\Twilio\TwilioSmsMessage;
 
 /**
  * The one-time code that proves a phone number belongs to the person turning
- * on text alerts (ai/modules/will-call-notifications, phase 6). Sent right
+ * on text alerts (ai/modules/will-call-notifications-complete, phase 6). Sent right
  * away (not queued) and only after they consented.
  */
 class SmsVerificationCode extends Notification

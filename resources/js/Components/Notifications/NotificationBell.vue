@@ -5,7 +5,7 @@ import { BellIcon } from '@heroicons/vue/24/outline'
 import NotificationIcon from '@/Components/Notifications/NotificationIcon.vue'
 import { useNotifications } from '@/Stores/useNotifications'
 
-// Store header bell (ai/modules/will-call-notifications, phase 3).
+// Store header bell (ai/modules/will-call-notifications-complete, phase 3).
 const { state, load, markRead, markAllRead } = useNotifications()
 
 const root = ref(null)

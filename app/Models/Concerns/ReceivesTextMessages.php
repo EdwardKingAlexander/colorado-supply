@@ -6,7 +6,7 @@ use App\Models\SmsRecipient;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
- * Text message routing for users and admins (ai/modules/will-call-notifications,
+ * Text message routing for users and admins (ai/modules/will-call-notifications-complete,
  * phase 6). The Twilio channel gets a number only when it may be texted.
  */
 trait ReceivesTextMessages

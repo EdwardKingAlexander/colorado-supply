@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
                 ],
             ],
             // Bell badge on first paint, and whether live updates are on
-            // (ai/modules/will-call-notifications). Portal users only.
+            // (ai/modules/will-call-notifications-complete). Portal users only.
             'notificationBell' => fn (): ?array => $request->user() instanceof User ? [
                 'unread' => $request->user()->unreadNotifications()->count(),
                 'live' => NotificationChannels::broadcasting(),

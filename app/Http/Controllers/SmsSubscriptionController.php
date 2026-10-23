@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 /**
  * A buyer turning text alerts on (consent + code) and off
- * (ai/modules/will-call-notifications, phase 6). Unavailable until SMS is
+ * (ai/modules/will-call-notifications-complete, phase 6). Unavailable until SMS is
  * enabled on the server.
  */
 class SmsSubscriptionController extends Controller

@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 
 /**
  * A buyer placed an order at store checkout, shipped or will call
- * (ai/modules/will-call-notifications).
+ * (ai/modules/will-call-notifications-complete).
  */
 class StoreOrderPlaced
 {

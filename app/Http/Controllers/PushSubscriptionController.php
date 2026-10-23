@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 /**
  * A buyer's devices with push notifications turned on
- * (ai/modules/will-call-notifications, phase 5). Admins manage theirs on the
+ * (ai/modules/will-call-notifications-complete, phase 5). Admins manage theirs on the
  * My notifications page instead.
  */
 class PushSubscriptionController extends Controller

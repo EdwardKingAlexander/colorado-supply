@@ -5,7 +5,7 @@ namespace App\Notifications;
 /**
  * Every notification the store sends, declared once: who it is for, how it
  * is delivered by default, and how it is labelled
- * (ai/modules/will-call-notifications, phase 2).
+ * (ai/modules/will-call-notifications-complete, phase 2).
  *
  * Buyer types go to the buyer of an order or quote. Admin types go only to
  * admins (App\Models\Admin), each filtered by their own preferences.

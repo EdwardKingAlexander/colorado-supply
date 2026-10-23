@@ -101,8 +101,8 @@ Schedule::call(function () {
     }
 })->dailyAt('06:00')->name('fetch-sam-opportunities');
 
-// Bell retention (ai/modules/will-call-notifications, phase 2).
+// Bell retention (ai/modules/will-call-notifications-complete, phase 2).
 Schedule::command('notifications:prune')->dailyAt('03:30')->timezone('America/Denver')->name('notifications-prune');
 
-// Will call pickup reminders (ai/modules/will-call-notifications, phase 4).
+// Will call pickup reminders (ai/modules/will-call-notifications-complete, phase 4).
 Schedule::command('will-call:remind')->dailyAt('09:00')->timezone('America/Denver')->name('will-call-remind');

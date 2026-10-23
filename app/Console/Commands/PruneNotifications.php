@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Keeps the bell's notifications table bounded
- * (ai/modules/will-call-notifications, phase 2): read notifications go after
+ * (ai/modules/will-call-notifications-complete, phase 2): read notifications go after
  * 90 days, unread ones after 180.
  */
 class PruneNotifications extends Command
