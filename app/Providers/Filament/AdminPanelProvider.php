@@ -38,6 +38,9 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('admin')
             ->sidebarCollapsibleOnDesktop()
             ->login()
+            // Full-layout profile page: where admins regenerate recovery
+            // codes and change MFA devices without needing admin:reset-mfa.
+            ->profile(isSimple: false)
             ->colors([
                 'primary' => '#0277bd', // terminal cyan-blue
                 'secondary' => '#4b5563', // gray-600

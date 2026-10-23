@@ -72,7 +72,8 @@ class Admin extends Authenticatable implements FilamentUser, HasAppAuthenticatio
 
     public function hasEmailAuthentication(): bool
     {
-        return $this->has_email_authentication;
+        // Unset on a just-created model (the column's DB default isn't hydrated).
+        return (bool) $this->has_email_authentication;
     }
 
     public function toggleEmailAuthentication(bool $condition): void
