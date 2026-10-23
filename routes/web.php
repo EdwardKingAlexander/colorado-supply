@@ -12,11 +12,11 @@ use App\Http\Controllers\DashboardReportController;
 use App\Http\Controllers\DashboardReportExportController;
 use App\Http\Controllers\MilSpecPartsController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PushSubscriptionController;
-use App\Http\Controllers\SmsSubscriptionController;
 use App\Http\Controllers\OrderTrackingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\RepairServiceController;
+use App\Http\Controllers\SmsSubscriptionController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StorePaypalReturnController;
 use App\Models\Order;
@@ -117,8 +117,8 @@ Route::middleware('auth')->group(function () {
     // Order-notification bell. Deliberately not verification-gated so an
     // unverified buyer can still receive and follow order updates.
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/read', [NotificationController::class, 'markAllRead'])->name('notifications.read');
     Route::middleware('throttle:60,1')->group(function () {
+        Route::post('/notifications/read', [NotificationController::class, 'markAllRead'])->name('notifications.read');
         Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
         Route::post('/notifications/{notification}/unread', [NotificationController::class, 'markUnread'])->name('notifications.mark-unread');
         Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');

@@ -195,7 +195,8 @@ test.describe('interactions at 390px', () => {
     await expect(modal.getByLabel(/^Quantity/)).toHaveValue('5')
     await modal.getByLabel(/^Notes/).fill('E2E check')
     await modal.getByRole('button', { name: 'Send request' }).click()
-    await expect(page.getByRole('status')).toContainText(/Q-\d{8}-[A-Z0-9]{4}/)
+    // Scoped: the notification toasts region is also a status.
+    await expect(page.getByRole('status').filter({ hasText: /Q-\d{8}-/ })).toContainText(/Q-\d{8}-[A-Z0-9]{4}/)
 
     expect(await axeScan(page)).toEqual([])
 

@@ -30,6 +30,22 @@ abstract class AppNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * Each channel is its own queued job, so an outage on one (Reverb down,
+     * a Twilio error) never blocks the others. A failing channel is retried
+     * a few times with backoff, then lands in failed_jobs and the log; the
+     * person who triggered it never sees an error.
+     */
+    public int $tries = 3;
+
+    /**
+     * @return list<int>
+     */
+    public function backoff(): array
+    {
+        return [60, 300];
+    }
+
     abstract public function type(): NotificationType;
 
     /** Short headline, e.g. "Your order is ready for pickup". */
