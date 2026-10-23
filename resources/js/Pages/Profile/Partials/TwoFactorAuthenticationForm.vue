@@ -62,10 +62,10 @@ const copyRecoveryCodes = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
-                Two-Factor Authentication
+            <h2 class="text-lg font-semibold text-st-ink">
+                Two-factor authentication
             </h2>
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm text-st-muted">
                 Add a second step to sign-in using an authenticator app or a
                 code emailed to you. This is required for accessing government
                 and CUI-related data.
@@ -75,18 +75,18 @@ const copyRecoveryCodes = () => {
         <!-- Freshly generated recovery codes (shown once) -->
         <div
             v-if="recoveryCodes"
-            class="rounded-md border border-amber-300 bg-amber-50 p-4"
+            class="rounded-md border border-st-signal/60 bg-st-signal/10 p-4"
         >
-            <p class="text-sm font-medium text-amber-800">
+            <p class="text-sm font-medium text-st-ink">
                 Save your recovery codes
             </p>
-            <p class="mt-1 text-sm text-amber-700">
+            <p class="mt-1 text-sm text-st-ink/85">
                 Store these somewhere safe. Each code can be used once to sign
                 in if you lose access to your authenticator or email. They will
                 not be shown again.
             </p>
             <ul
-                class="mt-3 grid grid-cols-2 gap-1 font-mono text-sm text-amber-900"
+                class="mt-3 grid grid-cols-2 gap-1 font-mono text-sm text-st-ink"
             >
                 <li v-for="code in recoveryCodes" :key="code">{{ code }}</li>
             </ul>
@@ -97,7 +97,7 @@ const copyRecoveryCodes = () => {
 
         <!-- Status: enabled -->
         <div v-if="enabled && !enrolling" class="space-y-4">
-            <p class="text-sm text-green-700">
+            <p class="text-sm text-st-ok">
                 Two-factor authentication is <strong>enabled</strong> using
                 {{ method === 'totp' ? 'an authenticator app' : 'email codes' }}.
             </p>
@@ -145,18 +145,18 @@ const copyRecoveryCodes = () => {
         <!-- Enrollment in progress -->
         <div v-else-if="enrolling" class="space-y-4">
             <div v-if="setup.method === 'totp'" class="space-y-3">
-                <p class="text-sm text-gray-600">
+                <p class="text-sm text-st-muted">
                     Scan this QR code with your authenticator app (Google
                     Authenticator, Authy, 1Password, …), then enter the 6-digit
                     code it shows.
                 </p>
                 <div class="inline-block rounded-md bg-white p-2 ring-1 ring-gray-200" v-html="setup.qr" />
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-st-muted">
                     Can’t scan? Enter this key manually:
                     <span class="font-mono">{{ setup.secret }}</span>
                 </p>
             </div>
-            <p v-else class="text-sm text-gray-600">
+            <p v-else class="text-sm text-st-muted">
                 We emailed a 6-digit code to your address. Enter it below to turn
                 on email-based two-factor authentication.
             </p>

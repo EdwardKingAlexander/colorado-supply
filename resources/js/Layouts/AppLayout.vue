@@ -1,10 +1,14 @@
 <script setup>
 import CookieConsentBanner from '@/Components/Privacy/CookieConsentBanner.vue'
 import Navigation from '@/Components/Navigation.vue'
+import { onMounted } from 'vue'
+import { forceSiteDark } from '@/Support/theme'
 
 defineProps({
   appName: String,
 })
+
+onMounted(forceSiteDark)
 </script>
 
 <template>

@@ -134,7 +134,7 @@ for (const viewport of viewports) {
 
     test('notifications page and bell are usable and accessible', async ({ page }) => {
       await loginBuyer(page)
-      await page.goto('/notifications')
+      await page.goto('/account/notifications')
       await expect(page.getByRole('heading', { level: 1 })).toContainText('Notifications')
 
       await expectNoSidewaysScroll(page)

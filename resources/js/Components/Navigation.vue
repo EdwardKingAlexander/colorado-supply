@@ -45,7 +45,7 @@ const dashboardHref = computed(() => {
     return route('dashboard')
   }
 
-  return '/dashboard'
+  return '/account'
 })
 </script>
 

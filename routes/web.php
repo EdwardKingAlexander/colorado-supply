@@ -23,6 +23,7 @@ use App\Models\Order;
 use App\Models\ScrapedProduct;
 use App\Support\StoreAvailability;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -42,13 +43,33 @@ Route::post('/privacy/consent', [ConsentController::class, 'store'])
     ->middleware('throttle:30,1')
     ->name('privacy.consent.store');
 
-Route::get('/company', [CompanyController::class, 'index'])->middleware(['auth', 'verified.enabled'])->name('company.index');
+// Customer account pages live under /account (ai/modules/customer-portal-ui-rebrand-complete,
+// phase 7). The old addresses are already in sent emails, push alerts and stored
+// notifications, so they redirect permanently, keeping any query string.
+foreach ([
+    'dashboard' => 'account',
+    'dashboard/reports' => 'account/reports',
+    'dashboard/reports/export' => 'account/reports/export',
+    'dashboard/locations' => 'account/locations',
+    'dashboard/organization-history' => 'account/organization-history',
+    'profile' => 'account/profile',
+    'notifications' => 'account/notifications',
+    'company' => 'account/company',
+] as $legacyPath => $accountPath) {
+    Route::get($legacyPath, function (Request $request) use ($accountPath) {
+        $query = $request->getQueryString();
 
-Route::get('/dashboard', DashboardController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard');
-Route::get('/dashboard/reports', DashboardReportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports');
-Route::get('/dashboard/reports/export', DashboardReportExportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports.export');
+        return redirect('/'.$accountPath.($query ? '?'.$query : ''), 301);
+    });
+}
 
-Route::middleware(['auth', 'verified.enabled'])->prefix('dashboard')->name('dashboard.')->group(function () {
+Route::get('/account/company', [CompanyController::class, 'index'])->middleware(['auth', 'verified.enabled'])->name('company.index');
+
+Route::get('/account', DashboardController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard');
+Route::get('/account/reports', DashboardReportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports');
+Route::get('/account/reports/export', DashboardReportExportController::class)->middleware(['auth.web_or_admin', 'verified.enabled'])->name('dashboard.reports.export');
+
+Route::middleware(['auth', 'verified.enabled'])->prefix('account')->name('dashboard.')->group(function () {
     Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
     Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
     Route::patch('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
@@ -104,24 +125,24 @@ Route::get('/admin/sam-opportunities/export', SamOpportunitiesExportController::
 
 // Profile Management
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/account/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/account/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/account/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Two-factor authentication (customer/web guard) — enrollment management.
-    Route::post('/profile/two-factor/enable', [MfaSettingsController::class, 'enable'])->name('mfa.enable');
-    Route::post('/profile/two-factor/confirm', [MfaSettingsController::class, 'confirm'])->name('mfa.confirm');
-    Route::post('/profile/two-factor/recovery-codes', [MfaSettingsController::class, 'regenerateRecoveryCodes'])->name('mfa.recovery-codes');
-    Route::delete('/profile/two-factor', [MfaSettingsController::class, 'disable'])->name('mfa.disable');
+    Route::post('/account/profile/two-factor/enable', [MfaSettingsController::class, 'enable'])->name('mfa.enable');
+    Route::post('/account/profile/two-factor/confirm', [MfaSettingsController::class, 'confirm'])->name('mfa.confirm');
+    Route::post('/account/profile/two-factor/recovery-codes', [MfaSettingsController::class, 'regenerateRecoveryCodes'])->name('mfa.recovery-codes');
+    Route::delete('/account/profile/two-factor', [MfaSettingsController::class, 'disable'])->name('mfa.disable');
 
     // Order-notification bell. Deliberately not verification-gated so an
     // unverified buyer can still receive and follow order updates.
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/account/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::middleware('throttle:60,1')->group(function () {
-        Route::post('/notifications/read', [NotificationController::class, 'markAllRead'])->name('notifications.read');
-        Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
-        Route::post('/notifications/{notification}/unread', [NotificationController::class, 'markUnread'])->name('notifications.mark-unread');
-        Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+        Route::post('/account/notifications/read', [NotificationController::class, 'markAllRead'])->name('notifications.read');
+        Route::post('/account/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
+        Route::post('/account/notifications/{notification}/unread', [NotificationController::class, 'markUnread'])->name('notifications.mark-unread');
+        Route::delete('/account/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     });
     Route::middleware('throttle:20,1')->group(function () {
         Route::get('/push-subscriptions', [PushSubscriptionController::class, 'index'])->name('push-subscriptions.index');
@@ -174,3 +195,4 @@ Route::get('/admin/scraped-products/{scrapedProduct}/html-cache', function (Scra
 })->name('scraped-products.html-cache');
 
 require __DIR__.'/auth.php';
+require __DIR__.'/reports.php';

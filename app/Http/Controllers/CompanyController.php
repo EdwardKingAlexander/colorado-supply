@@ -9,13 +9,11 @@ class CompanyController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        $company = $user->company;
-        $locations = $company->locations;
+        $company = Auth::user()->company;
 
         return Inertia::render('Company/Index', [
             'company' => $company,
-            'locations' => $locations,
+            'locations' => $company?->locations ?? [],
         ]);
     }
 }

@@ -15,19 +15,20 @@ const maxTotal = (rows) => Math.max(...rows.map((row) => Number(row.total) || 0)
 </script>
 
 <template>
-  <section class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-    <h2 class="text-base font-semibold text-gray-900">{{ title }}</h2>
-    <div class="mt-4 space-y-3">
-      <div v-for="row in rows" :key="`${row.label}-${row.location_id ?? ''}`" class="space-y-1">
-        <div class="flex items-center justify-between gap-3 text-sm">
-          <span class="truncate font-medium text-gray-700">{{ row.label }}</span>
-          <span class="whitespace-nowrap text-gray-600">{{ currency.format(row.total) }}</span>
+  <!-- Single-series bar list: one brand hue (validated against both panel surfaces), values as text. -->
+  <section class="st-panel p-5">
+    <h2 class="text-base font-semibold text-st-ink">{{ title }}</h2>
+    <ul class="mt-4 space-y-3.5">
+      <li v-for="row in rows" :key="`${row.label}-${row.location_id ?? ''}`" class="space-y-1.5">
+        <div class="flex items-baseline justify-between gap-3 text-sm">
+          <span class="truncate text-st-ink">{{ row.label }}</span>
+          <span class="st-num whitespace-nowrap font-semibold text-st-ink">{{ currency.format(row.total) }}</span>
         </div>
-        <div class="h-2 rounded-full bg-gray-100">
-          <div class="h-2 rounded-full bg-blue-600" :style="{ width: `${Math.max(4, (Number(row.total) / maxTotal(rows)) * 100)}%` }"></div>
+        <div class="h-2 rounded bg-st-sunk" aria-hidden="true">
+          <div class="h-2 rounded bg-primary-700 dark:bg-primary-500" :style="{ width: `${Math.max(2, (Number(row.total) / maxTotal(rows)) * 100)}%` }"></div>
         </div>
-      </div>
-      <p v-if="rows.length === 0" class="py-8 text-center text-sm text-gray-500">No spending data for this period.</p>
-    </div>
+      </li>
+    </ul>
+    <p v-if="rows.length === 0" class="py-8 text-center text-sm text-st-muted">No spending in this period.</p>
   </section>
 </template>

@@ -44,7 +44,7 @@ test('dashboard route renders for a normal user', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->get('/dashboard')
+        ->get('/account')
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page
             ->component('Dashboard')
@@ -56,7 +56,7 @@ test('dashboard route renders for a normal user', function () {
 });
 
 test('guest users are redirected to login', function () {
-    $this->get('/dashboard')->assertRedirect(route('login'));
+    $this->get('/account')->assertRedirect(route('login'));
 });
 
 test('a user without a company receives an empty location state', function () {

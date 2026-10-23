@@ -1,7 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
 import { computed, onMounted } from 'vue'
-import StoreLayout from '@/Layouts/StoreLayout.vue'
+import AccountLayout from '@/Layouts/AccountLayout.vue'
 import NotificationIcon from '@/Components/Notifications/NotificationIcon.vue'
 import PushOptIn from '@/Components/Notifications/PushOptIn.vue'
 import SmsOptIn from '@/Components/Notifications/SmsOptIn.vue'
@@ -55,17 +55,17 @@ const tabClass = (name) => (props.filter === name
 <template>
   <Head title="Notifications" />
 
-  <StoreLayout>
-    <div class="mobile-page-gutter mx-auto max-w-3xl space-y-6 py-6 sm:py-8">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <h1 class="st-display text-2xl font-extrabold text-st-ink sm:text-3xl">Notifications</h1>
+  <AccountLayout title="Notifications" description="Order, pickup and account updates." narrow>
+    <template #actions>
         <button
           v-if="state.unread"
           type="button"
           class="min-h-11 rounded-md border border-st-line px-4 text-sm font-semibold text-st-ink hover:border-st-action focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action"
           @click="markAllRead"
         >Mark all read</button>
-      </div>
+    </template>
+
+    <div class="max-w-3xl space-y-6">
 
       <PushOptIn />
       <SmsOptIn />
@@ -134,5 +134,5 @@ const tabClass = (name) => (props.filter === name
         >{{ state.loading ? 'Loading…' : 'Load more' }}</button>
       </div>
     </div>
-  </StoreLayout>
+  </AccountLayout>
 </template>

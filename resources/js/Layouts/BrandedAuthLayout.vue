@@ -5,6 +5,8 @@ import logo from '@images/logo-cleansed.svg'
 import logoLight from '@images/logo-cleansed-light.svg'
 import pipelineImageUrl from '@images/optimized/pipeline-1600.webp'
 import pipelineMobileImageUrl from '@images/optimized/pipeline-900.webp'
+import { onMounted } from 'vue'
+import { forceSiteDark } from '@/Support/theme'
 
 defineProps({
   title: {
@@ -28,6 +30,8 @@ defineProps({
     default: '',
   },
 })
+
+onMounted(forceSiteDark)
 </script>
 
 <template>

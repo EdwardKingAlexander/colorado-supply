@@ -252,6 +252,49 @@ textarea {
   color: rgb(var(--st-ink) / 0.85);
 }
 
-.store-shell .text-red-700 {
+.dark .store-shell .text-red-700 {
   color: rgb(248 113 113);
+}
+
+/* Account pages inside the store shell (ai/modules/customer-portal-ui-rebrand-complete). */
+@layer components {
+  .st-panel {
+    @apply rounded-lg border border-st-line bg-st-panel;
+  }
+
+  .st-btn-primary {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-st-fill px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-st-fill/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action focus-visible:ring-offset-2 focus-visible:ring-offset-st-bg disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .st-btn-secondary {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-st-line bg-st-panel px-4 py-3 text-base font-semibold text-st-ink transition-colors hover:border-st-action focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action focus-visible:ring-offset-2 focus-visible:ring-offset-st-bg disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .st-field {
+    @apply mt-1.5 block min-h-12 w-full rounded-md border-st-line text-base focus:border-st-action focus:ring-2 focus:ring-st-action/40 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .st-table th {
+    @apply px-5 py-3 text-left text-sm font-medium text-st-muted;
+  }
+
+  .st-table td {
+    @apply px-5 py-3;
+  }
+}
+
+/* Mobile card view of .responsive-data-table inside the shell. */
+@media (max-width: 767px) {
+  .store-shell .responsive-data-table tbody {
+    background: rgb(var(--st-sunk));
+  }
+
+  .store-shell .responsive-data-table tbody tr {
+    border-color: rgb(var(--st-line));
+    background: rgb(var(--st-panel));
+  }
+
+  .store-shell .responsive-data-table tbody td:not([colspan])::before {
+    color: rgb(var(--st-muted));
+  }
 }

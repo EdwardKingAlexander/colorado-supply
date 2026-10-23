@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import { Head } from '@inertiajs/vue3'
+import AccountLayout from '@/Layouts/AccountLayout.vue'
 
 const favorites = ref([])
 const loading = ref(true)
@@ -225,17 +227,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mobile-page-gutter mx-auto max-w-6xl space-y-6 py-6 sm:py-8 lg:px-8">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold text-gray-900">SAM Opportunities</h1>
-        <p class="text-gray-600">Favorited opportunities for your account.</p>
-      </div>
+  <Head title="Saved SAM opportunities" />
+
+  <AccountLayout title="Saved SAM opportunities" description="Federal opportunities you've favorited, with their documents and insights.">
+    <template #actions>
       <div class="flex items-center gap-3">
         <button
           v-if="!loading && favorites.length > 0"
           type="button"
-          class="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-blue-700 px-4 py-3 text-base font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          class="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-st-fill px-4 py-3 text-base font-semibold text-white transition hover:bg-st-fill/85 focus:outline-none focus:ring-2 focus:ring-st-action focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           :disabled="exporting"
           @click="exportToExcel"
         >
@@ -248,63 +248,65 @@ onMounted(() => {
           </svg>
           <span>{{ exporting ? 'Exporting...' : 'Export to Excel' }}</span>
         </button>
-        <div v-if="loading" class="text-sm text-gray-500">Loading...</div>
+        <div v-if="loading" class="text-sm text-st-muted">Loading...</div>
       </div>
-    </div>
+    </template>
 
-    <div v-if="errorMessage" class="rounded-md bg-red-50 p-4 text-red-700 text-sm">
+    <div class="space-y-6">
+
+    <div v-if="errorMessage" class="rounded-md border border-accent-600/40 bg-accent-600/10 p-4 text-sm text-st-ink">
       {{ errorMessage }}
     </div>
 
-    <div v-if="exportError" class="rounded-md bg-red-50 p-4 text-red-700 text-sm">
+    <div v-if="exportError" class="rounded-md border border-accent-600/40 bg-accent-600/10 p-4 text-sm text-st-ink">
       {{ exportError }}
     </div>
 
-    <div v-if="!loading && favorites.length === 0" class="rounded-lg border border-dashed border-gray-200 p-8 text-center text-gray-600">
+    <div v-if="!loading && favorites.length === 0" class="rounded-lg border border-dashed border-st-line p-8 text-center text-st-muted">
       No favorited opportunities yet.
     </div>
 
-    <div v-else-if="!loading" class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
-      <table class="responsive-data-table min-w-full divide-y divide-gray-200 bg-white">
-        <thead class="bg-gray-50">
+    <div v-else-if="!loading" class="overflow-hidden rounded-lg border border-st-line shadow-sm">
+      <table class="responsive-data-table min-w-full divide-y divide-st-line bg-st-panel">
+        <thead class="bg-st-sunk">
           <tr>
-            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700">Title</th>
-            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700">Agency</th>
-            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700">Posted</th>
-            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700">Due</th>
-            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700">Link</th>
-            <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-700">Favorite</th>
-            <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-700">Documents</th>
-            <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-700">Insights</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-st-ink">Title</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-st-ink">Agency</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-st-ink">Posted</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-st-ink">Due</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-st-ink">Link</th>
+            <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-st-ink">Favorite</th>
+            <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-st-ink">Documents</th>
+            <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-st-ink">Insights</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-st-line">
           <template v-for="opp in favorites" :key="opp.id">
-            <tr class="hover:bg-gray-50">
-              <td data-label="Opportunity" class="px-4 py-3 text-sm text-gray-900">
+            <tr class="hover:bg-st-sunk">
+              <td data-label="Opportunity" class="px-4 py-3 text-sm text-st-ink">
                 <div class="font-medium">{{ opp.title || 'Untitled opportunity' }}</div>
-                <div class="text-gray-500 text-xs" v-if="opp.naics_code || opp.psc_code">
+                <div class="text-st-muted text-xs" v-if="opp.naics_code || opp.psc_code">
                   <span v-if="opp.naics_code">NAICS: {{ opp.naics_code }}</span>
                   <span v-if="opp.naics_code && opp.psc_code" class="mx-1">•</span>
                   <span v-if="opp.psc_code">PSC: {{ opp.psc_code }}</span>
                 </div>
               </td>
-              <td data-label="Agency" class="px-4 py-3 text-sm text-gray-700">{{ opp.agency || '—' }}</td>
-              <td data-label="Posted" class="px-4 py-3 text-sm text-gray-700">{{ opp.posted_date || '—' }}</td>
-              <td data-label="Due" class="px-4 py-3 text-sm text-gray-700">{{ opp.response_deadline || '—' }}</td>
-              <td data-label="SAM.gov" class="px-4 py-3 text-sm text-blue-600">
-                <a v-if="opp.sam_url" :href="opp.sam_url" class="inline-flex min-h-12 items-center rounded-md px-3 text-base font-semibold hover:bg-blue-50 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600" target="_blank" rel="noopener noreferrer">View opportunity</a>
-                <span v-else class="text-gray-500">—</span>
+              <td data-label="Agency" class="px-4 py-3 text-sm text-st-ink">{{ opp.agency || '—' }}</td>
+              <td data-label="Posted" class="px-4 py-3 text-sm text-st-ink">{{ opp.posted_date || '—' }}</td>
+              <td data-label="Due" class="px-4 py-3 text-sm text-st-ink">{{ opp.response_deadline || '—' }}</td>
+              <td data-label="SAM.gov" class="px-4 py-3 text-sm text-st-action">
+                <a v-if="opp.sam_url" :href="opp.sam_url" class="inline-flex min-h-12 items-center rounded-md px-3 text-base font-semibold hover:bg-st-sunk hover:underline focus:outline-none focus:ring-2 focus:ring-st-action" target="_blank" rel="noopener noreferrer">View opportunity</a>
+                <span v-else class="text-st-muted">—</span>
               </td>
               <td data-label="Favorite" class="px-4 py-3 text-right">
                 <button
                   type="button"
-                  class="inline-flex min-h-12 items-center rounded-full border px-4 py-2 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  :class="opp.is_favorite ? 'border-amber-400 text-amber-600 bg-amber-50' : 'border-gray-300 text-gray-700 hover:border-amber-300 hover:text-amber-600'"
+                  class="inline-flex min-h-12 items-center rounded-full border px-4 py-2 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-st-action"
+                  :class="opp.is_favorite ? 'border-st-signal bg-st-signal/15 text-st-ink' : 'border-st-line text-st-ink hover:border-st-signal'"
                   :disabled="toggling.has(opp.id)"
                   @click="toggleFavorite(opp)"
                 >
-                  <svg class="h-4 w-4 mr-1" :class="opp.is_favorite ? 'fill-amber-500' : 'fill-none stroke-current'" viewBox="0 0 24 24" stroke-width="1.5">
+                  <svg class="h-4 w-4 mr-1" :class="opp.is_favorite ? 'fill-st-signal text-st-signal' : 'fill-none stroke-current'" viewBox="0 0 24 24" stroke-width="1.5">
                     <path
                       d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
                       :fill="opp.is_favorite ? 'currentColor' : 'none'"
@@ -317,7 +319,7 @@ onMounted(() => {
               <td data-label="Documents" class="px-4 py-3 text-right">
                 <button
                   type="button"
-                  class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:border-blue-400 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  class="inline-flex min-h-12 items-center justify-center rounded-md border border-st-line px-4 py-3 text-base font-semibold text-st-ink transition hover:border-st-action hover:text-st-action focus:outline-none focus:ring-2 focus:ring-st-action"
                   @click="toggleDocs(opp.id)"
                 >
                   Manage Documents
@@ -326,7 +328,7 @@ onMounted(() => {
               <td data-label="Insights" class="px-4 py-3 text-right">
                 <button
                   type="button"
-                  class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 transition hover:border-green-400 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+                  class="inline-flex min-h-12 items-center justify-center rounded-md border border-st-line px-4 py-3 text-base font-semibold text-st-ink transition hover:border-st-action hover:text-st-action focus:outline-none focus:ring-2 focus:ring-st-action"
                   @click="toggleInsights(opp.id)"
                 >
                   Insights
@@ -334,17 +336,17 @@ onMounted(() => {
               </td>
             </tr>
 
-            <tr v-if="openDocsFor === opp.id" :key="`docs-${opp.id}`" class="bg-gray-50">
+            <tr v-if="openDocsFor === opp.id" :key="`docs-${opp.id}`" class="bg-st-sunk">
               <td colspan="8" class="px-4 py-4">
                 <div class="flex items-start justify-between">
                   <div class="space-y-3 w-full">
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <h3 class="text-sm font-semibold text-gray-900">Documents</h3>
-                        <p class="text-xs text-gray-600">Upload and manage documents for this opportunity.</p>
+                        <h3 class="text-sm font-semibold text-st-ink">Documents</h3>
+                        <p class="text-xs text-st-muted">Upload and manage documents for this opportunity.</p>
                       </div>
                       <div class="flex items-center gap-2">
-                        <label class="inline-flex min-h-12 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-base font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-700 focus-within:ring-2 focus-within:ring-blue-600">
+                        <label class="inline-flex min-h-12 cursor-pointer items-center justify-center rounded-md border border-st-line bg-st-panel px-4 py-3 text-base font-semibold text-st-ink transition hover:border-st-action hover:text-st-action focus-within:ring-2 focus-within:ring-st-action">
                           <input type="file" class="hidden" :disabled="uploading.has(opp.id)" @change="(e) => uploadDocument(opp.id, e)" />
                           <span v-if="!uploading.has(opp.id)">Upload</span>
                           <span v-else>Uploading...</span>
@@ -352,34 +354,34 @@ onMounted(() => {
                       </div>
                     </div>
 
-                    <div v-if="documentsError[opp.id]" class="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                    <div v-if="documentsError[opp.id]" class="rounded-md border border-accent-600/40 bg-accent-600/10 p-3 text-sm text-st-ink">
                       {{ documentsError[opp.id] }}
                     </div>
 
-                    <div v-if="documentsLoading.has(opp.id)" class="text-sm text-gray-600">Loading documents...</div>
+                    <div v-if="documentsLoading.has(opp.id)" class="text-sm text-st-muted">Loading documents...</div>
 
-                    <div v-else-if="(documents[opp.id] || []).length === 0" class="rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-600">
+                    <div v-else-if="(documents[opp.id] || []).length === 0" class="rounded-md border border-dashed border-st-line p-4 text-sm text-st-muted">
                       No documents yet for this opportunity.
                     </div>
 
-                    <div v-else class="rounded-md border border-gray-200 bg-white divide-y divide-gray-100">
+                    <div v-else class="rounded-md border border-st-line bg-st-panel divide-y divide-st-line">
                       <div
                         v-for="doc in documents[opp.id]"
                         :key="doc.id"
                         class="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div>
-                          <div class="text-sm text-gray-900 font-medium">{{ doc.original_filename }}</div>
-                          <div class="text-xs text-gray-600">
+                          <div class="text-sm text-st-ink font-medium">{{ doc.original_filename }}</div>
+                          <div class="text-xs text-st-muted">
                             {{ doc.mime_type || 'Unknown type' }} · {{ formatSize(doc.size_bytes) }} ·
                             <span v-if="doc.uploaded_at">Uploaded {{ new Date(doc.uploaded_at).toLocaleDateString() }}</span>
                           </div>
                         </div>
                         <div class="flex items-center gap-2">
-                          <span class="text-xs text-gray-500" v-if="doc.uploaded_by">by {{ doc.uploaded_by.name }}</span>
+                          <span class="text-xs text-st-muted" v-if="doc.uploaded_by">by {{ doc.uploaded_by.name }}</span>
                           <button
                             type="button"
-                            class="inline-flex min-h-12 items-center justify-center rounded-md px-4 py-2 text-base font-semibold text-red-700 hover:bg-red-50 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 disabled:opacity-50"
+                            class="inline-flex min-h-12 items-center justify-center rounded-md px-4 py-2 text-base font-semibold text-red-700 hover:bg-accent-600/10 focus:outline-none focus:ring-2 focus:ring-accent-600 disabled:opacity-50"
                             :disabled="uploading.has(doc.id)"
                             @click="deleteDocument(opp.id, doc.id)"
                           >
@@ -393,13 +395,13 @@ onMounted(() => {
               </td>
             </tr>
 
-            <tr v-if="insightsOpen === opp.id" :key="`insights-${opp.id}`" class="bg-gray-50">
+            <tr v-if="insightsOpen === opp.id" :key="`insights-${opp.id}`" class="bg-st-sunk">
               <td colspan="8" class="px-4 py-4">
                 <div class="space-y-3">
                   <div class="flex items-center justify-between">
                     <div>
-                      <h3 class="text-sm font-semibold text-gray-900">Insights</h3>
-                      <p class="text-xs text-gray-600">Ask a question about this opportunity or its documents.</p>
+                      <h3 class="text-sm font-semibold text-st-ink">Insights</h3>
+                      <p class="text-xs text-st-muted">Ask a question about this opportunity or its documents.</p>
                     </div>
                   </div>
 
@@ -407,12 +409,12 @@ onMounted(() => {
                     <input
                       v-model="insightsQuestion"
                       type="text"
-                      class="min-h-12 w-full rounded-md border border-gray-300 px-3 py-3 text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                      class="min-h-12 w-full rounded-md border border-st-line px-3 py-3 text-base focus:border-st-action focus:ring-2 focus:ring-st-action"
                       placeholder="Ask a question..."
                     />
                     <button
                       type="button"
-                      class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-blue-700 px-4 py-3 text-base font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:w-auto"
+                      class="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-st-fill px-4 py-3 text-base font-semibold text-white hover:bg-st-fill/85 focus:outline-none focus:ring-2 focus:ring-st-action focus:ring-offset-2 disabled:opacity-50 sm:w-auto"
                       :disabled="insightsLoading.has(opp.id)"
                       @click="askInsights(opp.id)"
                     >
@@ -421,33 +423,33 @@ onMounted(() => {
                     </button>
                   </div>
 
-                  <div v-if="insightsError[opp.id]" class="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                  <div v-if="insightsError[opp.id]" class="rounded-md border border-accent-600/40 bg-accent-600/10 p-3 text-sm text-st-ink">
                     {{ insightsError[opp.id] }}
                   </div>
 
-                  <div v-if="insightsLoading.has(opp.id)" class="text-sm text-gray-600">Retrieving insights...</div>
+                  <div v-if="insightsLoading.has(opp.id)" class="text-sm text-st-muted">Retrieving insights...</div>
 
                   <div v-else-if="insightsAnswer[opp.id]" class="space-y-2">
-                    <div class="rounded-md border border-gray-200 bg-white p-3">
-                      <h4 class="text-sm font-semibold text-gray-900">Answer</h4>
-                      <p class="text-sm text-gray-800 whitespace-pre-line">{{ insightsAnswer[opp.id].answer }}</p>
+                    <div class="rounded-md border border-st-line bg-st-panel p-3">
+                      <h4 class="text-sm font-semibold text-st-ink">Answer</h4>
+                      <p class="text-sm text-st-ink whitespace-pre-line">{{ insightsAnswer[opp.id].answer }}</p>
                     </div>
-                    <div v-if="(insightsAnswer[opp.id].top_chunks || []).length" class="rounded-md border border-gray-200 bg-white p-3 space-y-2">
-                      <h4 class="text-sm font-semibold text-gray-900">Supporting context</h4>
+                    <div v-if="(insightsAnswer[opp.id].top_chunks || []).length" class="rounded-md border border-st-line bg-st-panel p-3 space-y-2">
+                      <h4 class="text-sm font-semibold text-st-ink">Supporting context</h4>
                       <ul class="space-y-1">
                         <li
                           v-for="ctx in insightsAnswer[opp.id].top_chunks"
                           :key="ctx.chunk_id"
-                          class="text-sm text-gray-700"
+                          class="text-sm text-st-ink"
                         >
-                          <span class="text-xs text-gray-500">Doc {{ ctx.document_id }} · Score {{ ctx.score.toFixed(2) }}</span>
-                          <div class="text-sm text-gray-800 truncate">{{ ctx.text }}</div>
+                          <span class="text-xs text-st-muted">Doc {{ ctx.document_id }} · Score {{ ctx.score.toFixed(2) }}</span>
+                          <div class="text-sm text-st-ink truncate">{{ ctx.text }}</div>
                         </li>
                       </ul>
                     </div>
                   </div>
 
-                  <div v-else class="text-sm text-gray-600">
+                  <div v-else class="text-sm text-st-muted">
                     Ask a question to see insights.
                   </div>
                 </div>
@@ -458,11 +460,11 @@ onMounted(() => {
       </table>
 
       <!-- Pagination -->
-      <div v-if="pagination.last_page > 1" class="flex flex-col gap-3 border-t border-gray-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div v-if="pagination.last_page > 1" class="flex flex-col gap-3 border-t border-st-line bg-st-panel px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
           <button
             type="button"
-            class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+            class="inline-flex min-h-12 items-center justify-center rounded-md border border-st-line px-4 py-3 text-base font-semibold text-st-ink hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="!pagination.prev_page_url"
             @click="fetchFavorites(pagination.prev_page_url)"
           >
@@ -470,17 +472,18 @@ onMounted(() => {
           </button>
           <button
             type="button"
-            class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+            class="inline-flex min-h-12 items-center justify-center rounded-md border border-st-line px-4 py-3 text-base font-semibold text-st-ink hover:bg-st-sunk focus:outline-none focus:ring-2 focus:ring-st-action disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="!pagination.next_page_url"
             @click="fetchFavorites(pagination.next_page_url)"
           >
             Next
           </button>
         </div>
-        <div class="text-sm text-gray-600">
+        <div class="text-sm text-st-muted">
           Page {{ pagination.current_page }} of {{ pagination.last_page }}
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </AccountLayout>
 </template>

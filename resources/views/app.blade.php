@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 @php($cspNonce = request()->attributes->get('csp_nonce', ''))
 @php(\Illuminate\Support\Facades\Vite::useCspNonce($cspNonce))
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark"> {{-- dY`^ enable dark mode --}}
+@php($portalTheme = \App\Support\PortalTheme::appliesTo($page['component'] ?? null))
+{{-- Site is dark by default; signed-in portal pages may switch to light (see the head script below). --}}
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark" @if ($portalTheme) data-portal-theme @endif>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,6 +13,20 @@
         <link rel="manifest" href="{{ asset('site.webmanifest') }}">
         <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
         <meta name="theme-color" content="#111827">
+        @if ($portalTheme)
+            {{-- Apply the per-browser theme choice (default dark) before first paint. Mirrors resources/js/Support/theme.js. --}}
+            <script nonce="{{ $cspNonce }}">
+                (function () {
+                    var preference = 'dark';
+                    try { preference = window.localStorage.getItem('cs-theme') || 'dark'; } catch (e) {}
+                    var dark = preference === 'system'
+                        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                        : preference !== 'light';
+                    document.documentElement.classList.toggle('dark', dark);
+                    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0E1624' : '#F3F5F8');
+                })();
+            </script>
+        @endif
 
         <title inertia>{{ config('app.name', 'Colorado Supply & Procurement LLC') }}</title>
 

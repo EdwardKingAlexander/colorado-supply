@@ -1,4 +1,6 @@
 <script setup>
+import { Link } from '@inertiajs/vue3'
+
 defineProps({
   orders: {
     type: Array,
@@ -10,34 +12,36 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 </script>
 
 <template>
-  <section class="rounded-lg border border-gray-200 bg-white shadow-sm">
-    <div class="border-b border-gray-200 px-5 py-4">
-      <h2 class="text-base font-semibold text-gray-900">Recent orders</h2>
+  <section class="st-panel">
+    <div class="border-b border-st-line px-5 py-4">
+      <h2 class="text-base font-semibold text-st-ink">Recent orders</h2>
     </div>
-    <div>
-      <table class="responsive-data-table min-w-full divide-y divide-gray-200 text-sm">
-        <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-          <tr>
-            <th class="px-5 py-3">Order</th>
-            <th class="px-5 py-3">Date</th>
-            <th class="px-5 py-3">Status</th>
-            <th class="px-5 py-3">Payment</th>
-            <th class="px-5 py-3 text-right">Total</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr v-for="order in orders" :key="order.id">
-            <td data-label="Order" class="whitespace-nowrap px-5 py-3 font-medium text-gray-900">{{ order.order_number }}</td>
-            <td data-label="Date" class="whitespace-nowrap px-5 py-3 text-gray-600">{{ order.created_at }}</td>
-            <td data-label="Status" class="whitespace-nowrap px-5 py-3 text-gray-600">{{ order.status_label }}</td>
-            <td data-label="Payment" class="whitespace-nowrap px-5 py-3 text-gray-600">{{ order.payment_status_label }}</td>
-            <td data-label="Total" class="whitespace-nowrap px-5 py-3 text-right font-medium text-gray-900">{{ currency.format(order.grand_total) }}</td>
-          </tr>
-          <tr v-if="orders.length === 0">
-            <td colspan="5" class="px-5 py-8 text-center text-gray-500">No orders in this account yet.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="responsive-data-table st-table min-w-full divide-y divide-st-line text-sm">
+      <thead>
+        <tr>
+          <th scope="col">Order</th>
+          <th scope="col">Date</th>
+          <th scope="col">Status</th>
+          <th scope="col">Payment</th>
+          <th scope="col" class="!text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-st-line">
+        <tr v-for="order in orders" :key="order.id">
+          <td data-label="Order" class="whitespace-nowrap font-semibold text-st-ink">{{ order.order_number }}</td>
+          <td data-label="Date" class="whitespace-nowrap text-st-muted">{{ order.created_at }}</td>
+          <td data-label="Status" class="whitespace-nowrap text-st-ink">{{ order.status_label }}</td>
+          <td data-label="Payment" class="whitespace-nowrap text-st-ink">{{ order.payment_status_label }}</td>
+          <td data-label="Total" class="st-num whitespace-nowrap text-right font-semibold text-st-ink">{{ currency.format(order.grand_total) }}</td>
+        </tr>
+        <tr v-if="orders.length === 0">
+          <td colspan="5" class="!py-8 text-center text-st-muted">
+            No orders yet.
+            <Link :href="route('store.index')" class="font-semibold text-st-action hover:underline">Browse the store</Link>
+            to place your first one.
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 </template>

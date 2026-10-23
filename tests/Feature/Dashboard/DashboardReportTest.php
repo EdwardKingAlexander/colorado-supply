@@ -43,7 +43,7 @@ test('report page renders for normal users', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->get('/dashboard/reports')
+        ->get('/account/reports')
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page
             ->component('Dashboard/Reports')
@@ -53,7 +53,7 @@ test('report page renders for normal users', function () {
 });
 
 test('guests cannot access reports', function () {
-    $this->get('/dashboard/reports')->assertRedirect(route('login'));
+    $this->get('/account/reports')->assertRedirect(route('login'));
 });
 
 test('report grouping excludes cross-company data', function () {
@@ -68,7 +68,7 @@ test('report grouping excludes cross-company data', function () {
     reportItem(reportOrder($userB, 900), $locationB, 900);
 
     $this->actingAs($userA)
-        ->get('/dashboard/reports?group_by=location&range=custom&start_date=2026-01-01&end_date=2026-01-31')
+        ->get('/account/reports?group_by=location&range=custom&start_date=2026-01-01&end_date=2026-01-31')
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page
             ->where('row_count', 1)
@@ -84,7 +84,7 @@ test('csv export returns report rows', function () {
     reportItem(reportOrder($user, 100), $location, 100);
 
     $response = $this->actingAs($user)
-        ->get('/dashboard/reports/export?group_by=location&range=custom&start_date=2026-01-01&end_date=2026-01-31');
+        ->get('/account/reports/export?group_by=location&range=custom&start_date=2026-01-01&end_date=2026-01-31');
 
     $response->assertSuccessful();
     expect($response->headers->get('content-type'))->toContain('text/csv');

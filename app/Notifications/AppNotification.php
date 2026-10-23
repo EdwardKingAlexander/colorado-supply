@@ -155,7 +155,7 @@ abstract class AppNotification extends Notification implements ShouldQueue
             ->icon('/apple-touch-icon.png')
             ->badge('/apple-touch-icon.png')
             ->tag($this->type()->value.':'.$this->id)
-            ->data(['url' => $this->url($notifiable) ?? ($notifiable instanceof Admin ? '/admin' : '/notifications')])
+            ->data(['url' => $this->url($notifiable) ?? ($notifiable instanceof Admin ? '/admin' : '/account/notifications')])
             ->options(['TTL' => 86400, 'urgency' => 'normal']);
     }
 

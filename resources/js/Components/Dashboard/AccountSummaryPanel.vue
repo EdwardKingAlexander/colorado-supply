@@ -10,39 +10,31 @@ defineProps({
 </script>
 
 <template>
-  <section class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+  <section class="st-panel p-5">
     <div class="flex items-start justify-between gap-4">
-      <div>
-        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Account</p>
-        <h2 class="mt-1 text-lg font-semibold text-gray-900">{{ account.name }}</h2>
-        <p class="text-sm text-gray-600">{{ account.email }}</p>
+      <div class="min-w-0">
+        <h2 class="truncate text-lg font-semibold text-st-ink">{{ account.name }}</h2>
+        <p class="truncate text-sm text-st-muted">{{ account.email }}</p>
       </div>
       <span
-        class="rounded-full px-2.5 py-1 text-xs font-semibold"
-        :class="account.profile_complete ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'"
+        class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-st-line px-2.5 py-1 text-xs font-semibold text-st-ink"
       >
-        {{ account.profile_complete ? 'Complete' : 'Needs setup' }}
+        <span class="h-2 w-2 rounded-full" :class="account.profile_complete ? 'bg-st-ok' : 'bg-st-warn'" aria-hidden="true" />
+        {{ account.profile_complete ? 'Profile complete' : 'Needs setup' }}
       </span>
     </div>
 
-    <dl class="mt-5 grid grid-cols-2 gap-4 text-sm">
+    <dl class="mt-5 grid grid-cols-2 gap-4 border-t border-st-line pt-4 text-sm">
       <div>
-        <dt class="text-gray-500">Company</dt>
-        <dd class="mt-1 font-medium text-gray-900">{{ account.company?.name ?? 'Not assigned' }}</dd>
+        <dt class="text-st-muted">Company</dt>
+        <dd class="mt-1 font-semibold text-st-ink">{{ account.company?.name ?? 'Not assigned' }}</dd>
       </div>
       <div>
-        <dt class="text-gray-500">Locations</dt>
-        <dd class="mt-1 font-medium text-gray-900">{{ account.locations_count }} / {{ account.sublocations_count }} sub</dd>
+        <dt class="text-st-muted">Locations</dt>
+        <dd class="st-num mt-1 font-semibold text-st-ink">{{ account.locations_count }} ({{ account.sublocations_count }} sub)</dd>
       </div>
     </dl>
 
-    <div class="mt-5 flex flex-wrap gap-2">
-      <Link :href="route('profile.edit')" class="inline-flex min-h-12 items-center justify-center rounded-md border border-gray-300 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        Edit profile
-      </Link>
-      <Link :href="route('store.index')" class="inline-flex min-h-12 items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        Browse store
-      </Link>
-    </div>
+    <Link :href="route('profile.edit')" class="st-btn-secondary mt-5 w-full">Edit profile</Link>
   </section>
 </template>

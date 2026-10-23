@@ -39,32 +39,32 @@ watch(() => form.location_id, () => {
 </script>
 
 <template>
-  <section class="dashboard-filter rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+  <section aria-label="Dashboard filters" class="dashboard-filter st-panel p-4">
     <div class="grid gap-3 md:grid-cols-6">
-      <label class="text-base md:col-span-1">
-        <span class="font-medium text-gray-700">Range</span>
-        <select v-model="form.range" class="mt-2 block w-full rounded-md border-gray-300 text-base">
+      <label class="block md:col-span-1">
+        <span class="text-sm font-medium text-st-muted">Range</span>
+        <select v-model="form.range" class="st-field">
           <option v-for="option in filters.options.ranges" :key="option.value" :value="option.value">{{ option.label }}</option>
         </select>
       </label>
-      <label class="text-base md:col-span-1">
-        <span class="font-medium text-gray-700">Start</span>
-        <input v-model="form.start_date" type="date" :disabled="form.range !== 'custom'" class="mt-2 block w-full rounded-md border-gray-300 text-base disabled:bg-gray-100" />
+      <label class="block md:col-span-1">
+        <span class="text-sm font-medium text-st-muted">Start</span>
+        <input v-model="form.start_date" type="date" :disabled="form.range !== 'custom'" class="st-field" />
       </label>
-      <label class="text-base md:col-span-1">
-        <span class="font-medium text-gray-700">End</span>
-        <input v-model="form.end_date" type="date" :disabled="form.range !== 'custom'" class="mt-2 block w-full rounded-md border-gray-300 text-base disabled:bg-gray-100" />
+      <label class="block md:col-span-1">
+        <span class="text-sm font-medium text-st-muted">End</span>
+        <input v-model="form.end_date" type="date" :disabled="form.range !== 'custom'" class="st-field" />
       </label>
-      <label class="text-base md:col-span-1">
-        <span class="font-medium text-gray-700">Location</span>
-        <select v-model="form.location_id" class="mt-2 block w-full rounded-md border-gray-300 text-base">
+      <label class="block md:col-span-1">
+        <span class="text-sm font-medium text-st-muted">Location</span>
+        <select v-model="form.location_id" class="st-field">
           <option value="">All</option>
           <option v-for="location in locations" :key="location.id" :value="location.id">{{ location.name }}</option>
         </select>
       </label>
-      <label class="text-base md:col-span-1">
-        <span class="font-medium text-gray-700">Sublocation</span>
-        <select v-model="form.sublocation_id" class="mt-2 block w-full rounded-md border-gray-300 text-base">
+      <label class="block md:col-span-1">
+        <span class="text-sm font-medium text-st-muted">Sublocation</span>
+        <select v-model="form.sublocation_id" class="st-field">
           <option value="">All</option>
           <template v-for="location in locations" :key="location.id">
             <option v-for="child in location.children" :key="child.id" :value="child.id">{{ location.name }} / {{ child.name }}</option>
@@ -72,7 +72,7 @@ watch(() => form.location_id, () => {
         </select>
       </label>
       <div class="flex items-end md:col-span-1">
-        <button type="button" class="min-h-12 w-full rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" @click="apply">
+        <button type="button" class="st-btn-primary w-full" @click="apply">
           Apply
         </button>
       </div>

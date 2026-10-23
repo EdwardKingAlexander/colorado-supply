@@ -9,6 +9,8 @@ import { useCartStore } from '@/Stores/useCartStore'
 import { useNotifications } from '@/Stores/useNotifications'
 import logo from '@images/logo-cleansed.svg'
 import logoLight from '@images/logo-cleansed-light.svg'
+import ThemeSwitcher from '@/Components/ThemeSwitcher.vue'
+import { applyPortalTheme, setThemePreference, themePreference } from '@/Support/theme'
 
 const props = defineProps({
   // Current catalog search term (v-model:search).
@@ -38,6 +40,14 @@ const accountName = computed(() => page.props.auth?.user?.name ?? page.props.aut
 const accountEmail = computed(() => page.props.auth?.user?.email ?? page.props.auth?.admin?.email ?? null)
 const isCustomer = computed(() => Boolean(page.props.auth?.user))
 const isAdmin = computed(() => Boolean(page.props.auth?.admin))
+const hasCompany = computed(() => Boolean(page.props.auth?.user?.company_id))
+const onAccountPage = computed(() => ['dashboard', 'dashboard.*', 'profile.*', 'company.*', 'notifications.*'].some((name) => route().current(name)))
+const themeOptions = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'system', label: 'System' },
+]
+const year = new Date().getFullYear()
 
 // Bell + live toasts for portal users (admins use the panel's bell).
 const notificationProps = computed(() => page.props.notificationBell ?? null)
@@ -120,6 +130,7 @@ const onKeydown = (event) => {
   }
 }
 
+onMounted(applyPortalTheme)
 onMounted(() => document.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeydown)
@@ -128,7 +139,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="store-shell min-h-screen bg-st-bg text-st-ink">
+  <div class="store-shell flex min-h-screen flex-col bg-st-bg text-st-ink">
     <header class="safe-top sticky top-0 z-40 border-b border-st-line bg-st-panel/95 backdrop-blur">
       <div class="mx-auto flex max-w-screen-2xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:gap-x-8 lg:px-8">
         <Link
@@ -144,9 +155,11 @@ onBeforeUnmount(() => {
         <div class="order-2 ml-auto flex items-center gap-1 lg:order-3 lg:ml-0">
           <Link
             :href="route('dashboard')"
-            class="hidden min-h-11 items-center rounded-md px-3 text-sm font-medium text-st-muted hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action lg:inline-flex"
+            class="hidden min-h-11 items-center rounded-md px-3 text-sm font-medium hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action lg:inline-flex"
+            :class="onAccountPage ? 'text-st-ink underline decoration-st-action decoration-2 underline-offset-[6px]' : 'text-st-muted'"
+            :aria-current="onAccountPage ? 'page' : undefined"
           >
-            Dashboard
+            Account
           </Link>
 
           <Menu as="div" class="relative hidden lg:block">
@@ -160,7 +173,16 @@ onBeforeUnmount(() => {
                 <p v-if="accountEmail" class="truncate text-sm text-st-muted">{{ accountEmail }}</p>
               </div>
               <MenuItem v-if="isCustomer" v-slot="{ active }">
+                <Link :href="route('dashboard')" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block px-4 py-2.5 text-sm']">Account overview</Link>
+              </MenuItem>
+              <MenuItem v-if="isCustomer" v-slot="{ active }">
                 <Link :href="route('dashboard.reports')" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block px-4 py-2.5 text-sm']">Order reports</Link>
+              </MenuItem>
+              <MenuItem v-if="isCustomer" v-slot="{ active }">
+                <Link :href="route('notifications.index')" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block px-4 py-2.5 text-sm']">Notifications</Link>
+              </MenuItem>
+              <MenuItem v-if="hasCompany" v-slot="{ active }">
+                <Link :href="route('company.index')" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block px-4 py-2.5 text-sm']">Company</Link>
               </MenuItem>
               <MenuItem v-if="isCustomer" v-slot="{ active }">
                 <Link :href="route('profile.edit')" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block px-4 py-2.5 text-sm']">Profile</Link>
@@ -168,9 +190,25 @@ onBeforeUnmount(() => {
               <MenuItem v-if="isAdmin" v-slot="{ active }">
                 <a :href="route('filament.admin.pages.dashboard')" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block px-4 py-2.5 text-sm']">Admin panel</a>
               </MenuItem>
-              <MenuItem v-slot="{ active }">
-                <Link :href="route('logout')" method="post" as="button" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block w-full px-4 py-2.5 text-left text-sm']">Log out</Link>
-              </MenuItem>
+              <div class="mt-1 border-t border-st-line pt-1" role="group" aria-label="Theme">
+                <p class="px-4 pb-1 pt-2 text-xs font-semibold text-st-muted" aria-hidden="true">Theme</p>
+                <MenuItem v-for="option in themeOptions" :key="option.value" v-slot="{ active }">
+                  <button
+                    type="button"
+                    :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'flex w-full items-center justify-between px-4 py-2 text-left text-sm']"
+                    @click="setThemePreference(option.value)"
+                  >
+                    <span>{{ option.label }}<span class="sr-only"> theme</span></span>
+                    <svg v-if="themePreference === option.value" class="h-4 w-4 text-st-action" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.4L8 12.58l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd" /></svg>
+                    <span v-if="themePreference === option.value" class="sr-only">(selected)</span>
+                  </button>
+                </MenuItem>
+              </div>
+              <div class="mt-1 border-t border-st-line pt-1">
+                <MenuItem v-slot="{ active }">
+                  <Link :href="route('logout')" method="post" as="button" :class="[active ? 'bg-st-sunk text-st-ink' : 'text-st-muted', 'block w-full px-4 py-2.5 text-left text-sm']">Log out</Link>
+                </MenuItem>
+              </div>
             </MenuItems>
           </Menu>
 
@@ -242,13 +280,23 @@ onBeforeUnmount(() => {
       </div>
     </header>
 
-    <main>
+    <main class="flex-1">
       <slot />
     </main>
 
+    <footer class="border-t border-st-line">
+      <div class="mx-auto flex max-w-screen-2xl flex-col gap-3 px-4 py-6 text-sm text-st-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <p>&copy; {{ year }} Colorado Supply &amp; Procurement LLC</p>
+        <nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2">
+          <a href="/" class="inline-flex min-h-11 items-center hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action sm:min-h-0">Main site</a>
+          <a :href="route('sms-terms')" class="inline-flex min-h-11 items-center hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-action sm:min-h-0">Text message terms</a>
+        </nav>
+      </div>
+    </footer>
+
     <Dialog class="lg:hidden" :open="mobileMenuOpen" @close="mobileMenuOpen = false">
       <div class="fixed inset-0 z-40 bg-black/60" aria-hidden="true" />
-      <DialogPanel class="store-shell safe-y fixed inset-y-0 right-0 z-50 flex w-full max-w-drawer flex-col bg-st-panel text-st-ink shadow-2xl">
+      <DialogPanel class="store-shell safe-y fixed inset-y-0 right-0 z-50 flex w-full max-w-drawer flex-col overflow-y-auto bg-st-panel text-st-ink shadow-2xl">
         <div class="flex h-16 items-center justify-between border-b border-st-line px-4">
           <div class="min-w-0">
             <p class="truncate text-base font-semibold">{{ accountName }}</p>
@@ -261,12 +309,17 @@ onBeforeUnmount(() => {
         <nav class="flex flex-col p-2 text-base">
           <Link :href="route('store.index')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Catalog</Link>
           <Link :href="route('store.cart')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Cart</Link>
-          <Link :href="route('dashboard')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Dashboard</Link>
+          <Link :href="route('dashboard')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Account overview</Link>
           <Link v-if="isCustomer" :href="route('dashboard.reports')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Order reports</Link>
+          <Link v-if="isCustomer" :href="route('notifications.index')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Notifications</Link>
+          <Link v-if="hasCompany" :href="route('company.index')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Company</Link>
           <Link v-if="isCustomer" :href="route('profile.edit')" class="rounded-md px-3 py-3 hover:bg-st-sunk" @click="mobileMenuOpen = false">Profile</Link>
           <a v-if="isAdmin" :href="route('filament.admin.pages.dashboard')" class="rounded-md px-3 py-3 hover:bg-st-sunk">Admin panel</a>
           <Link :href="route('logout')" method="post" as="button" class="rounded-md px-3 py-3 text-left hover:bg-st-sunk" @click="mobileMenuOpen = false">Log out</Link>
         </nav>
+        <div class="mt-auto border-t border-st-line p-4">
+          <ThemeSwitcher />
+        </div>
       </DialogPanel>
     </Dialog>
 
