@@ -8,7 +8,7 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
 | - | Module plan (`00-overview.md`) | Complete | 2026-10-26 | Owner approved 2026-10-26; starts after `nist-auth-hardening` Phase 1 |
 | 1 | [server] Mobile sessions, token issuance & MFA challenge | Not Started | 2026-10-26 | After `nist-auth-hardening` Phase 1 |
 | 2 | [server] Registration, MFA enrollment, verification, reset, deletion APIs | Not Started | 2026-10-26 | |
-| 3 | [mobile] App foundation: tooling, tests, API client, branding, dev networking | In Progress | 2026-10-26 | Independent of server work |
+| 3 | [mobile] App foundation: tooling, tests, API client, branding, dev networking | Awaiting Validation | 2026-10-26 | Owner: run on a real phone; 2 owner decisions in log |
 | 4 | [mobile] Sign-in, MFA challenge, session storage, protected routes, sign-out | Not Started | 2026-10-26 | |
 | 5 | [mobile] Registration, MFA setup, email verification, forgot password, delete account | Not Started | 2026-10-26 | |
 | 6 | [mobile] Session lock, privacy screen, biometric unlock | Not Started | 2026-10-26 | Needs Apple Developer Program + Expo account |
@@ -53,3 +53,25 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
   Waiting on `nist-auth-hardening` Phase 1 before Phase 1 here.
 - 2026-10-26 — Owner approved Phase 3 (runs in parallel with
   `nist-auth-hardening` Phase 1). Set `In Progress`.
+- 2026-10-26 — Phase 3 implemented by a subagent; parent re-verified.
+  Mobile commits 3ddf16a, 8c54677, 3eb58c6, 110eaea (pushed); template
+  deletions landed inside 65becbb because they were staged while the parent
+  committed AGENTS.md (content correct, message unrelated — not rewritten).
+  - Re-verified by parent: `npx expo lint` clean, `npx tsc --noEmit` clean,
+    `npm test` 6 suites / 45 tests passed, `npx expo-doctor` 20/20.
+  - Built: validated `EXPO_PUBLIC_API_URL` config (release builds require
+    https), typed fetch client + `ApiError` mapping, `GET /api/v1/store/categories`
+    (shape `{data:[{id,name,slug,parent_id,products_count}]}`; API is not
+    behind `store.enabled`), brand theme + UI primitives, (app) tabs Home
+    (categories, empty state) and Account (version info, website link),
+    icon/splash from the gear-and-mountain emblem, `eas.json` profiles.
+  - Dev networking finding: Herd nginx listens on 127.0.0.1 only, so LAN IP
+    access to Herd fails; `php artisan serve --host=0.0.0.0 --port=8000`
+    works with existing firewall rules. README documents it (`.env.local`
+    with `EXPO_PUBLIC_API_URL=http://<LAN-IP>:8000`; emulator `10.0.2.2`).
+  - Not yet done: running the app on a physical phone (owner validation).
+  - Owner decisions open: (1) preview builds point at production
+    `https://cogovsupply.com` — staging instead? (2) server `APP_URL` absolute
+    URLs (future product images) won't load on a phone via `artisan serve`;
+    address in the catalog module.
+  - Note: production `/api/v1/store/categories` currently returns `{"data":[]}`.
