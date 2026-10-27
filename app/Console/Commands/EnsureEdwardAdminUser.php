@@ -13,7 +13,7 @@ class EnsureEdwardAdminUser extends Command
 
     public function handle(): int
     {
-        $wasCreated = (new EnsureEdwardAdminUserAction())();
+        $wasCreated = (new EnsureEdwardAdminUserAction)();
 
         if ($wasCreated) {
             $this->info('Created Edward Filament admin user.');

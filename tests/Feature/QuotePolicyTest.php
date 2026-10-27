@@ -60,7 +60,8 @@ test('sales_reps can access quotes', function () {
 test('super_admins can access quotes', function () {
     $user = User::factory()->create();
     $user->assignRole('super_admins');
-    $quote = Quote::factory()->create(['sales_rep_id' => $user->id]);
+    // Not 'ordered': the factory picks a random status, and an ordered quote rightly can't be converted again.
+    $quote = Quote::factory()->create(['sales_rep_id' => $user->id, 'status' => 'draft']);
 
     expect($user->can('viewAny', Quote::class))->toBeTrue();
     expect($user->can('view', $quote))->toBeTrue();

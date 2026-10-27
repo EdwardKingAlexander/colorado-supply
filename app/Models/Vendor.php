@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Vendor extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -70,6 +73,32 @@ class Vendor extends Model
     public function preferredContact(): HasOne
     {
         return $this->hasOne(VendorContact::class)->where('is_preferred', true);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('vendors')
+            ->logOnly([
+                'sam_expiration_date',
+                'sam_number',
+                'w9_date',
+                'tax_id',
+                'insurance_expiration_date',
+                'insurance_policy_number',
+                'cage_code',
+                'duns_number',
+                'naics_code',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function tapActivity(Activity $activity, string $eventName): void
+    {
+        $companyId = $this->user?->company_id;
+        $activity->company_id = $companyId;
+        $activity->properties = $activity->properties->put('company_id', $companyId);
     }
 
     protected static function booted(): void

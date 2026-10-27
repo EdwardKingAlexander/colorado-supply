@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Inertia\Ssr\FastHttpGateway;
+use App\Listeners\LogRoleAssignmentActivity;
 use App\Models\ContractDocument;
 use App\Models\Customer;
 use App\Models\Location;
@@ -28,12 +29,17 @@ use App\Policies\UserPolicy;
 use App\Services\Stripe\StripeClientFactory;
 use App\Support\ActivitylogCauserResolver;
 use Filament\Support\Facades\FilamentColor;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Ssr\Gateway;
 use Spatie\Activitylog\Facades\CauserResolver;
+use Spatie\Permission\Events\PermissionAttached;
+use Spatie\Permission\Events\PermissionDetached;
+use Spatie\Permission\Events\RoleAttached;
+use Spatie\Permission\Events\RoleDetached;
 use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
@@ -79,6 +85,12 @@ class AppServiceProvider extends ServiceProvider
         Shipment::observe(ShipmentObserver::class);
 
         CauserResolver::resolveUsing(\Closure::fromCallable(new ActivitylogCauserResolver));
+
+        // Audit trail for role/permission grants (audit-logging phase 2).
+        Event::listen(RoleAttached::class, LogRoleAssignmentActivity::class);
+        Event::listen(RoleDetached::class, LogRoleAssignmentActivity::class);
+        Event::listen(PermissionAttached::class, LogRoleAssignmentActivity::class);
+        Event::listen(PermissionDetached::class, LogRoleAssignmentActivity::class);
 
         // Gate::before - Grant all permissions to super_admin
         Gate::before(function ($user, $ability, $arguments = []) {

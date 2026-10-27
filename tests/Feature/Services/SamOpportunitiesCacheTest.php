@@ -515,6 +515,6 @@ describe('cache key generation', function () {
     test('uses correct cache key prefix', function () {
         $cache = new SamOpportunitiesCache;
 
-        expect($cache->getPrefix())->toBe('sam_opp_v3');
+        expect($cache->getPrefix())->toBe('sam_opp_v5');
     });
 });

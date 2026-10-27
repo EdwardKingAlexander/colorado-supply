@@ -20,8 +20,8 @@ class VendorContactFactory extends Factory
             'name' => fake()->name(),
             'job_title' => fake()->jobTitle(),
             'email' => fake()->safeEmail(),
-            'phone' => fake()->phoneNumber(),
-            'mobile_phone' => fake()->phoneNumber(),
+            'phone' => fake()->numerify('###-###-####'), // phoneNumber() can add an extension (x123), which the form's tel() rule rejects
+            'mobile_phone' => fake()->numerify('###-###-####'),
             'notes' => fake()->optional()->sentence(),
             'is_preferred' => false,
         ];

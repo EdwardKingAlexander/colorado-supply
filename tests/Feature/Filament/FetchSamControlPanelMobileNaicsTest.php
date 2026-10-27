@@ -2,6 +2,7 @@
 
 use App\Filament\Pages\FetchSamControlPanel;
 use App\Models\Admin;
+use App\Support\SamStatePath;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -40,7 +41,7 @@ beforeEach(function () {
         ],
     ];
 
-    $path = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+    $path = SamStatePath::opportunities();
     $dir = dirname($path);
 
     if (! is_dir($dir)) {
@@ -51,7 +52,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    $path = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+    $path = SamStatePath::opportunities();
 
     if (file_exists($path)) {
         unlink($path);
@@ -63,8 +64,12 @@ afterEach(function () {
     }
 });
 
-it('renders the mobile naics row in the opportunities table', function () {
+it('labels every opportunity cell so the table can collapse into cards on narrow screens', function () {
     Livewire::test(FetchSamControlPanel::class)
-        ->assertSeeHtml('data-testid="sam-naics-mobile"')
+        ->assertSeeHtml('container-name: sam-table')
+        ->assertSeeHtml('data-testid="sam-naics"')
+        ->assertSeeHtml('data-label="Solicitation"')
+        ->assertSeeHtml('data-label="Due"')
+        ->assertSeeHtml('data-label="Agency"')
         ->assertSee('541330');
 });

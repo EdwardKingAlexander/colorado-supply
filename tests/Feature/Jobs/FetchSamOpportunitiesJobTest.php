@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Jobs\FetchSamOpportunitiesJob;
+use App\Support\SamStatePath;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -46,7 +47,7 @@ test('job executes and persists results', function () {
     $job->handle();
 
     // Verify state file was created
-    $stateFile = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+    $stateFile = SamStatePath::opportunities();
     expect(file_exists($stateFile))->toBeTrue();
 
     $result = json_decode(file_get_contents($stateFile), true);
@@ -73,7 +74,7 @@ test('job persists partial success when some NAICS fail', function () {
     $job->handle();
 
     // Verify state file was created with failure status
-    $stateFile = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+    $stateFile = SamStatePath::opportunities();
     expect(file_exists($stateFile))->toBeTrue();
 
     $result = json_decode(file_get_contents($stateFile), true);

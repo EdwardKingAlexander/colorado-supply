@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Jobs\FetchSamOpportunitiesJob;
 use App\Support\SamSearchParameters;
+use App\Support\SamStatePath;
 use BackedEnum;
 use Carbon\Carbon;
 use Filament\Forms\Components\CheckboxList;
@@ -40,13 +41,23 @@ class FetchSamControlPanel extends Page
 
     public array $queueLogTail = [];
 
+    /**
+     * Session key holding the operator's last-submitted query form.
+     *
+     * The page fully reloads after every fetch (and on results filtering and
+     * pagination). Without this, mount() reset the NAICS selection to the
+     * primary defaults each time, so the next fetch silently ignored the codes
+     * the operator had picked.
+     */
+    public const FORM_SESSION_KEY = 'sam_control_panel.form';
+
     public function mount(): void
     {
         $params = new SamSearchParameters;
 
-        $this->formData = [
+        $defaults = [
             'naics_override' => $params->naics_codes_primary, // Default to primary only (9 codes for better performance)
-            'psc_override' => [],
+            'psc_search' => $params->defaultPscSearch(), // NAICS OR PSC discovery (ai/modules/sam-psc-discovery)
             'place' => null, // null = nationwide, or 2-letter state code
             'days_back' => 7,
             'notice_type' => $params->notice_types,
@@ -56,9 +67,49 @@ class FetchSamControlPanel extends Page
             'small_business_only' => false,
         ];
 
+        $this->formData = array_merge($defaults, $this->restoreFormData($defaults, $params));
+
         $this->loadLastResult();
         $this->queueWorkerStatus = 'manual';
         $this->queueLogTail = $this->loadQueueLogTail();
+    }
+
+    /**
+     * Last-submitted form values from the session, limited to known fields and
+     * to NAICS/PSC codes the form still offers (config can change between visits).
+     */
+    protected function restoreFormData(array $defaults, SamSearchParameters $params): array
+    {
+        $saved = session(self::FORM_SESSION_KEY);
+
+        if (! is_array($saved)) {
+            return [];
+        }
+
+        $saved = array_intersect_key($saved, $defaults);
+
+        $allowed = [
+            'naics_override' => array_merge($params->naics_codes_primary, $params->naics_codes_secondary),
+            'psc_search' => $params->pscOptions(),
+        ];
+
+        foreach ($allowed as $key => $options) {
+            if (! array_key_exists($key, $saved)) {
+                continue;
+            }
+
+            $saved[$key] = is_array($saved[$key])
+                ? array_values(array_intersect($saved[$key], $options))
+                : [];
+        }
+
+        // An emptied NAICS list would fall back to every configured code in the resolver; keep the defaults instead.
+        // An emptied PSC list is kept: it means a deliberate NAICS-only fetch.
+        if (empty($saved['naics_override'])) {
+            unset($saved['naics_override']);
+        }
+
+        return $saved;
     }
 
     /**
@@ -98,8 +149,8 @@ class FetchSamControlPanel extends Page
 
         $naicsOptions = $naicsPrimary + $naicsSecondary;
 
-        $pscOptions = collect($params->psc_codes)
-            ->mapWithKeys(fn ($code) => [$code => $code])
+        $pscOptions = collect($params->pscOptions())
+            ->mapWithKeys(fn ($code) => [$code => isset($params->psc_descriptions[$code]) ? $code.' - '.$params->psc_descriptions[$code] : $code])
             ->toArray();
 
         return $schema
@@ -115,12 +166,13 @@ class FetchSamControlPanel extends Page
                             ->helperText('⚡ Defaults to core industry codes for best performance. Using all codes takes 2+ minutes and may timeout.')
                             ->columnSpanFull(),
 
-                        Select::make('psc_override')
-                            ->label('PSC Codes (optional)')
+                        Select::make('psc_search')
+                            ->label('Also search these PSC codes')
                             ->options($pscOptions)
                             ->multiple()
                             ->searchable()
-                            ->helperText('Optional. Filters results to these Product Service Codes, matched by prefix. Leave empty for no PSC filter.')
+                            ->default($params->defaultPscSearch())
+                            ->helperText('Finds opportunities by product code as well as NAICS, even when the buyer chose a NAICS you don\'t search. 2-digit groups find DLA buys; 4-character codes find VA, Navy and Army buys. Each code is one extra SAM.gov request (about 1 second). Clear all for a NAICS-only fetch.')
                             ->columnSpanFull(),
 
                         Select::make('place')
@@ -169,13 +221,13 @@ class FetchSamControlPanel extends Page
                             ->columnSpanFull(),
 
                         TextInput::make('limit')
-                            ->label('Result Limit')
+                            ->label('Display Limit')
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(1000)
                             ->default(1000)
                             ->required()
-                            ->helperText('Maximum number of opportunities to return after deduplication'),
+                            ->helperText('Maximum opportunities shown in this panel. All fetched matches are saved to the feed and available for export.'),
 
                         Toggle::make('clearCache')
                             ->label('Clear Cache')
@@ -206,7 +258,10 @@ class FetchSamControlPanel extends Page
         try {
             // Store timestamp when job was dispatched
             $timestamp = now()->timestamp;
-            session(['sam_fetch_started_at' => $timestamp]);
+            session([
+                'sam_fetch_started_at' => $timestamp,
+                self::FORM_SESSION_KEY => $this->formData,
+            ]);
 
             Log::info('SAM Control Panel - Dispatching fetch job', [
                 'user_id' => auth()->id(),
@@ -292,7 +347,7 @@ class FetchSamControlPanel extends Page
             // Check if there was an error
             $error = $this->lastResult['error'] ?? null;
             $success = $this->lastResult['success'] ?? false;
-            $totalOpps = $this->lastResult['summary']['returned'] ?? ($this->lastResult['summary']['total_after_dedup'] ?? 0);
+            $totalOpps = $this->lastResult['summary']['saved_count'] ?? ($this->lastResult['summary']['returned'] ?? 0);
 
             Log::info('SAM fetch completed - new results detected', [
                 'fetched_at' => $fetchedAt,
@@ -312,7 +367,7 @@ class FetchSamControlPanel extends Page
                 Notification::make()
                     ->title($success ? 'Fetch Complete!' : 'Fetch Completed with Warnings')
                     ->body($success
-                        ? "Successfully fetched {$totalOpps} opportunities from SAM.gov."
+                        ? "Fetch complete: {$totalOpps} opportunities available in the feed."
                         : 'The fetch completed but encountered some warnings. Check the results below.')
                     ->success($success)
                     ->warning(! $success)
@@ -333,7 +388,7 @@ class FetchSamControlPanel extends Page
      */
     protected function persistLastResult(array $result): void
     {
-        $file = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+        $file = SamStatePath::opportunities();
 
         try {
             $dir = dirname($file);
@@ -352,7 +407,7 @@ class FetchSamControlPanel extends Page
 
     protected function loadLastResult(): void
     {
-        $file = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+        $file = SamStatePath::opportunities();
 
         if (file_exists($file)) {
             $this->lastResult = json_decode(file_get_contents($file), true);
@@ -374,6 +429,11 @@ class FetchSamControlPanel extends Page
                 $summary['returned'] = $returned;
                 $summary['dedup_before_filters'] = $summary['dedup_before_filters'] ?? $dedup;
                 $summary['filtered_out'] = $summary['filtered_out'] ?? 0;
+                // Keep the complete matching set in state for export, but avoid
+                // sending the full ingestion payload to the Livewire component.
+                $displayLimit = max(1, min(1000, (int) ($summary['limit'] ?? 1000)));
+                $this->lastResult['opportunities'] = array_slice($opportunities, 0, $displayLimit);
+                $summary['displayed_count'] = count($this->lastResult['opportunities']);
             }
         }
     }

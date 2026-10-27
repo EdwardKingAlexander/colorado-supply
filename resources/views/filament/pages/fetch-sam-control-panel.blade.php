@@ -91,6 +91,14 @@
             </div>
 
             @if($result)
+                @if(($result['summary']['incomplete_naics_count'] ?? 0) > 0)
+                    <x-filament::section class="mb-6">
+                        <div role="alert" class="p-4 rounded-lg bg-amber-50 text-amber-900 dark:bg-amber-900/20 dark:text-amber-200">
+                            <h3 class="font-semibold">Some matching opportunities could not be retrieved</h3>
+                            <p class="mt-1 text-sm">Received {{ number_format($result['summary']['total_records'] ?? 0) }} of {{ number_format($result['summary']['api_total_records'] ?? 0) }} records reported across the queried NAICS codes, before deduplication and filtering. Available results are shown below. Review the query warnings and retry the fetch.</p>
+                        </div>
+                    </x-filament::section>
+                @endif
                 {{-- Error Display --}}
                 @if(isset($result['error']) && $result['error'])
                     <x-filament::section class="mb-6">
@@ -121,12 +129,12 @@
 
                     <div class="space-y-3">
                         <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                            <dt class="text-xs font-medium text-gray-500 dark:text-gray-400">Total Records (before dedup)</dt>
+                            <dt class="text-xs font-medium text-gray-500 dark:text-gray-400">Fetched (before deduplication)</dt>
                             <dd class="mt-2 text-3xl font-bold">{{ $result['summary']['total_records'] ?? 0 }}</dd>
                         </div>
 
                         <div class="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                            <dt class="text-xs font-medium text-blue-600 dark:text-blue-400">After Deduplication</dt>
+                            <dt class="text-xs font-medium text-blue-600 dark:text-blue-400">Matching Opportunities</dt>
                             <dd class="mt-2 text-3xl font-bold text-blue-700 dark:text-blue-300">{{ $result['summary']['total_after_dedup'] ?? 0 }}</dd>
                             @if(($result['summary']['duplicates_removed'] ?? 0) > 0)
                                 <dd class="mt-1 text-xs text-blue-600 dark:text-blue-400">
@@ -137,9 +145,28 @@
 
                         <div class="p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/20">
                             <dt class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Displayed</dt>
-                            <dd class="mt-2 text-3xl font-bold text-indigo-700 dark:text-indigo-300">{{ $result['summary']['returned'] ?? 0 }}</dd>
+                            <dd class="mt-2 text-3xl font-bold text-indigo-700 dark:text-indigo-300">{{ $result['summary']['displayed_count'] ?? $result['summary']['returned'] ?? 0 }}</dd>
                             <dd class="mt-1 text-xs text-indigo-600 dark:text-indigo-400">Limit {{ $result['summary']['limit'] ?? 'n/a' }}</dd>
+                            <dd class="mt-1 text-xs text-indigo-600 dark:text-indigo-400">Exports include all fetched matches, including those beyond this display limit.</dd>
                         </div>
+
+                        @if(!empty($result['query']['psc_codes']))
+                            <div class="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20" data-testid="sam-found-only-via-psc">
+                                <dt class="text-xs font-medium text-amber-700 dark:text-amber-400">Found only via PSC</dt>
+                                <dd class="mt-2 text-3xl font-bold text-amber-800 dark:text-amber-300">{{ $result['summary']['found_only_via_psc'] ?? 0 }}</dd>
+                                <dd class="mt-1 text-xs text-amber-700 dark:text-amber-400">Matches none of the NAICS searches returned.</dd>
+                            </div>
+                        @endif
+
+                        @if(isset($result['summary']['saved_count']))
+                            <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <dt class="text-xs font-medium text-gray-500 dark:text-gray-400">Saved to Feed</dt>
+                                <dd class="mt-2 text-3xl font-bold">{{ $result['summary']['saved_count'] }}</dd>
+                                @if(($result['summary']['skipped_count'] ?? 0) > 0)
+                                    <dd class="mt-1 text-xs">{{ $result['summary']['skipped_count'] }} matches could not be saved because their notice ID is missing.</dd>
+                                @endif
+                            </div>
+                        @endif
 
                         <div class="p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
                             <dt class="text-xs font-medium text-green-600 dark:text-green-400">Cache Hit Rate</dt>
@@ -158,6 +185,7 @@
                             'q' => request()->get('q', ''),
                             'notice' => request()->get('notice', ''),
                             'naics' => request()->get('naics', ''),
+                            'psc' => request()->get('psc', ''),
                             'state' => request()->get('state', ''),
                             'set_aside' => request()->get('set_aside', ''),
                         ];
@@ -173,6 +201,7 @@
                             $sol = $opp['solicitation_number'] ?? '';
                             $notice = $opp['notice_type'] ?? '';
                             $naics = $opp['naics_code'] ?? '';
+                            $psc = $opp['psc_code'] ?? '';
                             $state = $opp['state_code'] ?? '';
                             $setAside = $opp['set_aside_type'] ?? '';
 
@@ -191,6 +220,10 @@
                                 return false;
                             }
 
+                            if ($filters['psc'] && strcasecmp($psc, $filters['psc']) !== 0) {
+                                return false;
+                            }
+
                             if ($filters['state'] && strcasecmp($state, $filters['state']) !== 0) {
                                 return false;
                             }
@@ -205,6 +238,7 @@
                         // Dropdown options
                         $noticeOptions = collect($ops)->pluck('notice_type')->filter()->unique()->sort()->values()->all();
                         $naicsOptions = collect($ops)->pluck('naics_code')->filter()->unique()->sort()->values()->all();
+                        $pscOptions = collect($ops)->pluck('psc_code')->filter()->unique()->sort()->values()->all();
                         $stateOptions = collect($ops)->pluck('state_code')->filter()->unique()->sort()->values()->all();
                         $setAsideOptions = collect($ops)->pluck('set_aside_type')->filter()->unique()->sort()->values()->all();
 
@@ -248,6 +282,7 @@
                             }
                             .sam-filter-actions {
                                 display: flex;
+                                flex-wrap: wrap;
                                 gap: 0.5rem;
                                 justify-content: flex-end;
                             }
@@ -293,6 +328,15 @@
                                 </select>
                             </div>
                             <div>
+                                <label class="sam-filter-label" for="psc">PSC</label>
+                                <select id="psc" name="psc" class="sam-filter-select">
+                                    <option value="">All</option>
+                                    @foreach($pscOptions as $opt)
+                                        <option value="{{ $opt }}" @selected($filters['psc'] === $opt)>{{ $opt }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
                                 <label class="sam-filter-label" for="state">State</label>
                                 <select id="state" name="state" class="sam-filter-select">
                                     <option value="">All</option>
@@ -321,6 +365,8 @@
                         <div class="sam-table-container">
                             <style>
                                 .sam-table-container {
+                                    container-type: inline-size;
+                                    container-name: sam-table;
                                     border: 1px solid #e5e7eb;
                                     border-radius: 12px;
                                     overflow: hidden;
@@ -388,6 +434,58 @@
                                 .dark .sam-badge { background: #312e81; color: #c7d2fe; }
                                 .dark .sam-badge-green { background: #064e3b; color: #bbf7d0; }
                                 .dark .sam-meta { color: #cbd5e1; }
+
+                                /* Narrow containers (phones, and the sidebar column on desktop): one card per opportunity. */
+                                @container sam-table (max-width: 56rem) {
+                                    .sam-table thead {
+                                        position: absolute;
+                                        width: 1px;
+                                        height: 1px;
+                                        overflow: hidden;
+                                        clip: rect(0 0 0 0);
+                                    }
+                                    .sam-table,
+                                    .sam-table tbody,
+                                    .sam-table tr,
+                                    .sam-table td {
+                                        display: block;
+                                        width: 100%;
+                                    }
+                                    .sam-table tbody tr {
+                                        padding: 0.85rem 1rem;
+                                        border-bottom: 1px solid #e5e7eb;
+                                    }
+                                    .sam-table tbody tr:last-child { border-bottom: 0; }
+                                    .sam-table td {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: baseline;
+                                        gap: 1rem;
+                                        padding: 0.2rem 0;
+                                        text-align: right;
+                                    }
+                                    .sam-table td::before {
+                                        content: attr(data-label);
+                                        flex-shrink: 0;
+                                        text-align: left;
+                                        font-family: ui-sans-serif, system-ui, sans-serif;
+                                        font-size: 0.7rem;
+                                        font-weight: 600;
+                                        text-transform: uppercase;
+                                        letter-spacing: 0.02em;
+                                        color: #64748b;
+                                    }
+                                    .sam-table td.sam-cell-title {
+                                        display: block;
+                                        padding-bottom: 0.4rem;
+                                        text-align: left;
+                                        font-size: 1rem;
+                                    }
+                                    .sam-table td.sam-cell-title::before { content: none; }
+                                    .sam-table td > * { min-width: 0; overflow-wrap: anywhere; }
+                                    .dark .sam-table tbody tr { border-color: #1f2937; }
+                                    .dark .sam-table td::before { color: #94a3b8; }
+                                }
                             </style>
 
                             <table class="sam-table">
@@ -399,6 +497,7 @@
                                         <th>Posted</th>
                                         <th>Due</th>
                                         <th>NAICS</th>
+                                        <th>PSC</th>
                                         <th>Set-Aside</th>
                                         <th>Agency</th>
                                         <th>State</th>
@@ -407,7 +506,7 @@
                                 <tbody>
                                     @foreach($slice as $opp)
                                         <tr>
-                                            <td>
+                                            <td class="sam-cell-title">
                                                 <div class="leading-snug">
                                                     @if(!empty($opp['sam_url']))
                                                         <a href="{{ $opp['sam_url'] }}" target="_blank" class="sam-link">{{ $opp['title'] }}</a>
@@ -416,38 +515,31 @@
                                                     @endif
                                                 </div>
                                             </td>
-                                            <td class="sam-mono sam-meta">
+                                            <td class="sam-mono sam-meta" data-label="Solicitation">
                                                 @if(!empty($opp['sam_url']))
                                                     <a href="{{ $opp['sam_url'] }}" target="_blank" class="sam-link">{{ $opp['solicitation_number'] }}</a>
                                                 @else
                                                     {{ $opp['solicitation_number'] }}
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td data-label="Notice">
                                                 <span class="sam-badge">{{ $opp['notice_type'] }}</span>
                                             </td>
-                                            <td class="sam-meta">{{ $opp['posted_date'] ? \Carbon\Carbon::parse($opp['posted_date'])->format('M d, Y') : '—' }}</td>
-                                            <td class="sam-meta">{{ $opp['response_deadline'] ? \Carbon\Carbon::parse($opp['response_deadline'])->format('M d, Y') : '—' }}</td>
-                                            <td class="sam-mono sam-meta">{{ $opp['naics_code'] }}</td>
-                                            <td>
+                                            <td class="sam-meta" data-label="Posted">{{ $opp['posted_date'] ? \Carbon\Carbon::parse($opp['posted_date'])->format('M d, Y') : '—' }}</td>
+                                            <td class="sam-meta" data-label="Due">{{ $opp['response_deadline'] ? \Carbon\Carbon::parse($opp['response_deadline'])->format('M d, Y') : '—' }}</td>
+                                            <td class="sam-mono sam-meta" data-label="NAICS" data-testid="sam-naics">{{ $opp['naics_code'] ?: 'N/A' }}</td>
+                                            <td class="sam-mono sam-meta" data-label="PSC">{{ ($opp['psc_code'] ?? null) ?: 'N/A' }}</td>
+                                            <td data-label="Set-Aside">
                                                 @if(!empty($opp['set_aside_type']))
                                                     <span class="sam-badge sam-badge-green">{{ $opp['set_aside_type'] }}</span>
                                                 @else
                                                     <span class="sam-meta">—</span>
                                                 @endif
                                             </td>
-                                            <td class="sam-meta">
+                                            <td class="sam-meta" data-label="Agency">
                                                 <div class="line-clamp-2">{{ $opp['agency_name'] }}</div>
                                             </td>
-                                            <td class="sam-meta">{{ $opp['state_code'] ?? '—' }}</td>
-                                        </tr>
-                                        <tr class="sm:hidden" data-testid="sam-naics-mobile">
-                                            <td colspan="9" class="bg-slate-50/60 px-4 py-2 dark:bg-slate-900/40">
-                                                <div class="flex flex-wrap items-center gap-2 text-[11px]">
-                                                    <span class="uppercase tracking-wide text-slate-500 dark:text-slate-400">NAICS</span>
-                                                    <span class="sam-meta sam-mono">{{ $opp['naics_code'] ?: 'N/A' }}</span>
-                                                </div>
-                                            </td>
+                                            <td class="sam-meta" data-label="State">{{ $opp['state_code'] ?? '—' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -457,6 +549,8 @@
                         <style>
                             .sam-pagination {
                                 display: flex;
+                                flex-wrap: wrap;
+                                gap: 0.5rem;
                                 align-items: center;
                                 justify-content: space-between;
                                 margin-top: 0.75rem;
@@ -592,16 +686,31 @@
                                 <span class="font-mono text-gray-900 dark:text-gray-100">{{ $result['query']['state_code'] ?? 'Nationwide' }}</span>
                             </div>
 
-                            @if(!empty($result['query']['naics_codes']))
-                                <div class="p-2 rounded bg-gray-50 dark:bg-gray-800">
-                                    <span class="font-medium text-gray-600 dark:text-gray-400">NAICS Codes ({{ count($result['query']['naics_codes']) }}):</span>
-                                    <div class="mt-1 flex flex-wrap gap-1">
-                                        @foreach($result['query']['naics_codes'] as $naics)
-                                            <span class="px-2 py-1 text-xs font-mono rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">{{ $naics }}</span>
-                                        @endforeach
+                            @php
+                                // Matches per search term ("naics:332722", "psc:53"), so a code that returned
+                                // nothing reads as "searched, 0" rather than "skipped". Results saved before
+                                // PSC discovery have no matched_terms; fall back to their NAICS code.
+                                $termMatches = collect($result['opportunities'] ?? [])
+                                    ->flatMap(fn ($opp) => $opp['matched_terms'] ?? ['naics:'.($opp['naics_code'] ?? '')])
+                                    ->countBy();
+                                $termGroups = [
+                                    'naics' => ['label' => 'NAICS Codes searched', 'codes' => $result['query']['naics_codes'] ?? [], 'testid' => 'sam-naics-match-count'],
+                                    'psc' => ['label' => 'PSC Codes searched', 'codes' => $result['query']['psc_codes'] ?? [], 'testid' => 'sam-psc-match-count'],
+                                ];
+                            @endphp
+                            @foreach($termGroups as $dimension => $group)
+                                @if(!empty($group['codes']))
+                                    <div class="p-2 rounded bg-gray-50 dark:bg-gray-800">
+                                        <span class="font-medium text-gray-600 dark:text-gray-400">{{ $group['label'] }} ({{ count($group['codes']) }}), with matches:</span>
+                                        <div class="mt-1 flex flex-wrap gap-1">
+                                            @foreach($group['codes'] as $code)
+                                                @php($matches = $termMatches[$dimension.':'.$code] ?? 0)
+                                                <span data-testid="{{ $group['testid'] }}" class="px-2 py-1 text-xs font-mono rounded {{ $matches > 0 ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300' }}">{{ $code }} · {{ $matches }}</span>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                            @endif
+                                @endif
+                            @endforeach
 
                             @if(!empty($result['query']['keywords']))
                                 <div class="flex justify-between p-2 rounded bg-gray-50 dark:bg-gray-800">
@@ -632,7 +741,7 @@
                 @if(!empty($result['summary']['failed_naics']))
                     <x-filament::section class="mt-6">
                         <x-slot name="heading">
-                            Failed NAICS Codes
+                            NAICS Query Warnings
                         </x-slot>
 
                         <x-slot name="description">
@@ -643,7 +752,7 @@
                             @foreach($result['summary']['failed_naics'] as $failed)
                                 <div class="p-3 rounded-lg border-2 border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
                                     <div class="flex items-start justify-between mb-2">
-                                        <span class="text-sm font-mono font-semibold text-red-700 dark:text-red-300">NAICS: {{ $failed['naics'] }}</span>
+                                        <span class="text-sm font-mono font-semibold text-red-700 dark:text-red-300">{{ str_starts_with((string) $failed['naics'], 'psc:') ? 'PSC: '.substr($failed['naics'], 4) : 'NAICS: '.$failed['naics'] }}</span>
                                         @if(isset($failed['status_code']) && $failed['status_code'])
                                             <x-filament::badge color="danger" size="xs">HTTP {{ $failed['status_code'] }}</x-filament::badge>
                                         @endif

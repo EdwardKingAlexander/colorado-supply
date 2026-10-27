@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Mcp\Servers\ChromeDevTools\Skills\MultiPageScrapeSkill;
 use App\Models\ScrapedProduct;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
 class ScrapeCompetitorCatalog extends Command
@@ -139,7 +140,7 @@ class ScrapeCompetitorCatalog extends Command
         ];
     }
 
-    protected function generateUrlList(string $vendor, array $config): \Illuminate\Support\Collection
+    protected function generateUrlList(string $vendor, array $config): Collection
     {
         // Priority 1: Explicit URL list
         if ($urlList = $this->option('urls')) {
@@ -180,7 +181,7 @@ class ScrapeCompetitorCatalog extends Command
         return collect();
     }
 
-    protected function parseSitemap(string $sitemapUrl): \Illuminate\Support\Collection
+    protected function parseSitemap(string $sitemapUrl): Collection
     {
         try {
             $xml = simplexml_load_file($sitemapUrl);
@@ -217,7 +218,7 @@ class ScrapeCompetitorCatalog extends Command
         }
     }
 
-    protected function generatePaginatedUrls(string $vendor, array $config, string $pageRange): \Illuminate\Support\Collection
+    protected function generatePaginatedUrls(string $vendor, array $config, string $pageRange): Collection
     {
         [$start, $end] = explode('-', $pageRange);
         $start = (int) $start;

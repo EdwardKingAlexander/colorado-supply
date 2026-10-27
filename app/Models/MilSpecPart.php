@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Jobs\RebuildDibbsMatchesJob;
+use Database\Factories\MilSpecPartFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MilSpecPart extends Model
 {
-    /** @use HasFactory<\Database\Factories\MilSpecPartFactory> */
+    /** @use HasFactory<MilSpecPartFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -33,6 +35,21 @@ class MilSpecPart extends Model
     public function suppliers(): BelongsToMany
     {
         return $this->belongsToMany(Supplier::class)
-                    ->withPivot('supplier_part_number');
+            ->withPivot('supplier_part_number');
+    }
+
+    /**
+     * Keep DIBBS RFQ matches current when the nsn changes
+     * (ai/modules/dibbs-rfq-tracking, Phase 4).
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (MilSpecPart $model) {
+            if ($model->wasRecentlyCreated || $model->wasChanged('nsn')) {
+                RebuildDibbsMatchesJob::request();
+            }
+        });
+
+        static::deleted(fn () => RebuildDibbsMatchesJob::request());
     }
 }

@@ -35,6 +35,11 @@ class SamOpportunity extends Model
         return $this->favoritedBy()->where('user_id', $user->id)->exists();
     }
 
+    public function favoritedByAdmins(): BelongsToMany
+    {
+        return $this->belongsToMany(Admin::class, 'sam_opportunity_admin_favorites')->withTimestamps();
+    }
+
     public function documents(): HasMany
     {
         return $this->hasMany(SamOpportunityDocument::class, 'sam_opportunity_id');

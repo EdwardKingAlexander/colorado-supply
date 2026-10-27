@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\SamOpportunitiesStateExport;
 use App\Http\Controllers\Controller;
+use App\Support\SamStatePath;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
@@ -46,7 +47,7 @@ class SamOpportunitiesExportController extends Controller
      */
     protected function loadState(): array
     {
-        $path = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+        $path = SamStatePath::opportunities();
 
         if (! File::exists($path)) {
             abort(404, 'SAM opportunities state file not found.');
@@ -58,7 +59,7 @@ class SamOpportunitiesExportController extends Controller
     }
 
     /**
-     * @return array{q:string, notice:string, naics:string, state:string, set_aside:string}
+     * @return array{q:string, notice:string, naics:string, psc:string, state:string, set_aside:string}
      */
     protected function extractFilters(Request $request): array
     {
@@ -66,14 +67,15 @@ class SamOpportunitiesExportController extends Controller
             'q' => trim((string) $request->query('q', '')),
             'notice' => trim((string) $request->query('notice', '')),
             'naics' => trim((string) $request->query('naics', '')),
+            'psc' => trim((string) $request->query('psc', '')),
             'state' => trim((string) $request->query('state', '')),
             'set_aside' => trim((string) $request->query('set_aside', '')),
         ];
     }
 
     /**
-     * @param array<int, array<string, mixed>> $opportunities
-     * @param array{q:string, notice:string, naics:string, state:string, set_aside:string} $filters
+     * @param  array<int, array<string, mixed>>  $opportunities
+     * @param  array{q:string, notice:string, naics:string, psc:string, state:string, set_aside:string}  $filters
      * @return array<int, array<string, mixed>>
      */
     protected function applyFilters(array $opportunities, array $filters): array
@@ -84,6 +86,7 @@ class SamOpportunitiesExportController extends Controller
             $solicitation = $opp['solicitation_number'] ?? '';
             $notice = $opp['notice_type'] ?? '';
             $naics = $opp['naics_code'] ?? '';
+            $psc = $opp['psc_code'] ?? '';
             $state = $opp['state_code'] ?? '';
             $setAside = $opp['set_aside_type'] ?? '';
 
@@ -99,6 +102,10 @@ class SamOpportunitiesExportController extends Controller
             }
 
             if ($filters['naics'] !== '' && strcasecmp($naics, $filters['naics']) !== 0) {
+                return false;
+            }
+
+            if ($filters['psc'] !== '' && strcasecmp($psc, $filters['psc']) !== 0) {
                 return false;
             }
 

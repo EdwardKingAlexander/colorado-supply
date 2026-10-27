@@ -47,10 +47,11 @@ function paginationParams(): array
 }
 
 it('pages through a result set larger than one page', function () {
-    Http::fakeSequence()
-        ->push(samPage(1000, 0, 2500), 200)
-        ->push(samPage(1000, 1000, 2500), 200)
-        ->push(samPage(500, 2000, 2500), 200);
+    Http::fake(function ($request) {
+        $start = (int) $request['offset'] * (int) $request['limit'];
+
+        return Http::response(samPage(max(0, min(1000, 2500 - $start)), $start, 2500));
+    });
 
     $result = (new SamApiClient)->fetch('423840', paginationParams(), 'key');
 
@@ -66,7 +67,9 @@ it('pages through a result set larger than one page', function () {
         return true;
     });
 
-    expect($offsets)->toBe([0, 1000, 2000]);
+    expect($offsets)->toBe([0, 1, 2])
+        ->and(array_column($result['opportunities'], 'notice_id'))
+        ->toBe(array_map(fn ($i) => 'notice-'.$i, range(0, 2499)));
 });
 
 it('does not make a second request when the first page covers everything', function () {
@@ -126,7 +129,21 @@ it('stops when a page returns no records even if totalRecords disagrees', functi
     $result = (new SamApiClient)->fetch('423840', paginationParams(), 'key');
 
     expect($result['count'])->toBe(1000)
+        ->and($result['truncated'])->toBeTrue()
         ->and($result['pages_fetched'])->toBe(2);
 
     Http::assertSentCount(2);
+});
+
+it('preserves the advertised total when a later page reports no data', function () {
+    Http::fakeSequence()
+        ->push(samPage(1000, 0, 2500), 200)
+        ->push(['message' => 'No records found'], 404);
+
+    $result = (new SamApiClient)->fetch('423840', paginationParams(), 'key');
+
+    expect($result['count'])->toBe(1000)
+        ->and($result['total_records'])->toBe(2500)
+        ->and($result['truncated'])->toBeTrue()
+        ->and($result['no_data'])->toBeFalse();
 });

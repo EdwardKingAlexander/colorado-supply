@@ -59,7 +59,9 @@ class SamOpportunityDeduplicator
         $naicsFailed = [];
 
         foreach ($naicsResults as $result) {
-            $naicsCode = $result['naics'] ?? 'unknown';
+            // PSC results have no NAICS; they are identified by their term ("psc:53").
+            $naicsCode = $result['naics'] ?? $result['term'] ?? 'unknown';
+            $term = $result['term'] ?? 'naics:'.$naicsCode;
             $naicsQueried[] = $naicsCode;
 
             if ($result['success'] ?? false) {
@@ -68,7 +70,9 @@ class SamOpportunityDeduplicator
                 if (! empty($result['opportunities'])) {
                     foreach ($result['opportunities'] as $opp) {
                         // Tag with source NAICS for debugging
-                        $opp['source_naics'] = $naicsCode;
+                        $opp['source_naics'] = $result['naics'] ?? null;
+                        // Every search term that found this notice; merged across duplicates.
+                        $opp['matched_terms'] = [$term];
                         $allOpportunities[] = $opp;
                     }
 
@@ -131,6 +135,13 @@ class SamOpportunityDeduplicator
                 // Duplicate found - compare dates
                 $existingOpp = $deduplicated[$seen[$noticeId]];
                 $shouldReplace = $this->shouldReplaceExisting($existingOpp, $opp);
+
+                // Whichever version is kept, it keeps every term that found the notice.
+                $opp['matched_terms'] = $existingOpp['matched_terms'] = array_values(array_unique(array_merge(
+                    $existingOpp['matched_terms'] ?? [],
+                    $opp['matched_terms'] ?? [],
+                )));
+                $deduplicated[$seen[$noticeId]] = $existingOpp;
 
                 if ($shouldReplace) {
                     // Replace with newer version

@@ -101,6 +101,13 @@ class SamResponseBuilder
             // only while applyFilters() was a no-op, wrong the moment it wasn't.
             'total_after_filters' => $metadata['total_after_filters'] ?? null,
             'returned_count' => $metadata['returned_count'] ?? null,
+            'naics_incomplete' => $metadata['naics_incomplete'] ?? 0,
+            'api_total_records' => $metadata['api_total_records'] ?? 0,
+            // PSC discovery (ai/modules/sam-psc-discovery).
+            'psc_queried' => $metadata['psc_queried'] ?? 0,
+            'psc_succeeded' => $metadata['psc_succeeded'] ?? 0,
+            'psc_failed' => $metadata['psc_failed'] ?? 0,
+            'found_only_via_psc' => $metadata['found_only_via_psc'] ?? 0,
         ];
 
         // Merge additional fields
@@ -160,10 +167,14 @@ class SamResponseBuilder
      */
     public function build(array $opportunities, array $metadata = [], array $errors = []): array
     {
-        $succeeded = $metadata['naics_succeeded'] ?? 0;
-        $failed = $metadata['naics_failed'] ?? 0;
+        // Whole-run counts (NAICS + PSC terms) when present; a PSC-only run must not read as failure.
+        $succeeded = $metadata['terms_succeeded'] ?? $metadata['naics_succeeded'] ?? 0;
+        $failed = $metadata['terms_failed'] ?? $metadata['naics_failed'] ?? 0;
 
         $status = $this->determineStatus($succeeded, $failed);
+        if (($metadata['naics_incomplete'] ?? 0) > 0) {
+            $status = 'partial_success';
+        }
 
         return match ($status) {
             'success' => $this->success($opportunities, $metadata),
@@ -212,10 +223,21 @@ class SamResponseBuilder
         $errors = [];
 
         foreach ($fetchResults as $result) {
+            if ($result['truncated'] ?? false) {
+                $errors[] = [
+                    'message' => $result['page_error'] ?? 'Not all matching opportunities could be retrieved. The API returned an empty page early or the page limit was reached.',
+                    'naics' => $result['naics'] ?? $result['term'] ?? null,
+                    'type' => 'incomplete_results',
+                    'details' => [
+                        'fetched' => $result['count'] ?? 0,
+                        'reported_total' => $result['total_records'] ?? 0,
+                    ],
+                ];
+            }
             if (! ($result['success'] ?? false)) {
                 $errors[] = [
                     'message' => $result['error'] ?? 'Unknown error',
-                    'naics' => $result['naics'] ?? null,
+                    'naics' => $result['naics'] ?? $result['term'] ?? null,
                     'type' => $result['error_type'] ?? null,
                     'status_code' => $result['status_code'] ?? null,
                     'details' => $result['response_body'] ?? null,

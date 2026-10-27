@@ -15,7 +15,7 @@ class SamInsightsStats extends BaseWidget
     protected function getStats(): array
     {
         $totalOpps = SamOpportunity::count();
-        $favorited = SamOpportunity::whereHas('favoritedBy')->count();
+        $favorited = SamOpportunity::whereHas('favoritedBy')->orWhereHas('favoritedByAdmins')->count();
 
         $docCounts = SamOpportunityDocument::selectRaw('count(*) as total_docs')->first()?->total_docs ?? 0;
         $parseSuccess = SamOpportunityDocumentParse::where('status', 'success')->count();
@@ -30,7 +30,7 @@ class SamInsightsStats extends BaseWidget
                 ->description('Tracked federal opportunities')
                 ->color('primary'),
             Stat::make('Favorited Opportunities', $favorited)
-                ->description('Saved by users for monitoring')
+                ->description('Saved by customers and admins for monitoring')
                 ->color('success'),
             Stat::make('Parsed Docs', "{$parseSuccess} / {$docCounts} ({$parsedPct}%)")
                 ->description('Successful document parse coverage')

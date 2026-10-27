@@ -24,8 +24,9 @@ class SamOpportunitiesCache
     /**
      * Cache key prefix for SAM opportunities.
      */
-    // Bump prefix to invalidate stale caches created before the NAICS param fix.
-    protected const PREFIX = 'sam_opp_v3';
+    // Invalidate responses produced by the old record-offset pagination.
+    // v5: keys carry the search dimension (naics|psc) — see buildCacheKey().
+    protected const PREFIX = 'sam_opp_v5';
 
     /**
      * Get cached response for a NAICS code and query parameters.
@@ -34,10 +35,10 @@ class SamOpportunitiesCache
      * @param  array  $params  Resolved query parameters
      * @return array|null Cached response or null if cache miss
      */
-    public function get(string $naicsCode, array $params): ?array
+    public function get(string $naicsCode, array $params, string $dimension = 'naics'): ?array
     {
         try {
-            $cacheKey = $this->buildCacheKey($naicsCode, $params);
+            $cacheKey = $this->buildCacheKey($naicsCode, $params, $dimension);
 
             $cached = Cache::get($cacheKey);
 
@@ -84,10 +85,10 @@ class SamOpportunitiesCache
      * @param  array  $response  API response to cache
      * @return bool True if cached successfully, false otherwise
      */
-    public function put(string $naicsCode, array $params, array $response): bool
+    public function put(string $naicsCode, array $params, array $response, string $dimension = 'naics'): bool
     {
         try {
-            $cacheKey = $this->buildCacheKey($naicsCode, $params);
+            $cacheKey = $this->buildCacheKey($naicsCode, $params, $dimension);
 
             // Mark response as cached
             $response['cached'] = false; // Will be true when retrieved
@@ -123,10 +124,10 @@ class SamOpportunitiesCache
      * @param  array  $params  Resolved query parameters
      * @return bool True if cached response exists, false otherwise
      */
-    public function has(string $naicsCode, array $params): bool
+    public function has(string $naicsCode, array $params, string $dimension = 'naics'): bool
     {
         try {
-            $cacheKey = $this->buildCacheKey($naicsCode, $params);
+            $cacheKey = $this->buildCacheKey($naicsCode, $params, $dimension);
 
             return Cache::has($cacheKey);
         } catch (\Exception $e) {
@@ -149,10 +150,10 @@ class SamOpportunitiesCache
      * @param  array  $params  Resolved query parameters
      * @return bool True if cleared successfully, false otherwise
      */
-    public function forget(string $naicsCode, array $params): bool
+    public function forget(string $naicsCode, array $params, string $dimension = 'naics'): bool
     {
         try {
-            $cacheKey = $this->buildCacheKey($naicsCode, $params);
+            $cacheKey = $this->buildCacheKey($naicsCode, $params, $dimension);
 
             $result = Cache::forget($cacheKey);
 
@@ -209,7 +210,7 @@ class SamOpportunitiesCache
     /**
      * Build cache key for a NAICS code and query parameters.
      *
-     * Cache key format: sam_opp_v2_{naics}_{param_hash}
+     * Cache key format: sam_opp_v5_{dimension}_{code}_{param_hash}
      *
      * The param hash includes:
      * - place (state code)
@@ -227,7 +228,7 @@ class SamOpportunitiesCache
      * @param  array  $params  Resolved query parameters
      * @return string Cache key
      */
-    protected function buildCacheKey(string $naicsCode, array $params): string
+    protected function buildCacheKey(string $naicsCode, array $params, string $dimension = 'naics'): string
     {
         // Build hash from query parameters that affect results
         $paramHash = md5(json_encode([
@@ -238,7 +239,8 @@ class SamOpportunitiesCache
             'posted_to' => $params['posted_to'] ?? null,
         ]));
 
-        return self::PREFIX."_{$naicsCode}_{$paramHash}";
+        // The dimension keeps a PSC group and a NAICS code that share digits apart.
+        return self::PREFIX."_{$dimension}_{$naicsCode}_{$paramHash}";
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MilSpecParts;
 
 use App\Filament\Resources\MilSpecParts\Pages\CreateMilSpecPart;
 use App\Filament\Resources\MilSpecParts\Pages\EditMilSpecPart;
+use App\Filament\Resources\MilSpecParts\Pages\ImportMilSpecParts;
 use App\Filament\Resources\MilSpecParts\Pages\ListMilSpecParts;
 use App\Filament\Resources\MilSpecParts\RelationManagers\ProcurementHistoriesRelationManager;
 use App\Filament\Resources\MilSpecParts\RelationManagers\SuppliersRelationManager;
@@ -50,6 +51,7 @@ class MilSpecPartResource extends Resource
         return [
             'index' => ListMilSpecParts::route('/'),
             'create' => CreateMilSpecPart::route('/create'),
+            'import' => ImportMilSpecParts::route('/import'),
             'edit' => EditMilSpecPart::route('/{record}/edit'),
         ];
     }

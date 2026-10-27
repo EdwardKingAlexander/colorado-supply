@@ -9,6 +9,7 @@ use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use NotificationChannels\WebPush\HasPushSubscriptions;
@@ -21,6 +22,11 @@ class Admin extends Authenticatable implements FilamentUser, HasAppAuthenticatio
     protected string $guard_name = 'web';
 
     protected $fillable = ['name', 'email', 'password'];
+
+    public function favoriteSamOpportunities(): BelongsToMany
+    {
+        return $this->belongsToMany(SamOpportunity::class, 'sam_opportunity_admin_favorites')->withTimestamps();
+    }
 
     protected $hidden = [
         'password',

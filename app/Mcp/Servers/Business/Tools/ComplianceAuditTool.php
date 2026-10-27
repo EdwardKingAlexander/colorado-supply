@@ -4,6 +4,7 @@ namespace App\Mcp\Servers\Business\Tools;
 
 use App\Mcp\Servers\Tool;
 use App\Models\Vendor;
+use App\Support\SamStatePath;
 use Carbon\Carbon;
 
 class ComplianceAuditTool extends Tool
@@ -302,8 +303,8 @@ class ComplianceAuditTool extends Tool
      */
     protected function saveReport(array $report): void
     {
-        $stateDir = app_path('Mcp/Servers/Business/State');
-        $reportFile = $stateDir.'/compliance-report.json';
+        $stateDir = SamStatePath::directory();
+        $reportFile = SamStatePath::complianceReport();
 
         // Ensure State directory exists
         if (! file_exists($stateDir)) {

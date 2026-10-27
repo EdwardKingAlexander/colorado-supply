@@ -3,6 +3,7 @@
 use App\Mcp\Servers\Business\Tools\ComplianceAuditTool;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Support\SamStatePath;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -14,7 +15,7 @@ beforeEach(function () {
     $this->user = User::factory()->create();
 
     // Ensure State directory exists
-    $stateDir = app_path('Mcp/Servers/Business/State');
+    $stateDir = SamStatePath::directory();
     if (! File::exists($stateDir)) {
         File::makeDirectory($stateDir, 0755, true);
     }
@@ -22,7 +23,7 @@ beforeEach(function () {
 
 afterEach(function () {
     // Clean up test report file
-    $reportFile = app_path('Mcp/Servers/Business/State/compliance-report.json');
+    $reportFile = SamStatePath::complianceReport();
     if (File::exists($reportFile)) {
         File::delete($reportFile);
     }
@@ -258,7 +259,7 @@ test('saves report to State directory', function () {
     $tool = new ComplianceAuditTool;
     $tool->execute([]);
 
-    $reportFile = app_path('Mcp/Servers/Business/State/compliance-report.json');
+    $reportFile = SamStatePath::complianceReport();
 
     expect(File::exists($reportFile))->toBeTrue();
 

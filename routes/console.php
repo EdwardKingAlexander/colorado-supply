@@ -1,6 +1,9 @@
 <?php
 
+use App\Jobs\DibbsDailyDigestJob;
+use App\Jobs\DibbsDownloadJob;
 use App\Jobs\FetchSamOpportunitiesJob;
+use App\Support\SamSearchParameters;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
@@ -78,6 +81,8 @@ Schedule::call(function () {
         FetchSamOpportunitiesJob::dispatch(
             params: [
                 'days_back' => 7,
+                // NAICS (configured lists) OR PSC discovery: DLA groups + 4-char PSCs.
+                'psc_search' => (new SamSearchParameters)->defaultPscSearch(),
                 'place' => 'CO',
                 'limit' => 100,
                 'notice_type' => [
@@ -99,7 +104,47 @@ Schedule::call(function () {
             'exception_class' => get_class($e),
         ]);
     }
-})->dailyAt('06:00')->name('fetch-sam-opportunities');
+    // The app runs on UTC; without the timezone this fired at 06:00 UTC (midnight Mountain).
+})->dailyAt('06:00')->timezone('America/Denver')->name('fetch-sam-opportunities');
+
+/*
+|--------------------------------------------------------------------------
+| DIBBS RFQ Download
+|--------------------------------------------------------------------------
+|
+| DLA posts a day's RFQ files the following morning (the 2026-10-02 zip was
+| stamped 10-03 00:15 ET), so this runs at 07:00 Mountain and catches up on any
+| recent day not yet imported. See ai/modules/dibbs-rfq-tracking.
+|
+*/
+
+Schedule::call(function () {
+    try {
+        DibbsDownloadJob::dispatch();
+
+        Log::info('Scheduled DIBBS download queued', ['trigger' => 'scheduled_task']);
+    } catch (Throwable $e) {
+        Log::error('Scheduled DIBBS download failed to queue', [
+            'trigger' => 'scheduled_task',
+            'error' => $e->getMessage(),
+            'exception_class' => get_class($e),
+        ]);
+    }
+})->dailyAt('07:00')->timezone('America/Denver')->name('dibbs-download');
+
+// Fallback for the morning digest, which normally goes out right after the
+// download imports a new file. Sends at most once a day (DibbsDailyDigestJob).
+Schedule::call(function () {
+    try {
+        DibbsDailyDigestJob::dispatch();
+    } catch (Throwable $e) {
+        Log::error('Scheduled DIBBS digest failed to queue', ['error' => $e->getMessage(), 'exception_class' => get_class($e)]);
+    }
+})->dailyAt('08:30')->timezone('America/Denver')->name('dibbs-digest');
+
+// DIBBS health and retention (ai/modules/dibbs-rfq-tracking, Phase 7).
+Schedule::command('dibbs:check-freshness')->weekdays()->dailyAt('10:00')->timezone('America/Denver')->name('dibbs-freshness');
+Schedule::command('dibbs:prune')->weeklyOn(0, '03:00')->timezone('America/Denver')->name('dibbs-prune');
 
 // Bell retention (ai/modules/will-call-notifications-complete, phase 2).
 Schedule::command('notifications:prune')->dailyAt('03:30')->timezone('America/Denver')->name('notifications-prune');

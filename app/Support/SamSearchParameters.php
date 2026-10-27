@@ -12,6 +12,12 @@ class SamSearchParameters
 
     public array $psc_codes;
 
+    public array $psc_groups;
+
+    public array $psc_groups_optional;
+
+    public array $psc_descriptions;
+
     public array $keywords;
 
     public array $notice_types;
@@ -38,6 +44,22 @@ class SamSearchParameters
 
     public array $refresh_interval_options;
 
+    /**
+     * PSC terms searched by default: DLA groups, then 4-character PSCs.
+     */
+    public function defaultPscSearch(): array
+    {
+        return array_values(array_unique(array_merge($this->psc_groups, $this->psc_codes)));
+    }
+
+    /**
+     * Every PSC term the panel offers (defaults plus opt-in groups).
+     */
+    public function pscOptions(): array
+    {
+        return array_values(array_unique(array_merge($this->psc_groups, $this->psc_groups_optional, $this->psc_codes)));
+    }
+
     public function __construct()
     {
         $config = config('sam_opportunities');
@@ -46,6 +68,9 @@ class SamSearchParameters
         $this->naics_codes_secondary = $config['naics_codes']['secondary'];
         $this->naics_descriptions = $config['naics_descriptions'] ?? [];
         $this->psc_codes = $config['psc_codes'];
+        $this->psc_groups = $config['psc_groups'] ?? [];
+        $this->psc_groups_optional = $config['psc_groups_optional'] ?? [];
+        $this->psc_descriptions = $config['psc_descriptions'] ?? [];
         $this->keywords = $config['keywords'];
         $this->notice_types = $config['filters']['notice_types'];
         $this->set_asides = $config['filters']['set_asides'];

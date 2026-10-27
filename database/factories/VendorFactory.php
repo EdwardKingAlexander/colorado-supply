@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Vendor>
+ * @extends Factory<Vendor>
  */
 class VendorFactory extends Factory
 {
@@ -15,19 +16,18 @@ class VendorFactory extends Factory
      *
      * @return array<string, mixed>
      */
-
     protected $model = Vendor::class;
-    
+
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
+            'user_id' => User::factory(),
             'name' => fake()->company(),
             'email' => fake()->unique()->safeEmail,
-            'phone' => fake()->phoneNumber(),
+            'phone' => fake()->numerify('###-###-####'), // phoneNumber() can add an extension (x123), which the form's tel() rule rejects
             'slug' => fake()->unique()->slug(),
             'description' => fake()->paragraph(),
-            'logo' => fake()->imageUrl(640, 480, 'business', true)
+            'logo' => fake()->imageUrl(640, 480, 'business', true),
         ];
     }
 }

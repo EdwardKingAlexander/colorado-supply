@@ -33,6 +33,11 @@
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <!-- Volt::test() runs `view:cache`, which wipes and recompiles every view. Sharing
+             storage/framework/views with the running site made each test run race live
+             requests ("rename(...): Access is denied (code: 5)" on Windows). -->
+        <env name="VIEW_COMPILED_PATH" value="storage/framework/testing/views"/>
+        <env name="DIBBS_REQUEST_INTERVAL_SECONDS" value="0"/>
         <env name="STRIPE_KEY" value="pk_test_dummy"/>
         <env name="STRIPE_SECRET" value="sk_test_dummy"/>
         <env name="STRIPE_WEBHOOK_SECRET" value="whsec_dummy"/>

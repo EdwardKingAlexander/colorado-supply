@@ -15,12 +15,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use NotificationChannels\WebPush\HasPushSubscriptions;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasPushSubscriptions, HasRoles, Notifiable, ReceivesTextMessages;
+    use HasFactory, HasPushSubscriptions, HasRoles, LogsActivity, Notifiable, ReceivesTextMessages;
 
     protected string $guard_name = 'web';
 
@@ -129,6 +132,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function mfaCodes(): HasMany
     {
         return $this->hasMany(MfaCode::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('users')
+            ->logOnly(['name', 'email'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function tapActivity(Activity $activity, string $eventName): void
+    {
+        $activity->company_id = $this->company_id;
+        $activity->properties = $activity->properties->put('company_id', $this->company_id);
     }
 
     protected static function booted(): void

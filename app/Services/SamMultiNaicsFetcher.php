@@ -6,7 +6,8 @@ use App\Support\SamOpportunitiesCache;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Orchestrates sequential fetching of SAM.gov opportunities across multiple NAICS codes.
+ * Orchestrates sequential fetching of SAM.gov opportunities across multiple NAICS codes
+ * and, optionally, PSC codes (one query per code).
  *
  * This service:
  * - Iterates through NAICS codes sequentially (v2 API limitation)
@@ -48,14 +49,20 @@ class SamMultiNaicsFetcher
     }
 
     /**
-     * Fetch opportunities for multiple NAICS codes sequentially.
+     * Fetch opportunities for multiple NAICS codes, and optionally PSC codes, sequentially.
+     *
+     * Each code is one search term ("naics:332919", "psc:53") and one SAM.gov
+     * query: NAICS via `ncode`, PSC via `ccode`. A notice found by several terms
+     * appears in several results; the deduplicator collapses it and records
+     * every term that found it.
      *
      * @param  array  $naicsCodes  Array of 6-digit NAICS codes
      * @param  array  $params  Resolved query parameters from SamParameterResolver
      * @param  string  $apiKey  SAM.gov API key
-     * @return array Array of per-NAICS results with performance metrics
+     * @param  array  $pscCodes  2- or 4-character PSC codes to search as well
+     * @return array Array of per-term results with performance metrics
      */
-    public function fetchAll(array $naicsCodes, array $params, string $apiKey): array
+    public function fetchAll(array $naicsCodes, array $params, string $apiKey, array $pscCodes = []): array
     {
         $startTime = microtime(true);
 
@@ -64,39 +71,46 @@ class SamMultiNaicsFetcher
         $cacheHits = 0;
         $cacheMisses = 0;
 
-        $totalNaics = count($naicsCodes);
+        $terms = array_merge(
+            array_map(fn ($code) => ['dimension' => 'naics', 'code' => (string) $code], array_values($naicsCodes)),
+            array_map(fn ($code) => ['dimension' => 'psc', 'code' => (string) $code], array_values($pscCodes)),
+        );
 
-        foreach ($naicsCodes as $index => $naicsCode) {
-            $naicsStartTime = microtime(true);
+        $totalTerms = count($terms);
+
+        foreach ($terms as $index => ['dimension' => $dimension, 'code' => $code]) {
+            $termStartTime = microtime(true);
+            $term = $dimension.':'.$code;
 
             // Allow callers to force a fresh pull
             $skipCache = $params['clearCache'] ?? false;
 
             // If clearCache is requested, remove any existing entry before checking
             if ($skipCache) {
-                $this->cache->forget($naicsCode, $params);
+                $this->cache->forget($code, $params, $dimension);
             }
 
             // Check cache first (unless skipping)
-            $cachedResult = $skipCache ? null : $this->cache->get($naicsCode, $params);
+            $cachedResult = $skipCache ? null : $this->cache->get($code, $params, $dimension);
 
             if ($cachedResult !== null) {
                 // Cache hit
                 $results[] = $cachedResult;
                 $cacheHits++;
 
-                $duration = round((microtime(true) - $naicsStartTime) * 1000);
+                $duration = round((microtime(true) - $termStartTime) * 1000);
 
                 $performanceMetrics[] = [
-                    'naics' => $naicsCode,
+                    $dimension => $code,
+                    'term' => $term,
                     'duration_ms' => $duration,
                     'count' => $cachedResult['count'] ?? 0,
                     'cached' => true,
                 ];
 
-                Log::debug('SAM.gov NAICS query (cache hit)', [
+                Log::debug('SAM.gov query (cache hit)', [
                     'service' => 'SamMultiNaicsFetcher',
-                    'naics' => $naicsCode,
+                    $dimension => $code,
                     'duration_ms' => $duration,
                     'count' => $cachedResult['count'] ?? 0,
                     'cached' => true,
@@ -105,33 +119,39 @@ class SamMultiNaicsFetcher
                 // Cache miss - fetch from API
                 $cacheMisses++;
 
-                $result = $this->apiClient->fetch($naicsCode, $params, $apiKey);
+                $result = $dimension === 'psc'
+                    ? $this->apiClient->fetch($code, $params, $apiKey, 'psc')
+                    : $this->apiClient->fetch($code, $params, $apiKey);
 
-                $duration = round((microtime(true) - $naicsStartTime) * 1000);
+                $duration = round((microtime(true) - $termStartTime) * 1000);
 
-                // Store successful results in cache
                 if ($result['success'] ?? false) {
-                    $this->cache->put($naicsCode, $params, $result);
+                    // Keep metrics for partial responses, but retry them next time.
+                    if (! ($result['truncated'] ?? false)) {
+                        $this->cache->put($code, $params, $result, $dimension);
+                    }
 
                     $performanceMetrics[] = [
-                        'naics' => $naicsCode,
+                        $dimension => $code,
+                        'term' => $term,
                         'duration_ms' => $duration,
                         'count' => $result['count'] ?? 0,
                         'cached' => false,
                     ];
 
-                    Log::debug('SAM.gov NAICS query succeeded', [
+                    Log::debug('SAM.gov query returned results', [
                         'service' => 'SamMultiNaicsFetcher',
-                        'naics' => $naicsCode,
+                        $dimension => $code,
                         'duration_ms' => $duration,
                         'count' => $result['count'] ?? 0,
                         'cached' => false,
+                        'truncated' => $result['truncated'] ?? false,
                     ]);
                 } else {
-                    // Log failure
-                    Log::warning('SAM.gov query failed for NAICS', [
+                    // One failed term never aborts the run (partial success).
+                    Log::warning('SAM.gov query failed for '.strtoupper($dimension), [
                         'service' => 'SamMultiNaicsFetcher',
-                        'naics' => $naicsCode,
+                        $dimension => $code,
                         'error' => $result['error'] ?? 'Unknown error',
                         'status_code' => $result['status_code'] ?? null,
                         'error_category' => $this->categorizeError($result),
@@ -142,7 +162,7 @@ class SamMultiNaicsFetcher
             }
 
             // Add delay between requests (except after last one)
-            if ($index < $totalNaics - 1) {
+            if ($index < $totalTerms - 1) {
                 $this->addRateLimitDelay();
             }
         }
@@ -155,6 +175,7 @@ class SamMultiNaicsFetcher
                 'total_duration_ms' => $totalDuration,
                 'cache_hits' => $cacheHits,
                 'cache_misses' => $cacheMisses,
+                // Per search term; the key predates PSC terms.
                 'per_naics' => $performanceMetrics,
             ],
         ];
@@ -205,8 +226,11 @@ class SamMultiNaicsFetcher
         $results = $fetchResults['results'] ?? [];
         $performance = $fetchResults['performance'] ?? [];
 
-        $successfulResults = array_filter($results, fn ($r) => $r['success'] ?? false);
-        $failedResults = array_filter($results, fn ($r) => ! ($r['success'] ?? false));
+        $isPsc = fn ($r) => ($r['dimension'] ?? 'naics') === 'psc';
+        $succeeded = fn ($r) => $r['success'] ?? false;
+
+        $naicsResults = array_filter($results, fn ($r) => ! $isPsc($r));
+        $pscResults = array_filter($results, $isPsc);
 
         $totalQueries = $performance['cache_hits'] + $performance['cache_misses'];
         $cacheHitRate = $totalQueries > 0
@@ -214,9 +238,15 @@ class SamMultiNaicsFetcher
             : 0;
 
         return [
-            'total_naics_queried' => count($results),
-            'successful_naics' => count($successfulResults),
-            'failed_naics' => count($failedResults),
+            // NAICS-only counts, as before; PSC and whole-run counts sit alongside.
+            'total_naics_queried' => count($naicsResults),
+            'successful_naics' => count(array_filter($naicsResults, $succeeded)),
+            'failed_naics' => count(array_filter($naicsResults, fn ($r) => ! $succeeded($r))),
+            'total_psc_queried' => count($pscResults),
+            'successful_psc' => count(array_filter($pscResults, $succeeded)),
+            'failed_psc' => count(array_filter($pscResults, fn ($r) => ! $succeeded($r))),
+            'total_terms_queried' => count($results),
+            'failed_terms' => count(array_filter($results, fn ($r) => ! $succeeded($r))),
             'cache_hit_rate' => $cacheHitRate.'%',
             'total_duration_ms' => $performance['total_duration_ms'] ?? 0,
             'cache_hits' => $performance['cache_hits'] ?? 0,
@@ -239,7 +269,9 @@ class SamMultiNaicsFetcher
         foreach ($results as $result) {
             if (! ($result['success'] ?? false)) {
                 $failed[] = [
-                    'naics' => $result['naics'] ?? 'unknown',
+                    // PSC failures report their term ("psc:53") so the panel's failure list still names them.
+                    'naics' => $result['naics'] ?? $result['term'] ?? 'unknown',
+                    'term' => $result['term'] ?? null,
                     'error' => $result['error'] ?? 'Unknown error',
                     'status_code' => $result['status_code'] ?? null,
                     'error_type' => $result['error_type'] ?? null,

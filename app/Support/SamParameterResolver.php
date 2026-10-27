@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\GsaFilter;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 /**
@@ -37,8 +38,8 @@ class SamParameterResolver
         // Load NAICS codes from DB or override
         $naicsCodes = $this->resolveNaicsCodes($params);
 
-        // Load PSC codes from DB or override (optional)
-        $pscCodes = $this->resolvePscCodes($params);
+        // PSC codes to search by, in addition to NAICS (optional)
+        $pscCodes = $this->capPscTerms($naicsCodes, $this->resolvePscCodes($params));
 
         // Resolve notice types with v2 conversion
         $noticeTypes = $this->resolveNoticeTypes($params);
@@ -77,6 +78,7 @@ class SamParameterResolver
 
         return [
             'naics_codes' => $naicsCodes,
+            // Searched by ccode (discovery), not used to filter. See resolvePscCodes().
             'psc_codes' => $pscCodes,
             'notice_types' => $noticeTypes,
             'notice_type_codes' => $noticeTypeCodes,
@@ -129,26 +131,90 @@ class SamParameterResolver
     }
 
     /**
-     * Resolve PSC codes to filter on.
+     * Resolve PSC codes to search by (`ccode`), alongside the NAICS codes.
      *
-     * Defaults to NO filter. config('sam_opportunities.psc_codes') is the list
-     * of codes the UI offers, not a set to apply automatically — these are now
-     * really applied post-fetch, and defaulting to all 30 would silently narrow
-     * every result set the moment filtering started working.
+     * PSCs used to be a post-fetch *filter* over NAICS results, so a notice
+     * whose buyer picked a NAICS we don't query stayed invisible however well
+     * its product code matched. They are now a discovery dimension: each code
+     * is its own SAM.gov request (see ai/modules/sam-psc-discovery).
+     *
+     * SAM.gov matches `ccode` exactly. Valid terms are 2-character DLA groups
+     * (`53`) and 4-character PSCs (`5305`, `J053`); other lengths always return
+     * nothing, so they are rejected rather than silently wasting a request.
+     *
+     * Defaults to none: callers opt in (the panel and the scheduled fetch pass
+     * the configured lists).
+     *
+     * @throws InvalidArgumentException
      */
     protected function resolvePscCodes(array $params): array
     {
-        if (isset($params['psc_override']) && ! empty($params['psc_override'])) {
+        $pscCodes = $params['psc_search'] ?? null;
+
+        if (empty($pscCodes) && ! empty($params['psc_override'])) {
+            Log::info('SAM.gov psc_override is deprecated; it now means psc_search (discovery, not a filter)', [
+                'service' => 'SamParameterResolver',
+            ]);
+
             $pscCodes = $params['psc_override'];
-
-            if (! is_array($pscCodes)) {
-                throw new InvalidArgumentException('psc_override must be an array');
-            }
-
-            return array_values(array_filter(array_map('trim', $pscCodes)));
         }
 
-        return [];
+        if (empty($pscCodes)) {
+            return [];
+        }
+
+        if (! is_array($pscCodes)) {
+            throw new InvalidArgumentException('psc_search must be an array');
+        }
+
+        $normalized = [];
+
+        foreach ($pscCodes as $code) {
+            if (! is_string($code)) {
+                throw new InvalidArgumentException('All PSC codes must be strings');
+            }
+
+            $code = strtoupper(trim($code));
+
+            if ($code === '') {
+                continue;
+            }
+
+            if (! preg_match('/^(\d{2}|[A-Z0-9]{4})$/', $code)) {
+                throw new InvalidArgumentException("Invalid PSC code: {$code}. Expected a 2-digit group (e.g. 53) or a 4-character PSC (e.g. 5305).");
+            }
+
+            $normalized[] = $code;
+        }
+
+        return array_values(array_unique($normalized));
+    }
+
+    /**
+     * Keep NAICS + PSC terms within config('sam_opportunities.max_terms_per_fetch').
+     *
+     * Each term is a sequential ~1 s request against an unpublished daily
+     * quota. NAICS terms are never dropped (they are the operator's explicit
+     * industry selection); PSC terms beyond the cap are, loudly.
+     */
+    protected function capPscTerms(array $naicsCodes, array $pscCodes): array
+    {
+        $max = (int) config('sam_opportunities.max_terms_per_fetch', 150);
+        $room = max(0, $max - count($naicsCodes));
+
+        if ($max <= 0 || count($pscCodes) <= $room) {
+            return $pscCodes;
+        }
+
+        Log::warning('SAM.gov PSC terms capped by max_terms_per_fetch', [
+            'service' => 'SamParameterResolver',
+            'max_terms_per_fetch' => $max,
+            'naics_terms' => count($naicsCodes),
+            'psc_requested' => count($pscCodes),
+            'psc_dropped' => array_slice($pscCodes, $room),
+        ]);
+
+        return array_slice($pscCodes, 0, $room);
     }
 
     /**
@@ -212,6 +278,10 @@ class SamParameterResolver
 
     /**
      * Convert notice types to SAM.gov v2 API single-letter codes.
+     *
+     * Per the Get Opportunities API docs (open.gsa.gov), Sources Sought is "r".
+     * "s" is Special Notice; it was mapped here by mistake, so every fetch
+     * skipped Sources Sought notices and pulled Special Notices instead.
      */
     protected function convertNoticeTypesToV2Codes(array $noticeTypes): array
     {
@@ -219,7 +289,7 @@ class SamParameterResolver
             'Presolicitation' => 'p',
             'Solicitation' => 'o',
             'Combined Synopsis/Solicitation' => 'k',
-            'Sources Sought' => 's',
+            'Sources Sought' => 'r',
         ];
 
         $ptypes = [];

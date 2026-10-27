@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Jobs\FetchSamOpportunitiesJob;
 use App\Notifications\SamFetchFailedNotification;
+use App\Support\SamStatePath;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
@@ -94,7 +95,7 @@ it('does not crash the job when no alert recipient is configured', function () {
     Notification::assertNothingSent();
 
     $state = json_decode(
-        file_get_contents(app_path('Mcp/Servers/Business/State/sam-opportunities.json')),
+        file_get_contents(SamStatePath::opportunities()),
         true
     );
 

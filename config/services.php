@@ -65,6 +65,10 @@ return [
         // the moment GSA restores api.sam.gov.
         'base_url' => env('SAM_API_BASE_URL', 'https://sam.gov/api/prod/opportunities/v2/search'),
 
+        // Entity Management API (CAGE lookups). Same host workaround as base_url:
+        // api.sam.gov 404s; sam.gov/api/prod answers (verified 2026-10-04).
+        'entity_url' => env('SAM_ENTITY_API_URL', 'https://sam.gov/api/prod/entity-information/v3/entities'),
+
         'timeout' => (int) env('SAM_API_TIMEOUT', 30),
 
         // Cap on paginated requests per NAICS code (page size is 1000).

@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -255,7 +256,7 @@ class SamStateFileManager
     /**
      * Generate filename for state file.
      *
-     * @param  \Carbon\Carbon  $timestamp  Timestamp for filename
+     * @param  Carbon  $timestamp  Timestamp for filename
      * @return string Filename
      */
     protected function generateFilename($timestamp): string
@@ -306,7 +307,7 @@ class SamStateFileManager
      */
     public function saveLegacy(array $legacy): ?string
     {
-        $path = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+        $path = SamStatePath::opportunities();
 
         try {
             $dir = dirname($path);

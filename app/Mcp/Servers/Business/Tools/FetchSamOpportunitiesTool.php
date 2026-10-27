@@ -36,9 +36,14 @@ class FetchSamOpportunitiesTool extends Tool
                 'description' => 'NAICS codes to query (array of 6-digit strings). Each is queried separately with per-NAICS caching. Default: the configured primary + secondary lists.',
                 'required' => false,
             ],
+            'psc_search' => [
+                'type' => 'array',
+                'description' => 'PSC codes to search by, in addition to NAICS (array of strings). Each is its own SAM.gov query (exact match): 2-digit groups such as "53" find DLA notices, 4-character PSCs such as "6515" find VA/Navy/Army notices. Default: none.',
+                'required' => false,
+            ],
             'psc_override' => [
                 'type' => 'array',
-                'description' => 'Filter results to these PSC codes (array of strings). Matched by prefix, since PSC codes are hierarchical. Default: no PSC filter.',
+                'description' => 'Deprecated alias of psc_search (it used to filter; it now searches).',
                 'required' => false,
             ],
             'notice_type' => [
@@ -308,12 +313,12 @@ class FetchSamOpportunitiesTool extends Tool
         return json_encode($result, JSON_PRETTY_PRINT);
     }
 
-    public function fetch(array $params = []): array
+    public function fetch(array $params = [], bool $applyLimit = true): array
     {
-        return $this->runWorkflow($params);
+        return $this->runWorkflow($params, $applyLimit);
     }
 
-    protected function runWorkflow(array $params = []): array
+    protected function runWorkflow(array $params = [], bool $applyLimit = true): array
     {
         $startTime = microtime(true);
 
@@ -370,8 +375,8 @@ class FetchSamOpportunitiesTool extends Tool
                 ],
             ]);
 
-            // Fetch opportunities from all NAICS codes
-            $fetchResponse = $fetcher->fetchAll($resolved['naics_codes'], $resolved, $apiKey);
+            // Fetch opportunities for every NAICS code, then every PSC code (ccode)
+            $fetchResponse = $fetcher->fetchAll($resolved['naics_codes'], $resolved, $apiKey, $resolved['psc_codes'] ?? []);
             $fetchResults = $fetchResponse['results'];
 
             // Merge and deduplicate results
@@ -387,7 +392,10 @@ class FetchSamOpportunitiesTool extends Tool
                 return strcmp($b['posted_date'] ?? '', $a['posted_date'] ?? '');
             });
 
-            $limitedOpportunities = array_slice($filteredOpportunities, 0, $resolved['limit']);
+            // Jobs ingest every match; direct tool calls retain their response cap.
+            $limitedOpportunities = $applyLimit
+                ? array_slice($filteredOpportunities, 0, $resolved['limit'])
+                : $filteredOpportunities;
             $returnedCount = count($limitedOpportunities);
 
             // The "nationwide keyword-only" fallback that used to live here has
@@ -418,6 +426,20 @@ class FetchSamOpportunitiesTool extends Tool
                 'naics_queried' => $fetchSummary['total_naics_queried'] ?? 0,
                 'naics_succeeded' => $fetchSummary['successful_naics'] ?? 0,
                 'naics_failed' => $fetchSummary['failed_naics'] ?? 0,
+                'psc_queried' => $fetchSummary['total_psc_queried'] ?? 0,
+                'psc_succeeded' => $fetchSummary['successful_psc'] ?? 0,
+                'psc_failed' => $fetchSummary['failed_psc'] ?? 0,
+                'terms_succeeded' => ($fetchSummary['total_terms_queried'] ?? 0) - ($fetchSummary['failed_terms'] ?? 0),
+                'terms_failed' => $fetchSummary['failed_terms'] ?? 0,
+                // Matches no NAICS query returned: the value PSC discovery adds.
+                'found_only_via_psc' => count(array_filter(
+                    $filteredOpportunities,
+                    fn (array $opp) => ! empty($opp['matched_terms'])
+                        && array_filter($opp['matched_terms'], fn ($t) => str_starts_with($t, 'naics:')) === [],
+                )),
+                'naics_incomplete' => count(array_filter($fetchResults, fn ($result) => $result['truncated'] ?? false)),
+                // Sum across NAICS before deduplication, not a unique notice count.
+                'api_total_records' => array_sum(array_column($fetchResults, 'total_records')),
                 'count_before_dedup' => $dedupStats['total_before_dedup'] ?? 0,
                 'total_after_dedup' => $dedupStats['total_after_dedup'] ?? 0,
                 'total_after_filters' => $filteredCount,
@@ -471,7 +493,10 @@ class FetchSamOpportunitiesTool extends Tool
             $legacy = $this->toLegacyFormat($response, $resolved);
 
             // Persist legacy state to shared file used by UI/export
-            $stateManager->saveLegacy($legacy);
+            // The ingestion job publishes its complete state after DB persistence.
+            if ($applyLimit) {
+                $stateManager->saveLegacy($legacy);
+            }
 
             return $legacy;
         } catch (\Exception $e) {
@@ -501,7 +526,9 @@ class FetchSamOpportunitiesTool extends Tool
 
             // Best-effort persist failure state for visibility in UI/export
             try {
-                (new SamStateFileManager)->saveLegacy($legacy);
+                if ($applyLimit) {
+                    (new SamStateFileManager)->saveLegacy($legacy);
+                }
             } catch (\Throwable $persistException) {
                 // swallow
             }
@@ -511,13 +538,18 @@ class FetchSamOpportunitiesTool extends Tool
     }
 
     /**
-     * Apply post-fetch filters for PSC, keywords, and set-asides.
+     * Apply post-fetch filters for keywords and set-asides.
      *
      * The division of labour: the API query handles what controls *volume*
-     * (NAICS, date range, state, notice type). Everything that merely *refines*
-     * a manageable result set is filtered here. That keeps one request per
-     * NAICS, keeps cached responses reusable across different refinements, and
-     * supports multi-value filters SAM.gov's single-valued parameters cannot.
+     * (NAICS and PSC terms, date range, state, notice type). Everything that
+     * merely *refines* a manageable result set is filtered here. That keeps one
+     * request per term, keeps cached responses reusable across different
+     * refinements, and supports multi-value filters SAM.gov's single-valued
+     * parameters cannot.
+     *
+     * PSC codes are no longer a filter here: they are searched (ccode) as their
+     * own terms. Filtering by them would also have narrowed the NAICS results
+     * to the selected PSCs, the opposite of discovery.
      *
      * Every filter here defaults to off. An empty list means "no filter", never
      * "match nothing" — see the resolver, which no longer inherits the config
@@ -529,48 +561,17 @@ class FetchSamOpportunitiesTool extends Tool
      */
     protected function applyFilters(array $opportunities, array $params): array
     {
-        $pscCodes = $params['psc_codes'] ?? [];
         $keywords = $params['keywords'] ?? [];
         $setAsides = $params['set_aside_codes'] ?? [];
 
-        if (empty($pscCodes) && empty($keywords) && empty($setAsides)) {
+        if (empty($keywords) && empty($setAsides)) {
             return $opportunities;
         }
 
-        return array_values(array_filter($opportunities, function (array $opp) use ($pscCodes, $keywords, $setAsides) {
-            return $this->matchesPsc($opp, $pscCodes)
-                && $this->matchesKeywords($opp, $keywords)
+        return array_values(array_filter($opportunities, function (array $opp) use ($keywords, $setAsides) {
+            return $this->matchesKeywords($opp, $keywords)
                 && $this->matchesSetAside($opp, $setAsides);
         }));
-    }
-
-    /**
-     * PSC codes are hierarchical and SAM.gov returns them at varying depth —
-     * the same query can yield "65" and "6515". Prefix matching keeps a
-     * configured "6515" from silently dropping a record classified as "65",
-     * and a configured "65" correctly matches the whole family.
-     */
-    protected function matchesPsc(array $opp, array $pscCodes): bool
-    {
-        if (empty($pscCodes)) {
-            return true;
-        }
-
-        $code = (string) ($opp['psc_code'] ?? '');
-
-        if ($code === '') {
-            return false;
-        }
-
-        foreach ($pscCodes as $wanted) {
-            $wanted = (string) $wanted;
-
-            if ($wanted !== '' && (str_starts_with($code, $wanted) || str_starts_with($wanted, $code))) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -682,9 +683,17 @@ class FetchSamOpportunitiesTool extends Tool
                 : 0,
             'duplicates_removed' => $metadata['duplicates_removed'] ?? 0,
             'returned' => $returnedCount,
+            'fetched_count' => $metadata['count_before_dedup'] ?? 0,
+            'matched_count' => $filteredCount ?? $dedupCount,
+            'displayed_count' => min($returnedCount, $resolved['limit'] ?? 50),
             'limit' => $resolved['limit'] ?? 50,
             'successful_naics_count' => $metadata['naics_succeeded'] ?? 0,
             'failed_naics_count' => $metadata['naics_failed'] ?? 0,
+            'incomplete_naics_count' => $metadata['naics_incomplete'] ?? 0,
+            'successful_psc_count' => $metadata['psc_succeeded'] ?? 0,
+            'failed_psc_count' => $metadata['psc_failed'] ?? 0,
+            'found_only_via_psc' => $metadata['found_only_via_psc'] ?? 0,
+            'api_total_records' => $metadata['api_total_records'] ?? 0,
             'cache_hit_rate' => ($metadata['cache_hits'] ?? 0) + ($metadata['cache_misses'] ?? 0) > 0
                 ? round((($metadata['cache_hits'] ?? 0) / (($metadata['cache_hits'] ?? 0) + ($metadata['cache_misses'] ?? 0))) * 100, 1).'%'
                 : '0%',

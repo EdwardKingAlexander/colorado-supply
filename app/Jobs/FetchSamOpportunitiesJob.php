@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Mcp\Servers\Business\Tools\FetchSamOpportunitiesTool;
 use App\Models\SamOpportunity;
 use App\Notifications\SamFetchFailedNotification;
+use App\Support\SamStatePath;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +18,12 @@ class FetchSamOpportunitiesJob implements ShouldQueue
 
     /**
      * The number of seconds the job can run before timing out.
+     *
+     * NAICS + PSC discovery is ~107 sequential terms at ~1 s each (measured
+     * 2026-10-04, ai/modules/sam-psc-discovery/findings.md), 2–2.5 minutes;
+     * 300 s left too little headroom for slow SAM.gov days.
      */
-    public int $timeout = 300;
+    public int $timeout = 600;
 
     /**
      * Create a new job instance.
@@ -43,10 +48,11 @@ class FetchSamOpportunitiesJob implements ShouldQueue
             ]);
 
             $tool = app(FetchSamOpportunitiesTool::class);
-            $result = $tool->fetch($this->params);
+            $result = $tool->fetch($this->params, applyLimit: false);
 
             // Save opportunities to database
-            $this->saveOpportunitiesToDatabase($result);
+            $result['summary']['saved_count'] = $this->saveOpportunitiesToDatabase($result);
+            $result['summary']['skipped_count'] = count($result['opportunities'] ?? []) - $result['summary']['saved_count'];
 
             // Persist result to shared state file for UI/exports
             $this->persistState($result);
@@ -121,7 +127,7 @@ class FetchSamOpportunitiesJob implements ShouldQueue
      */
     protected function persistState(array $data): void
     {
-        $file = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+        $file = SamStatePath::opportunities();
         $dir = dirname($file);
 
         try {
@@ -143,7 +149,7 @@ class FetchSamOpportunitiesJob implements ShouldQueue
      */
     protected function persistErrorState(string $errorMessage): void
     {
-        $file = app_path('Mcp/Servers/Business/State/sam-opportunities.json');
+        $file = SamStatePath::opportunities();
         $dir = dirname($file);
 
         try {
@@ -185,12 +191,12 @@ class FetchSamOpportunitiesJob implements ShouldQueue
      *
      * @throws \Throwable when persistence fails
      */
-    protected function saveOpportunitiesToDatabase(array $data): void
+    protected function saveOpportunitiesToDatabase(array $data): int
     {
         if (empty($data['opportunities'])) {
             Log::info('No opportunities to save to database');
 
-            return;
+            return 0;
         }
 
         $received = count($data['opportunities']);
@@ -253,5 +259,7 @@ class FetchSamOpportunitiesJob implements ShouldQueue
             'count' => $saved,
             'total_in_result' => $received,
         ]);
+
+        return $saved;
     }
 }

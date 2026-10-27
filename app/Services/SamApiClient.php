@@ -76,14 +76,45 @@ class SamApiClient
     protected const DEFAULT_MAX_PAGES = 10;
 
     /**
-     * Fetch opportunities from SAM.gov v2 API for a single NAICS code.
+     * Search dimension of the request in flight: 'naics' sends `ncode`, 'psc' sends `ccode`.
+     */
+    protected string $dimension = 'naics';
+
+    /**
+     * Fetch opportunities from SAM.gov v2 API for a single search term.
      *
-     * @param  string  $naicsCode  6-digit NAICS code
+     * Every result is tagged with `dimension`, `code` and `term`
+     * ("naics:332919", "psc:53"). NAICS results keep their `naics` key for
+     * existing callers; PSC results carry `psc` instead.
+     *
+     * @param  string  $code  6-digit NAICS code, or a 2/4-character PSC when $dimension is 'psc'
      * @param  array  $params  Resolved query parameters from SamParameterResolver
      * @param  string  $apiKey  SAM.gov API key
+     * @param  string  $dimension  'naics' or 'psc'
      * @return array Standardized response with success/error status
      */
-    public function fetch(string $naicsCode, array $params, string $apiKey): array
+    public function fetch(string $code, array $params, string $apiKey, string $dimension = 'naics'): array
+    {
+        $this->dimension = $dimension === 'psc' ? 'psc' : 'naics';
+
+        $result = $this->fetchCode($code, $params, $apiKey);
+
+        $result['dimension'] = $this->dimension;
+        $result['code'] = $code;
+        $result['term'] = $this->dimension.':'.$code;
+
+        if ($this->dimension === 'psc') {
+            unset($result['naics']);
+            $result['psc'] = $code;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Fetch every page for one code in the current dimension.
+     */
+    protected function fetchCode(string $naicsCode, array $params, string $apiKey): array
     {
         $maxPages = max(1, (int) (config('services.sam.max_pages') ?: self::DEFAULT_MAX_PAGES));
 
@@ -94,7 +125,8 @@ class SamApiClient
         $noData = false;
 
         while (true) {
-            $result = $this->fetchPage($naicsCode, $params, $apiKey, $pagesFetched * self::DEFAULT_LIMIT);
+            // SAM offset is a zero-based page index, not a record offset.
+            $result = $this->fetchPage($naicsCode, $params, $apiKey, $pagesFetched);
 
             if (! ($result['success'] ?? false)) {
                 // Never discard pages already gathered because a later one
@@ -117,7 +149,9 @@ class SamApiClient
             }
 
             $opportunities = array_merge($opportunities, $result['opportunities'] ?? []);
-            $totalRecords = $result['total_records'] ?? 0;
+            // Keep the largest advertised total so a later empty/no-data page
+            // cannot hide records that the API previously promised.
+            $totalRecords = max($totalRecords, (int) ($result['total_records'] ?? 0));
             $pagesFetched++;
 
             // Only meaningful when the very first page came back empty: it
@@ -129,6 +163,7 @@ class SamApiClient
 
             // No progress: stop rather than loop forever on an empty page.
             if (empty($result['opportunities'])) {
+                $truncated = count($opportunities) < $totalRecords;
                 break;
             }
 
@@ -169,7 +204,7 @@ class SamApiClient
     /**
      * Fetch a single page of results for one NAICS code.
      *
-     * @param  int  $offset  Record offset for pagination
+     * @param  int  $offset  Zero-based page index
      * @return array Standardized per-page response
      */
     protected function fetchPage(string $naicsCode, array $params, string $apiKey, int $offset): array
@@ -182,7 +217,7 @@ class SamApiClient
         $debugParams['api_key'] = '***';
         Log::debug('SAM.gov API request', [
             'service' => 'SamApiClient',
-            'naics' => $naicsCode,
+            $this->dimension => $naicsCode,
             'endpoint' => $this->baseUrl(),
             'params' => $debugParams,
         ]);
@@ -324,7 +359,11 @@ class SamApiClient
             // run on 2026-06-12 pulled 9 x 1000 records and deduplicated 8000 of
             // them down to the same 1000. Measured 2026-08-24 over 08/01-08/24:
             //   (no filter) -> 24084 | naics=423840 -> 24084 | ncode=423840 -> 2
-            'ncode' => $naicsCode,
+            //
+            // PSC terms use `ccode` instead (exact match; measured 2026-10-04:
+            // ccode=53 -> 2372 notices all classified "53", ccode=530 -> 0).
+            // Never both in one request: that would AND them.
+            ($this->dimension === 'psc' ? 'ccode' : 'ncode') => $naicsCode,
             'ptype' => implode(',', $params['notice_type_codes']),
             'limit' => self::DEFAULT_LIMIT,
             'offset' => $params['offset'] ?? 0,

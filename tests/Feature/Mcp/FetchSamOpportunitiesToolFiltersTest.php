@@ -103,20 +103,13 @@ it('matches keywords against the solicitation number too', function () {
     expect(noticeIds(fetchWith(['keywords' => 'DLA-003'])))->toBe(['c']);
 });
 
-it('filters by PSC code', function () {
+it('does not narrow NAICS results by PSC: PSC codes are searched, not filtered', function () {
     fakeCatalogue();
 
-    expect(noticeIds(fetchWith(['psc_override' => ['5340']])))->toBe(['a']);
-});
-
-it('treats PSC codes as hierarchical prefixes', function () {
-    fakeCatalogue();
-
-    // "65" is the family; "6515" is a child. SAM.gov returns both depths for
-    // the same query, so a family-level filter must catch the child and a
-    // child-level filter must not be dropped by a family-level record.
-    expect(noticeIds(fetchWith(['psc_override' => ['65']])))
-        ->toEqualCanonicalizing(['b', 'c']);
+    // Previously psc_override kept only notices whose PSC matched. PSC codes
+    // are now their own discovery queries, so supplying one can only add
+    // notices, never hide what the NAICS queries found.
+    expect(noticeIds(fetchWith(['psc_search' => ['5340']])))->toHaveCount(4);
 });
 
 it('filters by set-aside using the machine code, not the description', function () {

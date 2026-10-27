@@ -68,6 +68,11 @@ class SamInsightsDashboardTest extends TestCase
         $this->actingAs(Admin::factory()->create(), 'admin');
         $this->actingAs($user);
 
-        Livewire::test(SamInsightsDashboard::class)->assertSuccessful();
+        Livewire::test(SamInsightsDashboard::class)
+            ->assertSuccessful()
+            // Phone summary column carries the key details in one line.
+            ->assertTableColumnExists('mobile_summary')
+            ->assertSee('Docs 1/1 parsed')
+            ->assertSee('Complete');
     }
 }

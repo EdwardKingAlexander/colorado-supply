@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Jobs\FetchSamOpportunitiesJob;
+use App\Support\SamSearchParameters;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Queue;
 
@@ -33,7 +34,8 @@ it('registers a daily SAM fetch that runs without throwing and queues the job', 
         ->first(fn ($event) => $event->description === 'fetch-sam-opportunities');
 
     expect($event)->not->toBeNull('The fetch-sam-opportunities scheduled task is not registered.')
-        ->and($event->expression)->toBe('0 6 * * *');
+        ->and($event->expression)->toBe('0 6 * * *')
+        ->and($event->timezone)->toBe('America/Denver'); // 6am Mountain, not 6am UTC
 
     Queue::fake();
 
@@ -41,5 +43,12 @@ it('registers a daily SAM fetch that runs without throwing and queues the job', 
     // production. Errors are not caught by the task's guard, so this throws.
     $event->run(app());
 
-    Queue::assertPushed(FetchSamOpportunitiesJob::class);
+    // NAICS OR PSC discovery (ai/modules/sam-psc-discovery): the daily fetch
+    // searches the DLA groups and 4-character PSCs as well.
+    Queue::assertPushed(
+        FetchSamOpportunitiesJob::class,
+        fn (FetchSamOpportunitiesJob $job) => ($job->params['psc_search'] ?? []) === (new SamSearchParameters)->defaultPscSearch()
+            && in_array('53', $job->params['psc_search'], true)
+            && in_array('5340', $job->params['psc_search'], true),
+    );
 });

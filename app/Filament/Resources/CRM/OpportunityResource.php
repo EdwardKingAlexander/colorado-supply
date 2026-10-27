@@ -6,31 +6,31 @@ use App\Filament\Resources\CRM\OpportunityResource\Pages;
 use App\Models\Opportunity;
 use App\Models\Pipeline;
 use App\Models\Stage;
-use Filament\Schemas\Schema;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\BadgeColumn;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class OpportunityResource extends Resource
 {
     protected static ?string $model = Opportunity::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+    protected static string|\UnitEnum|null $navigationGroup = 'CRM';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar-square';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
 
     protected static ?int $navigationSort = 30;
 
@@ -53,13 +53,13 @@ class OpportunityResource extends Resource
                     ->default(Pipeline::where('is_default', true)->first()?->id)
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn(Set $set) => $set('stage_id', null)),
+                    ->afterStateUpdated(fn (Set $set) => $set('stage_id', null)),
 
                 Select::make('stage_id')
                     ->label('Stage')
-                    ->options(fn(Get $get) => Stage::where('pipeline_id', $get('pipeline_id'))->orderBy('position')->pluck('name', 'id'))
+                    ->options(fn (Get $get) => Stage::where('pipeline_id', $get('pipeline_id'))->orderBy('position')->pluck('name', 'id'))
                     ->required()
-                    ->disabled(fn(Get $get) => !$get('pipeline_id')),
+                    ->disabled(fn (Get $get) => ! $get('pipeline_id')),
 
                 TextInput::make('title')
                     ->required()
@@ -108,7 +108,7 @@ class OpportunityResource extends Resource
                     ->relationship('owner', 'name')
                     ->searchable()
                     ->preload()
-                    ->default(fn() => auth()->id())
+                    ->default(fn () => auth()->id())
                     ->required(),
 
                 Select::make('source')
@@ -139,27 +139,45 @@ class OpportunityResource extends Resource
     {
         return $table
             ->columns([
+                // Phones get one condensed column; the full column set appears from md/lg up.
+                TextColumn::make('mobile_summary')
+                    ->label('Opportunity')
+                    ->state(fn (Opportunity $record) => $record->title)
+                    ->description(fn (Opportunity $record) => collect([
+                        $record->customer?->name,
+                        $record->stage?->name,
+                        $record->expected_close_date?->format('M j, Y'),
+                    ])->filter()->implode(' · '))
+                    ->weight('medium')
+                    ->wrap()
+                    ->hiddenFrom('md'),
+
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
-                    ->weight('medium'),
+                    ->weight('medium')
+                    ->wrap()
+                    ->visibleFrom('md'),
 
                 TextColumn::make('customer.name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->visibleFrom('md'),
 
                 TextColumn::make('pipeline.name')
                     ->badge()
-                    ->color('gray'),
+                    ->color('gray')
+                    ->visibleFrom('lg'),
 
                 BadgeColumn::make('stage.name')
                     ->label('Stage')
+                    ->visibleFrom('md')
                     ->colors([
-                        'success' => fn($record) => $record->stage?->is_won,
-                        'danger' => fn($record) => $record->stage?->is_lost,
-                        'warning' => fn($record) => $record->stage?->forecast_category === 'Commit',
-                        'primary' => fn($record) => $record->stage?->forecast_category === 'BestCase',
-                        'gray' => fn($record) => $record->stage?->forecast_category === 'Pipeline',
+                        'success' => fn ($record) => $record->stage?->is_won,
+                        'danger' => fn ($record) => $record->stage?->is_lost,
+                        'warning' => fn ($record) => $record->stage?->forecast_category === 'Commit',
+                        'primary' => fn ($record) => $record->stage?->forecast_category === 'BestCase',
+                        'gray' => fn ($record) => $record->stage?->forecast_category === 'Pipeline',
                     ]),
 
                 TextColumn::make('amount')
@@ -168,23 +186,28 @@ class OpportunityResource extends Resource
 
                 TextColumn::make('expected_close_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->visibleFrom('md'),
 
                 TextColumn::make('owner.name')
-                    ->label('Owner'),
+                    ->label('Owner')
+                    ->visibleFrom('lg'),
 
                 BadgeColumn::make('status')
                     ->colors([
                         'success' => 'won',
                         'danger' => 'lost',
                         'primary' => 'open',
-                    ]),
+                    ])
+                    ->visibleFrom('lg'),
             ])
             ->filters([])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

@@ -137,7 +137,7 @@ describe('NAICS code resolution', function () {
 });
 
 describe('PSC code resolution', function () {
-    test('uses override PSC codes when provided', function () {
+    test('accepts psc_override as a deprecated alias of psc_search', function () {
         $resolver = new SamParameterResolver;
 
         $params = [
@@ -150,13 +150,10 @@ describe('PSC code resolution', function () {
             ->toBe(['5340', '5305']);
     });
 
-    test('defaults to NO PSC filter so real filtering cannot silently narrow results', function () {
-        // Previously this returned all 30 configured PSC codes. That was
-        // harmless only while applyFilters() was a no-op. Now that PSC codes are
-        // genuinely applied post-fetch, inheriting the config list by default
-        // would drop every opportunity outside those codes without anyone
-        // asking. The config list is the set of options the UI offers, not a
-        // filter to apply automatically.
+    test('searches no PSC codes unless asked', function () {
+        // PSC codes are now searched (one SAM.gov request each), so defaulting
+        // to the configured lists would silently add dozens of requests to
+        // every caller. The panel and scheduled fetch opt in explicitly.
         $resolver = new SamParameterResolver;
 
         expect($resolver->resolve([])['psc_codes'])->toBe([]);
@@ -214,7 +211,7 @@ describe('notice type resolution', function () {
         $resolved = $resolver->resolve($params);
 
         expect($resolved['notice_type_codes'])
-            ->toBe(['p', 'o', 'k', 's']);
+            ->toBe(['p', 'o', 'k', 'r']);
     });
 
     test('uses default codes when no notice types match', function () {
