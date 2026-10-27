@@ -17,8 +17,7 @@ class StoreStatusWidgetTest extends TestCase
     public function test_widget_appears_on_the_admin_dashboard(): void
     {
         // The admin panel requires MFA enrollment before it renders any page.
-        $admin = Admin::factory()->create();
-        $admin->toggleEmailAuthentication(true);
+        $admin = Admin::factory()->withAppAuthentication()->create();
 
         $this->actingAs($admin->fresh(), 'admin')
             ->get('/admin')

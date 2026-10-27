@@ -109,3 +109,44 @@ it('stores the TOTP secret and recovery codes encrypted at rest', function () {
     expect($user->fresh()->two_factor_secret)->toBe('PLAINTEXTSECRET123')
         ->and($user->fresh()->two_factor_recovery_codes)->toBe(['AAAAA-BBBBB']);
 });
+
+it('passes the login challenge with a TOTP code but not an email code for authenticator users', function () {
+    $secret = $this->service->generateSecret();
+    $user = User::factory()->create([
+        'two_factor_method' => 'totp',
+        'two_factor_confirmed_at' => now(),
+    ]);
+    $user->two_factor_secret = $secret;
+    $user->save();
+
+    $emailCode = $this->service->issueEmailCode($user, 'challenge');
+
+    expect($this->service->verifyChallenge($user, $emailCode, null))->toBeFalse()
+        ->and($this->service->verifyChallenge($user, $this->google2fa->getCurrentOtp($secret), null))->toBeTrue()
+        ->and($this->service->verifyChallenge($user, null, null))->toBeFalse();
+});
+
+it('passes the login challenge with an email code only for legacy email-method users', function () {
+    $user = User::factory()->create([
+        'two_factor_method' => 'email',
+        'two_factor_confirmed_at' => now(),
+    ]);
+
+    $code = $this->service->issueEmailCode($user, 'challenge');
+
+    expect($user->usesLegacyEmailTwoFactor())->toBeTrue()
+        ->and($this->service->verifyChallenge($user, $code, null))->toBeTrue()
+        ->and($this->service->verifyChallenge($user, $code, null))->toBeFalse();
+});
+
+it('passes the login challenge with a recovery code and spends it', function () {
+    $user = User::factory()->create([
+        'two_factor_method' => 'totp',
+        'two_factor_confirmed_at' => now(),
+    ]);
+    $user->two_factor_recovery_codes = ['AAAAA-BBBBB'];
+    $user->save();
+
+    expect($this->service->verifyChallenge($user, null, 'aaaaa-bbbbb'))->toBeTrue()
+        ->and($this->service->verifyChallenge($user, null, 'AAAAA-BBBBB'))->toBeFalse();
+});

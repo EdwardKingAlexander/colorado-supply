@@ -7,7 +7,6 @@ use App\Support\EmailVerificationSettings;
 use App\Support\StoreAvailability;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
-use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -55,9 +54,10 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->databaseNotificationsPolling('60s')
             ->maxContentWidth(Width::ScreenTwoExtraLarge)
+            // Authenticator app only: NIST SP 800-63B forbids email as an
+            // authenticator, so Filament's email codes are not offered.
             ->multiFactorAuthentication([
                 AppAuthentication::make()->recoverable(),
-                EmailAuthentication::make(),
             ], isRequired: true)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

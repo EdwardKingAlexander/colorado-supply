@@ -104,3 +104,9 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
     No code change required to flip.
   - **Still owed before any phase is `Complete`**: the real-browser walkthrough
     (enroll/challenge/recovery-code paths) — not assertable via feature tests.
+
+- 2026-10-26 — Superseded in part by `nist-auth-hardening` Phase 1: email
+  codes can no longer be enrolled or used by authenticator users (NIST SP
+  800-63B). Customers already on email codes get a one-time transition
+  (email code or recovery code at login, then forced authenticator setup).
+  Challenge logic now lives in `TwoFactorAuthenticationService::verifyChallenge`.

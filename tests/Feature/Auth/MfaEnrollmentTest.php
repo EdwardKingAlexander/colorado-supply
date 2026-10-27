@@ -39,32 +39,28 @@ it('rejects an invalid authenticator code and does not enroll', function () {
     expect($user->fresh()->hasTwoFactorEnabled())->toBeFalse();
 });
 
-it('enrolls a user with email codes', function () {
+it('refuses email codes as a two-factor method', function () {
     Notification::fake();
     $user = User::factory()->create();
 
-    $this->actingAs($user)->post(route('mfa.enable'), ['method' => 'email']);
-
-    $code = null;
-    Notification::assertSentTo($user, MfaEmailCode::class, function ($notification) use (&$code) {
-        $code = $notification->code;
-
-        return true;
-    });
-
     $this->actingAs($user)
-        ->post(route('mfa.confirm'), ['code' => $code])
-        ->assertSessionHasNoErrors();
+        ->post(route('mfa.enable'), ['method' => 'email'])
+        ->assertSessionHasErrors('method');
 
-    $user->refresh();
-    expect($user->hasTwoFactorEnabled())->toBeTrue()
-        ->and($user->two_factor_method)->toBe('email')
-        ->and($user->two_factor_secret)->toBeNull();
+    Notification::assertNotSentTo($user, MfaEmailCode::class);
+
+    // A stale email-enrollment session from before the change cannot confirm.
+    $this->actingAs($user)
+        ->withSession(['mfa.pending_method' => 'email'])
+        ->post(route('mfa.confirm'), ['code' => '123456'])
+        ->assertSessionHasErrors('code');
+
+    expect($user->fresh()->hasTwoFactorEnabled())->toBeFalse();
 });
 
 it('regenerates recovery codes for an enrolled user', function () {
     $user = User::factory()->create([
-        'two_factor_method' => 'email',
+        'two_factor_method' => 'totp',
         'two_factor_confirmed_at' => now(),
     ]);
     $user->two_factor_recovery_codes = ['OLD01-OLD02'];

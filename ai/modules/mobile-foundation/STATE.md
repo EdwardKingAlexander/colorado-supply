@@ -8,7 +8,7 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
 | - | Module plan (`00-overview.md`) | Complete | 2026-10-26 | Owner approved 2026-10-26; starts after `nist-auth-hardening` Phase 1 |
 | 1 | [server] Mobile sessions, token issuance & MFA challenge | Not Started | 2026-10-26 | After `nist-auth-hardening` Phase 1 |
 | 2 | [server] Registration, MFA enrollment, verification, reset, deletion APIs | Not Started | 2026-10-26 | |
-| 3 | [mobile] App foundation: tooling, tests, API client, branding, dev networking | Not Started | 2026-10-26 | Independent of server work |
+| 3 | [mobile] App foundation: tooling, tests, API client, branding, dev networking | In Progress | 2026-10-26 | Independent of server work |
 | 4 | [mobile] Sign-in, MFA challenge, session storage, protected routes, sign-out | Not Started | 2026-10-26 | |
 | 5 | [mobile] Registration, MFA setup, email verification, forgot password, delete account | Not Started | 2026-10-26 | |
 | 6 | [mobile] Session lock, privacy screen, biometric unlock | Not Started | 2026-10-26 | Needs Apple Developer Program + Expo account |
@@ -51,3 +51,5 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
   - Awaiting orchestrator approval of the overall plan before any code.
 - 2026-10-26 — Owner approved the overall plan. Marked plan `Complete`.
   Waiting on `nist-auth-hardening` Phase 1 before Phase 1 here.
+- 2026-10-26 — Owner approved Phase 3 (runs in parallel with
+  `nist-auth-hardening` Phase 1). Set `In Progress`.

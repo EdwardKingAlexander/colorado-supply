@@ -31,7 +31,6 @@ class ResetAdminMultiFactorAuthentication extends Command
 
         $admin->saveAppAuthenticationSecret(null);
         $admin->saveAppAuthenticationRecoveryCodes(null);
-        $admin->toggleEmailAuthentication(false);
 
         $this->info("Multi-factor authentication reset for {$admin->email}. They will be prompted to re-enroll on next login.");
 

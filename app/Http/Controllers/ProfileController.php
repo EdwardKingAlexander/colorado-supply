@@ -33,8 +33,6 @@ class ProfileController extends Controller
                 'secret' => $pendingSecret,
                 'qr' => $twoFactor->qrCodeSvg($user, $pendingSecret),
             ];
-        } elseif ($pendingMethod === 'email') {
-            $twoFactorSetup = ['method' => 'email'];
         }
 
         return Inertia::render('Profile/Edit', [

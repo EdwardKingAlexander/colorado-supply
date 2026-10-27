@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\MfaEmailCode;
 use App\Services\Auth\TwoFactorAuthenticationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,37 +14,20 @@ class MfaSettingsController extends Controller
     public function __construct(private readonly TwoFactorAuthenticationService $twoFactor) {}
 
     /**
-     * Begin enrollment for the chosen method. The TOTP secret / email code is
-     * held pending in the session and only persisted once confirmed.
+     * Begin authenticator-app enrollment. The TOTP secret is held pending in
+     * the session and only persisted once confirmed. Email codes are not
+     * offered: NIST SP 800-63B forbids email as an authenticator.
      */
     public function enable(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'method' => ['required', 'in:totp,email'],
+        $request->validate([
+            'method' => ['required', 'in:totp'],
         ]);
 
-        $user = $request->user();
+        $request->session()->put('mfa.pending_secret', $this->twoFactor->generateSecret());
+        $request->session()->put('mfa.pending_method', 'totp');
 
-        if ($validated['method'] === 'totp') {
-            $secret = $this->twoFactor->generateSecret();
-            $request->session()->put('mfa.pending_secret', $secret);
-            $request->session()->put('mfa.pending_method', 'totp');
-
-            return Redirect::route('profile.edit');
-        }
-
-        // email
-        if (! $this->twoFactor->canIssueEmailCode($user)) {
-            throw ValidationException::withMessages([
-                'method' => 'Too many code requests. Please wait a few minutes and try again.',
-            ]);
-        }
-
-        $code = $this->twoFactor->issueEmailCode($user, 'enroll');
-        $user->notify(new MfaEmailCode($code));
-        $request->session()->put('mfa.pending_method', 'email');
-
-        return Redirect::route('profile.edit')->with('status', 'mfa-email-code-sent');
+        return Redirect::route('profile.edit');
     }
 
     /**
@@ -59,38 +41,30 @@ class MfaSettingsController extends Controller
         ]);
 
         $user = $request->user();
-        $method = $request->session()->get('mfa.pending_method');
+        $secret = $request->session()->get('mfa.pending_secret');
 
-        if ($method === 'totp') {
-            $secret = $request->session()->get('mfa.pending_secret');
-
-            if (! $secret || ! $this->twoFactor->verifyTotp($secret, $validated['code'])) {
-                throw ValidationException::withMessages([
-                    'code' => 'The code is invalid. Please try again.',
-                ]);
-            }
-
-            $user->two_factor_secret = $secret;
-        } elseif ($method === 'email') {
-            if (! $this->twoFactor->verifyEmailCode($user, $validated['code'], 'enroll')) {
-                throw ValidationException::withMessages([
-                    'code' => 'The code is invalid or has expired. Please request a new one.',
-                ]);
-            }
-
-            $user->two_factor_secret = null;
-        } else {
+        if ($request->session()->get('mfa.pending_method') !== 'totp' || ! $secret) {
             throw ValidationException::withMessages([
-                'code' => 'Start by choosing a two-factor method.',
+                'code' => 'Start by setting up your authenticator app.',
+            ]);
+        }
+
+        if (! $this->twoFactor->verifyTotp($secret, $validated['code'])) {
+            throw ValidationException::withMessages([
+                'code' => 'The code is invalid. Please try again.',
             ]);
         }
 
         $recoveryCodes = $this->twoFactor->generateRecoveryCodes();
 
+        // Also moves a legacy email-method customer onto the authenticator app.
+        $user->two_factor_secret = $secret;
         $user->two_factor_recovery_codes = $recoveryCodes;
-        $user->two_factor_method = $method;
+        $user->two_factor_method = 'totp';
         $user->two_factor_confirmed_at = now();
         $user->save();
+
+        $user->mfaCodes()->delete();
 
         $request->session()->forget(['mfa.pending_secret', 'mfa.pending_method']);
 

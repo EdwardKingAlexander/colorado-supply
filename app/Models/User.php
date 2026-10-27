@@ -77,6 +77,17 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Whether the user is still on email-code MFA, which is no longer allowed
+     * (NIST SP 800-63B forbids email as an authenticator). Such users may pass
+     * one login challenge with an email code and must then set up an
+     * authenticator app before reaching anything else.
+     */
+    public function usesLegacyEmailTwoFactor(): bool
+    {
+        return $this->hasTwoFactorEnabled() && $this->two_factor_method === 'email';
+    }
+
+    /**
      * Send the email verification notification — unless verification is
      * disabled via the admin toggle, in which case skip the send entirely
      * (local Mailgun sends fail, and enforcement is off anyway).

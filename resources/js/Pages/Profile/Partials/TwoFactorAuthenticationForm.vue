@@ -19,6 +19,9 @@ const props = defineProps({
 // means enrollment is in progress; `enabled` means a confirmed factor exists.
 const enrolling = computed(() => props.setup !== null);
 
+// Email codes are no longer accepted; customers still on them must switch.
+const needsAuthenticator = computed(() => props.enabled && props.method === 'email');
+
 const enableForm = useForm({ method: 'totp' });
 const confirmForm = useForm({ code: '' });
 const disableForm = useForm({ password: '' });
@@ -26,8 +29,7 @@ const recoveryForm = useForm({});
 
 const showDisable = ref(false);
 
-const startEnroll = (method) => {
-    enableForm.method = method;
+const startEnroll = () => {
     enableForm.post(route('mfa.enable'), { preserveScroll: true });
 };
 
@@ -66,9 +68,9 @@ const copyRecoveryCodes = () => {
                 Two-factor authentication
             </h2>
             <p class="mt-1 text-sm text-st-muted">
-                Add a second step to sign-in using an authenticator app or a
-                code emailed to you. This is required for accessing government
-                and CUI-related data.
+                Add a second step to sign-in using an authenticator app (Google
+                Authenticator, Microsoft Authenticator, Authy, 1Password, …).
+                This is required for accessing government and CUI-related data.
             </p>
         </header>
 
@@ -82,8 +84,8 @@ const copyRecoveryCodes = () => {
             </p>
             <p class="mt-1 text-sm text-st-ink/85">
                 Store these somewhere safe. Each code can be used once to sign
-                in if you lose access to your authenticator or email. They will
-                not be shown again.
+                in if you lose access to your authenticator app. They will not
+                be shown again.
             </p>
             <ul
                 class="mt-3 grid grid-cols-2 gap-1 font-mono text-sm text-st-ink"
@@ -95,11 +97,29 @@ const copyRecoveryCodes = () => {
             </SecondaryButton>
         </div>
 
+        <!-- Legacy email codes: must switch to an authenticator app -->
+        <div v-if="needsAuthenticator && !enrolling" class="space-y-4">
+            <div class="rounded-md border border-st-signal/60 bg-st-signal/10 p-4">
+                <p class="text-sm font-medium text-st-ink">
+                    Set up an authenticator app to continue
+                </p>
+                <p class="mt-1 text-sm text-st-ink/85">
+                    Emailed codes are no longer accepted for two-factor
+                    authentication under federal (NIST) security rules. Set up
+                    an authenticator app to keep using your account.
+                </p>
+            </div>
+            <PrimaryButton :disabled="enableForm.processing" @click="startEnroll">
+                Set up authenticator app
+            </PrimaryButton>
+            <InputError :message="enableForm.errors.method" />
+        </div>
+
         <!-- Status: enabled -->
-        <div v-if="enabled && !enrolling" class="space-y-4">
+        <div v-else-if="enabled && !enrolling" class="space-y-4">
             <p class="text-sm text-st-ok">
-                Two-factor authentication is <strong>enabled</strong> using
-                {{ method === 'totp' ? 'an authenticator app' : 'email codes' }}.
+                Two-factor authentication is <strong>enabled</strong> using an
+                authenticator app.
             </p>
 
             <div class="flex flex-wrap gap-3">
@@ -144,7 +164,7 @@ const copyRecoveryCodes = () => {
 
         <!-- Enrollment in progress -->
         <div v-else-if="enrolling" class="space-y-4">
-            <div v-if="setup.method === 'totp'" class="space-y-3">
+            <div class="space-y-3">
                 <p class="text-sm text-st-muted">
                     Scan this QR code with your authenticator app (Google
                     Authenticator, Authy, 1Password, …), then enter the 6-digit
@@ -156,10 +176,6 @@ const copyRecoveryCodes = () => {
                     <span class="font-mono">{{ setup.secret }}</span>
                 </p>
             </div>
-            <p v-else class="text-sm text-st-muted">
-                We emailed a 6-digit code to your address. Enter it below to turn
-                on email-based two-factor authentication.
-            </p>
 
             <form class="max-w-xs space-y-3" @submit.prevent="confirm">
                 <InputLabel for="mfa_code" value="Verification code" />
@@ -178,20 +194,14 @@ const copyRecoveryCodes = () => {
             </form>
         </div>
 
-        <!-- Not enrolled: choose a method -->
+        <!-- Not enrolled -->
         <div v-else class="flex flex-wrap gap-3">
             <PrimaryButton
                 :disabled="enableForm.processing"
-                @click="startEnroll('totp')"
+                @click="startEnroll"
             >
                 Set up authenticator app
             </PrimaryButton>
-            <SecondaryButton
-                :disabled="enableForm.processing"
-                @click="startEnroll('email')"
-            >
-                Use email codes
-            </SecondaryButton>
             <InputError :message="enableForm.errors.method" class="w-full" />
         </div>
     </section>

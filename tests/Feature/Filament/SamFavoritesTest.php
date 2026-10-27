@@ -15,7 +15,7 @@ beforeEach(function () {
 });
 
 it('opens the admin favorites destination without a customer login', function () {
-    $admin = Admin::factory()->create(['has_email_authentication' => true]);
+    $admin = Admin::factory()->withAppAuthentication()->create();
     $opportunity = SamOpportunity::factory()->create(['url' => 'https://sam.gov/opp/123/view']);
     $this->actingAs($admin, 'admin');
     expect(Auth::guard('web')->check())->toBeFalse();
@@ -63,7 +63,7 @@ it('requires admin authentication and keeps invalid focus requests unavailable',
     $this->actingAs(User::factory()->create(), 'web');
     $this->get($url)->assertRedirect('/admin/login');
     Livewire::test(SamFavorites::class)->assertForbidden();
-    $this->actingAs(Admin::factory()->create(['has_email_authentication' => true]), 'admin');
+    $this->actingAs(Admin::factory()->withAppAuthentication()->create(), 'admin');
     $this->get($url.'?focus=bad')->assertNotFound();
     $this->get($url.'?focus=999999')->assertNotFound();
 });

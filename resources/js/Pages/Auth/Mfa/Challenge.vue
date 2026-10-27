@@ -56,9 +56,9 @@ const sendEmailCode = () => {
                     <InputLabel for="code" value="Verification code" class="text-gray-800" />
                     <p class="mt-1 text-sm text-gray-600">
                         {{
-                            method === 'totp'
-                                ? 'Enter the 6-digit code from your authenticator app.'
-                                : 'Enter the 6-digit code we emailed to you.'
+                            method === 'email'
+                                ? 'Email codes are being retired. Request a code below to sign in one last time, then you will set up an authenticator app.'
+                                : 'Enter the 6-digit code from your authenticator app.'
                         }}
                     </p>
                     <TextInput
@@ -74,6 +74,7 @@ const sendEmailCode = () => {
                 </div>
 
                 <button
+                    v-if="method === 'email'"
                     type="button"
                     class="text-sm font-semibold text-amber-700 hover:text-amber-800"
                     @click="sendEmailCode"

@@ -15,8 +15,13 @@ use PragmaRX\Google2FA\Google2FA;
 /**
  * All second-factor crypto for the customer (web-guard) MFA feature lives here
  * so controllers stay thin and the security-sensitive logic is unit-tested in
- * one place. Covers TOTP (authenticator apps), recovery codes, and email
- * one-time codes.
+ * one place. Covers TOTP (authenticator apps) and recovery codes, the only
+ * factors customers may enroll (NIST SP 800-63B forbids email as an
+ * authenticator).
+ *
+ * Email one-time codes remain only so customers who enrolled with email before
+ * it was removed can sign in once and switch to an authenticator app; see
+ * {@see User::usesLegacyEmailTwoFactor()}.
  */
 class TwoFactorAuthenticationService
 {
@@ -100,7 +105,32 @@ class TwoFactorAuthenticationService
         return true;
     }
 
-    // ----- Email one-time codes ------------------------------------------
+    // ----- Login challenge --------------------------------------------------
+
+    /**
+     * Check a login-challenge answer. A recovery code is consumed on success.
+     * An authenticator code is checked against the TOTP secret; an email code
+     * is accepted only from a customer still on the legacy email method.
+     */
+    public function verifyChallenge(User $user, ?string $code, ?string $recoveryCode): bool
+    {
+        if (filled($recoveryCode)) {
+            return $this->consumeRecoveryCode($user, $recoveryCode);
+        }
+
+        if (blank($code)) {
+            return false;
+        }
+
+        if ($user->usesLegacyEmailTwoFactor()) {
+            return $this->verifyEmailCode($user, $code, 'challenge');
+        }
+
+        return filled($user->two_factor_secret)
+            && $this->verifyTotp($user->two_factor_secret, $code);
+    }
+
+    // ----- Legacy email one-time codes (transition only) -------------------
 
     /**
      * Create a hashed, single-use email code row and return the plaintext code

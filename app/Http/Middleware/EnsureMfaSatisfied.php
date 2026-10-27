@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
  * - Enrolled web users must clear the login challenge (`mfa.passed`).
  * - Unenrolled web users pass through when MFA is opt-in, or are redirected to
  *   enrollment when `config('mfa.required')` is on.
+ * - Users still on legacy email-code MFA are held on enrollment until they set
+ *   up an authenticator app.
  */
 class EnsureMfaSatisfied
 {
@@ -56,6 +58,17 @@ class EnsureMfaSatisfied
             }
 
             return redirect()->route('mfa.challenge');
+        }
+
+        // Email codes are no longer an allowed factor (NIST SP 800-63B). A
+        // customer still on email MFA must set up an authenticator app before
+        // anything else, regardless of `mfa.required`.
+        if ($user->usesLegacyEmailTwoFactor() && ! $this->isEnrollmentSurface($request)) {
+            if ($request->expectsJson()) {
+                abort(423, 'Authenticator app setup is required.');
+            }
+
+            return redirect()->route('profile.edit')->with('status', 'mfa-authenticator-required');
         }
 
         return $next($request);

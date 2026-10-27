@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\Concerns\ReceivesTextMessages;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
-use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\Permission\Traits\HasRoles;
 
-class Admin extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication
+class Admin extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery
 {
     use HasFactory, HasPushSubscriptions, HasRoles, Notifiable, ReceivesTextMessages;
 
@@ -40,7 +39,6 @@ class Admin extends Authenticatable implements FilamentUser, HasAppAuthenticatio
         return [
             'app_authentication_secret' => 'encrypted',
             'app_authentication_recovery_codes' => 'encrypted:array',
-            'has_email_authentication' => 'boolean',
         ];
     }
 
@@ -73,18 +71,6 @@ class Admin extends Authenticatable implements FilamentUser, HasAppAuthenticatio
     public function saveAppAuthenticationRecoveryCodes(?array $codes): void
     {
         $this->app_authentication_recovery_codes = $codes;
-        $this->save();
-    }
-
-    public function hasEmailAuthentication(): bool
-    {
-        // Unset on a just-created model (the column's DB default isn't hydrated).
-        return (bool) $this->has_email_authentication;
-    }
-
-    public function toggleEmailAuthentication(bool $condition): void
-    {
-        $this->has_email_authentication = $condition;
         $this->save();
     }
 }

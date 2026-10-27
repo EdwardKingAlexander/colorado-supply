@@ -18,11 +18,9 @@ class AdminMfaSmokeTest extends TestCase
 
         $admin->saveAppAuthenticationSecret('SECRETSEED123');
         $admin->saveAppAuthenticationRecoveryCodes(['code-1', 'code-2']);
-        $admin->toggleEmailAuthentication(true);
 
         $this->assertSame('SECRETSEED123', $admin->fresh()->getAppAuthenticationSecret());
         $this->assertSame(['code-1', 'code-2'], $admin->fresh()->getAppAuthenticationRecoveryCodes());
-        $this->assertTrue($admin->fresh()->hasEmailAuthentication());
         $this->assertSame($admin->email, $admin->getAppAuthenticationHolderName());
 
         // Confirm encryption at rest: the raw DB value must not equal the plaintext secret.
@@ -48,7 +46,6 @@ class AdminMfaSmokeTest extends TestCase
         $admin = Admin::factory()->create();
         $admin->saveAppAuthenticationSecret('SECRETSEED123');
         $admin->saveAppAuthenticationRecoveryCodes(['code-1']);
-        $admin->toggleEmailAuthentication(true);
 
         $this->artisan(ResetAdminMultiFactorAuthentication::class, ['email' => $admin->email])
             ->expectsConfirmation(
@@ -61,7 +58,27 @@ class AdminMfaSmokeTest extends TestCase
 
         $this->assertNull($admin->getAppAuthenticationSecret());
         $this->assertNull($admin->getAppAuthenticationRecoveryCodes());
-        $this->assertFalse($admin->hasEmailAuthentication());
+    }
+
+    public function test_panel_offers_only_the_authenticator_app_as_a_second_factor(): void
+    {
+        $providers = filament()->getPanel('admin')->getMultiFactorAuthenticationProviders();
+
+        $this->assertSame(['app'], array_keys($providers));
+        $this->assertTrue(filament()->getPanel('admin')->isMultiFactorAuthenticationRequired());
+    }
+
+    public function test_admin_with_only_legacy_email_codes_must_set_up_the_authenticator_app(): void
+    {
+        $admin = Admin::factory()->create(['has_email_authentication' => true]);
+
+        $this->actingAs($admin, 'admin')
+            ->get('/admin')
+            ->assertRedirect();
+
+        $this->actingAs(Admin::factory()->withAppAuthentication()->create(), 'admin')
+            ->get('/admin')
+            ->assertSuccessful();
     }
 
     public function test_reset_mfa_command_with_force_skips_confirmation(): void

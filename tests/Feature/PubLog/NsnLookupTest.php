@@ -103,7 +103,7 @@ it('flags stale releases unresolved companies and nonstandard source CAGE values
 
 it('renders an admin search with safe content and supports switching to all item references', function () {
     activateLookupFixture($this);
-    $this->actingAs(Admin::factory()->create(['has_email_authentication' => true]), 'admin');
+    $this->actingAs(Admin::factory()->withAppAuthentication()->create(), 'admin');
     $this->get(FetchNsnData::getUrl(panel: 'admin'))->assertOk()->assertSee('Search PUB LOG');
     DB::table('nsn_catalog_items')->where('niin', '000000045')->update(['item_name' => '<script>alert(1)</script>']);
     Livewire::test(FetchNsnData::class)->fillForm(['type' => 'cage', 'query' => '0cen3'])->call('fetchNsnData')

@@ -71,7 +71,25 @@ it('accepts a recovery code and consumes it', function () {
     expect($user->fresh()->two_factor_recovery_codes)->not->toContain($recoveryCode);
 });
 
-it('emails a challenge code and accepts it', function () {
+it('never accepts an email code from an authenticator-app user', function () {
+    Notification::fake();
+    [$user] = enrolledTotpUser();
+    $this->post(route('login'), ['email' => $user->email, 'password' => 'password']);
+
+    // They cannot request one…
+    $this->post(route('mfa.challenge.email'))->assertForbidden();
+    Notification::assertNothingSent();
+
+    // …and a valid email code planted directly is still rejected.
+    $code = app(TwoFactorAuthenticationService::class)->issueEmailCode($user, 'challenge');
+
+    $this->post(route('mfa.challenge.verify'), ['code' => $code])
+        ->assertSessionHasErrors('code');
+
+    $this->get(route('dashboard'))->assertRedirect(route('mfa.challenge'));
+});
+
+it('lets a legacy email-code user in once, then holds them on authenticator setup', function () {
     Notification::fake();
     $user = User::factory()->create([
         'two_factor_method' => 'email',
@@ -93,6 +111,42 @@ it('emails a challenge code and accepts it', function () {
 
     $this->post(route('mfa.challenge.verify'), ['code' => $code])
         ->assertRedirect(route('dashboard'));
+
+    // Past the challenge, every page except setup sends them to set up an
+    // authenticator app; JSON callers get 423.
+    $this->get(route('dashboard'))
+        ->assertRedirect(route('profile.edit'))
+        ->assertSessionHas('status', 'mfa-authenticator-required');
+    $this->getJson(route('dashboard'))->assertStatus(423);
+    $this->get(route('profile.edit'))->assertOk();
+
+    // Switching to the authenticator app releases them.
+    $this->post(route('mfa.enable'), ['method' => 'totp']);
+    $totp = app(Google2FA::class)->getCurrentOtp(session('mfa.pending_secret'));
+    $this->post(route('mfa.confirm'), ['code' => $totp])->assertSessionHasNoErrors();
+
+    $user->refresh();
+    expect($user->two_factor_method)->toBe('totp')
+        ->and($user->usesLegacyEmailTwoFactor())->toBeFalse()
+        ->and($user->mfaCodes()->count())->toBe(0);
+
+    $this->get(route('dashboard'))->assertOk();
+});
+
+it('lets a legacy email-code user pass with a recovery code', function () {
+    $user = User::factory()->create([
+        'two_factor_method' => 'email',
+        'two_factor_confirmed_at' => now(),
+    ]);
+    $user->two_factor_recovery_codes = ['AAAAA-BBBBB'];
+    $user->save();
+
+    $this->post(route('login'), ['email' => $user->email, 'password' => 'password']);
+
+    $this->post(route('mfa.challenge.verify'), ['recovery_code' => 'AAAAA-BBBBB'])
+        ->assertRedirect(route('dashboard'));
+
+    $this->get(route('dashboard'))->assertRedirect(route('profile.edit'));
 });
 
 it('logs an unenrolled user straight in without a challenge', function () {

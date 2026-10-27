@@ -43,22 +43,11 @@ class MfaChallengeController extends Controller
 
         $this->ensureNotRateLimited($request);
 
-        $passed = false;
-
-        if ($request->filled('recovery_code')) {
-            $passed = $this->twoFactor->consumeRecoveryCode($user, (string) $request->input('recovery_code'));
-        } elseif ($request->filled('code')) {
-            $code = (string) $request->input('code');
-
-            if ($user->two_factor_method === 'totp' && $user->two_factor_secret) {
-                $passed = $this->twoFactor->verifyTotp($user->two_factor_secret, $code);
-            }
-
-            // Email codes work as the configured method or as a fallback.
-            if (! $passed) {
-                $passed = $this->twoFactor->verifyEmailCode($user, $code, 'challenge');
-            }
-        }
+        $passed = $this->twoFactor->verifyChallenge(
+            $user,
+            $request->input('code'),
+            $request->input('recovery_code'),
+        );
 
         if (! $passed) {
             RateLimiter::hit($this->throttleKey($request));
@@ -75,11 +64,15 @@ class MfaChallengeController extends Controller
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
+    /**
+     * Email a challenge code — only for customers still on the legacy email
+     * method, so they can get in once and switch to an authenticator app.
+     */
     public function sendEmailCode(Request $request): RedirectResponse
     {
         $user = $request->user();
 
-        abort_unless($user && $user->hasTwoFactorEnabled(), 403);
+        abort_unless($user && $user->usesLegacyEmailTwoFactor(), 403);
 
         if (! $this->twoFactor->canIssueEmailCode($user)) {
             throw ValidationException::withMessages([

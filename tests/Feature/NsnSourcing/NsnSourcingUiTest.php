@@ -29,7 +29,7 @@ beforeEach(function () {
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->home = Company::factory()->create();
     $this->other = Company::factory()->create();
-    $this->admin = Admin::factory()->create(['has_email_authentication' => true]);
+    $this->admin = Admin::factory()->withAppAuthentication()->create();
     Storage::fake('local');
 });
 

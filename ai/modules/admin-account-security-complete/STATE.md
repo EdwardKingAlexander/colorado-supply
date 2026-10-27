@@ -275,3 +275,8 @@ Status values: `Not Started`, `Awaiting Plan Approval`, `Awaiting Phase Approval
     upgrade had 0 failures. Not fixed here, but flagged to the user.
   - Throwaway admin id 22 was deleted (no `mfa-throwaway%` admins remain).
 - 2026-10-23 — The user marked Phase 4 `Complete`, so every phase is now Complete. Code committed as `dc43f9a8` (only this module's hunks; another workstream's uncommitted `favoriteSamOpportunities` change in `Admin.php` was left unstaged). Module directory renamed to `admin-account-security-complete`.
+
+- 2026-10-26 — `nist-auth-hardening` Phase 1 removed Filament
+  `EmailAuthentication` from the admin panel (authenticator app only) and the
+  `HasEmailAuthentication` contract from `Admin`. The `has_email_authentication`
+  column stays until the cleanup step; `admin:reset-mfa` no longer touches it.

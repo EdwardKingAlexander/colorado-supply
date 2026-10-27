@@ -141,7 +141,7 @@ it('finishes an activation that was interrupted after the swap', function () {
 it('keeps sourcing cases working after their release is replaced', function () {
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     Company::factory()->create();
-    $this->actingAs(Admin::factory()->create(['has_email_authentication' => true]), 'admin');
+    $this->actingAs(Admin::factory()->withAppAuthentication()->create(), 'admin');
     liveRelease($this, 'one');
     $case = app(NsnSourcingService::class)->openFromReference(NsnReference::where('niin', '000000045')->where('cage_code', '24039')->value('id'));
 
