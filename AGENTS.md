@@ -2,6 +2,25 @@
 
 This is the main instruction file for every AI coding agent (Claude Code, Codex, Muse, Gemini, or others) working in this repository. `CLAUDE.md` only imports this file; put new rules here.
 
+## Subagents by default (speed)
+
+The owner's objective is speed. For **every** task, first apply the
+`parallel-delegation` skill (`.agents/skills/parallel-delegation/SKILL.md`;
+Claude Code also loads it from `.claude/skills/`). Read that file if your
+tool does not load skills automatically. In short:
+
+- Small task (a few tool calls) → do it yourself.
+- One sizable job → **one** subagent.
+- Independent pieces with no shared files (e.g. `[server]` + `[mobile]`
+  phases) → **one subagent per piece, launched in parallel**.
+- Never let two agents edit the same file. Only the parent agent updates
+  `STATE.md` / `remaining.md`. Verify subagent results before reporting.
+- Approval gates in the Feature Planning Workflow still apply.
+
+The same rule and skill live in the mobile repository. Keep the skill
+identical in both repos (`.agents/skills/` and `.claude/skills/`) and in the
+user-level copies (`~/.agents/skills/`, `~/.claude/skills/`).
+
 ## Project Overview
 
 **Colorado Supply** is a multi-tenant B2B supply chain and federal contracting platform with three core domains:
