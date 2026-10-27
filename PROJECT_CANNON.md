@@ -48,7 +48,7 @@ Failure to comply with this file invalidates all generated work.
    - Clear naming
    - Explicit intent
    - Understandable even to non‑developers
-8. **Follow all standards in `CLAUDE.md`**
+8. **Follow all standards in `AGENTS.md`**
 9. **Never modify environment‑specific files**
    - `.env`
    - secrets
@@ -110,7 +110,7 @@ Only then may the next phase begin.
   > “You must comply with `project_cannon.md`.”
 - If instructions conflict:
   - `project_cannon.md` wins
-  - Then `CLAUDE.md`
+  - Then `AGENTS.md`
   - Then local instructions
 
 ---

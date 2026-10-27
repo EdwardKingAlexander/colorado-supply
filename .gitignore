@@ -30,7 +30,8 @@ yarn-error.log
 .claude/settings.local.json
 .claude/agents/
 .mcp.json
-AI/
+# Plans in ai/ are tracked; bulky generated data (DB files, binaries, downloads) is not
+ai/**/artifacts/
 
 # --- Local debug / scratch ---
 errors/
