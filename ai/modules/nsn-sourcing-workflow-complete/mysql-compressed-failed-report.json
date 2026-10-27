@@ -1,0 +1,11 @@
+{
+    "finished_at": "2026-10-05T12:44:37+00:00",
+    "import": {
+        "id": 1,
+        "status": "failed",
+        "progress": "{\"P_FLIS_NSN.CSV\": {\"done\": false, \"rows\": 11285500, \"offset\": 588663460, \"stored\": 11285500}}",
+        "validation": "[]",
+        "error": "Invalid item name code."
+    },
+    "production_capacity_approved": false
+}

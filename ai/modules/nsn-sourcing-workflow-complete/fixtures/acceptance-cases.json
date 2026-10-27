@@ -1,0 +1,598 @@
+{
+  "source": "Official DLA PUB LOG release listed 2026-10-01; hashes in ../source-measurements.json",
+  "source_record_convention": "One-based data record, excluding header; not physical line number.",
+  "items": [
+    {
+      "source_record": 1,
+      "FSC": "4935",
+      "NIIN": "000000012",
+      "INC": "77777",
+      "ITEM_NAME": "UNKNOWN",
+      "SOS": "",
+      "END_ITEM_NAME": "",
+      "CANCELLED_NIIN": ""
+    },
+    {
+      "source_record": 6,
+      "FSC": "8940",
+      "NIIN": "000000042",
+      "INC": "77777",
+      "ITEM_NAME": "CK FILTER ASSEMBLY",
+      "SOS": "",
+      "END_ITEM_NAME": "USED ON ALM F13 AIRCRAFT",
+      "CANCELLED_NIIN": ""
+    },
+    {
+      "source_record": 9,
+      "FSC": "5940",
+      "NIIN": "000000045",
+      "INC": "08573",
+      "ITEM_NAME": "TERMINAL BOARD ASSEMBLY",
+      "SOS": "",
+      "END_ITEM_NAME": "USED ON ALM F13 AIRCRAFT",
+      "CANCELLED_NIIN": ""
+    },
+    {
+      "source_record": 21,
+      "FSC": "5340",
+      "NIIN": "000000057",
+      "INC": "06689",
+      "ITEM_NAME": "CLOSER,DOOR",
+      "SOS": "SMS",
+      "END_ITEM_NAME": "",
+      "CANCELLED_NIIN": "002633762 006855794"
+    },
+    {
+      "source_record": 22,
+      "FSC": "5340",
+      "NIIN": "000000058",
+      "INC": "06689",
+      "ITEM_NAME": "CLOSER,DOOR",
+      "SOS": "SMS",
+      "END_ITEM_NAME": "",
+      "CANCELLED_NIIN": "006631781"
+    }
+  ],
+  "references": [
+    {
+      "source_record": 1,
+      "NIIN": "000000042",
+      "PART_NUMBER": "UK 60A890216",
+      "CAGE_CODE": "24039",
+      "CAGE_STATUS": "A",
+      "RNCC": "3",
+      "RNVC": "2",
+      "DAC": "6",
+      "RNAAC": "9Z",
+      "RNFC": "4",
+      "RNSC": "A",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 2,
+      "NIIN": "000000045",
+      "PART_NUMBER": "UK 60A890D255",
+      "CAGE_CODE": "24039",
+      "CAGE_STATUS": "A",
+      "RNCC": "3",
+      "RNVC": "9",
+      "DAC": "5",
+      "RNAAC": "9Z",
+      "RNFC": "4",
+      "RNSC": "D",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 3,
+      "NIIN": "000000045",
+      "PART_NUMBER": "JWROGJWOEGIOW",
+      "CAGE_CODE": "0CEN3",
+      "CAGE_STATUS": "Y",
+      "RNCC": "5",
+      "RNVC": "2",
+      "DAC": "5",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 19,
+      "NIIN": "000000057",
+      "PART_NUMBER": "BHMA-A156.4 C02012 SIZE 2",
+      "CAGE_CODE": "41280",
+      "CAGE_STATUS": "A",
+      "RNCC": "3",
+      "RNVC": "2",
+      "DAC": "E",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 20,
+      "NIIN": "000000057",
+      "PART_NUMBER": "BHMA-A156.4",
+      "CAGE_CODE": "41280",
+      "CAGE_STATUS": "A",
+      "RNCC": "3",
+      "RNVC": "1",
+      "DAC": "E",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 21,
+      "NIIN": "000000057",
+      "PART_NUMBER": "A156.4 TYPE C02012 SIZE 2",
+      "CAGE_CODE": "80204",
+      "CAGE_STATUS": "A",
+      "RNCC": "5",
+      "RNVC": "1",
+      "DAC": "4",
+      "RNAAC": "KZ",
+      "RNFC": "1",
+      "RNSC": "D",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 22,
+      "NIIN": "000000057",
+      "PART_NUMBER": "FF-H-121",
+      "CAGE_CODE": "81348",
+      "CAGE_STATUS": "A",
+      "RNCC": "5",
+      "RNVC": "1",
+      "DAC": "4",
+      "RNAAC": "HD",
+      "RNFC": "1",
+      "RNSC": "D",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 23,
+      "NIIN": "000000057",
+      "PART_NUMBER": "A156.4 TYPE C02012 SIZE 2",
+      "CAGE_CODE": "81348",
+      "CAGE_STATUS": "A",
+      "RNCC": "5",
+      "RNVC": "9",
+      "DAC": "4",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "B",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 24,
+      "NIIN": "000000058",
+      "PART_NUMBER": "BHMA-A156.4 C02012 SIZE 3",
+      "CAGE_CODE": "41280",
+      "CAGE_STATUS": "A",
+      "RNCC": "3",
+      "RNVC": "2",
+      "DAC": "E",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 25,
+      "NIIN": "000000058",
+      "PART_NUMBER": "BHMA-A156.4",
+      "CAGE_CODE": "41280",
+      "CAGE_STATUS": "A",
+      "RNCC": "3",
+      "RNVC": "1",
+      "DAC": "E",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 26,
+      "NIIN": "000000058",
+      "PART_NUMBER": "A156-4 TYPE C02012 SIZE 3",
+      "CAGE_CODE": "80204",
+      "CAGE_STATUS": "A",
+      "RNCC": "5",
+      "RNVC": "9",
+      "DAC": "4",
+      "RNAAC": "KZ",
+      "RNFC": "1",
+      "RNSC": "B",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 27,
+      "NIIN": "000000058",
+      "PART_NUMBER": "FF-H-121",
+      "CAGE_CODE": "81348",
+      "CAGE_STATUS": "A",
+      "RNCC": "5",
+      "RNVC": "1",
+      "DAC": "4",
+      "RNAAC": "HD",
+      "RNFC": "1",
+      "RNSC": "D",
+      "RNJC": "",
+      "SADC": "",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 28,
+      "NIIN": "000000058",
+      "PART_NUMBER": "ANSI A156-4 TYP E C02012 SIZE3",
+      "CAGE_CODE": "D9182",
+      "CAGE_STATUS": "A",
+      "RNCC": "C",
+      "RNVC": "1",
+      "DAC": "6",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "",
+      "RNJC": "",
+      "SADC": "AC",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    },
+    {
+      "source_record": 29,
+      "NIIN": "000000058",
+      "PART_NUMBER": "A156.4 TYPE C02 012 SIZE 3",
+      "CAGE_CODE": "D9182",
+      "CAGE_STATUS": "A",
+      "RNCC": "C",
+      "RNVC": "1",
+      "DAC": "6",
+      "RNAAC": "ZZ",
+      "RNFC": "",
+      "RNSC": "",
+      "RNJC": "",
+      "SADC": "AC",
+      "HCC": "",
+      "MSDS": "",
+      "MEDALS": ""
+    }
+  ],
+  "companies": [
+    {
+      "source_record": 174218,
+      "CAGE_CODE": "0CEN3",
+      "CAGE_STATUS": "Y",
+      "COMPANY": "BLUE RIDGE SECURITY AGENCY INC",
+      "CITY": "MARSHALL",
+      "STATE_PROVINCE": "VA",
+      "ZIP_POSTAL_ZONE": "20115",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 845256,
+      "CAGE_CODE": "24039",
+      "CAGE_STATUS": "A",
+      "COMPANY": "VARO LLC",
+      "CITY": "GARLAND",
+      "STATE_PROVINCE": "TX",
+      "ZIP_POSTAL_ZONE": "75041-2499",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 1210370,
+      "CAGE_CODE": "41280",
+      "CAGE_STATUS": "A",
+      "COMPANY": "BUILDERS HARDWARE MFRS ASSN INC",
+      "CITY": "NEW YORK",
+      "STATE_PROVINCE": "NY",
+      "ZIP_POSTAL_ZONE": "10017",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 2783634,
+      "CAGE_CODE": "80204",
+      "CAGE_STATUS": "A",
+      "COMPANY": "AMERICAN NATIONAL STANDARDS INSTITUTE INCORPORATED DBA AMERICAN NATIONAL STANDARDS INSTITUTE",
+      "CITY": "WASHINGTON",
+      "STATE_PROVINCE": "DC",
+      "ZIP_POSTAL_ZONE": "20036-3804",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 2795992,
+      "CAGE_CODE": "81348",
+      "CAGE_STATUS": "A",
+      "COMPANY": "FEDERAL SPECIFICATIONS PROMULGATED BY GENERAL SERVICES ADMINISTRATION WASHINGTON DC",
+      "CITY": "NATL INSTITUTE STDS & TECH",
+      "STATE_PROVINCE": "MD",
+      "ZIP_POSTAL_ZONE": "20899",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 3648445,
+      "CAGE_CODE": "D9182",
+      "CAGE_STATUS": "A",
+      "COMPANY": "ZF INDUSTRIEANTRIEBE WITTEN GMBH",
+      "CITY": "WITTEN",
+      "STATE_PROVINCE": "",
+      "ZIP_POSTAL_ZONE": "58455",
+      "COUNTRY": "GERMANY"
+    }
+  ],
+  "addresses": [
+    {
+      "source_record": 174218,
+      "CAGE_CODE": "0CEN3",
+      "COMPANY_NAME": "BLUE RIDGE SECURITY AGENCY INC",
+      "STREET_ADDRESS_1": "VIRGINIA RT 709 AND US RT 17",
+      "STREET_ADDRESS_2": "",
+      "STREET_ADDRESS_3": "",
+      "CITY": "MARSHALL",
+      "STATE": "VA",
+      "ZIP": "20115",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 845256,
+      "CAGE_CODE": "24039",
+      "COMPANY_NAME": "VARO LLC",
+      "STREET_ADDRESS_1": "2800 W. KINGSLEY ROAD",
+      "STREET_ADDRESS_2": "",
+      "STREET_ADDRESS_3": "",
+      "CITY": "GARLAND",
+      "STATE": "TX",
+      "ZIP": "75041-2499",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 1210370,
+      "CAGE_CODE": "41280",
+      "COMPANY_NAME": "BUILDERS HARDWARE MFRS ASSN INC",
+      "STREET_ADDRESS_1": "355 LEXINGTON AVE",
+      "STREET_ADDRESS_2": "",
+      "STREET_ADDRESS_3": "",
+      "CITY": "NEW YORK",
+      "STATE": "NY",
+      "ZIP": "10017",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 2783634,
+      "CAGE_CODE": "80204",
+      "COMPANY_NAME": "AMERICAN NATIONAL STANDARDS INSTITUTE INCORPORATED DBA AMERICAN NATIONAL STANDARDS INSTITUTE",
+      "STREET_ADDRESS_1": "1899 L ST NW FL 11",
+      "STREET_ADDRESS_2": "",
+      "STREET_ADDRESS_3": "",
+      "CITY": "WASHINGTON",
+      "STATE": "DC",
+      "ZIP": "20036-3804",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 2795992,
+      "CAGE_CODE": "81348",
+      "COMPANY_NAME": "FEDERAL SPECIFICATIONS PROMULGATED BY GENERAL SERVICES ADMINISTRATION WASHINGTON DC",
+      "STREET_ADDRESS_1": "100 BUREAU DR",
+      "STREET_ADDRESS_2": "",
+      "STREET_ADDRESS_3": "",
+      "CITY": "NATL INSTITUTE STDS & TECH",
+      "STATE": "MD",
+      "ZIP": "20899",
+      "COUNTRY": "UNITED STATES"
+    },
+    {
+      "source_record": 3648445,
+      "CAGE_CODE": "D9182",
+      "COMPANY_NAME": "ZF INDUSTRIEANTRIEBE WITTEN GMBH",
+      "STREET_ADDRESS_1": "MANNESMANNSTR. 29",
+      "STREET_ADDRESS_2": "",
+      "STREET_ADDRESS_3": "",
+      "CITY": "WITTEN",
+      "STATE": "",
+      "ZIP": "58455",
+      "COUNTRY": "GERMANY"
+    }
+  ],
+  "standardization": [
+    {
+      "source_record": 1,
+      "NIIN": "000000012",
+      "RELATED_NSN": "",
+      "ISC": "",
+      "ORIG_STDZN_DEC": "",
+      "DT_STDZN_DEC": "",
+      "NIIN_STAT_CD": "4"
+    },
+    {
+      "source_record": 6,
+      "NIIN": "000000042",
+      "RELATED_NSN": "",
+      "ISC": "5",
+      "ORIG_STDZN_DEC": "97",
+      "DT_STDZN_DEC": "23-MAR-2006",
+      "NIIN_STAT_CD": "0"
+    },
+    {
+      "source_record": 9,
+      "NIIN": "000000045",
+      "RELATED_NSN": "",
+      "ISC": "5",
+      "ORIG_STDZN_DEC": "97",
+      "DT_STDZN_DEC": "23-MAR-2006",
+      "NIIN_STAT_CD": "0"
+    },
+    {
+      "source_record": 27,
+      "NIIN": "000000057",
+      "RELATED_NSN": "",
+      "ISC": "5",
+      "ORIG_STDZN_DEC": "96",
+      "DT_STDZN_DEC": "25-DEC-1995",
+      "NIIN_STAT_CD": "0"
+    },
+    {
+      "source_record": 28,
+      "NIIN": "000000058",
+      "RELATED_NSN": "",
+      "ISC": "5",
+      "ORIG_STDZN_DEC": "GX",
+      "DT_STDZN_DEC": "01-SEP-2023",
+      "NIIN_STAT_CD": "0"
+    }
+  ],
+  "definitions": [
+    {
+      "source_record": 7624,
+      "CODE": "RNCC",
+      "LITERAL": "REFERENCE NUMBER CATEGORY",
+      "DESCRIPTION": "REFERENCE NUMBER CATEGORY CODE (RNCC):  A CODE DESIGNATING THE RELATIONSHIP OF THE REFERENCE NUMBER TO THE ITEM OF SUPPLY.  SEE VOLUME 10, TABLES 6, 15, 31 AND 40 AND QUICK INFO ON-LINE.",
+      "REGS": "HTTPS://WWW.DLA.MIL/PORTALS/104/DOCUMENTS/DLMS/CDS/MANUALS/CDTS_VOLUME_10.DOCX"
+    },
+    {
+      "source_record": 7627,
+      "CODE": "RNCC:3",
+      "LITERAL": "DESIGN CONTROL REFERENCE",
+      "DESCRIPTION": "DESIGN CONTROL REFERENCE. THE PRIMARY NUMBER USED TO IDENTIFY AN ITEM OF PRODUCTION OR A RANGE OF ITEMS OF PRODUCTION, BY THE MANUFACTURER (INDIVIDUAL, COMPANY, FIRM, CORPORATION, OR GOVERNMENT ACTIVITY) WHICH CONTROLS THE DESIGN, CHARACTERISTICS, AND PRODUCTION OF THE ITEM BY MEANS OF ITS ENGINEERING DRAWINGS, SPECIFICATIONS AND INSPECTION REQUIREMENTS. (WHEN USED TO IDENTIFY A REFERENCE NUMBER WHERE THE DESIGN CONTROL REFERENCE IS NO LONGER ACTIVE (ORIGINAL DESIGN ACTIVITY), THE REFERENCE NUMBER WILL BE CODED WITH REFERENCE NUMBER VARIATION CODE (RNVC)9).",
+      "REGS": ""
+    },
+    {
+      "source_record": 7629,
+      "CODE": "RNCC:5",
+      "LITERAL": "SECONDARY REFERENCE",
+      "DESCRIPTION": "SECONDARY REFERENCE. ANY ADDITIONAL NUMBER, OTHER THAN A PRIMARY NUMBER (CODES 1, 2, 3, 4), INFORMATIVE REFERENCE (CODE 6) OR VENDOR ITEM DRAWING REFERENCE (CODE 7) ASSIGNED TO AN ITEM OF PRODUCTION OR SUPPLY BY A COMMERCIAL OR GOVERNMENT ORGANIZATION, WHICH REPRESENTS THE SAME ITEM OF PRODUCTION OR SUPPLY TO WHICH THE NATIONAL STOCK NUMBER (NSN) WAS ASSIGNED. THE REFERENCE NUMBER MAY HAVE HAD AN RNCC OF 1, 2, 3, 4, OR 7 BUT HAS SINCE BEEN REPLACED IN THE ITEM-OF-SUPPLY CONCEPT OF THE NSN BY ANOTHER PRIMARY NUMBER. INCLUDES ADDITIONAL NUMBERS ASSIGNED BY THE DESIGN CONTROL ORGANIZATION; SUPERSEDED OR DISCONTINUED REFERENCE NUMBERS WHICH MAY HAVE RESULTED FROM: A MANUFACTURER'S CHANGE IN NUMBERING SYSTEM; THE MANUFACTURER NO LONGER PRODUCES THE ITEM OR IS NO LONGER A TECHNICALLY APPROVED SOURCE; THE MANUFACTURER OR SUPPLIER FOR THAT NUMBER IS OUT OF BUSINESS. NOTE: AN RNCC 5 REFERENCE WITH A REFERENCE NUMBER VARIATION CODE (RNVC) OF 2 SHALL NOT BE ADDED TO AN NSN WITH A STANDARD MILITARY DRAWING (SMD) OR MILITARY SPECIFICATION CODED RNCC-RNVC 2-2 UNLESS THE REFERENCE IS REGISTERED ON THE QUALIFIED PRODUCTS LIST (QPL) FOR THE SMD OR MIL SPEC. (OBSOLETE, SUPERSEDED, CANCELLED, OR DISCONTINUED REFERENCE NUMBERS CODED RNCC 5 SHALL BE CODED REFERENCE NUMBER VARIATION CODE 9. ALL SECONDARY REFERENCE EXTRA LONG REFERENC",
+      "REGS": ""
+    },
+    {
+      "source_record": 7658,
+      "CODE": "RNVC",
+      "LITERAL": "REFERENCE NUMBER VARIATION",
+      "DESCRIPTION": "REFERENCE NUMBER VARIATION CODE (RNVC):  A CODE INDICATING THAT A CITED REFERENCE NUMBER IS OR IS NOT ITEM IDENTIFYING, OR IS FOR INFORMATION ONLY.  SEE VOLUME 10, TABLES 7,31 AND 75 AND QUICK INFO ON-LINE.31 AND 75 AND QUICK INFO ON-LINE.",
+      "REGS": "HTTPS://WWW.DLA.MIL/PORTALS/104/DOCUMENTS/DLMS/CDS/MANUALS/CDTS_VOLUME_10.DOCX"
+    },
+    {
+      "source_record": 7659,
+      "CODE": "RNVC:1",
+      "LITERAL": "NOT IDENTIFY AN ITEM OF PRODUCTION WITHOUT THE USE OF ADDITIONAL INFORMATION",
+      "DESCRIPTION": "A DESIGN CONTROL REFERENCE OR OTHER REFERENCE NUMBER THAT DOES NOT IDENTIFY AN ITEM OF PRODUCTION WITHOUT THE USE OF ADDITIONAL INFORMATION, OR IS EITHER A SPECIFICATION, PART, TYPE OR SIMILAR REFERENCE NUMBER THAT DOES NOT IDENTIFY AN ITEM OF SUPPLY WITHOUT THE USE OF ADDITIONAL INFORMATION.",
+      "REGS": ""
+    },
+    {
+      "source_record": 7660,
+      "CODE": "RNVC:2",
+      "LITERAL": "AN ITEM-IDENTIFYING NUMBER",
+      "DESCRIPTION": "A DESIGN CONTROL REFERENCE OR OTHER REFERENCE NUMBER THAT IS AN ITEM-IDENTIFYING NUMBER FOR AN ITEM OF PRODUCTION, OR IS EITHER A SOURCE CONTROL REFERENCE, A SPECIFICATION OR A STANDARD PART, TYPE, OR SIMILAR REFERENCE NUMBER THAT IS AN ITEM-IDENTIFYING NUMBER FOR AN ITEM OF SUPPLY.",
+      "REGS": ""
+    },
+    {
+      "source_record": 7663,
+      "CODE": "RNVC:9",
+      "LITERAL": "WAS THE DESIGN CONTROL REFERENCE",
+      "DESCRIPTION": "A REFERENCE NUMBER WHICH WAS THE DESIGN CONTROL REFERENCE FOR THE ITEM OF SUPPLY CONCEPT (ORIGINAL DESIGN ACTIVITY) THAT IS NOW INACTIVE CODED REFERENCE NUMBER CATEGORY CODE (RNCC) 3; A SPECIFICATION, STANDARD, OR OTHER REFERENCE NUMBER WHICH IS SUPERSEDED, CANCELLED, OBSOLETE OR DISCONTINUED AND IS CODED RNCC 5; A REFERENCE NUMBER FOR INFORMATION ONLY IS CODED RNCC 6; A DRAWING WHICH IS THE SINGLE CONTROLLING REFERENCE NUMBER (SCRN) CODED RNCC 2 OR 7; OR A DRAWING NUMBER REFERENCE CODED RNCC D.",
+      "REGS": ""
+    },
+    {
+      "source_record": 762,
+      "CODE": "CAGE_STATUS:A",
+      "LITERAL": "ACTIVE",
+      "DESCRIPTION": "ACTIVE.  COMPANY CURRENTLY IN OPERATION.  APPLICABILITY CAGE/NCAGE.",
+      "REGS": ""
+    },
+    {
+      "source_record": 773,
+      "CODE": "CAGE_STATUS:Y",
+      "LITERAL": "ACTIVE SPECIALIZED USE RECORD",
+      "DESCRIPTION": "ACTIVE SPECIALIZED USE RECORD. CAGE/NCAGE ASSIGNED TO AN ENTITY STILL ACTIVELY ENGAGED IN BUSINESS OPERATIONS: HOWEVER, THE ENTITY NO LONGER WISHES TO BE CONSIDERED FOR CONTRACTING OR SELLS ITS PRODUCTS ONLY THROUGH DISTRIBUTORS. (DO NOT USE FOR PROCUREMENT PURPOSES).",
+      "REGS": ""
+    },
+    {
+      "source_record": 766,
+      "CODE": "CAGE_STATUS:H",
+      "LITERAL": "OBSOLETE ENTITY HAS BEEN DISCONTINUED",
+      "DESCRIPTION": "OBSOLETE. ENTITY HAS BEEN DISCONTINUED. REFERENCE NUMBERS CURRENTLY RECORDED IN THE FEDERAL/NATO SUPPLY SYSTEM.  DIFFERS FROM STATUS DESIGNATOR F IN THAT INFORMATION ABOUT THE ENTITY IS UNKNOWN.",
+      "REGS": ""
+    },
+    {
+      "source_record": 5209,
+      "CODE": "NIIN_STAT_CD:4",
+      "LITERAL": "CANCELLED WITHOUT REPLACEMENT",
+      "DESCRIPTION": "ITEM IS CANCELLED WITHOUT REPLACEMENT. SUBMIT A REINSTATEMENT IF APPLICABLE.",
+      "REGS": ""
+    },
+    {
+      "source_record": 5210,
+      "CODE": "NIIN_STAT_CD:5",
+      "LITERAL": "CANCELLED-USE",
+      "DESCRIPTION": "ITEM IS CANCELLED-USE. FILE DATA CODED KFD FOR CATALOGING TRANSACTION OR KFE FOR SEARCH/INTERROGATION TRANSACTION FOR THE \"USE\" NSN IS FORWARDED. IF THIS DATA REPRESENTS YOUR ITEM OF SUPPLY, SUBMIT, IF APPLICABLE, AN LAD, OR LCU TRANSACTION. IF THE ORIGINAL INPUT IS APPLICABLE TO THE \"USE\" NSN, RESUBMIT USING THE \"USE\" NSN.",
+      "REGS": ""
+    }
+  ],
+  "synthetic_scenarios": [
+    {
+      "name": "missing_company",
+      "recipe": "Use real reference 000000042 / UK 60A890216 / 24039, but omit company and address 24039 from the test snapshot.",
+      "expected": "Reference preserved, unresolved company shown; not an assertion that DLA lacks this company."
+    },
+    {
+      "name": "no_match",
+      "input_type": "nsn",
+      "input": "9999999999999",
+      "expected": "Absent from this deliberately small fixture; not claimed absent from the complete public dataset."
+    },
+    {
+      "name": "invalid_input",
+      "input_type": "nsn",
+      "input": "abc5940000000045",
+      "expected": "Invalid format, not accepted by stripping letters."
+    }
+  ]
+}

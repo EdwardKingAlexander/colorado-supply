@@ -1,0 +1,2913 @@
+DIBBS Batch File and EDI 864 File Format
+Batch Quote Upload File Format
+File format: Comma ( , ) Delimited with quote ( " ) separator.
+Example: "SPE1C114T2120","F","N","N","10/02/2014","","","","","","","","","","","","","","","","","","","BI"........
+File layout: Upload file is basically in the same order, as the data would display
+on the individual web quote form.
+Unacceptable Characters
+Upon importing your data into our system, the following characters shall be stripped
+from your input with the exception as noted in note 2 & 3.
+,'~`!@#$%^&*;{}[]|\+=?;<> '
+ASCII Characters 0~32 and greater than 126
+Note:
+1. Commas are used for data separation and should not be included in your response
+data with the exception as noted in note 2 & 3.
+2. The following characters ARE allowed for part number field.
+0123456789
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+~!@#$%)(_-+=}{[]\:;'",.?/ & * space
+(108) Part Number Offered
+3. The following characters ARE allowed for remarks fields.
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+0123456789
+~!@#$%)(_-+=}{[]\:;'",.?/ space
+(109) Part Number Offered Remarks
+(111) Supplies Offered Remarks
+(119) Higher-Level Quality Remarks
+(121) Quote Remarks
+Quote Level
+Header
+Cols 1-43 , 121
+Must be the same for each line for the individual quote.
+Line
+Cols 44, 46-51, 64
+May vary by line
+Subline
+Col 45
+May vary by subline.
+Product
+Cols 61-63, 65-120
+Must be the same data for each NSN/PN across all lines.
+Data Content
+Input Code Legend
+M
+Mandatory Entry
+C
+Required when applicable
+0
+Optional
+Last Updated:
+30-APR-2024
+#
+Quote Level
+Column Name
+Maximum Length
+Input Code
+Definition
+Validation
+Default
+May Effect Bid Type
+001
+Header
+Solicitation Number
+13
+Mandatory
+Must Match RFQ Requirement
+RFQ Solicitation #
+002
+Header
+Solicitation Type Indicator
+1
+Conditional
+Type of RFQ requirement.
+Must Match RFQ Requirement (may be blank)
+Valid Solicitation Type Indicator codes:
+F - Fast Auto Evaluation
+I - Automated Indefinite Delivery Contract (AIDC)
+P - Auto Evaluation
+RFQ Requirement
+003
+Header
+Small Business Set Aside Indicator
+1
+Mandatory
+Indicates if the RFQ is a Small Business Set-Aside
+Must Match RFQ Requirement
+Valid Small Business Set Aside Indicator codes:
+Y - Small Business Set-Aside
+H - HUBZone Set-Aside
+R - Service Disabled Veteran-Owned Small Business (SDVOSB) Set-Aside
+L - Woman Owned Small Business (WOSB) Set-Aside
+A - 8a Set-Aside
+E - Economically Disadvantaged Woman Owned Small Business (EDWOSB) Set-Aside
+N - Unrestricted/Not Set-Aside
+NOTE: If the RFQ Requirement is blank, the RFQ is considered "Unrestricted/Not Set-Aside".
+RFQ Requirement
+004
+Header
+Additional Clause Fill-Ins Indicator
+1
+Mandatory
+Indicates if additional "Clause Fill Ins" are required.
+Must Match RFQ Requirement
+Valid Additional Clause Fill-Ins Indicator codes:
+N - No
+Y - Yes
+RFQ Requirement
+005
+Header
+Return By Date
+10
+Mandatory
+Provided for informational purposes only.
+Must Match RFQ Requirement
+Format MM/DD/YYYY
+RFQ Return By Date
+006
+Header
+Quoter CAGE Code
+5
+Mandatory
+CAGE that submits the quote.
+Must match registered CAGE Code.
+Blank
+007
+Header
+Quote for CAGE Code
+5
+Mandatory
+Must match registered CAGE Code and, if different than the Quoter CAGE, must have provided authorization for the "Quoter CAGE" to submit quotes on their behalf.
+Blank
+008
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+009
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+010
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+011
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+012
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+013
+Header
+Small Business and Other Contractor Representations Code
+1
+Mandatory
+Applies to Quote For CAGE code.
+Valid Small Business and Other Contractor Representations codes:
+A - Large Business/Other Business
+B - Small Business
+C - Nonprofit Institution
+E - Educational Institution (other than HBCU or Minority)
+F - Historically Black College or University (HBCU)
+G - JWOD Participating Nonprofit Agency
+M - Small Disadvantaged Business
+P - Minority Institution (other than HBCU)
+X - Intragovernmental
+Blank
+014
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+015
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+016
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+017
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+018
+Header
+Joint Venture
+2
+Conditional
+Applicable when Small Business Set Aside Indicator ( 3 ) is NOT equal to N and where Quote For CAGE is a small business concern. The offeror represents that it is a Joint Venture that complies with 13 CFR Part 121.103(h) and 13 CFR Part 125.
+If Small Business Set Aside Indicator ( 3 ) is equal to N, then must be blank.
+If Small Business Set Aside Indicator ( 3 ) is NOT equal to N and Small Business and Other Contractor Representations Codes ( 13 ) not equal B or M, then must be blank.
+If Small Business Set Aside Indicator ( 3 ) is NOT equal to N and Small Business and Other Contractor Representations Codes ( 13 ) = B or M, then may be completed
+Valid Joint Venture codes:
+JV - Is a Joint Venture that complies with 13 CFR Part 121.103(h) and 13 CFR Part 125
+JN - Is not a Joint Venture that complies with 13 CFR Part 121.103(h) and 13 CFR Part 125
+Blank
+019
+Header
+Joint Venture Remarks
+255
+Conditional
+Applicable where Quote For CAGE is a Joint Venture. Insert the CAGE(s)/Names(s) of concerns that are participating in the Joint Venture.
+If Joint Venture ( 18 ) does not equal JV, then must be blank.
+If Joint Venture ( 18 ) equals JV, then must be completed.
+Blank
+020
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+021
+Header
+Affirmative Action Compliance Code
+2
+Mandatory
+Applies to Quote For CAGE code.
+Valid Affirmative Action Compliance codes:
+Y6 - Developed and on File
+N6 - Not Developed and Not on File
+NH - No Previous Contracts Subject to Requirements
+NA - Not Applicable
+Blank
+022
+Header
+Previous Contracts and Compliance Reports Code
+2
+Mandatory
+Applies to Quote For CAGE code.
+Valid Previous Contracts Compliance Reports codes:
+Y4 - Participated and Filed
+Y5 - Participated and Not Filed
+N4 - Not Participated
+NA - Not Applicable
+Blank
+023
+Header
+Alternate Disputes Resolution
+1
+Mandatory
+Do you agree to use alternate dispute resolution in accordance with
+DLAD 5452.233 - 9001 ?
+Valid Alternate Disputes Resolution codes:
+A - Agree To Use Alternate Disputes Resolution
+B - Do Not Agree To Use Alternate Disputes Resolution
+Blank
+024
+Header
+Bid Type Code
+2
+Mandatory
+Valid Bid Type codes:
+BI - Bid without Exception
+BW - Bid With Exception
+AB - Alternate Bid
+DQ - No Bid
+BI
+025
+Header
+Prompt Payment Discount Terms Code
+2
+Mandatory
+Valid Discount Terms codes:
+1 - Net 30
+10 - 2% 10 Days
+3 - 1/2% 20 Days
+6 - 1/2% 10 Days
+8 - 1/4% 20 Days
+1
+026
+Header
+Vendor Quote Number
+15
+Optional
+Optional Fill-In for vendor reference only.
+Blank
+027
+Header
+Days Quote Valid
+3
+Mandatory
+Enter Number Of Days Your Quote Is Valid.
+If Solicitation Type Indicator ( 2 ) equals I, then must be equal to or greater than 90.
+If Solicitation Type Indicator ( 2 ) equals I and Days Quote Valid ( 27 ) is less than 90, then Bid Type Code ( 24 ) must equal bid with exception "BW" or alternate bid "AB".
+90
+Yes
+028
+Header
+Meets Packaging Requirement
+1
+Mandatory
+Valid Accept Packaging codes:
+Y - Yes
+N - No
+If "N" response, then Bid Type Code ( 24 ) must be Bid With Exception, "BW" or Alternate Bid, "AB".
+Blank
+Yes
+029
+Header
+Basic Ordering Agreement (BOA)/ Federal Supply Schedule (FSS)/Blanket Purchase Agreement (BPA).
+3
+Mandatory
+Valid Basic Ordering Agreement (BOA) / Federla Supply Schedule (FSS) / Blanket Purchase Agreement (BPA) codes:
+NAP - Not Applicable
+FSS - Federal Supply Schedule
+BOA - Blanket Ordering Agreement
+BPA - Blanket Purchase Agreement
+If BOA/FSS/BPA ( 29 ) is "BOA", "FSS" or "BPA", Contract # ( 30 ) and Expiration date ( 31 ) must be completed.
+If BOA/FSS/BPA ( 29 ) is "NAP", BOA/FSS/BPA Contract # ( 30 ) and Expiration date ( 31 ) must be blank.
+NAP
+030
+Header
+BOA/FSS/BPA Contract Number
+17
+Conditional
+If BOA/FSS/BPA ( 29 ) , = "BOA", "FSS" or "BPA", required.
+If BOA/FSS/BPA ( 29 ) , = "NAP", BOA/FSS/BPA Contract Number ( 30 ) must be blank.
+Blank
+031
+Header
+BOA/FSS/BPA Contract Expiration Date
+10
+Conditional
+If BOA/FSS/BPA ( 29 ) , = "BOA", "FSS" or "BPA", required. Format MM/DD/YYYY
+If BOA/FSS/BPA ( 29 ) , = "NAP", BOA/FSS/ or BPA Contract Expiration date ( 31 ) must be blank.
+Blank
+032
+Header
+FOB Point
+1
+Mandatory
+Valid Free On Board (FOB) codes:
+D - Destination
+O - Origin
+If not in accordance with RFQ requirement, then Bid Type Code ( 24 ) must be Bid With Exception, "BW" or Alternate Bid, "AB" .
+If "O" response, City ( 33 ) , State/Province ( 34 ) and Country ( 35 ) are required.
+RFQ Requirement
+Yes
+033
+Header
+FOB City
+30
+Conditional
+If FOB Point ( 32 ), = "D", must be blank.
+If "O" response, City ( 33 ) , State/Province ( 34 ) and Country ( 35 ) are required.
+Blank
+034
+Header
+FOB State/Province
+2
+Conditional
+If FOB Point ( 32 ) = "D", must be blank.
+If FOB Point ( 32 ) = "O" and FOB Country ( 35 ) equals "US" or "CA", must be completed.
+If FOB Country ( 35 ) does not equal "US" or "CA", must be blank.
+If Country ( 35 ) equals "US" Valid U.S. States & Territories codes:
+AK - Alaska
+AL - Alabama
+AR - Arkansas
+AS - American Samoa
+AZ - Arizona
+CA - California
+CO - Colorado
+CT - Connecticut
+DC - District Of Columbia
+DE - Delaware
+FL - Florida
+FM - Federated States Of Micronesia
+GA - Georgia
+GU - Guam
+HI - Hawaii
+IA - Iowa
+ID - Idaho
+IL - Illinois
+IN - Indiana
+KS - Kansas
+KY - Kentucky
+LA - Louisiana
+MA - Massachusetts
+MD - Maryland
+ME - Maine
+MH - Marshall Islands
+MI - Michigan
+MN - Minnesota
+MO - Missouri
+MS - Mississippi
+MT - Montana
+NC - North Carolina
+ND - North Dakota
+NE - Nebraska
+NH - New Hampshire
+NJ - New Jersey
+NM - New Mexico
+NV - Nevada
+NY - New York
+OH - Ohio
+OK - Oklahoma
+OR - Oregon
+PA - Pennsylvania
+PR - Puerto Rico
+PW - Palau
+RI - Rhode Island
+SC - South Carolina
+SD - South Dakota
+TN - Tennessee
+TX - Texas
+UT - Utah
+VA - Virginia
+VI - Virgin Islands
+VT - Vermont
+WA - Washington
+WV - West Virginia
+WI - Wisconsin
+WY - Wyoming
+If Country ( 35 ) equals "CA" Valid Canadian Province codes:
+AB - Alberta
+BC - British Columbia
+MB - Manitoba
+NB - New Brunswick
+NF - Newfoundland
+NS - Nova Scotia
+NT - Nunavut
+ON - Ontario
+PE - Prince Edward Island
+QC - Quebec
+SK - Saskatchewan
+YT - Yukon
+Blank
+035
+Header
+FOB Country
+2
+Conditional
+If FOB Point ( 32 ) = "D", must be blank.
+If FOB Point ( 32 ) = "O" response, City ( 33 ) , State/Province ( 34 ) and Country ( 35 ) are required.
+Valid Country codes:
+AF - Afghanistan
+AL - Albania
+DZ - Algeria
+AS - American Samoa
+AD - Andorra
+AO - Angola
+AI - Anguilla
+AQ - Antarctica
+AG - Antigua And Barbuda
+AR - Argentina
+AM - Armenia
+AW - Aruba
+AU - Australia
+AT - Austria
+AZ - Azerbaijan
+BS - Bahamas
+BH - Bahrain
+BD - Bangladesh
+BB - Barbados
+BY - Belarus
+BE - Belgium
+BZ - Belize
+BJ - Benin
+BM - Bermuda
+BT - Bhutan
+BO - Bolivia
+BQ - Bonaire, Sint Eustatius and Saba
+BA - Bosnia And Herzegovina
+BW - Botswana
+BV - Bouvet Island
+BR - Brazil
+IO - British Indian Ocean Territory
+BN - Brunei Darussalam
+BG - Bulgaria
+BF - Burkina Faso
+CV - Cabo Verde
+KH - Cambodia
+CM - Cameroon
+BI - Burundi
+CA - Canada
+KY - Cayman Islands
+CF - Central African Republic
+TD - Chad
+CL - Chile
+CN - China
+CX - Christmas Island
+CC - Cocos (Keeling) Islands
+CO - Colombia
+KM - Comoros
+CG - Congo
+CD - Congo The Democratic Republic Of The
+CK - Cook Islands
+CR - Costa Rica
+CI - Cote d'Ivoire
+HR - Croatia
+CU - Cuba
+CW - Curacao
+CY - Cyprus
+CZ - Czechia
+DK - Denmark
+DJ - Djibouti
+DM - Dominica
+DO - Dominican Republic
+EC - Ecuador
+EG - Egypt
+SV - El Salvador
+GQ - Equatorial Guinea
+ER - Eritrea
+EE - Estonia
+SZ - Eswatini
+ET - Ethiopia
+FK - Falkland Islands (Malvinas)
+FO - Faroe Islands
+FJ - Fiji
+FI - Finland
+FR - France
+GF - French Guiana
+PF - French Polynesia
+TF - French Southern Territories
+GA - Gabon
+GM - Gambia
+GE - Georgia
+DE - Germany
+GH - Ghana
+GI - Gibraltar
+GR - Greece
+GL - Greenland
+GD - Grenada
+GP - Guadeloupe
+GU - Guam
+GT - Guatemala
+GN - Guinea
+GW - Guinea-Bissau
+GY - Guyana
+HT - Haiti
+HM - Heard Island And McDonald Islands
+VA - Holy See (Vatican City State)
+HN - Honduras
+HK - Hong Kong
+HU - Hungary
+IS - Iceland
+IN - India
+ID - Indonesia
+IR - Iran Islamic Republic Of
+IQ - Iraq
+IE - Ireland
+IM - Isle of Man
+IL - Israel
+IT - Italy
+JM - Jamaica
+JP - Japan
+JO - Jordan
+KZ - Kazakhstan
+KE - Kenya
+KI - Kiribati
+KP - Korea Democratic People's Republic of
+KR - Korea Republic Of
+XK - Kosovo
+KW - Kuwait
+KG - Kyrgyzstan
+LA - Lao Peoples Democratic Republic
+LV - Latvia
+LB - Lebanon
+LS - Lesotho
+LR - Liberia
+LY - Libya
+LI - Liechtenstein
+LT - Lithuania
+LU - Luxembourg
+NF - Norfolk Island
+MO - Macao
+MG - Madagascar
+MW - Malawi
+MY - Malaysia
+MV - Maldives
+ML - Mali
+MT - Malta
+MH - Marshall Islands
+MQ - Martinique
+MR - Mauritania
+MU - Mauritius
+YT - Mayotte
+MX - Mexico
+FM - Micronesia Federated States Of
+MD - Moldova Republic Of
+MC - Monaco
+MN - Mongolia
+ME - Montenegro
+MS - Montserrat
+MA - Morocco
+MZ - Mozambique
+MM - Myanmar
+NA - Namibia
+NR - Nauru
+NP - Nepal
+NL - Netherlands
+NC - New Caledonia
+NZ - New Zealand
+NI - Nicaragua
+NE - Niger
+NG - Nigeria
+NU - Niue
+MK - North Macedonia
+MP - Northern Mariana Islands
+NO - Norway
+OM - Oman
+PK - Pakistan
+PW - Palau
+PS - Palestine State of
+PA - Panama
+PG - Papua New Guinea
+PY - Paraguay
+PE - Peru
+PH - Philippines
+PN - Pitcairn
+PL - Poland
+PT - Portugal
+PR - Puerto Rico
+QA - Qatar
+RE - Reunion
+RO - Romania
+RU - Russian Federation
+RW - Rwanda
+SH - Saint Helena
+LC - Saint Lucia
+KN - Saint Kitts And Nevis
+MF - Saint Martin
+PM - Saint Pierre And Miquelon
+VC - Saint Vincent And The Grenadines
+WS - Samoa
+SM - San Marino
+ST - Sao Tome And Principe
+SA - Saudi Arabia
+SN - Senegal
+RS - Serbia
+SC - Seychelles
+SL - Sierra Leone
+SG - Singapore
+SX - Sint Maarten
+SK - Slovakia
+SI - Slovenia
+SB - Solomon Islands
+SO - Somalia
+ZA - South Africa
+GS - South Georgia And The South Sandwich Islands
+SS - South Sudan
+ES - Spain
+LK - Sri Lanka
+SD - Sudan
+SR - Suriname
+SJ - Svalbard And Jan Mayen
+SE - Sweden
+CH - Switzerland
+SY - Syrian Arab Republic
+TW - Taiwan Province Of China
+TJ - Tajikistan
+TZ - Tanzania United Republic Of
+TH - Thailand
+TL - Timor-Leste
+TG - Togo
+TK - Tokelau
+TT - Trinidad And Tobago
+TN - Tunisia
+TO - Tonga
+TR - Turkey
+TM - Turkmenistan
+TC - Turks And Caicos Islands
+TV - Tuvalu
+UG - Uganda
+UA - Ukraine
+AE - United Arab Emirates
+GB - United Kingdom
+US - United States
+UM - United States Minor Outlying Islands
+UY - Uruguay
+UZ - Uzbekistan
+VU - Vanuatu
+VE - Venezuela
+VN - Viet Nam
+VI - Virgin Islands U.S.
+VG - Virgin Islands British
+WF - Wallis And Futuna
+EH - Western Sahara
+YE - Yemen
+ZM - Zambia
+ZW - Zimbabwe
+Blank
+036
+Header
+Inspection Point Code
+1
+Mandatory
+Valid Inspection Point codes:
+D - Destination
+O - Origin
+If the inspection point code is changed from the RFQ requirement, Bid Type Code ( 24 )
+must equal bid with exception "BW" or alternate bid "AB".
+RFQ Requirement
+Yes
+037
+Header
+Place of Government Inspection - Packaging CAGE code
+5
+Conditional
+If Inspection Point Code ( 36 ) , = "O", required.
+If Inspection Point Code ( 36 ) , = "D", must be blank
+Blank
+038
+Header
+Place of Government Inspection - Supplies CAGE code
+5
+Conditional
+If Inspection Point Code ( 36 ) , = "O", required.
+If Inspection Point Code ( 36 ), = "D", must be blank
+Blank
+039
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+040
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+041
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+042
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+043
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+044
+Header
+Solicitation Line Number
+4
+Mandatory
+Description: 0000 - 9999
+Must match Solicitation Line for Solicitation Line listed on RFQ.
+Blank
+045
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+046
+Line
+Purchase Request Number
+10
+Mandatory
+Must match Purchase Request Number for Solicitation Line listed on RFQ.
+RFQ Requirement
+047
+Line
+National Stock Number / Part Number
+45
+Mandatory
+Must match NSN/Part Number listed for Solicitation Line listed on RFQ.
+RFQ Requirement
+048
+Line
+Unit of Issue
+2
+Mandatory
+Must match Unit of Issue listed for Solicitation Line listed on RFQ.
+RFQ Requirement
+049
+Line
+Quantity
+10
+Conditional
+If not in accordance with RFQ requirement, then Bid Type Code ( 24 ) must be Bid With
+Exception, "BW" or Alternate Bid, "AB" .
+If zero quantity ( 49 ) for all line items, Bid Type Code ( 24 ) must equal "DQ" No Bid.
+Offering a different quantity than solicited on National Stock Number / Part Number ( 15 ) 0001S00000052 or 0001S00000053 is prohibited.
+Note: If Solicitation Type Indicator ( 2 ) equals I then the quantity is an estimate and not a firm quantity. The quoted quantity must match the estimated quantity
+RFQ Requirement
+Yes
+050
+Line
+Unit Price
+13
+Conditional
+If "No Charge", "Free Issue" or "No Bid" on a line item enter 0
+Unit Price must be a number from .00000 to 9999999.99999 having (0 ~ 5 decimal places).
+Cannot be Blank.
+Blank
+051
+Line
+Delivery Days
+4
+Conditional
+Delivery days after date of order (ADO).
+Cannot be Blank.
+Format 0 ~ 9999, whole numbers only. Do not use decimals.
+* NOTE: If the solicitation number ( 1 ) begins with "SPM", the valid length is 3.
+If zero unit price ( 50 ) entered and delivery days ( 51 ) does not equal zero, Government assumes no charge.
+If zero unit price ( 50 ) and zero delivery days ( 51 ):
+Government assumes no bid on the line item, unless the National Stock Number / Part Number ( 15 ) is 0001S00000052 or 0001S00000053, then Bid Type Code ( 24 ) must be Bid With Exception, "BW" or Alternate Bid, "AB" .
+If the National Stock Number / Part Number ( 15 ) is 0001S00000052 or 0001S00000053, Government assumes "Request Waiver of First Article
+Testing (FAT)" unless First Article Waiver Code ( 64 ) = "N".
+If First Article Waiver Code ( 64 ) = "N", delivery days cannot equal zero.
+RFQ Requirement
+Yes
+052
+Header
+Guaranteed
+Minimum
+7
+Conditional
+This is the guaranteed minimum quantity for the life of the contract.
+Must match the RFQ Requirement
+RFQ Requirement
+053
+Header
+DO Minimum
+8
+Conditional
+Indicates the minimum quantity on each order unless No DO Minimum Quantity ( 56 ) equals "Y".
+Must match the RFQ Requirement
+RFQ Requirement
+054
+Header
+Contract Maximum
+12
+Conditional
+The contract maximum will not exceed the simplified acquisition threshold (SAT) dollar value.
+Must match the RFQ Requirement
+RFQ Requirement
+055
+Header
+Annual Frequency of Buys (AFB)
+4
+Conditional
+This is the estimated number of orders per year.
+Must match the RFQ Requirement
+RFQ Requirement
+056
+Header
+No DO Minimum Quantity?
+1
+Conditional
+Would you be willing to accept orders without a minimum quantity?
+If Solicitation Type Indicator ( 2 ) does not equal I, then must be blank.
+If Solicitation Type Indicator ( 2 ) equals I, then must be completed.
+Valid No DO Minimum Quantity codes:
+Y - Yes
+N - No
+Blank
+057
+Header
+HUBZone Preference Indicator
+1
+Mandatory
+Applicable when FAR 52.219-4, Notice of Price Evaluation Preference for HUBZone Small Business Concerns is applicable.
+Must match RFQ Requirement
+Valid HUBZone Preference Indicator codes:
+Y - Yes
+N - No
+RFQ Requirement
+058
+Header
+Waiver of HUBZone Preference
+1
+Conditional
+Request waiver of FAR 52.219-4, Notice of Price Evaluation Preference for HUBZone Small Business Concerns
+If HUBZone Preference Indicator ( 57 ) equals 'Y' and the Small Business
+and Other Contractor Representation Codes ( 13 ) equals 'B' or 'M', then must be completed. This only applies to those quoting as a HUBZone entity that has been certified by the Small Business Administration (SBA).
+If certified by the SBA as HUBZone, then select 'Yes, request waiver' or 'No waiver requested'. If the offeror is a Small or Small Disadvantaged Business not certified by the SBA as HUBZone, then select 'Not Applicable'.
+Validations are:
+HUBZone Preference Indicator ( 57 ) equals 'Y' and the Small Business and Other Contractor Representation Codes ( 13 ) equals 'B' or 'M', Waiver of HUBZone Preference ( 58 ) must be completed.
+If HUBZone Preference Indicator ( 57 ) equals 'N' must be null.
+If HUBZone Preference Indicator ( 57 ) equals 'Y' and the Small Business and Other Contractor Representation Codes ( 13 ) does not equal 'B' or 'M', Waiver of HUBZone Preference ( 58 ) must be null.
+The Waiver of HUBZone Preference ( 58 ) database and batch/EDI values are as follows:
+Valid Waiver of HUBZone Preference codes:
+Y - Yes, request waiver
+N - No waiver requested
+A - Not Applicable
+Blank
+059
+Product
+Immediate Shipment Price
+13
+Conditional
+Provide price of the item that is available for immediate shipment.
+If Immediate Shipment Available ( 100 ) equals "N", then must be blank.
+If Immediate Shipment Available ( 100 ) equals "Y", then cannot be blank.
+Price must be a number from .00000 to 9999999.99999 having (0 ~ 5 decimal places).
+Blank
+060
+Product
+Immediate Shipment Delivery Days
+4
+Conditional
+Provide delivery days of the item that is available for immediate shipment.
+If Immediate Shipment Available ( 100 ) equals "N", then must be blank.
+If Immediate Shipment Available ( 100 ) equals "Y", then cannot be blank.
+Format 0 ~ 9999, whole numbers only. Do not use decimals.
+Blank
+061
+RESERVED
+0
+RESERVED
+RESERVED
+Blank
+062
+Product
+Trade Agreements Indicator
+1
+Mandatory
+Applies only if "Trade Agreements" is included in solicitation.
+Must match RFQ Requirement
+Valid Trade Agreements Indicator codes:
+N - Not Applicable
+Y - Trade Agreements
+I - Information Only (overseas Shipment)
+RFQ Requirement
+063
+Product
+Source of Supply CAGE Code
+5
+Conditional
+CAGE code of the source from which you are directly obtaining the material being quoted.
+Applies if Manufacturer/Dealer ( 102 ) equals "QD" Qualified Supplier List Dealer
+If Manufacturer/Dealer ( 102 ) does not equal "QD" Qualified Supplier List Dealer, then must be blank.
+Blank
+064
+Line
+First Article Waiver Code
+1
+Conditional
+Request Waiver of First Article Testing?
+Applicable to National Stock Number / Part Number ( 15 ) is 0001S00000052 or 0001S00000053.
+Valid First Article Testing Waiver Code codes:
+N - No Waiver Requested
+Y - Yes. Request Waiver
+If National Stock Number / Part Number ( 15 ) is NOT 0001S00000052 or 0001S00000053, must be blank.
+Blank
+065
+Product
+Hazardous Material Identification and Material Safety Data
+1
+Mandatory
+Identify hazardous material to be delivered under any resultant contract as prescribed by FAR 52.223 - 3.
+Valid Hazardous Material Identification and Material Safety Data codes:
+N - No
+Y - Yes
+Blank
+066
+Product
+Hazardous Warning Labels
+1
+Conditional
+Valid Hazardous Warning Label codes:
+1 - Hazardous Communication Standard
+2 - Federal Insecticide, Fungicide and Rodenicide Act
+3 - Federal Food, Drug, and Cosmetic Act
+4 - Consumer Product Safety Act
+5 - Federal Hazardous Substance Act
+6 - Federal Alcohol Administration Act
+7 - Not Applicable
+Blank
+067
+Product
+Material Requirements
+1
+Mandatory
+Identify Other Than New, Reconditioned, Remanufactured supplies
+or Unused Former Government surplus property proposed for use under any resultant contract as prescribed by FAR 52.211-5.
+Valid Material Type codes:
+0 - No*
+1 - Yes - Other Than New (Used)
+2 - Yes - Reconditioned
+3 - Yes - Remanufactured
+4 - Yes - Unused Former Government Surplus
+If Solicitation Type Indicator ( 2 ) equals 'I' and Material Requirements ( 67 ) is equal to '4', then Bid Type Code ( 24 ) must equal bid with exception 'BW' or alternate bid 'AB'.
+*Not Other Than New, Reconditioned, Remanufactured or Unused Former Government Surplus.
+Yes
+068
+Product
+Buy American Indicator
+1
+Mandatory
+Applies unless Buy American Act/ Free Trade Agreements - Balance of Payments Program is included in the solicitation.
+Valid Buy American Act Indicator codes:
+N - Not Applicable
+Y - Applicable
+I - Informational Only (Overseas Shipment)
+RFQ Requirement
+069
+Product
+Free Trade Agreements Indicator
+1
+Mandatory
+Applies only if "Buy American Act/ Free Trade Agreements - Balance of Payments Program", is included in solicitation.
+Valid Free Trade Agreements Indicator codes:
+N - Not Applicable
+Y - Free Trade Agreements
+A - Free Trade Agreements (formerly ALT I)
+B - Free Trade Agreements ALT IV
+I - Informational Only (Overseas Shipment)
+RFQ Requirement
+070
+Product
+Buy American/Free Trade/Trade Agreements End Product
+2
+Mandatory
+Buy American Act/Free Trade Agreements/Trade Agreements (DFARS 252.225-7000, DFARS 252.225-7035 &
+DFARS 252.225-7020): For Quotes equal or less than the micro-purchase threshold and Supplies Acquired
+for use Outside the United States this fill-in is gathered for information purposes only as the
+restrictions of the Buy American Act do not apply.
+If Buy American Indicator ( 68 ) = "Y" or "I" or
+if Trade Agreements Indicator ( 62 ) and Buy American Indicator ( 68 ) and
+Free Trade Agreements Indicator ( 69 ) = "N",
+Valid Buy American Act - Balance Of Payments Program Certification codes:
+D - Domestic End Products
+Q - Qualifying Country End Products
+NQ - Non-Qualifying Country End Products
+If Free Trade Agreements Indicator ( 69 ) = "Y",
+Valid Buy American Act - Free Trade Agreements - Balance Of Payments Program Certification codes:
+D - Domestic End Products
+N - Free Trade Agreement Country End Products
+QA - Qualifying Country End Products
+O - Other Foreign End Products
+If Free Trade Agreements Indicator ( 69 ) = "A",
+Valid Buy American Act - Free Trade Agreements - Balance Of Payments Program (Formerly Free Trade Agreements ALT I) codes:
+D - Domestic End Products
+C - Canadian End Products
+QE - Qualifying Country End Products
+O - Other Foreign End Products
+If Free Trade Agreements Indicator ( 69 ) = "B",
+Valid Free Trade Agreements ALT IV - Country End Products codes:
+D - Domestic End Products
+P - Free Trade Agreement Country End Products
+QA - Qualifying Country End Products
+O - Other Foreign End Products
+If Trade Agreements Indicator ( 62 ) = "Y",
+Valid Trade Agreement End Product Codes codes:
+US - US Made End Product
+QD - Qualifying Country End Product
+DE - Designated Country End Product
+ND - Non-Designated Country End Products
+Blank
+071
+Product
+Buy American/ Free Trade Agreements/Trade Agreements Country of Origin Code
+2
+Conditional
+Applies when supplying a non-qualifying country end product, other foreign end product or Non-Designated country end product.
+If Buy American/Free Trade/Trade Agreements End Product ( 70 )) does not equal "NQ", "O", "ND" or "US", must be blank.
+If Free Trade Agreements Indicator ( 69 ) equals
+A - Free Trade Agreements (formerly ALT I)
+and Buy American/Free Trade/Trade Agreements End Product ( 70 ) = O, enter a
+Buy American/Free Trade/Trade Agreements Country of Origin Code
+Valid Other Foreign Countries - Free Trade A codes:
+AF - Afghanistan
+AL - Albania
+DZ - Algeria
+AS - American Samoa
+AD - Andorra
+AO - Angola
+AI - Anguilla
+AQ - Antarctica
+AG - Antigua And Barbuda
+AR - Argentina
+AM - Armenia
+AW - Aruba
+AZ - Azerbaijan
+BS - Bahamas
+BH - Bahrain
+BD - Bangladesh
+BB - Barbados
+BY - Belarus
+BZ - Belize
+BJ - Benin
+BM - Bermuda
+BT - Bhutan
+BO - Bolivia
+BQ - Bonaire, Sint Eustatius and Saba
+BA - Bosnia And Herzegovina
+BW - Botswana
+BV - Bouvet Island
+BR - Brazil
+IO - British Indian Ocean Territory
+BN - Brunei Darussalam
+BG - Bulgaria
+BF - Burkina Faso
+BI - Burundi
+CV - Cabo Verde
+KH - Cambodia
+CM - Cameroon
+KY - Cayman Islands
+CF - Central African Republic
+TD - Chad
+CL - Chile
+CN - China
+CX - Christmas Island
+CC - Cocos (Keeling) Islands
+CO - Colombia
+KM - Comoros
+CG - Congo
+CD - Congo The Democratic Republic Of The
+CK - Cook Islands
+CR - Costa Rica
+CI - Cote d'Ivoire
+HR - Croatia
+CW - Curacao
+CY - Cyprus
+DJ - Djibouti
+DM - Dominica
+DO - Dominican Republic
+EC - Ecuador
+SV - El Salvador
+GQ - Equatorial Guinea
+ER - Eritrea
+SZ - Eswatini
+ET - Ethiopia
+FK - Falkland Islands (Malvinas)
+FO - Faroe Islands
+FJ - Fiji
+GF - French Guiana
+PF - French Polynesia
+TF - French Southern Territories
+GA - Gabon
+GM - Gambia
+GE - Georgia
+GH - Ghana
+GI - Gibraltar
+GL - Greenland
+GD - Grenada
+GP - Guadeloupe
+GU - Guam
+GT - Guatemala
+GN - Guinea
+GW - Guinea-Bissau
+GY - Guyana
+HT - Haiti
+HM - Heard Island And McDonald Islands
+VA - Holy See (Vatican City State)
+HN - Honduras
+HK - Hong Kong
+HU - Hungary
+IS - Iceland
+IN - India
+ID - Indonesia
+IQ - Iraq
+IE - Ireland
+IM - Isle of Man
+JM - Jamaica
+JO - Jordan
+KZ - Kazakhstan
+KE - Kenya
+KI - Kiribati
+KR - Korea Republic Of
+XK - Kosovo
+KW - Kuwait
+KG - Kyrgyzstan
+LA - Lao Peoples Democratic Republic
+LB - Lebanon
+LS - Lesotho
+LR - Liberia
+LY - Libya
+LI - Liechtenstein
+MO - Macao
+MG - Madagascar
+MW - Malawi
+MY - Malaysia
+MV - Maldives
+ML - Mali
+MT - Malta
+MH - Marshall Islands
+MQ - Martinique
+MR - Mauritania
+MU - Mauritius
+YT - Mayotte
+MX - Mexico
+FM - Micronesia Federated States Of
+MD - Moldova Republic Of
+MC - Monaco
+MN - Mongolia
+ME - Montenegro
+MS - Montserrat
+MA - Morocco
+MZ - Mozambique
+NA - Namibia
+NR - Nauru
+NP - Nepal
+NC - New Caledonia
+NZ - New Zealand
+NI - Nicaragua
+NE - Niger
+NG - Nigeria
+NU - Niue
+NF - Norfolk Island
+MK - North Macedonia
+MP - Northern Mariana Islands
+OM - Oman
+PK - Pakistan
+PW - Palau
+PS - Palestine State of
+PA - Panama
+PG - Papua New Guinea
+PY - Paraguay
+PE - Peru
+PH - Philippines
+PN - Pitcairn
+PR - Puerto Rico
+QA - Qatar
+RE - Reunion
+RO - Romania
+RU - Russian Federation
+RW - Rwanda
+SH - Saint Helena
+KN - Saint Kitts And Nevis
+LC - Saint Lucia
+MF - Saint Martin
+PM - Saint Pierre And Miquelon
+VC - Saint Vincent And The Grenadines
+WS - Samoa
+SM - San Marino
+ST - Sao Tome And Principe
+SA - Saudi Arabia
+SN - Senegal
+RS - Serbia
+SC - Seychelles
+SL - Sierra Leone
+SG - Singapore
+SX - Sint Maarten
+SK - Slovakia
+SB - Solomon Islands
+SO - Somalia
+ZA - South Africa
+GS - South Georgia And The South Sandwich Islands
+SS - South Sudan
+LK - Sri Lanka
+SR - Suriname
+SJ - Svalbard And Jan Mayen
+SY - Syrian Arab Republic
+TW - Taiwan Province Of China
+TJ - Tajikistan
+TZ - Tanzania United Republic Of
+TH - Thailand
+TL - Timor-Leste
+TG - Togo
+TK - Tokelau
+TO - Tonga
+TT - Trinidad And Tobago
+TN - Tunisia
+TM - Turkmenistan
+TC - Turks And Caicos Islands
+TV - Tuvalu
+UG - Uganda
+UA - Ukraine
+AE - United Arab Emirates
+UM - United States Minor Outlying Islands
+UY - Uruguay
+UZ - Uzbekistan
+VU - Vanuatu
+VE - Venezuela
+VN - Viet Nam
+VI - Virgin Islands U.S.
+VG - Virgin Islands British
+WF - Wallis And Futuna
+EH - Western Sahara
+YE - Yemen
+ZM - Zambia
+ZW - Zimbabwe
+If Free Trade Agreements Indicator ( 69 ) equals B - Free Trade Agreements ALT IV and
+Buy American/Free Trade/Trade Agreements End Product ( 70 ) = "O",
+enter a Buy American/Free Trade/Trade Agreements Country of Origin Code
+Valid Other Foreign Countries - Free Trade B codes:
+AF - Afghanistan
+AL - Albania
+DZ - Algeria
+AS - American Samoa
+AD - Andorra
+AO - Angola
+AI - Anguilla
+AQ - Antarctica
+AG - Antigua And Barbuda
+AR - Argentina
+AM - Armenia
+AW - Aruba
+AZ - Azerbaijan
+BS - Bahamas
+BH - Bahrain
+BD - Bangladesh
+BB - Barbados
+BY - Belarus
+BZ - Belize
+BJ - Benin
+BM - Bermuda
+BT - Bhutan
+BO - Bolivia
+BQ - Bonaire, Sint Eustatius and Saba
+BA - Bosnia And Herzegovina
+BW - Botswana
+BV - Bouvet Island
+BR - Brazil
+IO - British Indian Ocean Territory
+BN - Brunei Darussalam
+BG - Bulgaria
+BF - Burkina Faso
+BI - Burundi
+CV - Cabo Verde
+KH - Cambodia
+CM - Cameroon
+KY - Cayman Islands
+CF - Central African Republic
+TD - Chad
+CN - China
+CX - Christmas Island
+CC - Cocos (Keeling) Islands
+KM - Comoros
+CG - Congo
+CD - Congo The Democratic Republic Of The
+CK - Cook Islands
+CI - Cote d'Ivoire
+HR - Croatia
+CW - Curacao
+CY - Cyprus
+DJ - Djibouti
+DM - Dominica
+EC - Ecuador
+GQ - Equatorial Guinea
+ER - Eritrea
+SZ - Eswatini
+ET - Ethiopia
+FK - Falkland Islands (Malvinas)
+FO - Faroe Islands
+FJ - Fiji
+GF - French Guiana
+PF - French Polynesia
+TF - French Southern Territories
+GA - Gabon
+GM - Gambia
+GE - Georgia
+GH - Ghana
+GI - Gibraltar
+GL - Greenland
+GD - Grenada
+GP - Guadeloupe
+GU - Guam
+GN - Guinea
+GW - Guinea-Bissau
+GY - Guyana
+HT - Haiti
+HM - Heard Island And McDonald Islands
+VA - Holy See (Vatican City State)
+HK - Hong Kong
+HU - Hungary
+IS - Iceland
+IN - India
+ID - Indonesia
+IQ - Iraq
+IE - Ireland
+IM - Isle of Man
+JM - Jamaica
+JO - Jordan
+KZ - Kazakhstan
+KE - Kenya
+KI - Kiribati
+KR - Korea Republic Of
+XK - Kosovo
+KW - Kuwait
+KG - Kyrgyzstan
+LA - Lao Peoples Democratic Republic
+LB - Lebanon
+LS - Lesotho
+LR - Liberia
+LY - Libya
+LI - Liechtenstein
+MO - Macao
+MG - Madagascar
+MW - Malawi
+MY - Malaysia
+MV - Maldives
+ML - Mali
+MT - Malta
+MH - Marshall Islands
+MQ - Martinique
+MR - Mauritania
+MU - Mauritius
+YT - Mayotte
+FM - Micronesia Federated States Of
+MD - Moldova Republic Of
+MC - Monaco
+MN - Mongolia
+ME - Montenegro
+MS - Montserrat
+MA - Morocco
+MZ - Mozambique
+NA - Namibia
+NR - Nauru
+NP - Nepal
+NC - New Caledonia
+NZ - New Zealand
+NE - Niger
+NG - Nigeria
+NU - Niue
+NF - Norfolk Island
+MK - North Macedonia
+MP - Northern Mariana Islands
+OM - Oman
+PK - Pakistan
+PW - Palau
+PS - Palestine State of
+PA - Panama
+PG - Papua New Guinea
+PY - Paraguay
+PE - Peru
+PH - Philippines
+PN - Pitcairn
+PR - Puerto Rico
+QA - Qatar
+RE - Reunion
+RO - Romania
+RU - Russian Federation
+RW - Rwanda
+SH - Saint Helena
+KN - Saint Kitts And Nevis
+LC - Saint Lucia
+MF - Saint Martin
+PM - Saint Pierre And Miquelon
+VC - Saint Vincent And The Grenadines
+WS - Samoa
+SM - San Marino
+ST - Sao Tome And Principe
+SA - Saudi Arabia
+SN - Senegal
+RS - Serbia
+SC - Seychelles
+SL - Sierra Leone
+SX - Sint Maarten
+SK - Slovakia
+SB - Solomon Islands
+SO - Somalia
+ZA - South Africa
+GS - South Georgia And The South Sandwich Islands
+SS - South Sudan
+LK - Sri Lanka
+SR - Suriname
+SJ - Svalbard And Jan Mayen
+SY - Syrian Arab Republic
+TW - Taiwan Province Of China
+TJ - Tajikistan
+TZ - Tanzania United Republic Of
+TH - Thailand
+TL - Timor-Leste
+TG - Togo
+TK - Tokelau
+TO - Tonga
+TT - Trinidad And Tobago
+TN - Tunisia
+TM - Turkmenistan
+TC - Turks And Caicos Islands
+TV - Tuvalu
+UG - Uganda
+UA - Ukraine
+AE - United Arab Emirates
+UM - United States Minor Outlying Islands
+UY - Uruguay
+UZ - Uzbekistan
+VU - Vanuatu
+VE - Venezuela
+VN - Viet Nam
+VI - Virgin Islands U.S.
+VG - Virgin Islands British
+WF - Wallis And Futuna
+EH - Western Sahara
+YE - Yemen
+ZM - Zambia
+ZW - Zimbabwe
+If Free Trade Agreements Indicator ( 69 ) equals Y - Free Trade Agreements and
+Buy American/Free Trade/Trade Agreements End Product ( 70 ) = "O", enter a Buy American/ Free Trade Agreements/
+Trade Agreements Country of Origin Code
+Valid Other Foreign Countries - Free Trade Y codes:
+AF - Afghanistan
+AL - Albania
+DZ - Algeria
+AS - American Samoa
+AD - Andorra
+AO - Angola
+AI - Anguilla
+AQ - Antarctica
+AG - Antigua And Barbuda
+AR - Argentina
+AM - Armenia
+AW - Aruba
+AZ - Azerbaijan
+BS - Bahamas
+BH - Bahrain
+BD - Bangladesh
+BB - Barbados
+BY - Belarus
+BZ - Belize
+BJ - Benin
+BM - Bermuda
+BT - Bhutan
+BO - Bolivia
+BQ - Bonaire, Sint Eustatius and Saba
+BA - Bosnia And Herzegovina
+BW - Botswana
+BV - Bouvet Island
+BR - Brazil
+IO - British Indian Ocean Territory
+BN - Brunei Darussalam
+BG - Bulgaria
+BF - Burkina Faso
+BI - Burundi
+CV - Cabo Verde
+KH - Cambodia
+CM - Cameroon
+KY - Cayman Islands
+CF - Central African Republic
+TD - Chad
+CN - China
+CX - Christmas Island
+CC - Cocos (Keeling) Islands
+KM - Comoros
+CG - Congo
+CD - Congo The Democratic Republic Of The
+CK - Cook Islands
+CI - Cote d'Ivoire
+FK - Falkland Islands (Malvinas)
+HR - Croatia
+CW - Curacao
+CY - Cyprus
+DJ - Djibouti
+DM - Dominica
+EC - Ecuador
+GQ - Equatorial Guinea
+ER - Eritrea
+SZ - Eswatini
+ET - Ethiopia
+FO - Faroe Islands
+FJ - Fiji
+GF - French Guiana
+PF - French Polynesia
+TF - French Southern Territories
+GA - Gabon
+GM - Gambia
+GE - Georgia
+GH - Ghana
+GI - Gibraltar
+GL - Greenland
+GD - Grenada
+GP - Guadeloupe
+GU - Guam
+GN - Guinea
+GW - Guinea-Bissau
+GY - Guyana
+HT - Haiti
+HM - Heard Island And McDonald Islands
+VA - Holy See (Vatican City State)
+HK - Hong Kong
+HU - Hungary
+IS - Iceland
+IN - India
+ID - Indonesia
+IQ - Iraq
+IE - Ireland
+IM - Isle of Man
+JM - Jamaica
+JO - Jordan
+KZ - Kazakhstan
+KE - Kenya
+KI - Kiribati
+XK - Kosovo
+KW - Kuwait
+KG - Kyrgyzstan
+LA - Lao Peoples Democratic Republic
+LB - Lebanon
+LS - Lesotho
+LR - Liberia
+LY - Libya
+LI - Liechtenstein
+MO - Macao
+MG - Madagascar
+MW - Malawi
+MY - Malaysia
+MV - Maldives
+ML - Mali
+MT - Malta
+MH - Marshall Islands
+MQ - Martinique
+MR - Mauritania
+MU - Mauritius
+YT - Mayotte
+FM - Micronesia Federated States Of
+MD - Moldova Republic Of
+MC - Monaco
+MN - Mongolia
+ME - Montenegro
+MS - Montserrat
+MA - Morocco
+MZ - Mozambique
+NA - Namibia
+NR - Nauru
+NP - Nepal
+NC - New Caledonia
+NZ - New Zealand
+NE - Niger
+NG - Nigeria
+NU - Niue
+NF - Norfolk Island
+MK - North Macedonia
+MP - Northern Mariana Islands
+OM - Oman
+PK - Pakistan
+PW - Palau
+PS - Palestine State of
+PA - Panama
+PG - Papua New Guinea
+PY - Paraguay
+PE - Peru
+PH - Philippines
+PN - Pitcairn
+PR - Puerto Rico
+QA - Qatar
+RE - Reunion
+RO - Romania
+RU - Russian Federation
+RW - Rwanda
+SH - Saint Helena
+KN - Saint Kitts And Nevis
+LC - Saint Lucia
+MF - Saint Martin
+PM - Saint Pierre And Miquelon
+VC - Saint Vincent And The Grenadines
+WS - Samoa
+SM - San Marino
+SA - Saudi Arabia
+ST - Sao Tome And Principe
+SN - Senegal
+RS - Serbia
+SC - Seychelles
+SL - Sierra Leone
+SX - Sint Maarten
+SK - Slovakia
+SB - Solomon Islands
+SO - Somalia
+ZA - South Africa
+GS - South Georgia And The South Sandwich Islands
+SS - South Sudan
+LK - Sri Lanka
+SR - Suriname
+SJ - Svalbard And Jan Mayen
+SY - Syrian Arab Republic
+TW - Taiwan Province Of China
+TJ - Tajikistan
+TZ - Tanzania United Republic Of
+TH - Thailand
+TL - Timor-Leste
+TG - Togo
+TK - Tokelau
+TO - Tonga
+TT - Trinidad And Tobago
+TN - Tunisia
+TM - Turkmenistan
+TC - Turks And Caicos Islands
+TV - Tuvalu
+UG - Uganda
+UA - Ukraine
+AE - United Arab Emirates
+UM - United States Minor Outlying Islands
+UY - Uruguay
+UZ - Uzbekistan
+VU - Vanuatu
+VE - Venezuela
+VN - Viet Nam
+VI - Virgin Islands U.S.
+VG - Virgin Islands British
+WF - Wallis And Futuna
+EH - Western Sahara
+YE - Yemen
+ZM - Zambia
+ZW - Zimbabwe
+If Buy American Indicator
+( 68 ) equals Y - Applicable or I - Informational Only (Overseas Shipment) and Buy American/Free Trade Agreements End Product
+( 70 ) = "NQ - Non-Qualifying Country End Products", enter Buy American/ Free Trade Agreements/ Trade Agreements
+Country of Origin Code.
+Valid Non-Qualifying Country End Products Country Codes codes:
+AF - Afghanistan
+AL - Albania
+DZ - Algeria
+AS - American Samoa
+AD - Andorra
+AO - Angola
+AI - Anguilla
+AQ - Antarctica
+AG - Antigua And Barbuda
+AR - Argentina
+AM - Armenia
+AW - Aruba
+AZ - Azerbaijan
+BS - Bahamas
+BH - Bahrain
+BD - Bangladesh
+BB - Barbados
+BY - Belarus
+BZ - Belize
+BJ - Benin
+BM - Bermuda
+BT - Bhutan
+BO - Bolivia
+BQ - Bonaire, Sint Eustatius and Saba
+BA - Bosnia And Herzegovina
+BW - Botswana
+BV - Bouvet Island
+BR - Brazil
+IO - British Indian Ocean Territory
+BN - Brunei Darussalam
+BG - Bulgaria
+BF - Burkina Faso
+BI - Burundi
+CV - Cabo Verde
+KH - Cambodia
+CM - Cameroon
+KY - Cayman Islands
+CF - Central African Republic
+TD - Chad
+CL - Chile
+CN - China
+CX - Christmas Island
+CC - Cocos (Keeling) Islands
+CO - Colombia
+KM - Comoros
+CG - Congo
+CD - Congo The Democratic Republic Of The
+CK - Cook Islands
+CR - Costa Rica
+CI - Cote d'Ivoire
+HR - Croatia
+CW - Curacao
+CY - Cyprus
+DJ - Djibouti
+DM - Dominica
+DO - Dominican Republic
+EC - Ecuador
+SV - El Salvador
+GQ - Equatorial Guinea
+ER - Eritrea
+SZ - Eswatini
+ET - Ethiopia
+FK - Falkland Islands (Malvinas)
+FO - Faroe Islands
+FJ - Fiji
+GF - French Guiana
+PF - French Polynesia
+TF - French Southern Territories
+GA - Gabon
+GM - Gambia
+GE - Georgia
+GH - Ghana
+GI - Gibraltar
+GL - Greenland
+GD - Grenada
+GP - Guadeloupe
+GU - Guam
+GT - Guatemala
+GN - Guinea
+GW - Guinea-Bissau
+GY - Guyana
+HT - Haiti
+HM - Heard Island And McDonald Islands
+VA - Holy See (Vatican City State)
+HN - Honduras
+HK - Hong Kong
+HU - Hungary
+IS - Iceland
+IN - India
+ID - Indonesia
+IQ - Iraq
+IE - Ireland
+IM - Isle of Man
+JM - Jamaica
+JO - Jordan
+KZ - Kazakhstan
+KE - Kenya
+KI - Kiribati
+KR - Korea Republic Of
+XK - Kosovo
+KW - Kuwait
+KG - Kyrgyzstan
+LA - Lao Peoples Democratic Republic
+LB - Lebanon
+LS - Lesotho
+LR - Liberia
+LY - Libya
+LI - Liechtenstein
+MO - Macao
+MG - Madagascar
+MW - Malawi
+MY - Malaysia
+MV - Maldives
+ML - Mali
+MT - Malta
+MH - Marshall Islands
+MQ - Martinique
+MR - Mauritania
+MU - Mauritius
+YT - Mayotte
+MX - Mexico
+FM - Micronesia Federated States Of
+MD - Moldova Republic Of
+MC - Monaco
+MN - Mongolia
+ME - Montenegro
+MS - Montserrat
+MA - Morocco
+MZ - Mozambique
+NA - Namibia
+NR - Nauru
+NP - Nepal
+NC - New Caledonia
+NZ - New Zealand
+NI - Nicaragua
+NE - Niger
+NG - Nigeria
+NU - Niue
+NF - Norfolk Island
+MK - North Macedonia
+MP - Northern Mariana Islands
+OM - Oman
+PK - Pakistan
+PW - Palau
+PS - Palestine State of
+PA - Panama
+PG - Papua New Guinea
+PY - Paraguay
+PE - Peru
+PH - Philippines
+PN - Pitcairn
+PR - Puerto Rico
+QA - Qatar
+RE - Reunion
+RO - Romania
+RU - Russian Federation
+RW - Rwanda
+SH - Saint Helena
+KN - Saint Kitts And Nevis
+LC - Saint Lucia
+MF - Saint Martin
+PM - Saint Pierre And Miquelon
+VC - Saint Vincent And The Grenadines
+WS - Samoa
+SM - San Marino
+ST - Sao Tome And Principe
+SA - Saudi Arabia
+SN - Senegal
+RS - Serbia
+SC - Seychelles
+SL - Sierra Leone
+SG - Singapore
+SX - Sint Maarten
+SK - Slovakia
+SB - Solomon Islands
+SO - Somalia
+ZA - South Africa
+GS - South Georgia And The South Sandwich Islands
+SS - South Sudan
+LK - Sri Lanka
+SR - Suriname
+SJ - Svalbard And Jan Mayen
+SY - Syrian Arab Republic
+TW - Taiwan Province Of China
+TJ - Tajikistan
+TZ - Tanzania United Republic Of
+TH - Thailand
+TL - Timor-Leste
+TG - Togo
+TK - Tokelau
+TO - Tonga
+TT - Trinidad And Tobago
+TN - Tunisia
+TM - Turkmenistan
+TC - Turks And Caicos Islands
+TV - Tuvalu
+UG - Uganda
+UA - Ukraine
+AE - United Arab Emirates
+UM - United States Minor Outlying Islands
+UY - Uruguay
+UZ - Uzbekistan
+VU - Vanuatu
+VE - Venezuela
+VN - Viet Nam
+VI - Virgin Islands U.S.
+VG - Virgin Islands British
+WF - Wallis And Futuna
+EH - Western Sahara
+YE - Yemen
+ZM - Zambia
+ZW - Zimbabwe
+If Trade Agreement Indicator ( 62 )
+equals Y and Buy American/Free Trade/Trade Agreements End Product ( 70 ) = "ND - Non-Designated Country End Products",
+enter Buy American/ Free Trade Agreements/ Trade Agreements Country of Origin Code.
+Valid Non-Designated Country End Products codes:
+AL - Albania
+DZ - Algeria
+AS - American Samoa
+AD - Andorra
+AI - Anguilla
+AQ - Antarctica
+AR - Argentina
+AZ - Azerbaijan
+BY - Belarus
+BM - Bermuda
+BO - Bolivia
+BA - Bosnia And Herzegovina
+BW - Botswana
+BV - Bouvet Island
+BR - Brazil
+IO - British Indian Ocean Territory
+BN - Brunei Darussalam
+CV - Cabo Verde
+CM - Cameroon
+KY - Cayman Islands
+CN - China
+CX - Christmas Island
+CC - Cocos (Keeling) Islands
+CG - Congo
+CK - Cook Islands
+CI - Cote d'Ivoire
+EC - Ecuador
+SZ - Eswatini
+FK - Falkland Islands (Malvinas)
+FO - Faroe Islands
+FJ - Fiji
+GF - French Guiana
+PF - French Polynesia
+TF - French Southern Territories
+GA - Gabon
+GE - Georgia
+GH - Ghana
+GI - Gibraltar
+GL - Greenland
+GP - Guadeloupe
+GU - Guam
+HM - Heard Island And McDonald Islands
+VA - Holy See (Vatican City State)
+IN - India
+ID - Indonesia
+IQ - Iraq
+IM - Isle of Man
+JO - Jordan
+KZ - Kazakhstan
+KE - Kenya
+XK - Kosovo
+KW - Kuwait
+KG - Kyrgyzstan
+LB - Lebanon
+LY - Libya
+MO - Macao
+MY - Malaysia
+MV - Maldives
+MH - Marshall Islands
+MQ - Martinique
+MU - Mauritius
+YT - Mayotte
+FM - Micronesia Federated States Of
+MC - Monaco
+MN - Mongolia
+NA - Namibia
+NR - Nauru
+NC - New Caledonia
+NG - Nigeria
+NU - Niue
+NF - Norfolk Island
+MP - Northern Mariana Islands
+OM - Oman
+PK - Pakistan
+PW - Palau
+PS - Palestine State of
+PG - Papua New Guinea
+PY - Paraguay
+PH - Philippines
+PN - Pitcairn
+PR - Puerto Rico
+QA - Qatar
+RE - Reunion
+RU - Russian Federation
+SH - Saint Helena
+PM - Saint Pierre And Miquelon
+SM - San Marino
+SA - Saudi Arabia
+RS - Serbia
+SC - Seychelles
+ZA - South Africa
+GS - South Georgia And The South Sandwich Islands
+LK - Sri Lanka
+SR - Suriname
+SJ - Svalbard And Jan Mayen
+SY - Syrian Arab Republic
+TJ - Tajikistan
+TH - Thailand
+TK - Tokelau
+TO - Tonga
+TN - Tunisia
+TM - Turkmenistan
+TC - Turks And Caicos Islands
+AE - United Arab Emirates
+UM - United States Minor Outlying Islands
+UY - Uruguay
+UZ - Uzbekistan
+VE - Venezuela
+VN - Viet Nam
+VI - Virgin Islands U.S.
+WF - Wallis And Futuna
+EH - Western Sahara
+ZW - Zimbabwe
+Blank
+072
+Product
+Buy American / Free Trade / Trade Agreements Country Code
+2
+Mandatory
+Applies when supplying a qualifying or Free Trade Agreements country end product.
+If Buy American/Free TradeTrade Agreements End Product
+( 70 ) = "D", "NQ", "O" or "ND", "US", must be blank.
+If Buy American/Free Trade/Trade Agreements End Product ( 70 ) = Q, enter a Qualified Country End Product.
+Valid Buy American Act - Qualifying End Products Country codes:
+AU - Australia
+AT - Austria
+BE - Belgium
+CA - Canada
+CZ - Czechia
+DK - Denmark
+EG - Egypt
+EE - Estonia
+FI - Finland
+FR - France
+DE - Germany
+GR - Greece
+IL - Israel
+IT - Italy
+JP - Japan
+LV - Latvia
+LT - Lithuania
+LU - Luxembourg
+NL - Netherlands
+NO - Norway
+PL - Poland
+PT - Portugal
+SI - Slovenia
+ES - Spain
+SE - Sweden
+CH - Switzerland
+TR - Turkey
+GB - United Kingdom
+If Buy American/Free Trade/Trade Agreements End Product ( 70 ) = "QA", enter a Qualifying Country (EXCEPT CANADA and AUSTRALIA) End Product.
+Valid Free Trade Agreements - Qualifying Country (Except Canada and Australia) codes:
+AT - Austria
+BE - Belgium
+CZ - Czechia
+DK - Denmark
+EG - Egypt
+EE - Estonia
+FI - Finland
+FR - France
+DE - Germany
+GR - Greece
+IL - Israel
+IT - Italy
+JP - Japan
+LV - Latvia
+LT - Lithuania
+LU - Luxembourg
+NL - Netherlands
+NO - Norway
+PL - Poland
+PT - Portugal
+SI - Slovenia
+ES - Spain
+SE - Sweden
+CH - Switzerland
+TR - Turkey
+GB - United Kingdom
+If Buy American/Free Trade/Trade Agreements End Product ( 70 ) = "QD", enter a Qualified Country End Product.
+Valid Trade Agreement Qualified Country Codes codes:
+AU - Australia
+AT - Austria
+BE - Belgium
+CA - Canada
+CZ - Czechia
+DK - Denmark
+EG - Egypt
+EE - Estonia
+FI - Finland
+FR - France
+DE - Germany
+GR - Greece
+IL - Israel
+IT - Italy
+JP - Japan
+LV - Latvia
+LT - Lithuania
+LU - Luxembourg
+NL - Netherlands
+NO - Norway
+PL - Poland
+PT - Portugal
+SI - Slovenia
+ES - Spain
+SE - Sweden
+CH - Switzerland
+TR - Turkey
+GB - United Kingdom
+If Buy American/Free Trade/Trade Agreements End Product ( 70 ) = "QE", enter a Qualifying Country (EXCEPT CANADA) End Product.
+Valid Free Trade Agreements - Qualifying Country (Except Canada) codes:
+AU - Australia
+AT - Austria
+BE - Belgium
+CZ - Czechia
+DK - Denmark
+EG - Egypt
+EE - Estonia
+FI - Finland
+FR - France
+DE - Germany
+GR - Greece
+IL - Israel
+IT - Italy
+JP - Japan
+LV - Latvia
+LT - Lithuania
+LU - Luxembourg
+NL - Netherlands
+NO - Norway
+PL - Poland
+PT - Portugal
+SI - Slovenia
+ES - Spain
+SE - Sweden
+CH - Switzerland
+TR - Turkey
+GB - United Kingdom
+If Buy American/Free Trade/Trade Agreements End Product ( 70 ) equals "C", enter a Free Trade Agreements Country End Product.
+Valid Free Trade Agreements - Canadian End Products Country codes:
+CA - CANADA
+If Buy American/Free Trade/Trade Agreements End Product ( 70 ) equals "N", enter a Free Trade Agreements Country End Product.
+Valid Free Trade Agreements ALT I - Country End Products codes:
+AU - Australia
+CA - Canada
+CL - Chile
+CO - Colombia
+CR - Costa Rica
+DO - Dominican Republic
+SV - El Salvador
+GT - Guatemala
+HN - Honduras
+KR - Korea, Republic Of
+MX - Mexico
+NI - Nicaragua
+SG - Singapore
+If Buy American/Free Trade/Trade Agreements End Product ( 70 ) equals "P",
+enter a Free Trade Agreements Country End Product.
+Valid Free Trade Agreements - Country End Products codes:
+AU - Australia
+CA - Canada
+CL - Chile
+CO - Colombia
+CR - Costa Rica
+DO - Dominican Republic
+SV - El Salvador
+GT - Guatemala
+HN - Honduras
+MX - Mexico
+NI - Nicaragua
+SG - Singapore
+If Buy American/Free Trade/Trade Agreements End Product (70) equals "DE", enter a Designated Country End Product.
+Valid Trade Agreement Designated Country Codes codes:
+AF - Afghanistan
+AO - Angola
+AG - Antigua and Barbuda
+AM - Armenia
+AW - Aruba
+BS - Bahamas
+BH - Bahrain
+BD - Bangladesh
+BB - Barbados
+BZ - Belize
+BJ - Benin
+BT - Bhutan
+BQ - Bonaire, Sint Eustatius and Saba
+BG - Bulgaria
+BF - Burkina Faso
+BI - Burundi
+KH - Cambodia
+CF - Central African Republic
+TD - Chad
+CL - Chile
+CO - Colombia
+KM - Comoros
+CD - Congo The Democratic Republic Of The
+CR - Costa Rica
+HR - Croatia
+CW - Curacao
+CY - Cyprus
+DJ - Djibouti
+DM - Dominica
+DO - Dominican Republic
+SV - El Salvador
+GQ - Equatorial Guinea
+ER - Eritrea
+ET - Ethiopia
+GM - Gambia
+GD - Grenada
+GT - Guatemala
+GN - Guinea
+GW - Guinea-Bissau
+GY - Guyana
+HT - Haiti
+HN - Honduras
+HK - Hong Kong
+HU - Hungary
+IS - Iceland
+IE - Ireland
+JM - Jamaica
+KI - Kiribati
+KR - Korea Republic Of
+LA - Lao Peoples Democratic Republic
+LS - Lesotho
+LR - Liberia
+LI - Liechtenstein
+MG - Madagascar
+MW - Malawi
+ML - Mali
+MT - Malta
+MR - Mauritania
+MX - Mexico
+MD - Moldova Republic of
+ME - Montenegro
+MS - Montserrat
+MA - Morocco
+MZ - Mozambique
+NP - Nepal
+NZ - New Zealand
+NI - Nicaragua
+NE - Niger
+MK - North Macedonia
+PA - Panama
+PE - Peru
+RO - Romania
+RW - Rwanda
+KN - Saint Kitts and Nevis
+LC - Saint Lucia
+VC - Saint Vincent and the Grenadines
+WS - Samoa
+ST - Sao Tome and Principe
+SN - Senegal
+SL - Sierra Leone
+SG - Singapore
+SX - Sint Maarten
+SK - Slovakia
+SB - Solomon Islands
+SO - Somalia
+SS - South Sudan
+TW - Taiwan Province of China
+TZ - Tanzania United Republic of
+TL - Timor-Leste
+TG - Togo
+TT - Trinidad and Tobago
+TV - Tuvalu
+UG - Uganda
+UA - Ukraine
+VU - Vanuatu
+VG - Virgin Islands British
+YE - Yemen
+ZM - Zambia
+073
+Product
+Duty Free Entry Requested
+1
+Conditional
+Duty Free Entry Requested
+If Buy American Indicator ( 68 ) = "I", must be blank.
+Valid Duty Free Entry Requested codes:
+N - No
+Y - Yes
+N
+074
+Product
+Duty Free Entry Requested/Foreign Supplies in US Code
+1
+Conditional
+Are such foreign supplies now in the United States?
+If Buy American Indicator ( 68 ) = "I", must be blank.
+Applies only if Duty Free Entry Requested (73) = "Y"
+Valid Duty Free Entry Requested Foreign Supplies in U.S. codes:
+N - No
+Y - Yes
+Blank
+075
+Product
+Duty Free Entry Requested/Duty Paid Code
+1
+Conditional
+Has the duty on such foreign supplies been paid?
+If Buy American Indicator ( 68 ) = "I", must be blank.
+Applies only if Duty Free Entry Requested/Foreign Supplies in US Code (74) = "Y".
+Valid Duty Free Entry Requested Duty Paid codes:
+N - No
+Y - Yes
+Blank
+076
+Product
+Duty Free Entry Requested/Duty Paid Amount
+15
+Conditional
+What amount is included in the offer to cover such duty?
+If Buy American Indicator ( 68 ) = "I", must be blank.
+Applies only if Duty Free Entry Requested/Duty Paid Code ( 75 ) = "N"
+Blank
+077
+Product
+Price Breaks Solicited Indicator
+1
+Conditional
+Must Match RFQ Requirement.
+Applies only when price break ranges are solicited.
+Valid Price Breaks Indicator codes:
+N - Price Breaks Do Not Apply
+Y - Request Price Breaks
+RFQ Requirement
+078
+Product
+Quantity Price Breaks - Range 1 Lower Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+079
+Product
+Quantity Price Breaks - Range 1 Upper Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+080
+Product
+Quantity Price Breaks - Range 1 Unit Price
+13
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999.99999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+081
+Product
+Quantity Price Breaks - Range 2 Lower Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+Quantity price breaks must be stepladder (upper quantity + 1 for next lower quantity)
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+082
+Product
+Quantity Price Breaks - Range 2 Upper Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+083
+Product
+Quantity Price Breaks - Range 2 Unit Price
+13
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999.99999
+Quantity price breaks must be stepladder (upper quantity + 1 for next lower quantity)
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+084
+Product
+Quantity Price Breaks - Range 3 Lower Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+Quantity price breaks must be stepladder (upper quantity + 1 for next lower quantity)
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+085
+Product
+Quantity Price Breaks - Range 3 Upper Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+086
+Product
+Quantity Price Breaks - Range 3 Unit Price
+13
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999.99999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+087
+Product
+Quantity Price Breaks - Range 4 Lower Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+Quantity price breaks must be stepladder (upper quantity + 1 for next lower quantity)
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+088
+Product
+Quantity Price Breaks - Range 4 Upper Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+089
+Product
+Quantity Price Breaks - Range 4 Unit Price
+13
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999.99999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+090
+Product
+Quantity Price Breaks - Range 5 Lower Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+Quantity price breaks must be stepladder (upper quantity + 1 for next lower quantity)
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+091
+Product
+Quantity Price Breaks - Range 5 Upper Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+092
+Product
+Quantity Price Breaks - Range 5 Unit Price
+13
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999.99999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+093
+Product
+Quantity Price Breaks - Range 6 Lower Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+Quantity price breaks must be stepladder (upper quantity + 1 for next lower quantity)
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+094
+Product
+Quantity Price Breaks - Range 6 Upper Quantity
+10
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+095
+Product
+Quantity Price Breaks - Range 6 Unit Price
+13
+Conditional
+If greater quantities are available at the same or yet lower unit prices,
+offerors are requested to enter the lower unit prices and quantity ranges
+to which such prices will apply. The Government may elect to accept such alternate
+quantity quotations not exceeding $25,000 without further
+solicitation or discussion. See FAR 52.207-4.
+If Solicitation Type ( 2 ) = "F" or "P", then enter a value.
+Format 0 ~ 9999999.99999
+If Solicitation Type Indicator ( 2 ) equals I, then must be blank.
+096
+Product
+Quantity Variance Plus
+2
+Conditional
+Use when quoting a variation in the quantity of items to be delivered under any resulting order.
+Range of 0 - 10
+If Solicitation Type Indicator ( 2 ) does not equal I, F, or P, Bid Type Code ( 24 ) is not affected.
+If Solicitation Type Indicator ( 2 ) = I, F, or P, and percent quoted is greater than the increase permitted by the RFQ, then Bid Type Code ( 24 ) must be Bid With Exception, "BW" or Alternate Bid, "AB".
+If batch file has a value, then must upload a value.
+0
+Yes
+097
+Product
+Quantity Variance Minus
+2
+Conditional
+Use when quoting a variation in the quantity of items to be delivered under any resulting order.
+Range of 0 - 10
+If Solicitation Type Indicator ( 2 ) does not equal I, F, or P, Bid Type Code ( 24 ) is not affected.
+If Solicitation Type Indicator ( 2 ) = I, F, or P, and percent quoted is greater than the decrease permitted by the RFQ, then Bid Type Code ( 24 ) must be Bid With Exception, "BW" or Alternate Bid, "AB" .
+If batch file has a value, then must upload a value.
+0
+Yes
+098
+Product
+Minimum Order Quantity Code
+1
+Conditional
+Is a larger quantity obtainable at no additional total price due to a minimum order quantity?
+Associated with an NSN or Part Number
+If Solicitation Type ( 2 ) = "F", "P", or blank then must be completed.
+Valid Minimum Order Quantity codes:
+Y - Yes
+N - No
+N
+099
+Product
+Minimum Order Maximum Quantity
+10
+Conditional
+Provide quantity that is available at no additional total price due to a minimum order quantity.
+If Minimum Order Quantity Code (98) equals "Y", then must be completed.
+Format 1 ~ 9999999999
+Blank
+100
+Product
+Immediate Shipment Available
+1
+Optional
+Is there a quantity available for immediate shipment?
+If Solicitation Type ( 2 ) = "F", "P", or blank then must be completed. If Solicitation Type ( 2 ) = "I", should be populated with an "N".
+Valid Immediate Shipment Available codes:
+N - No
+Y - Yes
+N
+101
+Product
+Immediate Shipment Quantity
+10
+Conditional
+Provide quantity of the item that is available for immediate shipment.
+If Immediate Shipment Available ( 100 ) equals "N", then must be blank.
+If Immediate Shipment Available ( 100 ) equals "Y", then cannot be blank.
+Format 0 ~ 9999999999.
+Blank
+102
+Product
+Manufacturer/Dealer
+2
+Mandatory
+Status of "Quoting For" CAGE code.
+Valid Supplier Type W/ Qualified Supplier codes:
+DD - Dealer
+MM - Manufacturer
+QD - Qualified Supplier List Dealer
+QM - Qualified Supplier List Manufacturer
+Blank
+103
+Product
+Actual Manufacturing/Production Source CAGE code
+5
+Mandatory
+If Manufacturer/Dealer ( 102 ) is "dealer" or "qualified supplier list dealer", enter CAGE code of facility that is actually manufacturing/producing
+the item. If the CAGE code is unknown, or the facility does not have a CAGE code, enter the company name and address in Actual Manufacturing/Production Source
+CAGE Remarks (104).
+If Manufacturer/Dealer ( 102 ) = MM or QM must be blank.
+If Manufacturer/Dealer ( 102 ) = DD or QD and Actual Manufacturing/Production Source Name and Address (104) is blank, then must be completed.
+Blank
+104
+Product
+Actual Manufacturing/Production Source Name and Address
+255
+Conditional
+If Manufacturer/Dealer ( 102 ) is "dealer" or "qualified supplier list dealer" and the CAGE code of the actual manufacturing/production source is
+unknown, or the facility does not have a CAGE code, enter the company name and address.
+If Manufacturer/Dealer ( 102 ) = MM or QM must be blank.
+If Manufacturer/Dealer ( 102 ) = DD or QD and Actual Manufacturing/Production Source CAGE ( 103 ) is blank, then must be completed.
+Blank
+105
+Product
+Item Description Indicator
+1
+Mandatory
+Describes controlling characteristics of the item.
+Must Match RFQ Requirement.
+Valid Item Description Indicator codes:
+B - Source Controlled Item
+D - Specification/Standard/Drawing Item
+N - Non-NSN Item
+P - Approved Source Item
+Q - Qualified Products List (QPL) Item
+S - Service Material Item
+RFQ Requirement
+106
+Product
+Part Number Offered Code
+1
+Conditional
+If Item Description Indicator ( 105 ) does not equal "P", "B", or "N", then must be blank.
+If Item Description Indicator ( 105 ) equals "P", "B", or "N", then must be completed.
+Valid Codes Where Item Description Indicator ( 105 ) equals "P" or "N":
+Valid Part Number Offered codes:
+1 - Exact Product
+2 - Alternate Product
+3 - Superseding P/N - Administrative Change Only
+4 - Superseding P/N - Minor Change / No Change In Configuration
+5 - Previously-Approved Product
+6 - CAGE/PN Correction - CAGE Code In Error/Same Corp., Different Division
+7 - CAGE/PN Correction - CAGE Code In Error/Sold To Different Corp.
+8 - CAGE/PN Correction - Part Number Not Recognized
+9 - CAGE & P/N Correction - Obsolete Part Number
+A - CAGE & P/N Correction - Other
+Valid Codes Where Item Description Indicator ( 105 ) equals "B":
+Valid Part Number Offered - Source Control Item codes:
+1 - Exact Product
+2 - Alternate Product
+If "1" Exact Product is selected, columns ( 107 ) ~ ( 108 ) must match approved item listed on the RFQ.
+If "2" Alternate Product is selected, complete columns ( 107 ) ~ ( 108 ), Bid Type Code ( 24 ) must equal "AB" Alternate Bid.
+If "3, 4, or 5" Superceding P/N/Previously Approved Product is selected, complete columns ( 107 ) ~ ( 108 ) . Bid Type is not affected.
+If "6, 7, 8, 9, or A" CAGE & P/N Correction is selected, complete columns ( 107 ) ~ ( 108 ). Bid Type is not affected.
+Blank
+Yes
+107
+Product
+Part Number Offered CAGE code
+5
+Conditional
+If Item Description Indicator ( 105 ) does not equal "P", "B", or "N", then must be blank.
+If Item Description Indicator ( 105 ) equals "P", "B", or "N", then must be completed.
+If Part Number Offered Code ( 106 ) = "1" Exact Product, CAGE & Part Number must match approved CAGE/part numbers listed on the RFQ.
+Blank
+108
+Product
+Part Number Offered - Part Number
+40
+Conditional
+If Item Description Indicator ( 105 ) does not equal "P", "B", or "N", then must be blank.
+If Item Description Indicator ( 105 ) equals "P", "B", or "N", then must be completed.
+If Part Number Offered Code ( 106 ) equals"1" Exact Product, CAGE & Part Number must match approved CAGE/part numbers listed on the RFQ.
+Blank
+109
+Product
+Part Number Offered Remarks
+255
+Optional
+Used to provide remarks about part number offered.
+If Item Description Indicator ( 105 ) does not equal "P", "B", or "N", or Part Number Offered Code ( 106 ) equals "1", then must be blank.
+Applies if Item Description Indicator ( 105 ) equals "P", "B", or "N", and Part Number Offered Code ( 106 ) does not equal "1".
+Blank
+110
+Product
+Supplies Offered
+1
+Conditional
+Identifies supplies offered when the controlling characteristic of the item is a Specification/Standard/Drawing.
+If Item Description Indicator ( 105 ) does not equal "D", "B" or "Q" then must be blank.
+If Item Description Indicator ( 105 ) equals "D", "B" or "Q" must be completed.
+Valid Supplies Offered codes:
+1 - Supplies In Accordance With All SPEC/STD/DWGS Cited In The Solicitation Item Description.
+2 - Supplies Based On Different Revision Of Any SPEC/STD/DWGS Cited In the Solicitation Item Description.
+3 - Supplies Based On Changes To SPEC/STD/DWGS Cited In The Solicitation Item Description.
+4 - Supplies Based On Other Technical Data / Solicitation Item Description In Error.
+Blank
+111
+Product
+Supplies Offered Remarks
+255
+Optional
+If Item Description Indicator ( 105 ) does not equal "D", "B", or "Q" or Supplies Offered Code ( 110 ) equals "1", then must be blank.
+Applies if Item Description Indicator ( 105 ) equals "D", "B", or "Q" and Supplies Offered Code ( 110 ) does not equal "1."
+Blank
+112
+Product
+Qualification Requirements MFG CAGE
+5
+Conditional
+Provide Manufacturer CAGE of offered item as prescribed by FAR 52.209 - 1.
+If Item Description Indicator ( 105 ) does not equal "Q", then must be blank.
+If Item Description Indicator ( 105 ) equals "Q", then must be completed.
+Blank
+113
+Product
+Qualification Requirements Source CAGE
+5
+Conditional
+Provide Source CAGE of offered item as prescribed by FAR 52.209 - 1.
+If Item Description Indicator ( 105 ) does not equal "Q", then must be blank.
+Applies if Item Description Indicator ( 105 ) equals "Q".
+Blank
+114
+Product
+Qualification Requirements Item Name
+50
+Conditional
+Provide the Item Name as prescribed by FAR 52.209 - 1.
+If Item Description Indicator ( 105 ) does not equal "Q", then must be blank.
+Applies if Item Description Indicator ( 105 ) equals "Q".
+Blank
+115
+Product
+Qualification Requirements Service Identification
+50
+Conditional
+Provide the Service Identification as prescribed by FAR 52.209 - 1.
+If Item Description Indicator ( 105 ) does not equal "Q", then must be blank.
+Applies if Item Description Indicator ( 105 ) equals "Q".
+Blank
+116
+Product
+Qualification Requirements Test Number
+50
+Conditional
+Provide the Test Number as prescribed by FAR 52.209 - 1.
+If Item Description Indicator ( 105 ) does not equal "Q", then must be blank.
+Applies if Item Description Indicator ( 105 ) equals "Q".
+Blank
+117
+Product
+Higher-Level Quality Indicator
+1
+Mandatory
+Identifies when a Higher-Level quality standard/system is required for the item. (FAR 46.202 - 4)
+Must match RFQ Requirement.
+Valid Higher Level Quality Indicator codes:
+N - Not Applicable
+8 - SAE AS9100
+7 - ISO 9001:2015
+6 - SAE AS9003 or ISO 9001 tailored to meet SAE AS9003
+RFQ Requirement
+118
+Product
+Higher-Level Quality Code
+1
+Conditional
+Identify the Higher-Level quality standard/system that applies to the manufacturing facility.
+If Higher Level Quality Indicator ( 117 ) equals "N" then must be blank.
+If Higher-Level Quality Indicator ( 117 ) does not equal "N" must be completed.
+If the Higer-Level Quality Indicator ( 117 ) equals "8 - SAE AS9100"
+Valid Higher Level Quality System AS9100 codes:
+8 - SAE AS9100
+2 - Other Equivalent
+1 - None
+If Higher-Level Quality Indicator ( 117 ) equals "7 - ISO 9001:2015"
+Valid Higher Level Quality System Non-Tailored codes:
+8 - SAE AS9100
+7 - ISO 9001:2015
+2 - Other Equivalent
+1 - None
+If Higher-Level Quality Indicator ( 117 ) equals "6 - SAE AS9003 or ISO 9001
+tailored to meet SAE AS9003"
+Valid Higher Level Quality System codes:
+8 - SAE AS9100
+7 - ISO 9001:2015
+6 - SAE AS9003 or ISO 9001 tailored to meet SAE AS9003
+2 - Other Equivalent
+1 - None
+If Higher-Level Quality Indicator ( 117 ) equals "6" or "7" or "8" and Higher-Level Quality
+Code ( 118 ) equals "1", then Bid Type Code ( 24 ) must be Bid With Exception,
+"BW" or Alternate Bid, "AB".
+Blank
+Yes
+119
+Product
+Higher-Level Quality Remarks
+255
+Optional
+If Higher-Level Quality Indicator ( 117 ) equals "N", must be blank.
+If Higher-Level Quality Indicator ( 117 ) does not equal "N" and Higher Level Quality Code ( 118 ) does not equal "2" (Other Equivalent) must be blank.
+If Higher-Level Quality Indicator ( 117 ) does not equal "N" and Higher Level Quality Code ( 118 ) equals "2" (Other Equivalent) must be completed.
+Blank
+120
+Product
+Child Labor Certification Code
+1
+Mandatory
+Are you providing an end product that may have been mined, produced or
+manufactured by forced or indentured child labor? (See FAR 52.222-18
+and the Department of Labor's current list of products and corresponding countries
+at http://www.dol.gov/agencies/ilab/reports/child-labor/list-of-products )
+Valid Child Labor Certification codes:
+N - No
+U - May Supply, but not aware of any such use of child labor based on good faith effort.
+Y - Yes
+If Child Labor Certification Code ( 120 ) equals "Y", then Bid Type Code ( 24 ) must be Bid With Exception, "BW" or Alternate Bid, "AB" .
+N
+Yes
+121
+Header
+Quote Remarks
+255
+Optional
+Available for all quotes except when Bid Type Code (24) equals "BI" (Bid Without Exception)
+on solicitations with a "T" or "U" in the ninth position.
+Solicitations with a "T" or "U" in the ninth position are quotes that are eligible for automated awards and the evaluation program cannot consider textual input.
+Suppliers are now available to input quote remarks without taking an additional exception.
+If Solicitation Type Indicator ( 2 ) = F or P and Bid Type Code ( 24 ) equals "BI" (Bid without Exception), must be blank.
+When Quote Remarks ( 121 ) are entered, then Bid Type ( 24 ) must be Bid with Exception "BW", or Alternate Bid "AB".
+Blank
+Yes

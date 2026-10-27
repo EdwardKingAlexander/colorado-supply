@@ -1,0 +1,9 @@
+{
+  "files_fully_parsed": 9,
+  "parsed_data_records": 77370292,
+  "archive_bytes": 808927323,
+  "uncompressed_bytes": 5387830072,
+  "core_sqlite_projection_bytes": 12230746928,
+  "projection_limitations": "First 100k records per file; four core tables only. Excludes status rows, MySQL overhead, staging, retained versions, WAL/temp, backups and app data. Not a capacity guarantee.",
+  "fixture_assertions_passed": 10
+}

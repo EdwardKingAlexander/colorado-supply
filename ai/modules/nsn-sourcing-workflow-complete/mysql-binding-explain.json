@@ -1,0 +1,34 @@
+{
+    "integer": [
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "cage_entities",
+            "partitions": null,
+            "type": "ref",
+            "possible_keys": "cage_entities_import_id_cage_code_unique",
+            "key": "cage_entities_import_id_cage_code_unique",
+            "key_len": "8",
+            "ref": "const",
+            "rows": 1102881,
+            "filtered": 30.000001907348633,
+            "Extra": "Using index condition"
+        }
+    ],
+    "string": [
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "cage_entities",
+            "partitions": null,
+            "type": "range",
+            "possible_keys": "cage_entities_import_id_cage_code_unique",
+            "key": "cage_entities_import_id_cage_code_unique",
+            "key_len": "30",
+            "ref": null,
+            "rows": 3,
+            "filtered": 100,
+            "Extra": "Using index condition"
+        }
+    ]
+}

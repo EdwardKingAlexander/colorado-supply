@@ -1,0 +1,32 @@
+[
+    {
+        "table":  "cage_entities",
+        "previous_sample_bytes":  80904192,
+        "optimized_sample_bytes":  80904192,
+        "estimated_full_bytes":  3364299695
+    },
+    {
+        "table":  "nsn_catalog_items",
+        "previous_sample_bytes":  28917760,
+        "optimized_sample_bytes":  28917760,
+        "estimated_full_bytes":  4923455981
+    },
+    {
+        "table":  "nsn_catalog_relationships",
+        "previous_sample_bytes":  110051328,
+        "optimized_sample_bytes":  63717376,
+        "estimated_full_bytes":  5832727786
+    },
+    {
+        "table":  "nsn_references",
+        "previous_sample_bytes":  66846720,
+        "optimized_sample_bytes":  41533440,
+        "estimated_full_bytes":  6904320121
+    },
+    {
+        "table":  "pub_log_definitions",
+        "previous_sample_bytes":  17383424,
+        "optimized_sample_bytes":  17383424,
+        "estimated_full_bytes":  17383424
+    }
+]

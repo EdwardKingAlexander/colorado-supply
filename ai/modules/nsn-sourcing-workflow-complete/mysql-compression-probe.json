@@ -1,0 +1,66 @@
+{
+    "nsn_catalog_items": {
+        "rebuild_seconds": 0.9893009662628174,
+        "count": 100000
+    },
+    "nsn_references": {
+        "rebuild_seconds": 1.6254820823669434,
+        "count": 100000
+    },
+    "cage_entities": {
+        "rebuild_seconds": 2.3924219608306885,
+        "count": 100000
+    },
+    "nsn_catalog_relationships": {
+        "rebuild_seconds": 2.4802279472351074,
+        "count": 199689
+    },
+    "pub_log_definitions": {
+        "rebuild_seconds": 0.5423150062561035,
+        "count": 36200
+    },
+    "sizes": [
+        {
+            "TABLE_NAME": "cage_entities",
+            "DATA_LENGTH": 37535744,
+            "INDEX_LENGTH": 1843200,
+            "ROW_FORMAT": "Compressed"
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_items",
+            "DATA_LENGTH": 9723904,
+            "INDEX_LENGTH": 4210688,
+            "ROW_FORMAT": "Compressed"
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_relationships",
+            "DATA_LENGTH": 31760384,
+            "INDEX_LENGTH": 17408000,
+            "ROW_FORMAT": "Compressed"
+        },
+        {
+            "TABLE_NAME": "nsn_references",
+            "DATA_LENGTH": 18644992,
+            "INDEX_LENGTH": 13213696,
+            "ROW_FORMAT": "Compressed"
+        },
+        {
+            "TABLE_NAME": "pub_log_catalog_state",
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384,
+            "ROW_FORMAT": "Dynamic"
+        },
+        {
+            "TABLE_NAME": "pub_log_definitions",
+            "DATA_LENGTH": 5513216,
+            "INDEX_LENGTH": 4759552,
+            "ROW_FORMAT": "Compressed"
+        },
+        {
+            "TABLE_NAME": "pub_log_imports",
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 0,
+            "ROW_FORMAT": "Dynamic"
+        }
+    ]
+}

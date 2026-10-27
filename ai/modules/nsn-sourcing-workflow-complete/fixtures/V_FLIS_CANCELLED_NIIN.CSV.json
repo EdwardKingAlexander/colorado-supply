@@ -1,0 +1,173 @@
+[
+  {
+    "source_record": 1,
+    "NIIN": "000000051",
+    "CANCELLED_NIIN_FSC": "5960",
+    "CANCELLED_NIIN": "001649799",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 2,
+    "NIIN": "000000057",
+    "CANCELLED_NIIN_FSC": "5340",
+    "CANCELLED_NIIN": "002633762",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 3,
+    "NIIN": "000000057",
+    "CANCELLED_NIIN_FSC": "5340",
+    "CANCELLED_NIIN": "006855794",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "01-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 4,
+    "NIIN": "000000058",
+    "CANCELLED_NIIN_FSC": "5340",
+    "CANCELLED_NIIN": "006631781",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "22-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 5,
+    "NIIN": "000000059",
+    "CANCELLED_NIIN_FSC": "5340",
+    "CANCELLED_NIIN": "006641371",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 6,
+    "NIIN": "000000060",
+    "CANCELLED_NIIN_FSC": "5340",
+    "CANCELLED_NIIN": "002633764",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 7,
+    "NIIN": "000000067",
+    "CANCELLED_NIIN_FSC": "8305",
+    "CANCELLED_NIIN": "010700890",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 8,
+    "NIIN": "000000070",
+    "CANCELLED_NIIN_FSC": "6530",
+    "CANCELLED_NIIN": "002263641",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 9,
+    "NIIN": "000000070",
+    "CANCELLED_NIIN_FSC": "6530",
+    "CANCELLED_NIIN": "011536338",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 13,
+    "NIIN": "000000086",
+    "CANCELLED_NIIN_FSC": "4730",
+    "CANCELLED_NIIN": "012131016",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 18,
+    "NIIN": "000000114",
+    "CANCELLED_NIIN_FSC": "2320",
+    "CANCELLED_NIIN": "010273998",
+    "NIIN_STAT_CD": "7",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 19,
+    "NIIN": "000000121",
+    "CANCELLED_NIIN_FSC": "1270",
+    "CANCELLED_NIIN": "005461480",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "01-JUL-2026",
+    "DEMIL": "D"
+  },
+  {
+    "source_record": 20,
+    "NIIN": "000000121",
+    "CANCELLED_NIIN_FSC": "6605",
+    "CANCELLED_NIIN": "002843168",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "01-JUL-2026",
+    "DEMIL": "C"
+  },
+  {
+    "source_record": 21,
+    "NIIN": "000000123",
+    "CANCELLED_NIIN_FSC": "1270",
+    "CANCELLED_NIIN": "001493451",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "B"
+  },
+  {
+    "source_record": 22,
+    "NIIN": "000000129",
+    "CANCELLED_NIIN_FSC": "1650",
+    "CANCELLED_NIIN": "003526618",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "01-JUL-2026",
+    "DEMIL": "B"
+  },
+  {
+    "source_record": 23,
+    "NIIN": "000000143",
+    "CANCELLED_NIIN_FSC": "1680",
+    "CANCELLED_NIIN": "001858311",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 24,
+    "NIIN": "000000182",
+    "CANCELLED_NIIN_FSC": "2610",
+    "CANCELLED_NIIN": "001393704",
+    "NIIN_STAT_CD": "5",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 26,
+    "NIIN": "000010017",
+    "CANCELLED_NIIN_FSC": "4730",
+    "CANCELLED_NIIN": "001695644",
+    "NIIN_STAT_CD": "7",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  },
+  {
+    "source_record": 27,
+    "NIIN": "000010024",
+    "CANCELLED_NIIN_FSC": "4820",
+    "CANCELLED_NIIN": "000054932",
+    "NIIN_STAT_CD": "7",
+    "EFF_DATE": "02-JUL-2026",
+    "DEMIL": "A"
+  }
+]

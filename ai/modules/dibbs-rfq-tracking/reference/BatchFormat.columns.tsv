@@ -1,0 +1,127 @@
+001	Header	Solicitation Number	13	Mandatory
+002	Header	Solicitation Type Indicator	1	Conditional
+003	Header	Small Business Set Aside Indicator	1	Mandatory
+004	Header	Additional Clause Fill-Ins Indicator	1	Mandatory
+005	Header	Return By Date	10	Mandatory
+006	Header	Quoter CAGE Code	5	Mandatory
+007	Header	Quote for CAGE Code	5	Mandatory
+008	RESERVED	0	RESERVED	RESERVED
+009	RESERVED	0	RESERVED	RESERVED
+010	RESERVED	0	RESERVED	RESERVED
+011	RESERVED	0	RESERVED	RESERVED
+012	RESERVED	0	RESERVED	RESERVED
+013	Header	Small Business and Other Contractor Representations Code	1	Mandatory
+014	RESERVED	0	RESERVED	RESERVED
+015	RESERVED	0	RESERVED	RESERVED
+016	RESERVED	0	RESERVED	RESERVED
+017	RESERVED	0	RESERVED	RESERVED
+018	Header	Joint Venture	2	Conditional
+019	Header	Joint Venture Remarks	255	Conditional
+255	Conditional	Applicable where Quote For CAGE is a Joint Venture. Insert the CAGE(s)/Names(s) of concerns that are participating in the Joint Venture.	If Joint Venture ( 18 ) does not equal JV, then must be blank.	If Joint Venture ( 18 ) equals JV, then must be completed.
+020	RESERVED	0	RESERVED	RESERVED
+021	Header	Affirmative Action Compliance Code	2	Mandatory
+022	Header	Previous Contracts and Compliance Reports Code	2	Mandatory
+023	Header	Alternate Disputes Resolution	1	Mandatory
+024	Header	Bid Type Code	2	Mandatory
+025	Header	Prompt Payment Discount Terms Code	2	Mandatory
+026	Header	Vendor Quote Number	15	Optional
+027	Header	Days Quote Valid	3	Mandatory
+028	Header	Meets Packaging Requirement	1	Mandatory
+029	Header	Basic Ordering Agreement (BOA)/ Federal Supply Schedule (FSS)/Blanket Purchase Agreement (BPA).	3	Mandatory
+030	Header	BOA/FSS/BPA Contract Number	17	Conditional
+031	Header	BOA/FSS/BPA Contract Expiration Date	10	Conditional
+032	Header	FOB Point	1	Mandatory
+033	Header	FOB City	30	Conditional
+034	Header	FOB State/Province	2	Conditional
+035	Header	FOB Country	2	Conditional
+036	Header	Inspection Point Code	1	Mandatory
+037	Header	Place of Government Inspection - Packaging CAGE code	5	Conditional
+038	Header	Place of Government Inspection - Supplies CAGE code	5	Conditional
+039	RESERVED	0	RESERVED	RESERVED
+040	RESERVED	0	RESERVED	RESERVED
+041	RESERVED	0	RESERVED	RESERVED
+042	RESERVED	0	RESERVED	RESERVED
+043	RESERVED	0	RESERVED	RESERVED
+044	Header	Solicitation Line Number	4	Mandatory
+045	RESERVED	0	RESERVED	RESERVED
+046	Line	Purchase Request Number	10	Mandatory
+047	Line	National Stock Number / Part Number	45	Mandatory
+048	Line	Unit of Issue	2	Mandatory
+049	Line	Quantity	10	Conditional
+050	Line	Unit Price	13	Conditional
+051	Line	Delivery Days	4	Conditional
+052	Header	Guaranteed	Minimum	7
+053	Header	DO Minimum	8	Conditional
+054	Header	Contract Maximum	12	Conditional
+055	Header	Annual Frequency of Buys (AFB)	4	Conditional
+056	Header	No DO Minimum Quantity?	1	Conditional
+057	Header	HUBZone Preference Indicator	1	Mandatory
+058	Header	Waiver of HUBZone Preference	1	Conditional
+059	Product	Immediate Shipment Price	13	Conditional
+060	Product	Immediate Shipment Delivery Days	4	Conditional
+061	RESERVED	0	RESERVED	RESERVED
+062	Product	Trade Agreements Indicator	1	Mandatory
+063	Product	Source of Supply CAGE Code	5	Conditional
+064	Line	First Article Waiver Code	1	Conditional
+065	Product	Hazardous Material Identification and Material Safety Data	1	Mandatory
+066	Product	Hazardous Warning Labels	1	Conditional
+067	Product	Material Requirements	1	Mandatory
+068	Product	Buy American Indicator	1	Mandatory
+069	Product	Free Trade Agreements Indicator	1	Mandatory
+070	Product	Buy American/Free Trade/Trade Agreements End Product	2	Mandatory
+071	Product	Buy American/ Free Trade Agreements/Trade Agreements Country of Origin Code	2	Conditional
+072	Product	Buy American / Free Trade / Trade Agreements Country Code	2	Mandatory
+073	Product	Duty Free Entry Requested	1	Conditional
+074	Product	Duty Free Entry Requested/Foreign Supplies in US Code	1	Conditional
+075	Product	Duty Free Entry Requested/Duty Paid Code	1	Conditional
+076	Product	Duty Free Entry Requested/Duty Paid Amount	15	Conditional
+077	Product	Price Breaks Solicited Indicator	1	Conditional
+078	Product	Quantity Price Breaks - Range 1 Lower Quantity	10	Conditional
+079	Product	Quantity Price Breaks - Range 1 Upper Quantity	10	Conditional
+080	Product	Quantity Price Breaks - Range 1 Unit Price	13	Conditional
+081	Product	Quantity Price Breaks - Range 2 Lower Quantity	10	Conditional
+082	Product	Quantity Price Breaks - Range 2 Upper Quantity	10	Conditional
+083	Product	Quantity Price Breaks - Range 2 Unit Price	13	Conditional
+084	Product	Quantity Price Breaks - Range 3 Lower Quantity	10	Conditional
+085	Product	Quantity Price Breaks - Range 3 Upper Quantity	10	Conditional
+086	Product	Quantity Price Breaks - Range 3 Unit Price	13	Conditional
+087	Product	Quantity Price Breaks - Range 4 Lower Quantity	10	Conditional
+088	Product	Quantity Price Breaks - Range 4 Upper Quantity	10	Conditional
+089	Product	Quantity Price Breaks - Range 4 Unit Price	13	Conditional
+090	Product	Quantity Price Breaks - Range 5 Lower Quantity	10	Conditional
+091	Product	Quantity Price Breaks - Range 5 Upper Quantity	10	Conditional
+092	Product	Quantity Price Breaks - Range 5 Unit Price	13	Conditional
+093	Product	Quantity Price Breaks - Range 6 Lower Quantity	10	Conditional
+094	Product	Quantity Price Breaks - Range 6 Upper Quantity	10	Conditional
+095	Product	Quantity Price Breaks - Range 6 Unit Price	13	Conditional
+096	Product	Quantity Variance Plus	2	Conditional
+097	Product	Quantity Variance Minus	2	Conditional
+098	Product	Minimum Order Quantity Code	1	Conditional
+099	Product	Minimum Order Maximum Quantity	10	Conditional
+100	Product	Immediate Shipment Available	1	Optional
+101	Product	Immediate Shipment Quantity	10	Conditional
+102	Product	Manufacturer/Dealer	2	Mandatory
+103	Product	Actual Manufacturing/Production Source CAGE code	5	Mandatory
+104	Product	Actual Manufacturing/Production Source Name and Address	255	Conditional
+255	Conditional	If Manufacturer/Dealer ( 102 ) is "dealer" or "qualified supplier list dealer" and the CAGE code of the actual manufacturing/production source is	unknown, or the facility does not have a CAGE code, enter the company name and address.	If Manufacturer/Dealer ( 102 ) = MM or QM must be blank.
+105	Product	Item Description Indicator	1	Mandatory
+106	Product	Part Number Offered Code	1	Conditional
+107	Product	Part Number Offered CAGE code	5	Conditional
+108	Product	Part Number Offered - Part Number	40	Conditional
+109	Product	Part Number Offered Remarks	255	Optional
+255	Optional	Used to provide remarks about part number offered.	If Item Description Indicator ( 105 ) does not equal "P", "B", or "N", or Part Number Offered Code ( 106 ) equals "1", then must be blank.	Applies if Item Description Indicator ( 105 ) equals "P", "B", or "N", and Part Number Offered Code ( 106 ) does not equal "1".
+110	Product	Supplies Offered	1	Conditional
+111	Product	Supplies Offered Remarks	255	Optional
+255	Optional	If Item Description Indicator ( 105 ) does not equal "D", "B", or "Q" or Supplies Offered Code ( 110 ) equals "1", then must be blank.	Applies if Item Description Indicator ( 105 ) equals "D", "B", or "Q" and Supplies Offered Code ( 110 ) does not equal "1."	Blank
+112	Product	Qualification Requirements MFG CAGE	5	Conditional
+113	Product	Qualification Requirements Source CAGE	5	Conditional
+114	Product	Qualification Requirements Item Name	50	Conditional
+115	Product	Qualification Requirements Service Identification	50	Conditional
+116	Product	Qualification Requirements Test Number	50	Conditional
+117	Product	Higher-Level Quality Indicator	1	Mandatory
+118	Product	Higher-Level Quality Code	1	Conditional
+119	Product	Higher-Level Quality Remarks	255	Optional
+255	Optional	If Higher-Level Quality Indicator ( 117 ) equals "N", must be blank.	If Higher-Level Quality Indicator ( 117 ) does not equal "N" and Higher Level Quality Code ( 118 ) does not equal "2" (Other Equivalent) must be blank.	If Higher-Level Quality Indicator ( 117 ) does not equal "N" and Higher Level Quality Code ( 118 ) equals "2" (Other Equivalent) must be completed.
+120	Product	Child Labor Certification Code	1	Mandatory
+121	Header	Quote Remarks	255	Optional
+255	Optional	Available for all quotes except when Bid Type Code (24) equals "BI" (Bid Without Exception)	on solicitations with a "T" or "U" in the ninth position.	Solicitations with a "T" or "U" in the ninth position are quotes that are eligible for automated awards and the evaluation program cannot consider textual input.

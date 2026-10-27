@@ -1,0 +1,213 @@
+FAQ/Help
+·
+Refs
+·
+My Account
+·
+Log In
+Navigation Main
+Home
+Solicitations
+RFQs
+RFP/IFB/Other RFQs
+Tech Data
+Downloads
+Awards
+Navigation:
+Navigation/Documents - - - - - -
+Accessibility
+Awards Area
+- Awards by Award DT
+- Awards by Post DT
+- Market Ready Orders ®
+- Post Award Request (PAR)®
+Batch Quoting ®
+Batch Quoting File Format
+BidSets
+Contracts
+Delivery Orders
+FAQs
+Feedback
+Forecast ®
+FSC ~ DLA Managed
+Global Search
+Home Page
+Invitation For Bid (IFB) Area
+Log In Screen
+Master Solicitation (PAC)
+Notices/Message Board
+Post Award Request (PAR)®
+Quoting Help
+Quote Search ®
+Request For Proposal (RFP)Area
+Request For Quote (RFQ) Area
+- RFQs by Issue Date
+- RFQs by Return By Date
+- RFQs Recent
+References
+Registration
+Solicitations
+SRVA ®
+User(s) Profile Update ®
+Vendor Profile Update ®
+Welcome Page ®
+Regs / Supplement Extracts ---
+DFARS 225.502
+DFARS 252.211-7005
+DFARS 252.211-7006
+DFARS 252.223-7001
+DFARS 252.225-7001
+DFARS 252.225-7035
+DFARS 252.225-7036
+DLAD 52.211-9000
+DLAD 52.213-9000
+DLAD 52.217-9002
+DLAD 52.219-9015
+DLAD 52.223-9000
+DLAD 52.233-9001
+FAR 52.209-1
+FAR 52.211-5
+FAR 52.212-3
+FAR 52.219-1
+FAR 52.222-18
+FAR 52.222-22
+FAR 52.222-25
+FAR 52.222-26
+FAR 52.223-3
+Database Search:
+Choose Search
+RFQs - NSN
+RFQs - Solicitation
+RFQs - PR
+-----------------------
+Awards - Awardee CAGE
+Awards - Award/Basic Number
+Awards - Delivery Order #
+Awards - NSN
+Awards - PR
+-----------------------
+RFP/IFB/Other RFQs - Solicitation
+RFP/IFB/Other RFQs - NSN
+-----------------------
+CAGE Search
+Value:
+Notice:
+· Suspension of CMMC Phase II » Read Notice
+Please read notices posted on the Notices page .
+Location:
+Home » Solicitations » RFQs » RFQ Dates » RFQs Download Help
+[ 277 ] 10/4/2026 10:12:50 PM
+ATTENTION:
+To access all of our features, you need a browser that supports JavaScript, and
+it needs to be enabled.
+Downloadable RFQ Files
+Files are located here .
+Software Needed
+A compression utility is required to open the "ZIP" files.
+A text viewer such as notepad is required for viewing text ".txt" files.
+Adobe® Acrobat Reader is required for viewing any "PDF" documents
+contained in the "ZIP" file.
+See
+Document Viewers
+for links to compression tools and viewing software.
+File Description
+Contains All or "ca" compressed file.
+This compressed file contains all Request For Quote (RFQ) solicitation documents
+posted for the indicated date. The file name format begins with "ca" followed
+by the two-digit year, month and day and ending with ".zip". Example:
+ca070427.zip Links to these files are located in the "Zip File Name" column
+on the Recent RFQ Page.
+Index Text or "in" file.
+This text file contains a fixed format listing of all Request For Quote (RFQ) solicitations
+posted for the indicated date. The file name format begins with "in" followed
+by the two digit year, month and day and ending with ".txt". example:
+in070427.txt Links to these files are located in the "Index File Name"
+column on the Recent RFQ Page.
+File Layout:
+Column Name
+Length
+Solicitation #
+13
+NSN/Part #
+46
+Purchase Request #
+13
+Return By Date
+8
+File Name
+19
+QTY
+7
+Unit Issue
+2
+Nomenclature
+21
+Buyer Code
+5
+AMSC
+1
+Item type indicator
+Codes:
+1 - NSN
+2 - Part Number
+1
+Small Business Set-Aside Indicator
+Codes:
+Y - Small Business Set-Aside
+H - HUBZone Set-Aside
+R - Service Disabled Veteran-Owned Small Business (SDVOSB) Set-Aside
+L - Woman Owned Small Business (WOSB) Set-Aside
+A - 8a Set-Aside
+E - Economically Disadvantaged Woman Owned Small Business (EDWOSB) Set-Aside
+N - Unrestricted/Not Set-Aside
+1
+Small Business Set-Aside Percentage
+3
+Data Example:
+SPM1C107T06698415014444302 001511937705/11/07SPM1C107T0669.html 0000002PRGLOVES
+SHELLS, ELECTRPQBB2G1Y100
+Batch Quote or "bq" compressed file.
+This compressed file contains two text files that are used for batch quoting. Data
+contained in these files are also useful for any other off-line evaluation routines.
+Links to these files are located in the "Batch Quote File Name" column
+on the Recent RFQ Page.
+1. Batch Quote text file contains preformatted, comma delimited, double quote separated
+data for Request For Quote (RFQ) solicitations posted for the indicated date. The
+file name format begins with "bq" followed by the two-digit year, month
+and day and ending with ".txt". Example: bq070427.txt A description of
+the file layout and validation requirements are in the DIBBS Batch quoting help
+located here
+2. Approved Source text file containing a preformatted, comma delimited, double
+quote separated approved sources for Request For Quote (RFQ) solicitations contained
+in the associated "bq" file. The file name format begins with "as"
+followed by the two-digit year, month and day and ending with ".txt".
+Example: as070427.txt
+File layout:
+NSN, Approve Source CAGE, Part Number, Approved Source Company Name
+Data Example:
+"6640014392807","08071","XX63 1K1 15","MILLIPORE
+CORPORATION"
+Batch Quote Other or "bqothers" compressed file.
+This compressed file contains all other available RFQ solicitations in Batch Quote
+File Format that are not contained to the date specific files. This file link is
+located at the bottom of Recent RFQ Page. The description contain the file layout
+and validation requirements are located in the DIBBS Batch quoting help located
+here
+Updates
+Posting of new files occur daily. Posting of links to the current day
+files will not display until the next day because file updates occur through out
+the day.
+Download Preparation
+Prior to downloading files, we recommend creating a storage location
+on your computer.
+Downloading Files
+1. Locate your desired file and click on the file name.
+2. Depending on your browser and PC configuration, a prompted to open
+or save the file may occur. Consult your software help instructions for any needed
+assistance. Note: Help is available for most Windows based software by pressing
+the "F1" key.
+Policy Statements
+·
+Feedback
+EOXD8AUZtkEYdY8J13UBXg==
+Ver.6.3.2

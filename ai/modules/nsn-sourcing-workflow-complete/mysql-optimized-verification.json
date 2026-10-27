@@ -1,0 +1,93 @@
+{
+    "mysql_fixture_import_activation_rollback_idempotency": "passed",
+    "first_validation": {
+        "counts": {
+            "cage_entities": 6,
+            "nsn_references": 14,
+            "nsn_catalog_items": 5,
+            "pub_log_definitions": 12,
+            "nsn_catalog_relationships": 7
+        },
+        "orphan_references": 0,
+        "short_item_name_codes": 0,
+        "unresolved_cage_references": 0
+    },
+    "sample_lookup_only": {
+        "nsn": {
+            "p95_ms": 0.2655,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_catalog_items",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_catalog_items_import_id_niin_unique,nsn_catalog_items_import_id_nsn_index",
+                    "key": "nsn_catalog_items_import_id_nsn_index",
+                    "key_len": "62",
+                    "ref": "const,const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        "niin": {
+            "p95_ms": 0.2397,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_references",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_references_import_id_row_hash_unique,nsn_references_import_id_niin_id_index,nsn_reference_part_search,nsn_references_import_id_cage_code_id_index",
+                    "key": "nsn_references_import_id_niin_id_index",
+                    "key_len": "46",
+                    "ref": "const,const",
+                    "rows": 2,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        "part": {
+            "p95_ms": 0.2454,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_references",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_references_import_id_row_hash_unique,nsn_references_import_id_niin_id_index,nsn_reference_part_search,nsn_references_import_id_cage_code_id_index",
+                    "key": "nsn_reference_part_search",
+                    "key_len": "1030",
+                    "ref": "const,const",
+                    "rows": 4,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        "cage": {
+            "p95_ms": 0.2524,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_references",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_references_import_id_row_hash_unique,nsn_references_import_id_niin_id_index,nsn_reference_part_search,nsn_references_import_id_cage_code_id_index",
+                    "key": "nsn_references_import_id_cage_code_id_index",
+                    "key_len": "30",
+                    "ref": "const,const",
+                    "rows": 5,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        }
+    }
+}

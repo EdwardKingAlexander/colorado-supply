@@ -1,0 +1,39 @@
+HTTP/1.1 302 Found
+Cache-Control: private, no-store
+Content-Type: text/html; charset=utf-8
+Location: /dodwarning.aspx?goto=/rfq/rfqdates.aspx?category=recent
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Security-Policy: frame-ancestors 'self' https://www.dibbs.bsm.dla.mil; upgrade-insecure-requests; connect-src 'self'; frame-src 'self' https://www.dibbs.bsm.dla.mil; img-src 'self'; object-src 'self'; media-src 'self'; font-src 'self'; child-src 'self';
+X-Frowarded-Host: https://www.dibbs.bsm.dla.mil
+Access-Control-Allow-Origin: none
+Access-Control-Allow-Methods: none
+Access-Control-Allow-Headers: none
+X-Frame-Options: SAMEORIGIN
+Public-Key-Pins: pin-sha256="iQvzRnsHdOoKTMJ5eGQnIk/5HMS703cvzZKjZmALXJE="; max-age=63072000; includeSubDomains; preload
+Redleader6: red6
+Date: Mon, 05 Oct 2026 02:11:46 GMT
+Content-Length: 173
+Strict-Transport-Security: max-age=63072000; includeSubDomains
+Set-Cookie: TS01523db3=0107f0fba0ae460d8b366f16dfc5a8d2fedbcfff4182a66ff3e21ddc500af91ee6611475302da5ad12a9da01847c1dda605fac5d90; Path=/; Domain=.www.dibbs.bsm.dla.mil; Secure; HttpOnly; SameSite=Strict
+
+HTTP/1.1 200 OK
+Cache-Control: private, no-store
+Content-Type: text/html; charset=utf-8
+Set-Cookie: SessionId=w3raigwe4tuwsdq202ycg140; path=/; HttpOnly; SameSite=Strict; Secure; SameSite=Strict;
+Set-Cookie: di=2a0ac7c1-d870-44b9-ae3d-3bb1f5d9e1c7; path=/; secure; HttpOnly; SameSite=strict; SameSite=Strict
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Security-Policy: frame-ancestors 'self' https://www.dibbs.bsm.dla.mil; upgrade-insecure-requests; connect-src 'self'; frame-src 'self' https://www.dibbs.bsm.dla.mil; img-src 'self'; object-src 'self'; media-src 'self'; font-src 'self'; child-src 'self';
+X-Frowarded-Host: https://www.dibbs.bsm.dla.mil
+Access-Control-Allow-Origin: none
+Access-Control-Allow-Methods: none
+Access-Control-Allow-Headers: none
+X-Frame-Options: SAMEORIGIN
+Public-Key-Pins: pin-sha256="iQvzRnsHdOoKTMJ5eGQnIk/5HMS703cvzZKjZmALXJE="; max-age=63072000; includeSubDomains; preload
+Redleader6: red6
+Date: Mon, 05 Oct 2026 02:11:46 GMT
+Content-Length: 11404
+Strict-Transport-Security: max-age=63072000; includeSubDomains
+Set-Cookie: TS01523db3=0107f0fba0c5ce7f3e215c88c52f93956f25908c3c3b90a49dcf818a3be4af93b5db517c2946792a48ea1c273f065d8ec4818a22de; Path=/; Domain=.www.dibbs.bsm.dla.mil; Secure; HttpOnly; SameSite=Strict
+

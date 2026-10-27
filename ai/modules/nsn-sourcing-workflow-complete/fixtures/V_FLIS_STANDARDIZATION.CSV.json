@@ -1,0 +1,2036 @@
+[
+  {
+    "source_record": 1,
+    "NIIN": "000000012",
+    "RELATED_NSN": "",
+    "ISC": "",
+    "ORIG_STDZN_DEC": "",
+    "DT_STDZN_DEC": "",
+    "NIIN_STAT_CD": "4"
+  },
+  {
+    "source_record": 2,
+    "NIIN": "000000018",
+    "RELATED_NSN": "",
+    "ISC": "",
+    "ORIG_STDZN_DEC": "",
+    "DT_STDZN_DEC": "",
+    "NIIN_STAT_CD": "4"
+  },
+  {
+    "source_record": 3,
+    "NIIN": "000000019",
+    "RELATED_NSN": "",
+    "ISC": "",
+    "ORIG_STDZN_DEC": "",
+    "DT_STDZN_DEC": "",
+    "NIIN_STAT_CD": "4"
+  },
+  {
+    "source_record": 4,
+    "NIIN": "000000040",
+    "RELATED_NSN": "",
+    "ISC": "",
+    "ORIG_STDZN_DEC": "",
+    "DT_STDZN_DEC": "",
+    "NIIN_STAT_CD": "4"
+  },
+  {
+    "source_record": 6,
+    "NIIN": "000000042",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "23-MAR-2006",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 9,
+    "NIIN": "000000045",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "23-MAR-2006",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 11,
+    "NIIN": "000000047",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "30-SEP-1977",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 12,
+    "NIIN": "000000048",
+    "RELATED_NSN": "",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "13-APR-1987",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 13,
+    "NIIN": "000000048",
+    "RELATED_NSN": "",
+    "ISC": "1",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "13-APR-1987",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 14,
+    "NIIN": "000000048",
+    "RELATED_NSN": "",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "GP",
+    "DT_STDZN_DEC": "15-AUG-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 15,
+    "NIIN": "000000048",
+    "RELATED_NSN": "",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "GP",
+    "DT_STDZN_DEC": "15-AUG-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 16,
+    "NIIN": "000000048",
+    "RELATED_NSN": "2840003989671",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "13-APR-1987",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 17,
+    "NIIN": "000000048",
+    "RELATED_NSN": "2840000630801",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "GP",
+    "DT_STDZN_DEC": "15-AUG-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 18,
+    "NIIN": "000000048",
+    "RELATED_NSN": "2840004286382",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "GP",
+    "DT_STDZN_DEC": "15-AUG-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 19,
+    "NIIN": "000000049",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "21-AUG-1986",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 20,
+    "NIIN": "000000050",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "12-JUN-1979",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 21,
+    "NIIN": "000000051",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "TX",
+    "DT_STDZN_DEC": "31-MAR-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 27,
+    "NIIN": "000000057",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "96",
+    "DT_STDZN_DEC": "25-DEC-1995",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 28,
+    "NIIN": "000000058",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "GX",
+    "DT_STDZN_DEC": "01-SEP-2023",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 29,
+    "NIIN": "000000059",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "96",
+    "DT_STDZN_DEC": "25-DEC-1995",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 30,
+    "NIIN": "000000060",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "9Z",
+    "DT_STDZN_DEC": "01-SEP-2001",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 31,
+    "NIIN": "000000061",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "11-OCT-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 34,
+    "NIIN": "000000064",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "04-OCT-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 35,
+    "NIIN": "000000065",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "11-OCT-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 37,
+    "NIIN": "000000067",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "GX",
+    "DT_STDZN_DEC": "01-JAN-2009",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 38,
+    "NIIN": "000000068",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "11-OCT-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 39,
+    "NIIN": "000000069",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "KX",
+    "DT_STDZN_DEC": "10-JUL-2002",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 40,
+    "NIIN": "000000070",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "GX",
+    "DT_STDZN_DEC": "01-DEC-2011",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 41,
+    "NIIN": "000000071",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "11-OCT-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 45,
+    "NIIN": "000000075",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "23-OCT-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 47,
+    "NIIN": "000000077",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "KZ",
+    "DT_STDZN_DEC": "08-APR-1982",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 49,
+    "NIIN": "000000079",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "KZ",
+    "DT_STDZN_DEC": "30-MAR-1983",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 50,
+    "NIIN": "000000080",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "28-MAR-1996",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 52,
+    "NIIN": "000000082",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "PA",
+    "DT_STDZN_DEC": "08-DEC-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 53,
+    "NIIN": "000000083",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "CX",
+    "DT_STDZN_DEC": "04-JAN-1991",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 54,
+    "NIIN": "000000084",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "23-AUG-1977",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 55,
+    "NIIN": "000000085",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "PA",
+    "DT_STDZN_DEC": "12-DEC-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 56,
+    "NIIN": "000000086",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "96",
+    "DT_STDZN_DEC": "23-DEC-1995",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 57,
+    "NIIN": "000000087",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 58,
+    "NIIN": "000000088",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 60,
+    "NIIN": "000000090",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 61,
+    "NIIN": "000000091",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 62,
+    "NIIN": "000000092",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 64,
+    "NIIN": "000000094",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 66,
+    "NIIN": "000000096",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 68,
+    "NIIN": "000000098",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "30-AUG-1983",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 70,
+    "NIIN": "000000100",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "CX",
+    "DT_STDZN_DEC": "21-AUG-2000",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 75,
+    "NIIN": "000000105",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "30-SEP-1977",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 77,
+    "NIIN": "000000109",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "KZ",
+    "DT_STDZN_DEC": "19-MAR-1981",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 79,
+    "NIIN": "000000112",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 80,
+    "NIIN": "000000113",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 81,
+    "NIIN": "000000114",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 82,
+    "NIIN": "000000115",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "15-MAR-1981",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 84,
+    "NIIN": "000000117",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "13-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 85,
+    "NIIN": "000000118",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "15-AUG-1983",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 87,
+    "NIIN": "000000120",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "15-AUG-1983",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 88,
+    "NIIN": "000000121",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "05-NOV-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 89,
+    "NIIN": "000000122",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "14-MAR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 90,
+    "NIIN": "000000123",
+    "RELATED_NSN": "",
+    "ISC": "1",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "26-MAY-1979",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 91,
+    "NIIN": "000000123",
+    "RELATED_NSN": "",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "26-MAY-1979",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 92,
+    "NIIN": "000000123",
+    "RELATED_NSN": "6130010032289",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "26-MAY-1979",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 94,
+    "NIIN": "000000125",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "15-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 98,
+    "NIIN": "000000129",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "01-NOV-1997",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 100,
+    "NIIN": "000000131",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "15-APR-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 101,
+    "NIIN": "000000132",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "KZ",
+    "DT_STDZN_DEC": "05-OCT-1989",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 102,
+    "NIIN": "000000133",
+    "RELATED_NSN": "",
+    "ISC": "C",
+    "ORIG_STDZN_DEC": "CX",
+    "DT_STDZN_DEC": "11-NOV-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 105,
+    "NIIN": "000000136",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "TX",
+    "DT_STDZN_DEC": "14-MAR-1990",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 106,
+    "NIIN": "000000137",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "CZ",
+    "DT_STDZN_DEC": "25-APR-1979",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 107,
+    "NIIN": "000000138",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 108,
+    "NIIN": "000000139",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 109,
+    "NIIN": "000000140",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 110,
+    "NIIN": "000000141",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 112,
+    "NIIN": "000000143",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "9Z",
+    "DT_STDZN_DEC": "01-MAR-2008",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 113,
+    "NIIN": "000000144",
+    "RELATED_NSN": "",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "14-MAY-1989",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 114,
+    "NIIN": "000000144",
+    "RELATED_NSN": "",
+    "ISC": "1",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "14-MAY-1989",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 115,
+    "NIIN": "000000144",
+    "RELATED_NSN": "1680001230718",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "14-MAY-1989",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 116,
+    "NIIN": "000000145",
+    "RELATED_NSN": "",
+    "ISC": "C",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "03-MAR-1998",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 117,
+    "NIIN": "000000146",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 118,
+    "NIIN": "000000147",
+    "RELATED_NSN": "",
+    "ISC": "C",
+    "ORIG_STDZN_DEC": "CX",
+    "DT_STDZN_DEC": "02-FEB-1983",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 119,
+    "NIIN": "000000148",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 120,
+    "NIIN": "000000149",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 121,
+    "NIIN": "000000150",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "TX",
+    "DT_STDZN_DEC": "13-MAR-1991",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 122,
+    "NIIN": "000000151",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 123,
+    "NIIN": "000000152",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "28-APR-1978",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 124,
+    "NIIN": "000000154",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "15-AUG-1983",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 125,
+    "NIIN": "000000155",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "15-AUG-1983",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 126,
+    "NIIN": "000000156",
+    "RELATED_NSN": "",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "CY",
+    "DT_STDZN_DEC": "01-FEB-1982",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 127,
+    "NIIN": "000000156",
+    "RELATED_NSN": "",
+    "ISC": "1",
+    "ORIG_STDZN_DEC": "CY",
+    "DT_STDZN_DEC": "06-FEB-1982",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 128,
+    "NIIN": "000000156",
+    "RELATED_NSN": "8460001329020",
+    "ISC": "3",
+    "ORIG_STDZN_DEC": "CY",
+    "DT_STDZN_DEC": "01-FEB-1982",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 129,
+    "NIIN": "000000157",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "CX",
+    "DT_STDZN_DEC": "04-OCT-1987",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 130,
+    "NIIN": "000000158",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "KX",
+    "DT_STDZN_DEC": "23-APR-1988",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 131,
+    "NIIN": "000000160",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "18-AUG-1990",
+    "NIIN_STAT_CD": "6"
+  },
+  {
+    "source_record": 132,
+    "NIIN": "000000161",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "18-AUG-1990",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 133,
+    "NIIN": "000000162",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "18-AUG-1990",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 134,
+    "NIIN": "000000163",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "18-AUG-1990",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 138,
+    "NIIN": "000000167",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "18-AUG-1990",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 141,
+    "NIIN": "000000170",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "CZ",
+    "DT_STDZN_DEC": "14-MAR-1991",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 142,
+    "NIIN": "000000171",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "CY",
+    "DT_STDZN_DEC": "26-MAY-1991",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 143,
+    "NIIN": "000000172",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 144,
+    "NIIN": "000000173",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "02-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 145,
+    "NIIN": "000000174",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "10-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 146,
+    "NIIN": "000000175",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "02-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 147,
+    "NIIN": "000000176",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "10-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 148,
+    "NIIN": "000000177",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "02-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 149,
+    "NIIN": "000000178",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "10-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 150,
+    "NIIN": "000000179",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "14-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 151,
+    "NIIN": "000000180",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "10-JUN-1999",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 152,
+    "NIIN": "000000182",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "9Z",
+    "DT_STDZN_DEC": "01-FEB-2008",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 153,
+    "NIIN": "000000183",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "27-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 154,
+    "NIIN": "000000184",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 155,
+    "NIIN": "000000185",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 157,
+    "NIIN": "000000187",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 158,
+    "NIIN": "000000188",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 159,
+    "NIIN": "000000189",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 160,
+    "NIIN": "000000190",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "27-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 163,
+    "NIIN": "000000193",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "27-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 165,
+    "NIIN": "000000195",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "27-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 166,
+    "NIIN": "000000196",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 167,
+    "NIIN": "000000197",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 168,
+    "NIIN": "000000198",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 169,
+    "NIIN": "000000199",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "97",
+    "DT_STDZN_DEC": "25-JUN-1993",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 268,
+    "NIIN": "000010001",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 270,
+    "NIIN": "000010003",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "03-JUL-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 271,
+    "NIIN": "000010004",
+    "RELATED_NSN": "",
+    "ISC": "6",
+    "ORIG_STDZN_DEC": "TU",
+    "DT_STDZN_DEC": "03-JUL-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 272,
+    "NIIN": "000010005",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 275,
+    "NIIN": "000010008",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 276,
+    "NIIN": "000010009",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 277,
+    "NIIN": "000010010",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 279,
+    "NIIN": "000010012",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 281,
+    "NIIN": "000010014",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "27-AUG-2003",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 283,
+    "NIIN": "000010017",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 284,
+    "NIIN": "000010018",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "15-NOV-1990",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 287,
+    "NIIN": "000010022",
+    "RELATED_NSN": "",
+    "ISC": "C",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 288,
+    "NIIN": "000010023",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "21-SEP-1976",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 289,
+    "NIIN": "000010024",
+    "RELATED_NSN": "",
+    "ISC": "C",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 296,
+    "NIIN": "000010031",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 300,
+    "NIIN": "000010037",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 306,
+    "NIIN": "000010049",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 307,
+    "NIIN": "000010053",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 308,
+    "NIIN": "000010056",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 309,
+    "NIIN": "000010057",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 312,
+    "NIIN": "000010060",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 320,
+    "NIIN": "000010070",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 325,
+    "NIIN": "000010076",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 329,
+    "NIIN": "000010080",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 331,
+    "NIIN": "000010082",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 333,
+    "NIIN": "000010084",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "08-MAR-1977",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 337,
+    "NIIN": "000010092",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 338,
+    "NIIN": "000010093",
+    "RELATED_NSN": "",
+    "ISC": "2",
+    "ORIG_STDZN_DEC": "AX",
+    "DT_STDZN_DEC": "01-DEC-1974",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 342,
+    "NIIN": "000010101",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 359,
+    "NIIN": "000010118",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 360,
+    "NIIN": "000010119",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 361,
+    "NIIN": "000010120",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 362,
+    "NIIN": "000010121",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 364,
+    "NIIN": "000010123",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 366,
+    "NIIN": "000010125",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 367,
+    "NIIN": "000010126",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 368,
+    "NIIN": "000010127",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 369,
+    "NIIN": "000010128",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 370,
+    "NIIN": "000010129",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 371,
+    "NIIN": "000010130",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 372,
+    "NIIN": "000010131",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 373,
+    "NIIN": "000010132",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 374,
+    "NIIN": "000010133",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 383,
+    "NIIN": "000010142",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 385,
+    "NIIN": "000010144",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 386,
+    "NIIN": "000010145",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 390,
+    "NIIN": "000010149",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 393,
+    "NIIN": "000010152",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 395,
+    "NIIN": "000010154",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 398,
+    "NIIN": "000010157",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 399,
+    "NIIN": "000010158",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 400,
+    "NIIN": "000010159",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 401,
+    "NIIN": "000010160",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 402,
+    "NIIN": "000010161",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 403,
+    "NIIN": "000010162",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 404,
+    "NIIN": "000010163",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 405,
+    "NIIN": "000010164",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 406,
+    "NIIN": "000010165",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 407,
+    "NIIN": "000010166",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 408,
+    "NIIN": "000010167",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 409,
+    "NIIN": "000010168",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 410,
+    "NIIN": "000010169",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 411,
+    "NIIN": "000010170",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 412,
+    "NIIN": "000010171",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 413,
+    "NIIN": "000010172",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 434,
+    "NIIN": "000010193",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 435,
+    "NIIN": "000010194",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 436,
+    "NIIN": "000010195",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 437,
+    "NIIN": "000010196",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 438,
+    "NIIN": "000010197",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 439,
+    "NIIN": "000010198",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 440,
+    "NIIN": "000010199",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 441,
+    "NIIN": "000010200",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 442,
+    "NIIN": "000010201",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 443,
+    "NIIN": "000010202",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 444,
+    "NIIN": "000010203",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 445,
+    "NIIN": "000010204",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 446,
+    "NIIN": "000010205",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 447,
+    "NIIN": "000010206",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 448,
+    "NIIN": "000010207",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 449,
+    "NIIN": "000010208",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 450,
+    "NIIN": "000010209",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 451,
+    "NIIN": "000010210",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 454,
+    "NIIN": "000010213",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 456,
+    "NIIN": "000010215",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 457,
+    "NIIN": "000010216",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 458,
+    "NIIN": "000010217",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 459,
+    "NIIN": "000010218",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 461,
+    "NIIN": "000010220",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 462,
+    "NIIN": "000010221",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 463,
+    "NIIN": "000010222",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 464,
+    "NIIN": "000010223",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 465,
+    "NIIN": "000010224",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 466,
+    "NIIN": "000010225",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 467,
+    "NIIN": "000010226",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 468,
+    "NIIN": "000010227",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 469,
+    "NIIN": "000010228",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 470,
+    "NIIN": "000010229",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 471,
+    "NIIN": "000010230",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 472,
+    "NIIN": "000010231",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 473,
+    "NIIN": "000010232",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 474,
+    "NIIN": "000010233",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 475,
+    "NIIN": "000010234",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 476,
+    "NIIN": "000010235",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  },
+  {
+    "source_record": 490,
+    "NIIN": "000010249",
+    "RELATED_NSN": "",
+    "ISC": "5",
+    "ORIG_STDZN_DEC": "98",
+    "DT_STDZN_DEC": "01-FEB-1975",
+    "NIIN_STAT_CD": "0"
+  }
+]

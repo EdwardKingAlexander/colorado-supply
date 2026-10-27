@@ -1,0 +1,34 @@
+Batch Quoting
+Batch quoting allows multiple quotes on Request for Quotations (RFQ) to be batch
+uploaded. Quotes are prepared off-line in a prescribed comma delimited format
+then uploaded via the Internet.
+BatchNotes
+· Batch File Format
+Batch File Format link
+contians the formatting requirements and acceptable values for batch quoting.
+· Batch File Size Limit
+Files are limited to
+75
+lines per file.
+Files with more lines will not be processed.
+The size of the file has a great effect on the validating process performance.
+The smaller the file,the faster the validation.
+· Preformated RFQ Batch Files
+Preformated RFQ Batch Files are available at
+Recent RFQs
+under the heading "Batch Quote File Name".
+· Handy Microsoft Access 2000© table
+Handy Microsoft Access 2000© table which you may use for formatting DIBBS batch
+quotes. The file is contained in DIBBSBatchQuote.zip
+DLA supplies this commercially available MicroSoft Access 2000© Database file
+in order to assist our vendors in preparing comma delimited upload file. Use
+of this Database is not required. DLA will not provide technical support with
+regard to its use nor does it assume any responsibility for claims of hardware,
+software, or network difficulties or problems resulting in its use.
+· Direct questions to the DIBBS Help Desk at
+DIBBSBsm@dla.mil
+Related Topics
+·
+Web Form Quoting
+·
+FAQs on Quoting

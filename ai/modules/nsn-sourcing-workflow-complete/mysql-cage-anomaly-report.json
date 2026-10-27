@@ -1,0 +1,11 @@
+{
+    "finished_at": "2026-10-05T13:26:15+00:00",
+    "import": {
+        "id": 1,
+        "status": "failed",
+        "progress": "{\"P_CAGE.CSV\": {\"done\": false, \"rows\": 4158000, \"offset\": 371154347, \"stored\": 4158000}, \"P_FLIS_NSN.CSV\": {\"done\": true, \"rows\": 17025717, \"offset\": 987210664, \"stored\": 17025715}}",
+        "validation": "[]",
+        "error": "Invalid CAGE_CODE at P_CAGE.CSV record 4158375."
+    },
+    "production_capacity_approved": false
+}

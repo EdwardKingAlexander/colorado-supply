@@ -1,0 +1,150 @@
+{
+    "finished_at": "2026-10-05T18:36:46+00:00",
+    "import": {
+        "id": 1,
+        "status": "ready",
+        "progress": "{\"P_CAGE.CSV\": {\"done\": true, \"rows\": 4158375, \"offset\": 371183040, \"stored\": 4158375, \"invalid_cage_codes\": 1}, \"P_HELP.CSV\": {\"done\": true, \"rows\": 36515, \"offset\": 4798116, \"stored\": 36200}, \"P_FLIS_NSN.CSV\": {\"done\": true, \"rows\": 17025717, \"offset\": 987210664, \"stored\": 17025715}, \"V_FLIS_PART.CSV\": {\"done\": true, \"rows\": 16623521, \"offset\": 1283022921, \"stored\": 16623521}, \"V_CAGE_ADDRESS.CSV\": {\"done\": true, \"rows\": 4158375, \"offset\": 468230972, \"stored\": 4158375, \"invalid_cage_codes\": 1}, \"V_FLIS_CANCELLED_NIIN.CSV\": {\"done\": true, \"rows\": 907604, \"offset\": 49009257, \"stored\": 907604}, \"V_FLIS_STANDARDIZATION.CSV\": {\"done\": true, \"rows\": 17400519, \"offset\": 614943289, \"stored\": 17361845}}",
+        "validation": "{\"counts\": {\"cage_entities\": 4158375, \"nsn_references\": 16623521, \"nsn_catalog_items\": 17025715, \"pub_log_definitions\": 36200, \"nsn_catalog_relationships\": 18269449}, \"orphan_references\": 0, \"short_item_name_codes\": 1, \"invalid_cage_source_rows\": {\"P_CAGE.CSV\": 1, \"V_FLIS_PART.CSV\": 0, \"V_CAGE_ADDRESS.CSV\": 1}, \"unresolved_cage_references\": 930}",
+        "error": null
+    },
+    "production_capacity_approved": false,
+    "tables": [
+        {
+            "TABLE_NAME": "cage_entities",
+            "TABLE_ROWS": 4019398,
+            "DATA_LENGTH": 3229614080,
+            "INDEX_LENGTH": 116129792,
+            "DATA_FREE": 6291456,
+            "ROW_FORMAT": "Dynamic"
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_items",
+            "TABLE_ROWS": 16651955,
+            "DATA_LENGTH": 3310338048,
+            "INDEX_LENGTH": 1312784384,
+            "DATA_FREE": 7340032,
+            "ROW_FORMAT": "Dynamic"
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_relationships",
+            "TABLE_ROWS": 17530190,
+            "DATA_LENGTH": 2285895680,
+            "INDEX_LENGTH": 4055875584,
+            "DATA_FREE": 7340032,
+            "ROW_FORMAT": "Dynamic"
+        },
+        {
+            "TABLE_NAME": "nsn_references",
+            "TABLE_ROWS": 16491924,
+            "DATA_LENGTH": 2372927488,
+            "INDEX_LENGTH": 3714039808,
+            "DATA_FREE": 5242880,
+            "ROW_FORMAT": "Dynamic"
+        },
+        {
+            "TABLE_NAME": "pub_log_catalog_state",
+            "TABLE_ROWS": 1,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384,
+            "DATA_FREE": 0,
+            "ROW_FORMAT": "Dynamic"
+        },
+        {
+            "TABLE_NAME": "pub_log_definitions",
+            "TABLE_ROWS": 35825,
+            "DATA_LENGTH": 9977856,
+            "INDEX_LENGTH": 7405568,
+            "DATA_FREE": 4194304,
+            "ROW_FORMAT": "Dynamic"
+        },
+        {
+            "TABLE_NAME": "pub_log_imports",
+            "TABLE_ROWS": 1,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 32768,
+            "DATA_FREE": 0,
+            "ROW_FORMAT": "Dynamic"
+        }
+    ],
+    "allocated_table_bytes": 20445478912,
+    "two_snapshots_bytes": 40890957824,
+    "limitations": "Local benchmark; production free disk, binlog\/temporary space, retained versions and concurrent app workload still require preflight. No production import is authorized by this report.",
+    "lookups": {
+        "nsn": {
+            "p95_ms": 0.2589,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_catalog_items",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_catalog_items_import_id_niin_unique,nsn_catalog_items_import_id_nsn_index",
+                    "key": "nsn_catalog_items_import_id_nsn_index",
+                    "key_len": "62",
+                    "ref": "const,const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        "niin": {
+            "p95_ms": 0.3073,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_references",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_references_import_id_row_hash_unique,nsn_references_import_id_niin_id_index,nsn_reference_part_search,nsn_references_import_id_cage_code_id_index",
+                    "key": "nsn_references_import_id_niin_id_index",
+                    "key_len": "46",
+                    "ref": "const,const",
+                    "rows": 2,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        "part": {
+            "p95_ms": 0.4048,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_references",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_references_import_id_row_hash_unique,nsn_references_import_id_niin_id_index,nsn_reference_part_search,nsn_references_import_id_cage_code_id_index",
+                    "key": "nsn_reference_part_search",
+                    "key_len": "1030",
+                    "ref": "const,const",
+                    "rows": 5,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        "cage": {
+            "p95_ms": 0.6012,
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "nsn_references",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "nsn_references_import_id_row_hash_unique,nsn_references_import_id_niin_id_index,nsn_reference_part_search,nsn_references_import_id_cage_code_id_index",
+                    "key": "nsn_references_import_id_cage_code_id_index",
+                    "key_len": "30",
+                    "ref": "const,const",
+                    "rows": 986,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        }
+    }
+}

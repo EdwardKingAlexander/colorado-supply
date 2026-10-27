@@ -1,0 +1,36 @@
+{
+  "P_CAGE.CSV": {
+    "rows": 4158375,
+    "lengths": {
+      "5": 4158375
+    },
+    "invalid_count": 1,
+    "examples": [
+      {
+        "source_row": 4158375,
+        "cage_code": "`Q9C4"
+      }
+    ]
+  },
+  "V_CAGE_ADDRESS.CSV": {
+    "rows": 4158375,
+    "lengths": {
+      "5": 4158375
+    },
+    "invalid_count": 1,
+    "examples": [
+      {
+        "source_row": 4158375,
+        "cage_code": "`Q9C4"
+      }
+    ]
+  },
+  "V_FLIS_PART.CSV": {
+    "rows": 16623521,
+    "lengths": {
+      "5": 16623521
+    },
+    "invalid_count": 0,
+    "examples": []
+  }
+}

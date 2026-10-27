@@ -1,0 +1,292 @@
+{
+  "observed_release_date": "2026-10-01",
+  "archives": {
+    "IDENTIFICATION": {
+      "url": "https://www.dla.mil/Portals/104/Documents/InformationOperations/LogisticsInformationServices/FOIA/PUBLOG/IDENTIFICATION.zip",
+      "bytes": 362453790,
+      "sha256": "549c77ebe10aaf8c573379431e1e50789b423ef95a291a3c284e1b74c0a26d2c"
+    },
+    "CAGE": {
+      "url": "https://www.dla.mil/Portals/104/Documents/InformationOperations/LogisticsInformationServices/FOIA/PUBLOG/CAGE.zip",
+      "bytes": 265932060,
+      "sha256": "6a501987dd02cb750cda7544809caf4d8085742292e75832328097738a5a06af"
+    },
+    "REFERENCE": {
+      "url": "https://www.dla.mil/Portals/104/Documents/InformationOperations/LogisticsInformationServices/FOIA/PUBLOG/REFERENCE.zip",
+      "bytes": 180541473,
+      "sha256": "f75203e29360579612a65de9642289b68500119bc699eb07b69490cced8fefa9"
+    }
+  },
+  "files": {
+    "V_FLIS_PART.CSV": {
+      "rows": 16623521,
+      "headers": [
+        "NIIN",
+        "PART_NUMBER",
+        "CAGE_CODE",
+        "CAGE_STATUS",
+        "RNCC",
+        "RNVC",
+        "DAC",
+        "RNAAC",
+        "RNFC",
+        "RNSC",
+        "RNJC",
+        "SADC",
+        "HCC",
+        "MSDS",
+        "MEDALS"
+      ],
+      "bytes": 1283022921,
+      "compressed_bytes": 180541175,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        10,
+        2,
+        24
+      ],
+      "encoding_verified": "UTF-8 (strict decoding, optional BOM)",
+      "prefix_hex": "224e49494e222c2250415254",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 53.39,
+      "sample_rows": 12560
+    },
+    "P_FLIS_NSN.CSV": {
+      "rows": 17025717,
+      "headers": [
+        "FSC",
+        "NIIN",
+        "INC",
+        "ITEM_NAME",
+        "SOS",
+        "END_ITEM_NAME",
+        "CANCELLED_NIIN"
+      ],
+      "bytes": 987210664,
+      "compressed_bytes": 151876890,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        43,
+        26
+      ],
+      "encoding_verified": "UTF-8 (strict decoding, optional BOM)",
+      "prefix_hex": "22465343222c224e49494e22",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 39.53,
+      "sample_rows": 214
+    },
+    "P_HELP.CSV": {
+      "rows": 36515,
+      "headers": [
+        "CODE",
+        "LITERAL",
+        "DESCRIPTION",
+        "REGS"
+      ],
+      "bytes": 4798116,
+      "compressed_bytes": 775318,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        43,
+        26
+      ],
+      "decoding_used": "cp1252",
+      "encoding_note": "Strict full-file decoding; ASCII-only bytes do not establish original encoding.",
+      "prefix_hex": "22434f4445222c224c495445",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 0.1,
+      "sample_rows": 5683
+    },
+    "V_FLIS_IDENTIFICATION.CSV": {
+      "rows": 17025717,
+      "headers": [
+        "NIIN",
+        "INC",
+        "PINC",
+        "CRIT_CD",
+        "II",
+        "DMIL",
+        "DMIL_INT_CD",
+        "NIIN_ASGMT",
+        "PMIC",
+        "ADP",
+        "HMIC",
+        "ESD_EMI",
+        "HCC",
+        "SCHEDULE_B",
+        "ENAC",
+        "IUID_INDICATOR",
+        "LST_KWN_SOS",
+        "FEDMALL"
+      ],
+      "bytes": 1608363642,
+      "compressed_bytes": 134031913,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        46,
+        8
+      ],
+      "decoding_used": "utf-8-sig",
+      "encoding_note": "Strict full-file decoding; ASCII-only bytes do not establish original encoding.",
+      "prefix_hex": "224e49494e222c22494e4322",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 58.19,
+      "sample_rows": 214
+    },
+    "V_FLIS_CANCELLED_NIIN.CSV": {
+      "rows": 907604,
+      "headers": [
+        "NIIN",
+        "CANCELLED_NIIN_FSC",
+        "CANCELLED_NIIN",
+        "NIIN_STAT_CD",
+        "EFF_DATE",
+        "DEMIL"
+      ],
+      "bytes": 49009257,
+      "compressed_bytes": 8395710,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        46,
+        14
+      ],
+      "decoding_used": "utf-8-sig",
+      "encoding_note": "Strict full-file decoding; ASCII-only bytes do not establish original encoding.",
+      "prefix_hex": "224e49494e222c2243414e43",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 1.95,
+      "sample_rows": 19
+    },
+    "V_COLLOQUIAL_NAME.CSV": {
+      "rows": 33949,
+      "headers": [
+        "INC",
+        "COLLOQUIAL_NAME"
+      ],
+      "bytes": 1068171,
+      "compressed_bytes": 298356,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        46,
+        14
+      ],
+      "decoding_used": "utf-8-sig",
+      "encoding_note": "Strict full-file decoding; ASCII-only bytes do not establish original encoding.",
+      "prefix_hex": "22494e43222c22434f4c4c4f",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 0.05,
+      "sample_rows": 4
+    },
+    "V_FLIS_STANDARDIZATION.CSV": {
+      "rows": 17400519,
+      "headers": [
+        "NIIN",
+        "RELATED_NSN",
+        "ISC",
+        "ORIG_STDZN_DEC",
+        "DT_STDZN_DEC",
+        "NIIN_STAT_CD"
+      ],
+      "bytes": 614943289,
+      "compressed_bytes": 67073863,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        47,
+        36
+      ],
+      "decoding_used": "utf-8-sig",
+      "encoding_note": "Strict full-file decoding; ASCII-only bytes do not establish original encoding.",
+      "prefix_hex": "224e49494e222c2252454c41",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 32.36,
+      "sample_rows": 226
+    },
+    "P_CAGE.CSV": {
+      "rows": 4158375,
+      "headers": [
+        "CAGE_CODE",
+        "CAGE_STATUS",
+        "COMPANY",
+        "CITY",
+        "STATE_PROVINCE",
+        "ZIP_POSTAL_ZONE",
+        "COUNTRY"
+      ],
+      "bytes": 371183040,
+      "compressed_bytes": 110883422,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        39,
+        42
+      ],
+      "decoding_used": "utf-8-sig",
+      "encoding_note": "Strict full-file decoding; ASCII-only bytes do not establish original encoding.",
+      "prefix_hex": "22434147455f434f4445222c",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 12.26,
+      "sample_rows": 271
+    },
+    "V_CAGE_ADDRESS.CSV": {
+      "rows": 4158375,
+      "headers": [
+        "CAGE_CODE",
+        "COMPANY_NAME",
+        "STREET_ADDRESS_1",
+        "STREET_ADDRESS_2",
+        "STREET_ADDRESS_3",
+        "CITY",
+        "STATE",
+        "ZIP",
+        "COUNTRY"
+      ],
+      "bytes": 468230972,
+      "compressed_bytes": 155048068,
+      "zip_timestamp": [
+        2026,
+        9,
+        28,
+        9,
+        40,
+        28
+      ],
+      "decoding_used": "utf-8-sig",
+      "encoding_note": "Strict full-file decoding; ASCII-only bytes do not establish original encoding.",
+      "prefix_hex": "22434147455f434f4445222c",
+      "crlf_in_prefix": true,
+      "malformed_rows": 0,
+      "seconds": 14.73,
+      "sample_rows": 271
+    }
+  }
+}

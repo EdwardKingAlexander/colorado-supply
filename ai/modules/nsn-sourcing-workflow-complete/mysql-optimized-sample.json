@@ -1,0 +1,86 @@
+{
+    "mysql": "8.0.46",
+    "sample_limit_per_member": 100000,
+    "members": {
+        "P_FLIS_NSN.CSV": {
+            "rows": 100000,
+            "stored": 100000,
+            "seconds": 6.279009103775024
+        },
+        "P_CAGE.CSV": {
+            "rows": 100000,
+            "stored": 100000,
+            "seconds": 5.104933023452759
+        },
+        "V_CAGE_ADDRESS.CSV": {
+            "rows": 100000,
+            "stored": 100000,
+            "seconds": 8.866636991500854
+        },
+        "V_FLIS_PART.CSV": {
+            "rows": 100000,
+            "stored": 100000,
+            "seconds": 10.394433975219727
+        },
+        "V_FLIS_STANDARDIZATION.CSV": {
+            "rows": 100000,
+            "stored": 99689,
+            "seconds": 13.644423007965088
+        },
+        "V_FLIS_CANCELLED_NIIN.CSV": {
+            "rows": 100000,
+            "stored": 100000,
+            "seconds": 16.376356840133667
+        },
+        "P_HELP.CSV": {
+            "rows": 36515,
+            "stored": 36200,
+            "seconds": 2.320831060409546
+        }
+    },
+    "peak_php_bytes": 62914560,
+    "table_sizes": [
+        {
+            "TABLE_NAME": "cage_entities",
+            "TABLE_ROWS": 95926,
+            "DATA_LENGTH": 77217792,
+            "INDEX_LENGTH": 3686400
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_items",
+            "TABLE_ROWS": 98659,
+            "DATA_LENGTH": 18399232,
+            "INDEX_LENGTH": 10518528
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_relationships",
+            "TABLE_ROWS": 197756,
+            "DATA_LENGTH": 26804224,
+            "INDEX_LENGTH": 36913152
+        },
+        {
+            "TABLE_NAME": "nsn_references",
+            "TABLE_ROWS": 96044,
+            "DATA_LENGTH": 15220736,
+            "INDEX_LENGTH": 26312704
+        },
+        {
+            "TABLE_NAME": "pub_log_catalog_state",
+            "TABLE_ROWS": 1,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384
+        },
+        {
+            "TABLE_NAME": "pub_log_definitions",
+            "TABLE_ROWS": 38517,
+            "DATA_LENGTH": 9977856,
+            "INDEX_LENGTH": 7405568
+        },
+        {
+            "TABLE_NAME": "pub_log_imports",
+            "TABLE_ROWS": 1,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 0
+        }
+    ]
+}

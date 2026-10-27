@@ -1,0 +1,2142 @@
+[
+  {
+    "source_record": 1,
+    "FSC": "4935",
+    "NIIN": "000000012",
+    "INC": "77777",
+    "ITEM_NAME": "UNKNOWN",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 2,
+    "FSC": "1450",
+    "NIIN": "000000018",
+    "INC": "77777",
+    "ITEM_NAME": "UNKNOWN",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 3,
+    "FSC": "1450",
+    "NIIN": "000000019",
+    "INC": "77777",
+    "ITEM_NAME": "UNKNOWN",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 4,
+    "FSC": "5310",
+    "NIIN": "000000040",
+    "INC": "77777",
+    "ITEM_NAME": "UNKNOWN",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 6,
+    "FSC": "8940",
+    "NIIN": "000000042",
+    "INC": "77777",
+    "ITEM_NAME": "CK FILTER ASSEMBLY",
+    "SOS": "",
+    "END_ITEM_NAME": "USED ON ALM F13 AIRCRAFT",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 9,
+    "FSC": "5940",
+    "NIIN": "000000045",
+    "INC": "08573",
+    "ITEM_NAME": "TERMINAL BOARD ASSEMBLY",
+    "SOS": "",
+    "END_ITEM_NAME": "USED ON ALM F13 AIRCRAFT",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 11,
+    "FSC": "1560",
+    "NIIN": "000000047",
+    "INC": "39730",
+    "ITEM_NAME": "MODIFICATION KIT,AIRFRAME",
+    "SOS": "",
+    "END_ITEM_NAME": "OH-58",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 12,
+    "FSC": "2840",
+    "NIIN": "000000048",
+    "INC": "32600",
+    "ITEM_NAME": "ENGINE,AIRCRAFT,TURBO-SHAFT",
+    "SOS": "",
+    "END_ITEM_NAME": "T-55 ENGINES SERIES",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 13,
+    "FSC": "2840",
+    "NIIN": "000000049",
+    "INC": "39733",
+    "ITEM_NAME": "MODIFICATION KIT,ENGINE",
+    "SOS": "",
+    "END_ITEM_NAME": "T-55 SERIES ENGINES",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 14,
+    "FSC": "4310",
+    "NIIN": "000000050",
+    "INC": "29301",
+    "ITEM_NAME": "COMPRESSOR UNIT,RECIPROCATING",
+    "SOS": "FLZ",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 15,
+    "FSC": "5960",
+    "NIIN": "000000051",
+    "INC": "00001",
+    "ITEM_NAME": "ELECTRON TUBE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "001649799"
+  },
+  {
+    "source_record": 21,
+    "FSC": "5340",
+    "NIIN": "000000057",
+    "INC": "06689",
+    "ITEM_NAME": "CLOSER,DOOR",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "002633762 006855794"
+  },
+  {
+    "source_record": 22,
+    "FSC": "5340",
+    "NIIN": "000000058",
+    "INC": "06689",
+    "ITEM_NAME": "CLOSER,DOOR",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "006631781"
+  },
+  {
+    "source_record": 23,
+    "FSC": "5340",
+    "NIIN": "000000059",
+    "INC": "06689",
+    "ITEM_NAME": "CLOSER,DOOR",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "006641371"
+  },
+  {
+    "source_record": 24,
+    "FSC": "5340",
+    "NIIN": "000000060",
+    "INC": "06689",
+    "ITEM_NAME": "CLOSER,DOOR",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "002633764"
+  },
+  {
+    "source_record": 25,
+    "FSC": "1005",
+    "NIIN": "000000061",
+    "INC": "21601",
+    "ITEM_NAME": "MACHINE GUN,7.62 MILLIMETER",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 28,
+    "FSC": "6520",
+    "NIIN": "000000064",
+    "INC": "11393",
+    "ITEM_NAME": "BUR,DENTAL,EXCAVATING",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 29,
+    "FSC": "8140",
+    "NIIN": "000000065",
+    "INC": "77777",
+    "ITEM_NAME": "SHIPPING AND STORAG",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 31,
+    "FSC": "8305",
+    "NIIN": "000000067",
+    "INC": "29987",
+    "ITEM_NAME": "CLOTH,TWILL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "010700890"
+  },
+  {
+    "source_record": 32,
+    "FSC": "5340",
+    "NIIN": "000000068",
+    "INC": "29785",
+    "ITEM_NAME": "COVER,ACCESS",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 33,
+    "FSC": "6515",
+    "NIIN": "000000069",
+    "INC": "13904",
+    "ITEM_NAME": "ELECTROSURGICAL APPARATUS",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 34,
+    "FSC": "6530",
+    "NIIN": "000000070",
+    "INC": "35484",
+    "ITEM_NAME": "CUP,MEDICINE",
+    "SOS": "G36 SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "002263641 011536338"
+  },
+  {
+    "source_record": 35,
+    "FSC": "6520",
+    "NIIN": "000000071",
+    "INC": "12998",
+    "ITEM_NAME": "EXCAVATOR,DENTAL",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 39,
+    "FSC": "2815",
+    "NIIN": "000000075",
+    "INC": "03751",
+    "ITEM_NAME": "ENGINE,DIESEL",
+    "SOS": "NRP",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 41,
+    "FSC": "5310",
+    "NIIN": "000000077",
+    "INC": "15887",
+    "ITEM_NAME": "NUT,PLAIN,ROUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 43,
+    "FSC": "5310",
+    "NIIN": "000000079",
+    "INC": "13393",
+    "ITEM_NAME": "WASHER,FLAT",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "ARMORED MULTI-PURPOSE VEHICLE (AMPV); MULTIPLE LAUNCH ROCKET SYSTEM (MLRS); A4 BRADLEY FIGHTING VEHICLE; A3 BRADLEY FIGHTING VEHICLE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 44,
+    "FSC": "4720",
+    "NIIN": "000000080",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 46,
+    "FSC": "4140",
+    "NIIN": "000000082",
+    "INC": "10087",
+    "ITEM_NAME": "IMPELLER,FAN,AXIAL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "MOTOR,GENERAL MOTORS CORP DETROIT DIESEL MODEL 71",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 47,
+    "FSC": "5995",
+    "NIIN": "000000083",
+    "INC": "00450",
+    "ITEM_NAME": "WIRING HARNESS",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 48,
+    "FSC": "4720",
+    "NIIN": "000000084",
+    "INC": "17271",
+    "ITEM_NAME": "HOSE,PREFORMED",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 49,
+    "FSC": "5330",
+    "NIIN": "000000085",
+    "INC": "77777",
+    "ITEM_NAME": "RETAINER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 50,
+    "FSC": "4730",
+    "NIIN": "000000086",
+    "INC": "61840",
+    "ITEM_NAME": "REDUCER BODY,TUBE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "TRUCK, HEAVY EXPANDED MOBILITY TACTICAL",
+    "CANCELLED_NIIN": "012131016"
+  },
+  {
+    "source_record": 51,
+    "FSC": "5998",
+    "NIIN": "000000087",
+    "INC": "61638",
+    "ITEM_NAME": "CIRCUIT CARD ASSEMBLY",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 52,
+    "FSC": "2920",
+    "NIIN": "000000088",
+    "INC": "77777",
+    "ITEM_NAME": "INSTALLATION KIT,AL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "2320000771636",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 54,
+    "FSC": "6145",
+    "NIIN": "000000090",
+    "INC": "00798",
+    "ITEM_NAME": "WIRE,ELECTRICAL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 55,
+    "FSC": "3020",
+    "NIIN": "000000091",
+    "INC": "05466",
+    "ITEM_NAME": "GEAR,SPUR",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 56,
+    "FSC": "9150",
+    "NIIN": "000000092",
+    "INC": "77777",
+    "ITEM_NAME": "ADDITIVE,VISCOSITY",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 58,
+    "FSC": "5305",
+    "NIIN": "000000094",
+    "INC": "29294",
+    "ITEM_NAME": "SCREW,CLOSE TOLERANCE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 60,
+    "FSC": "3830",
+    "NIIN": "000000096",
+    "INC": "28152",
+    "ITEM_NAME": "TOOTH,SURFACE RIPPING",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 62,
+    "FSC": "4520",
+    "NIIN": "000000098",
+    "INC": "29427",
+    "ITEM_NAME": "HEATING ELEMENT,ELECTRICAL,NONIM",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 64,
+    "FSC": "6115",
+    "NIIN": "000000100",
+    "INC": "00781",
+    "ITEM_NAME": "GENERATOR,ALTERNATING CURRENT",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 69,
+    "FSC": "2935",
+    "NIIN": "000000105",
+    "INC": "30128",
+    "ITEM_NAME": "CAP,FILLER OPENING",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 71,
+    "FSC": "4010",
+    "NIIN": "000000109",
+    "INC": "09764",
+    "ITEM_NAME": "WIRE ROPE ASSEMBLY,SINGLE LEG",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 73,
+    "FSC": "5180",
+    "NIIN": "000000112",
+    "INC": "34594",
+    "ITEM_NAME": "TOOL KIT,GENERAL MECHANIC'S",
+    "SOS": "FLZ",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 74,
+    "FSC": "5180",
+    "NIIN": "000000113",
+    "INC": "34594",
+    "ITEM_NAME": "TOOL KIT,GENERAL MECHANIC'S",
+    "SOS": "",
+    "END_ITEM_NAME": "2520-01-085-5579",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 75,
+    "FSC": "2320",
+    "NIIN": "000000114",
+    "INC": "15784",
+    "ITEM_NAME": "TRUCK,MAINTENANCE",
+    "SOS": "AKZ",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "010273998"
+  },
+  {
+    "source_record": 76,
+    "FSC": "7230",
+    "NIIN": "000000115",
+    "INC": "60359",
+    "ITEM_NAME": "CURTAIN,BLACKOUT",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "UH-1 AVIATION",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 78,
+    "FSC": "5930",
+    "NIIN": "000000117",
+    "INC": "00206",
+    "ITEM_NAME": "SWITCH,PRESSURE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 79,
+    "FSC": "6130",
+    "NIIN": "000000118",
+    "INC": "00740",
+    "ITEM_NAME": "POWER SUPPLY",
+    "SOS": "",
+    "END_ITEM_NAME": "AN/AYK-10 SYSTEM",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 81,
+    "FSC": "5975",
+    "NIIN": "000000120",
+    "INC": "29923",
+    "ITEM_NAME": "MOUNTING BASE,ELECTRICAL EQUIPME",
+    "SOS": "NRP",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 82,
+    "FSC": "1270",
+    "NIIN": "000000121",
+    "INC": "77777",
+    "ITEM_NAME": "CONTROL PANEL ASSEM",
+    "SOS": "FLZ",
+    "END_ITEM_NAME": "P/N A05A0204-9 AND 8429354-10 HUD; F-15 AIRCRAFT",
+    "CANCELLED_NIIN": "002843168 005461480"
+  },
+  {
+    "source_record": 83,
+    "FSC": "6610",
+    "NIIN": "000000122",
+    "INC": "03386",
+    "ITEM_NAME": "ALTIMETER,PRESSURE",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 84,
+    "FSC": "6130",
+    "NIIN": "000000123",
+    "INC": "00740",
+    "ITEM_NAME": "POWER SUPPLY",
+    "SOS": "FLZ",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "001493451"
+  },
+  {
+    "source_record": 86,
+    "FSC": "6150",
+    "NIIN": "000000125",
+    "INC": "04581",
+    "ITEM_NAME": "LEAD,ELECTRICAL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 90,
+    "FSC": "1650",
+    "NIIN": "000000129",
+    "INC": "61748",
+    "ITEM_NAME": "SERVOVALVE,HYDRAULIC",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "F-15 AIRCRAFT;T.O.9H27-2-4;U/O P/N 010-63055-20",
+    "CANCELLED_NIIN": "003526618"
+  },
+  {
+    "source_record": 92,
+    "FSC": "1650",
+    "NIIN": "000000131",
+    "INC": "61725",
+    "ITEM_NAME": "ROD,PISTON,LINEAR ACTUATING CYLI",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 93,
+    "FSC": "5340",
+    "NIIN": "000000132",
+    "INC": "24328",
+    "ITEM_NAME": "SEAT,HELICAL COMPRESSION SPRING",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 94,
+    "FSC": "6635",
+    "NIIN": "000000133",
+    "INC": "13192",
+    "ITEM_NAME": "X-RAY APPARATUS,RADIOGRAPHIC,IND",
+    "SOS": "FLZ",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 97,
+    "FSC": "5905",
+    "NIIN": "000000136",
+    "INC": "32068",
+    "ITEM_NAME": "RESISTOR NETWORK,FIXED,FILM",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 98,
+    "FSC": "8950",
+    "NIIN": "000000137",
+    "INC": "40102",
+    "ITEM_NAME": "STEAK SAUCE",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 99,
+    "FSC": "1040",
+    "NIIN": "000000138",
+    "INC": "41197",
+    "ITEM_NAME": "DISCHARGER,GRENADE,SMOKE,COUNTER",
+    "SOS": "A12",
+    "END_ITEM_NAME": "1055-00-000-0138",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 100,
+    "FSC": "1430",
+    "NIIN": "000000139",
+    "INC": "77777",
+    "ITEM_NAME": "NUTATOR,TRACKER",
+    "SOS": "B64",
+    "END_ITEM_NAME": "1430-00-078-8340",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 101,
+    "FSC": "8415",
+    "NIIN": "000000140",
+    "INC": "77777",
+    "ITEM_NAME": "SEAL,VISOR",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 102,
+    "FSC": "8415",
+    "NIIN": "000000141",
+    "INC": "77777",
+    "ITEM_NAME": "VISOR,HELMENT",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 104,
+    "FSC": "1680",
+    "NIIN": "000000143",
+    "INC": "32415",
+    "ITEM_NAME": "CUSHION,SEAT,AIRCRAFT",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "OH-58A AND OH-58C",
+    "CANCELLED_NIIN": "001858311"
+  },
+  {
+    "source_record": 105,
+    "FSC": "1680",
+    "NIIN": "000000144",
+    "INC": "32416",
+    "ITEM_NAME": "CUSHION,SEAT BACK,AIRCRAFT",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 106,
+    "FSC": "4330",
+    "NIIN": "000000145",
+    "INC": "32624",
+    "ITEM_NAME": "FILTER ELEMENT,FLUID",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 107,
+    "FSC": "5950",
+    "NIIN": "000000146",
+    "INC": "32496",
+    "ITEM_NAME": "TRANSFORMER,POWER",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 108,
+    "FSC": "4130",
+    "NIIN": "000000147",
+    "INC": "32625",
+    "ITEM_NAME": "FILTER MEDIA,AIR CONDITIONING",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 109,
+    "FSC": "5915",
+    "NIIN": "000000148",
+    "INC": "00209",
+    "ITEM_NAME": "FILTER,BAND PASS",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 110,
+    "FSC": "5995",
+    "NIIN": "000000149",
+    "INC": "00782",
+    "ITEM_NAME": "CABLE ASSEMBLY,SPECIAL PURPOSE,E",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 111,
+    "FSC": "5961",
+    "NIIN": "000000150",
+    "INC": "62108",
+    "ITEM_NAME": "RECTIFIER,SEMICONDUCTOR DEVICE,U",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 112,
+    "FSC": "1650",
+    "NIIN": "000000151",
+    "INC": "77777",
+    "ITEM_NAME": "SWIVEL JOINT HYDRAU",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 113,
+    "FSC": "1650",
+    "NIIN": "000000152",
+    "INC": "51062",
+    "ITEM_NAME": "SWIVEL JOINT,HYDRAULIC,AIRCRAFT",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 114,
+    "FSC": "5998",
+    "NIIN": "000000154",
+    "INC": "61638",
+    "ITEM_NAME": "CIRCUIT CARD ASSEMBLY",
+    "SOS": "B16 FGZ",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 115,
+    "FSC": "5805",
+    "NIIN": "000000155",
+    "INC": "09781",
+    "ITEM_NAME": "RECEIVER-TRANSMITTER,ORDER WIRE",
+    "SOS": "B16 FGZ",
+    "END_ITEM_NAME": "AN/TSC-85A/93A",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 116,
+    "FSC": "8460",
+    "NIIN": "000000156",
+    "INC": "11482",
+    "ITEM_NAME": "BAG,MONEY",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 117,
+    "FSC": "7640",
+    "NIIN": "000000157",
+    "INC": "14232",
+    "ITEM_NAME": "CHART",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 118,
+    "FSC": "6520",
+    "NIIN": "000000158",
+    "INC": "40260",
+    "ITEM_NAME": "LIGHT SET,DENTAL OPERATING,FIELD",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 119,
+    "FSC": "1240",
+    "NIIN": "000000160",
+    "INC": "22603",
+    "ITEM_NAME": "SIGHT UNIT",
+    "SOS": "",
+    "END_ITEM_NAME": "TOW COBRA",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 120,
+    "FSC": "1440",
+    "NIIN": "000000161",
+    "INC": "77777",
+    "ITEM_NAME": "SIGHT UNIT,STABLIZE",
+    "SOS": "",
+    "END_ITEM_NAME": "TOW COBRA",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 121,
+    "FSC": "1440",
+    "NIIN": "000000162",
+    "INC": "77777",
+    "ITEM_NAME": "SIGHT UNIT,STABLIZE",
+    "SOS": "",
+    "END_ITEM_NAME": "TOW COBRA",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 122,
+    "FSC": "9905",
+    "NIIN": "000000163",
+    "INC": "00155",
+    "ITEM_NAME": "PLATE,IDENTIFICATION",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 126,
+    "FSC": "5330",
+    "NIIN": "000000167",
+    "INC": "34944",
+    "ITEM_NAME": "PARTS KIT,SEAL REPLACEMENT,MECHA",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "1260-01-250-4888",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 129,
+    "FSC": "8960",
+    "NIIN": "000000170",
+    "INC": "42256",
+    "ITEM_NAME": "WATER,DRINKING,EMERGENCY",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 130,
+    "FSC": "8305",
+    "NIIN": "000000171",
+    "INC": "29979",
+    "ITEM_NAME": "CLOTH,PLAIN WEAVE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 131,
+    "FSC": "6210",
+    "NIIN": "000000172",
+    "INC": "77777",
+    "ITEM_NAME": "COVER PLATE ASSEMBL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 132,
+    "FSC": "5998",
+    "NIIN": "000000173",
+    "INC": "26088",
+    "ITEM_NAME": "ELECTRONIC COMPONENTS ASSEMBLY",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 133,
+    "FSC": "6150",
+    "NIIN": "000000174",
+    "INC": "61341",
+    "ITEM_NAME": "WIRING HARNESS,BRANCHED",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 134,
+    "FSC": "5998",
+    "NIIN": "000000175",
+    "INC": "26088",
+    "ITEM_NAME": "ELECTRONIC COMPONENTS ASSEMBLY",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 135,
+    "FSC": "6150",
+    "NIIN": "000000176",
+    "INC": "61341",
+    "ITEM_NAME": "WIRING HARNESS,BRANCHED",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 136,
+    "FSC": "5998",
+    "NIIN": "000000177",
+    "INC": "26088",
+    "ITEM_NAME": "ELECTRONIC COMPONENTS ASSEMBLY",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 137,
+    "FSC": "6150",
+    "NIIN": "000000178",
+    "INC": "61341",
+    "ITEM_NAME": "WIRING HARNESS,BRANCHED",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 138,
+    "FSC": "6150",
+    "NIIN": "000000179",
+    "INC": "61341",
+    "ITEM_NAME": "WIRING HARNESS,BRANCHED",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 139,
+    "FSC": "6150",
+    "NIIN": "000000180",
+    "INC": "61341",
+    "ITEM_NAME": "WIRING HARNESS,BRANCHED",
+    "SOS": "FHZ",
+    "END_ITEM_NAME": "B-2SE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 140,
+    "FSC": "2610",
+    "NIIN": "000000182",
+    "INC": "51020",
+    "ITEM_NAME": "TIRE,PNEUMATIC,VEHICULAR",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "750 DP COMPRESSOR, ROTARY, TRAILER M720 DOLLY SET, SHELTER",
+    "CANCELLED_NIIN": "001393704"
+  },
+  {
+    "source_record": 141,
+    "FSC": "2920",
+    "NIIN": "000000183",
+    "INC": "17311",
+    "ITEM_NAME": "GENERATOR,ENGINE ACCESSORY",
+    "SOS": "",
+    "END_ITEM_NAME": "2320013469317",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 142,
+    "FSC": "9140",
+    "NIIN": "000000184",
+    "INC": "26648",
+    "ITEM_NAME": "DIESEL FUEL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 143,
+    "FSC": "9140",
+    "NIIN": "000000185",
+    "INC": "26648",
+    "ITEM_NAME": "DIESEL FUEL",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 145,
+    "FSC": "9130",
+    "NIIN": "000000187",
+    "INC": "26646",
+    "ITEM_NAME": "TURBINE FUEL,AVIATION",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 146,
+    "FSC": "5180",
+    "NIIN": "000000188",
+    "INC": "77777",
+    "ITEM_NAME": "ADAPTER KIT,FUEL IN",
+    "SOS": "",
+    "END_ITEM_NAME": "TESTER, FUEL INJECTOR",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 147,
+    "FSC": "6680",
+    "NIIN": "000000189",
+    "INC": "03372",
+    "ITEM_NAME": "TRANSMITTER,LIQUID QUANTITY",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "EA-6B I-CAP II PECULIAR",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 148,
+    "FSC": "4920",
+    "NIIN": "000000190",
+    "INC": "03639",
+    "ITEM_NAME": "TEST SET,FLIGHT CONTROL SYSTEM",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 151,
+    "FSC": "3510",
+    "NIIN": "000000193",
+    "INC": "45807",
+    "ITEM_NAME": "DRYING TUMBLER,LAUNDRY,MOBILE",
+    "SOS": "A12",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 153,
+    "FSC": "1427",
+    "NIIN": "000000195",
+    "INC": "42771",
+    "ITEM_NAME": "GUIDED MISSILE AND LAUNCHING ASS",
+    "SOS": "B64",
+    "END_ITEM_NAME": "ATACMS,SURFACE TO SURFACE MISSILE",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 154,
+    "FSC": "6830",
+    "NIIN": "000000196",
+    "INC": "16852",
+    "ITEM_NAME": "MONOCHLORODIFLUOROMETHANE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 155,
+    "FSC": "6830",
+    "NIIN": "000000197",
+    "INC": "16634",
+    "ITEM_NAME": "DICHLOROTETRAFLUOROETHANE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 156,
+    "FSC": "6830",
+    "NIIN": "000000198",
+    "INC": "23722",
+    "ITEM_NAME": "DICHLORODIFLUOROMETHANE AND DIFL",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 157,
+    "FSC": "6830",
+    "NIIN": "000000199",
+    "INC": "30324",
+    "ITEM_NAME": "MONOCHLORODIFLUOROMETHANE AND MO",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 256,
+    "FSC": "2990",
+    "NIIN": "000010001",
+    "INC": "77777",
+    "ITEM_NAME": "BLOWER ASSEMBLY",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "19401823097; 19404170526",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 258,
+    "FSC": "1450",
+    "NIIN": "000010003",
+    "INC": "77777",
+    "ITEM_NAME": "SCREEN ASSEMBLY",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 259,
+    "FSC": "1450",
+    "NIIN": "000010004",
+    "INC": "77777",
+    "ITEM_NAME": "SCREEN ASSEMBLY",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 260,
+    "FSC": "2010",
+    "NIIN": "000010005",
+    "INC": "03044",
+    "ITEM_NAME": "SHAFT,PROPULSION,SHIP",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 263,
+    "FSC": "4730",
+    "NIIN": "000010008",
+    "INC": "06078",
+    "ITEM_NAME": "COUPLING,TUBE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "LANDING CRAFT AIR CUSHION",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 264,
+    "FSC": "4730",
+    "NIIN": "000010009",
+    "INC": "06078",
+    "ITEM_NAME": "COUPLING,TUBE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "LANDING CRAFT AIR CUSHION",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 265,
+    "FSC": "4820",
+    "NIIN": "000010010",
+    "INC": "45485",
+    "ITEM_NAME": "VALVE,ROTARY,SELECTOR",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 267,
+    "FSC": "2530",
+    "NIIN": "000010012",
+    "INC": "17961",
+    "ITEM_NAME": "WHEEL,SOLID RUBBER TIRE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 269,
+    "FSC": "4720",
+    "NIIN": "000010014",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 271,
+    "FSC": "4730",
+    "NIIN": "000010017",
+    "INC": "18018",
+    "ITEM_NAME": "ADAPTER BUSHING",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "SUPPORT EQUIPMENT F-4 AIRCRAFT",
+    "CANCELLED_NIIN": "001695644"
+  },
+  {
+    "source_record": 272,
+    "FSC": "4730",
+    "NIIN": "000010018",
+    "INC": "03769",
+    "ITEM_NAME": "ELBOW,PIPE TO HOSE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "TACT. INFO PROCESS AND INTERPRETATION SYSTEM WS-42",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 275,
+    "FSC": "2815",
+    "NIIN": "000010022",
+    "INC": "15884",
+    "ITEM_NAME": "VALVE,POPPET,ENGINE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "CRAWLER TRACTOR;J I CASE,MODEL 450B.",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 276,
+    "FSC": "4720",
+    "NIIN": "000010023",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 277,
+    "FSC": "4820",
+    "NIIN": "000010024",
+    "INC": "35224",
+    "ITEM_NAME": "DISK,VALVE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": "000054932"
+  },
+  {
+    "source_record": 284,
+    "FSC": "4720",
+    "NIIN": "000010031",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 288,
+    "FSC": "4820",
+    "NIIN": "000010037",
+    "INC": "05488",
+    "ITEM_NAME": "VALVE,SAFETY RELIEF",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 294,
+    "FSC": "4730",
+    "NIIN": "000010049",
+    "INC": "18681",
+    "ITEM_NAME": "COUPLING HALF,QUICK DISCONNECT",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "AIRCRAFT, GALAXY C-5",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 295,
+    "FSC": "4720",
+    "NIIN": "000010053",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 296,
+    "FSC": "4730",
+    "NIIN": "000010056",
+    "INC": "18681",
+    "ITEM_NAME": "COUPLING HALF,QUICK DISCONNECT",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "AIRCRAFT, GALAXY C-5",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 297,
+    "FSC": "4720",
+    "NIIN": "000010057",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 300,
+    "FSC": "4720",
+    "NIIN": "000010060",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 308,
+    "FSC": "4720",
+    "NIIN": "000010070",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 313,
+    "FSC": "4730",
+    "NIIN": "000010076",
+    "INC": "03771",
+    "ITEM_NAME": "ELBOW,TUBE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 317,
+    "FSC": "4710",
+    "NIIN": "000010080",
+    "INC": "21989",
+    "ITEM_NAME": "TUBE ASSEMBLY,METAL",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 319,
+    "FSC": "4710",
+    "NIIN": "000010082",
+    "INC": "21989",
+    "ITEM_NAME": "TUBE ASSEMBLY,METAL",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 321,
+    "FSC": "4720",
+    "NIIN": "000010084",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 325,
+    "FSC": "4720",
+    "NIIN": "000010092",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 326,
+    "FSC": "4720",
+    "NIIN": "000010093",
+    "INC": "20311",
+    "ITEM_NAME": "HOSE ASSEMBLY,NONMETALLIC",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 330,
+    "FSC": "6540",
+    "NIIN": "000010101",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 347,
+    "FSC": "6540",
+    "NIIN": "000010118",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 348,
+    "FSC": "6540",
+    "NIIN": "000010119",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 349,
+    "FSC": "6540",
+    "NIIN": "000010120",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 350,
+    "FSC": "6540",
+    "NIIN": "000010121",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 352,
+    "FSC": "6540",
+    "NIIN": "000010123",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 354,
+    "FSC": "6540",
+    "NIIN": "000010125",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 355,
+    "FSC": "6540",
+    "NIIN": "000010126",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 356,
+    "FSC": "6540",
+    "NIIN": "000010127",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 357,
+    "FSC": "6540",
+    "NIIN": "000010128",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 358,
+    "FSC": "6540",
+    "NIIN": "000010129",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 359,
+    "FSC": "6540",
+    "NIIN": "000010130",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 360,
+    "FSC": "6540",
+    "NIIN": "000010131",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 361,
+    "FSC": "6540",
+    "NIIN": "000010132",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 362,
+    "FSC": "6540",
+    "NIIN": "000010133",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 371,
+    "FSC": "6540",
+    "NIIN": "000010142",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 373,
+    "FSC": "6540",
+    "NIIN": "000010144",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 374,
+    "FSC": "6540",
+    "NIIN": "000010145",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 378,
+    "FSC": "6540",
+    "NIIN": "000010149",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 381,
+    "FSC": "6540",
+    "NIIN": "000010152",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 383,
+    "FSC": "6540",
+    "NIIN": "000010154",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 386,
+    "FSC": "6540",
+    "NIIN": "000010157",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 387,
+    "FSC": "6540",
+    "NIIN": "000010158",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 388,
+    "FSC": "6540",
+    "NIIN": "000010159",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 389,
+    "FSC": "6540",
+    "NIIN": "000010160",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 390,
+    "FSC": "6540",
+    "NIIN": "000010161",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 391,
+    "FSC": "6540",
+    "NIIN": "000010162",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 392,
+    "FSC": "6540",
+    "NIIN": "000010163",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 393,
+    "FSC": "6540",
+    "NIIN": "000010164",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 394,
+    "FSC": "6540",
+    "NIIN": "000010165",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 395,
+    "FSC": "6540",
+    "NIIN": "000010166",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 396,
+    "FSC": "6540",
+    "NIIN": "000010167",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 397,
+    "FSC": "6540",
+    "NIIN": "000010168",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 398,
+    "FSC": "6540",
+    "NIIN": "000010169",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 399,
+    "FSC": "6540",
+    "NIIN": "000010170",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 400,
+    "FSC": "6540",
+    "NIIN": "000010171",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 401,
+    "FSC": "6540",
+    "NIIN": "000010172",
+    "INC": "04122",
+    "ITEM_NAME": "LENS,OPHTHALMIC,SPHERE",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 422,
+    "FSC": "6540",
+    "NIIN": "000010193",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 423,
+    "FSC": "6540",
+    "NIIN": "000010194",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 424,
+    "FSC": "6540",
+    "NIIN": "000010195",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 425,
+    "FSC": "6540",
+    "NIIN": "000010196",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 426,
+    "FSC": "6540",
+    "NIIN": "000010197",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 427,
+    "FSC": "6540",
+    "NIIN": "000010198",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 428,
+    "FSC": "6540",
+    "NIIN": "000010199",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 429,
+    "FSC": "6540",
+    "NIIN": "000010200",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 430,
+    "FSC": "6540",
+    "NIIN": "000010201",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 431,
+    "FSC": "6540",
+    "NIIN": "000010202",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 432,
+    "FSC": "6540",
+    "NIIN": "000010203",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 433,
+    "FSC": "6540",
+    "NIIN": "000010204",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 434,
+    "FSC": "6540",
+    "NIIN": "000010205",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 435,
+    "FSC": "6540",
+    "NIIN": "000010206",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 436,
+    "FSC": "6540",
+    "NIIN": "000010207",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 437,
+    "FSC": "6540",
+    "NIIN": "000010208",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 438,
+    "FSC": "6540",
+    "NIIN": "000010209",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 439,
+    "FSC": "6540",
+    "NIIN": "000010210",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 442,
+    "FSC": "6540",
+    "NIIN": "000010213",
+    "INC": "30298",
+    "ITEM_NAME": "LENS,OPHTHALMIC,PLANO CYLINDER",
+    "SOS": "",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 444,
+    "FSC": "6540",
+    "NIIN": "000010215",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 445,
+    "FSC": "6540",
+    "NIIN": "000010216",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 446,
+    "FSC": "6540",
+    "NIIN": "000010217",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 447,
+    "FSC": "6540",
+    "NIIN": "000010218",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 449,
+    "FSC": "6540",
+    "NIIN": "000010220",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 450,
+    "FSC": "6540",
+    "NIIN": "000010221",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 451,
+    "FSC": "6540",
+    "NIIN": "000010222",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 452,
+    "FSC": "6540",
+    "NIIN": "000010223",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 453,
+    "FSC": "6540",
+    "NIIN": "000010224",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 454,
+    "FSC": "6540",
+    "NIIN": "000010225",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 455,
+    "FSC": "6540",
+    "NIIN": "000010226",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 456,
+    "FSC": "6540",
+    "NIIN": "000010227",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 457,
+    "FSC": "6540",
+    "NIIN": "000010228",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 458,
+    "FSC": "6540",
+    "NIIN": "000010229",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 459,
+    "FSC": "6540",
+    "NIIN": "000010230",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 460,
+    "FSC": "6540",
+    "NIIN": "000010231",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 461,
+    "FSC": "6540",
+    "NIIN": "000010232",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 462,
+    "FSC": "6540",
+    "NIIN": "000010233",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 463,
+    "FSC": "6540",
+    "NIIN": "000010234",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 464,
+    "FSC": "6540",
+    "NIIN": "000010235",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  },
+  {
+    "source_record": 478,
+    "FSC": "6540",
+    "NIIN": "000010249",
+    "INC": "04121",
+    "ITEM_NAME": "LENS,OPHTHALMIC,COMPOUND",
+    "SOS": "SMS",
+    "END_ITEM_NAME": "",
+    "CANCELLED_NIIN": ""
+  }
+]

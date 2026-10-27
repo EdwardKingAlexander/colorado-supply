@@ -1,0 +1,70 @@
+[
+    {
+        "file": "V_FLIS_PART.CSV",
+        "rows": 100000,
+        "seconds_including_indexes": 1.024,
+        "database_bytes": 31887360,
+        "bytes_per_row_with_raw_json_and_three_indexes": 318.8736,
+        "php_process_peak_bytes": 2097152,
+        "warm_exact_lookup_p95_ms": 0.0536,
+        "explain": [
+            {
+                "id": 5,
+                "parent": 0,
+                "notused": 61,
+                "detail": "SEARCH records USING INDEX idx_k1 (version_id=? AND k1=?)"
+            }
+        ]
+    },
+    {
+        "file": "P_FLIS_NSN.CSV",
+        "rows": 100000,
+        "seconds_including_indexes": 0.965,
+        "database_bytes": 23715840,
+        "bytes_per_row_with_raw_json_and_three_indexes": 237.1584,
+        "php_process_peak_bytes": 2097152,
+        "warm_exact_lookup_p95_ms": 0.044,
+        "explain": [
+            {
+                "id": 5,
+                "parent": 0,
+                "notused": 61,
+                "detail": "SEARCH records USING INDEX idx_k1 (version_id=? AND k1=?)"
+            }
+        ]
+    },
+    {
+        "file": "P_CAGE.CSV",
+        "rows": 100000,
+        "seconds_including_indexes": 1.093,
+        "database_bytes": 31182848,
+        "bytes_per_row_with_raw_json_and_three_indexes": 311.82848,
+        "php_process_peak_bytes": 2097152,
+        "warm_exact_lookup_p95_ms": 0.0696,
+        "explain": [
+            {
+                "id": 5,
+                "parent": 0,
+                "notused": 61,
+                "detail": "SEARCH records USING INDEX idx_k1 (version_id=? AND k1=?)"
+            }
+        ]
+    },
+    {
+        "file": "V_CAGE_ADDRESS.CSV",
+        "rows": 100000,
+        "seconds_including_indexes": 1.365,
+        "database_bytes": 38367232,
+        "bytes_per_row_with_raw_json_and_three_indexes": 383.67232,
+        "php_process_peak_bytes": 2097152,
+        "warm_exact_lookup_p95_ms": 0.1076,
+        "explain": [
+            {
+                "id": 5,
+                "parent": 0,
+                "notused": 61,
+                "detail": "SEARCH records USING INDEX idx_k1 (version_id=? AND k1=?)"
+            }
+        ]
+    }
+]

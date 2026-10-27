@@ -1,0 +1,22 @@
+[
+    {
+        "table":  "cage_entities",
+        "estimated_bytes":  3364299695
+    },
+    {
+        "table":  "nsn_catalog_items",
+        "estimated_bytes":  4923455981
+    },
+    {
+        "table":  "nsn_catalog_relationships",
+        "estimated_bytes":  10074166247
+    },
+    {
+        "table":  "nsn_references",
+        "estimated_bytes":  11112278538
+    },
+    {
+        "table":  "pub_log_definitions",
+        "estimated_bytes":  17383424
+    }
+]

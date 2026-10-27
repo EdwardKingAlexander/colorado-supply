@@ -1,0 +1,22 @@
+[
+  {
+    "source_record": 1,
+    "INC": "00001",
+    "COLLOQUIAL_NAME": "CATHODE RAY TUBE"
+  },
+  {
+    "source_record": 2,
+    "INC": "00001",
+    "COLLOQUIAL_NAME": "INFRARED IMAGE TUBE"
+  },
+  {
+    "source_record": 3,
+    "INC": "00001",
+    "COLLOQUIAL_NAME": "KENOTRON,RECTIFIER"
+  },
+  {
+    "source_record": 4,
+    "INC": "00001",
+    "COLLOQUIAL_NAME": "GEIGER-MUELLER TUBE"
+  }
+]

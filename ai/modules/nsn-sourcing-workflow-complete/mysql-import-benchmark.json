@@ -1,0 +1,197 @@
+{
+    "mysql": "8.0.46",
+    "seconds": 3112.9592730998993,
+    "peak_php_bytes": 60817408,
+    "import": {
+        "id": 1,
+        "release_date": "2026-10-01T00:00:00.000000Z",
+        "fingerprint": "a4461291fa6045143166c5234ed88ff99201db6d5462b9d8e471270cfe7b6fb7",
+        "status": "ready",
+        "manifest": {
+            "schema": "publog-2026-10",
+            "archives": {
+                "CAGE": {
+                    "path": "C:\\Users\\babyd\\Herd\\colorado-supply\\ai\\modules\\nsn-sourcing-workflow\/artifacts\/mysql-benchmark\/imports\\aeeab788-7c95-4646-90e0-a6cc64098d1f\\CAGE.zip",
+                    "bytes": 265932060,
+                    "sha256": "6a501987dd02cb750cda7544809caf4d8085742292e75832328097738a5a06af",
+                    "members": {
+                        "P_CAGE.CSV": {
+                            "crc": "fa05ff9a",
+                            "bytes": 371183040,
+                            "modified_at": 1790609982
+                        },
+                        "V_CAGE_ADDRESS.CSV": {
+                            "crc": "a1baf384",
+                            "bytes": 468230972,
+                            "modified_at": 1790610028
+                        }
+                    }
+                },
+                "REFERENCE": {
+                    "path": "C:\\Users\\babyd\\Herd\\colorado-supply\\ai\\modules\\nsn-sourcing-workflow\/artifacts\/mysql-benchmark\/imports\\aeeab788-7c95-4646-90e0-a6cc64098d1f\\REFERENCE.zip",
+                    "bytes": 180541473,
+                    "sha256": "f75203e29360579612a65de9642289b68500119bc699eb07b69490cced8fefa9",
+                    "members": {
+                        "V_FLIS_PART.CSV": {
+                            "crc": "9f9a0021",
+                            "bytes": 1283022921,
+                            "modified_at": 1790611344
+                        }
+                    }
+                },
+                "IDENTIFICATION": {
+                    "path": "C:\\Users\\babyd\\Herd\\colorado-supply\\ai\\modules\\nsn-sourcing-workflow\/artifacts\/mysql-benchmark\/imports\\aeeab788-7c95-4646-90e0-a6cc64098d1f\\IDENTIFICATION.zip",
+                    "bytes": 362453790,
+                    "sha256": "549c77ebe10aaf8c573379431e1e50789b423ef95a291a3c284e1b74c0a26d2c",
+                    "members": {
+                        "P_HELP.CSV": {
+                            "crc": "fe503d77",
+                            "bytes": 4798116,
+                            "modified_at": 1790610206
+                        },
+                        "P_FLIS_NSN.CSV": {
+                            "crc": "f59ebe03",
+                            "bytes": 987210664,
+                            "modified_at": 1790610206
+                        },
+                        "V_COLLOQUIAL_NAME.CSV": {
+                            "crc": "371400aa",
+                            "bytes": 1068171,
+                            "modified_at": 1790610374
+                        },
+                        "V_FLIS_CANCELLED_NIIN.CSV": {
+                            "crc": "6eef7062",
+                            "bytes": 49009257,
+                            "modified_at": 1790610374
+                        },
+                        "V_FLIS_IDENTIFICATION.CSV": {
+                            "crc": "fddbae68",
+                            "bytes": 1608363642,
+                            "modified_at": 1790610368
+                        },
+                        "V_FLIS_STANDARDIZATION.CSV": {
+                            "crc": "4edd107c",
+                            "bytes": 614943289,
+                            "modified_at": 1790610456
+                        }
+                    }
+                }
+            },
+            "directory": "C:\\Users\\babyd\\Herd\\colorado-supply\\ai\\modules\\nsn-sourcing-workflow\/artifacts\/mysql-benchmark\/imports\\aeeab788-7c95-4646-90e0-a6cc64098d1f",
+            "baseline_import_id": null
+        },
+        "progress": {
+            "P_CAGE.CSV": {
+                "done": true,
+                "rows": 4158375,
+                "offset": 371183040,
+                "stored": 4158375,
+                "invalid_cage_codes": 1
+            },
+            "P_HELP.CSV": {
+                "done": true,
+                "rows": 36515,
+                "offset": 4798116,
+                "stored": 36200
+            },
+            "P_FLIS_NSN.CSV": {
+                "done": true,
+                "rows": 17025717,
+                "offset": 987210664,
+                "stored": 17025715
+            },
+            "V_FLIS_PART.CSV": {
+                "done": true,
+                "rows": 16623521,
+                "offset": 1283022921,
+                "stored": 16623521
+            },
+            "V_CAGE_ADDRESS.CSV": {
+                "done": true,
+                "rows": 4158375,
+                "offset": 468230972,
+                "stored": 4158375,
+                "invalid_cage_codes": 1
+            },
+            "V_FLIS_CANCELLED_NIIN.CSV": {
+                "done": true,
+                "rows": 907604,
+                "offset": 49009257,
+                "stored": 907604
+            },
+            "V_FLIS_STANDARDIZATION.CSV": {
+                "done": true,
+                "rows": 17400519,
+                "offset": 614943289,
+                "stored": 17361845
+            }
+        },
+        "validation": {
+            "counts": {
+                "cage_entities": 4158375,
+                "nsn_references": 16623521,
+                "nsn_catalog_items": 17025715,
+                "pub_log_definitions": 36200,
+                "nsn_catalog_relationships": 18269449
+            },
+            "orphan_references": 0,
+            "short_item_name_codes": 1,
+            "invalid_cage_source_rows": {
+                "P_CAGE.CSV": 1,
+                "V_FLIS_PART.CSV": 0,
+                "V_CAGE_ADDRESS.CSV": 1
+            },
+            "unresolved_cage_references": 930
+        },
+        "error": null,
+        "pinned": false,
+        "completed_at": "2026-10-05T18:36:45.000000Z",
+        "activated_at": null,
+        "created_at": "2026-10-05T03:05:34.000000Z",
+        "updated_at": "2026-10-05T18:36:45.000000Z"
+    },
+    "table_sizes": [
+        {
+            "TABLE_NAME": "cage_entities",
+            "TABLE_ROWS": 0,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_items",
+            "TABLE_ROWS": 3559782,
+            "DATA_LENGTH": 553648128,
+            "INDEX_LENGTH": 245055488
+        },
+        {
+            "TABLE_NAME": "nsn_catalog_relationships",
+            "TABLE_ROWS": 0,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384
+        },
+        {
+            "TABLE_NAME": "nsn_references",
+            "TABLE_ROWS": 0,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384
+        },
+        {
+            "TABLE_NAME": "pub_log_catalog_state",
+            "TABLE_ROWS": 1,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384
+        },
+        {
+            "TABLE_NAME": "pub_log_definitions",
+            "TABLE_ROWS": 0,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 16384
+        },
+        {
+            "TABLE_NAME": "pub_log_imports",
+            "TABLE_ROWS": 1,
+            "DATA_LENGTH": 16384,
+            "INDEX_LENGTH": 32768
+        }
+    ]
+}
