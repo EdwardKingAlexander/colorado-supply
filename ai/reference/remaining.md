@@ -1,12 +1,12 @@
 # Module status: complete vs. remaining
 
-Last updated: 2026-10-26
+Last updated: 2026-11-13
 
 Source of truth is each module's `STATE.md` in `ai/modules/`. A module counts
 as complete only when every phase is `Complete`; it is then renamed with a
 `-complete` suffix (see the Feature Planning Workflow in `AGENTS.md`).
 
-**Totals:** 14 complete, 22 remaining.
+**Totals:** 15 complete, 22 remaining.
 
 ## Complete (renamed to `-complete`)
 
@@ -19,6 +19,7 @@ as complete only when every phase is `Complete`; it is then renamed with a
 | `normal-user-dashboard-panel-complete` | 6/6 phases |
 | `nsn-sourcing-workflow-complete` | 5/5 phases, owner validated 2026-10-10. Commits a472e21d, ad7b1bf5, 4535cd6e (pushed 2026-10-23). Deployment = owner runs its RUNBOOK.md |
 | `product-detail-page-complete` | 5/5 phases, owner validated 2026-10-10. Commits 612c7d8b, ea77ce8e, f3cfedde, b10b1926 (pushed 2026-10-23). Follow-ups listed in its STATE.md |
+| `sam-api-key-format-fix-complete` | 2/2 phases, 2026-11-13 (owner asked to complete). Panel 400s were SAM.gov rejecting the old bare-UUID key; new `SAM-` key installed locally. Clearer credential errors, fail-fast, key redaction. Owner to-do: set the new `SAM_API_KEY` on Forge |
 | `sam-fetch-repair-complete` | Owner closed 2026-10-10 (fetch works). Phase 6 operator visibility/regression suite closed without being built |
 | `sam-result-volume-complete` | Investigation only, 2/2 phases; fixes continue in `sam-volume-fixes` |
 | `store-toggle-profile-menu-complete` | 1/1 phase |

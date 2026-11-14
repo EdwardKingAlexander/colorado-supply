@@ -271,7 +271,66 @@ describe('HTTP error handling', function () {
 
         expect($result['success'])->toBeFalse()
             ->and($result['status_code'])->toBe(401)
-            ->and($result['error'])->toBe('Authentication failed - check SAM.gov API key');
+            ->and($result['error_type'])->toBe('authentication')
+            ->and($result['error'])->toContain('refused the API key')
+            ->and($result['error'])->toContain(SamApiClient::KEY_REMEDY);
+    });
+
+    test('names the key format when SAM.gov rejects an old-style key with a 400', function () {
+        Http::fake([
+            '*opportunities/v2/search*' => Http::response([
+                'detail' => 'Validation failure',
+                'instance' => '/opportunities/v2/search',
+                'status' => 400,
+                'title' => 'Bad Request',
+            ], 400),
+        ]);
+
+        $params = ['posted_from' => '01/01/2025', 'posted_to' => '01/31/2025', 'notice_type_codes' => ['o']];
+
+        $result = (new SamApiClient)->fetch('123456', $params, 'c94b240c-1ac0-4a1e-b0c3-000000000000');
+
+        expect($result['success'])->toBeFalse()
+            ->and($result['status_code'])->toBe(400)
+            ->and($result['error_type'])->toBe('api_key_format')
+            ->and($result['error'])->toContain('API key format')
+            ->and($result['error'])->toContain(SamApiClient::KEY_REMEDY)
+            ->and($result['error'])->not->toContain('c94b240c');
+    });
+
+    test('does not blame the key format when a current-format key gets a 400', function () {
+        Http::fake([
+            '*opportunities/v2/search*' => Http::response(['detail' => 'Validation failure', 'status' => 400], 400),
+        ]);
+
+        $params = ['posted_from' => '01/01/2025', 'posted_to' => '01/31/2025', 'notice_type_codes' => ['o']];
+
+        $result = (new SamApiClient)->fetch('123456', $params, 'SAM-c94b240c-1ac0-4a1e-b0c3-000000000000');
+
+        expect($result['error_type'])->toBe('bad_request')
+            ->and($result['error'])->toBe('SAM.gov rejected the request: Validation failure');
+    });
+
+    test('passes SAM.gov\'s own explanation through on other 400s', function () {
+        Http::fake([
+            '*opportunities/v2/search*' => Http::response([
+                'detail' => 'Date range must be 1 year(s) apart',
+                'status' => 400,
+            ], 400),
+        ]);
+
+        $params = ['posted_from' => '01/01/2024', 'posted_to' => '01/31/2025', 'notice_type_codes' => ['o']];
+
+        $result = (new SamApiClient)->fetch('123456', $params, 'c94b240c-1ac0-4a1e-b0c3-000000000000');
+
+        expect($result['error_type'])->toBe('bad_request')
+            ->and($result['error'])->toContain('Date range must be 1 year(s) apart');
+    });
+
+    test('recognises the current key format', function () {
+        expect(SamApiClient::hasCurrentKeyFormat('SAM-c94b240c-1ac0-4a1e-b0c3-000000000000'))->toBeTrue()
+            ->and(SamApiClient::hasCurrentKeyFormat('c94b240c-1ac0-4a1e-b0c3-000000000000'))->toBeFalse()
+            ->and(SamApiClient::hasCurrentKeyFormat(''))->toBeFalse();
     });
 
     test('handles 404 endpoint not found', function () {
@@ -383,6 +442,26 @@ describe('network error handling', function () {
         expect($result['success'])->toBeFalse()
             ->and($result['error'])->toContain('Network error')
             ->and($result['status_code'])->toBeNull();
+    });
+
+    test('redacts the API key that cURL quotes in timeout messages', function () {
+        $key = 'SAM-c94b240c-1ac0-4a1e-b0c3-000000000000';
+
+        Log::shouldReceive('warning')
+            ->once()
+            ->withArgs(fn ($message, $context) => ! str_contains($context['error'], $key));
+
+        Http::fake(function () use ($key) {
+            throw new ConnectionException('cURL error 28: Operation timed out after 30001 milliseconds for '
+                ."https://api.sam.gov/opportunities/v2/search?api_key={$key}&postedFrom=10%2F30%2F2026&ccode=39");
+        });
+
+        $params = ['posted_from' => '01/01/2025', 'posted_to' => '01/31/2025', 'notice_type_codes' => ['o']];
+
+        $result = (new SamApiClient)->fetch('39', $params, $key, 'psc');
+
+        expect($result['error'])->not->toContain($key)
+            ->and($result['error'])->toContain('api_key=***&postedFrom=');
     });
 });
 

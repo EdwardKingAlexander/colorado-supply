@@ -51,6 +51,48 @@ it('distinguishes a rejected credential from a missing route', function () {
 
     $this->artisan('sam:diagnose')
         ->expectsOutputToContain('Credential rejected')
+        ->expectsOutputToContain('Request Public API Key')
+        ->assertExitCode(1);
+});
+
+it('blames the old key format, not the route, when SAM.gov answers 400 with and without a key', function () {
+    // Live signature, 2026-11-13: both probes 400, but with different bodies.
+    Http::fake(function ($request) {
+        if (! str_contains($request->url(), 'sam.test')) {
+            return Http::response('ok', 200);
+        }
+
+        return str_contains($request->url(), 'api_key=')
+            ? Http::response(['detail' => 'Validation failure', 'status' => 400, 'title' => 'Bad Request'], 400)
+            : Http::response(['detail' => "Required parameter 'api_key' is not present.", 'status' => 400], 400);
+    });
+
+    $this->artisan('sam:diagnose')
+        ->expectsOutputToContain('bare UUID (old format')
+        ->expectsOutputToContain('API key rejected (old key format)')
+        ->expectsOutputToContain('Request Public API Key')
+        ->doesntExpectOutputToContain('the route itself is the problem')
+        ->assertExitCode(1);
+});
+
+it('does not blame the key format for a 400 when the key is current-format', function () {
+    Config::set('services.sam.api_key', 'SAM-c94b240c-1ac0-4a1e-b0c3-000000000000');
+
+    Http::fake(function ($request) {
+        if (! str_contains($request->url(), 'sam.test')) {
+            return Http::response('ok', 200);
+        }
+
+        return str_contains($request->url(), 'api_key=')
+            ? Http::response(['detail' => 'Invalid Date Entered', 'status' => 400], 400)
+            : Http::response(['detail' => "Required parameter 'api_key' is not present.", 'status' => 400], 400);
+    });
+
+    $this->artisan('sam:diagnose')
+        ->expectsOutputToContain('SAM- prefixed (current SAM.gov format)')
+        ->expectsOutputToContain('Unexpected HTTP 400')
+        ->expectsOutputToContain('Invalid Date Entered')
+        ->doesntExpectOutputToContain('old key format')
         ->assertExitCode(1);
 });
 

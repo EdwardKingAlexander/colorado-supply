@@ -166,7 +166,7 @@ describe('error tolerance', function () {
         Http::fake([
             '*opportunities/v2/search*' => Http::sequence()
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'SUCCESS1']]], 200)
-                ->push('Unauthorized', 401) // Non-retryable failure
+                ->push('Forbidden', 403) // Non-retryable, but not a refused key (those stop the run)
                 ->push(['totalRecords' => 1, 'opportunitiesData' => [['noticeId' => 'SUCCESS2']]], 200),
         ]);
 
@@ -231,6 +231,53 @@ describe('error tolerance', function () {
         expect($result['results'])->toHaveCount(2)
             ->and($result['results'][0]['success'])->toBeFalse()
             ->and($result['results'][1]['success'])->toBeFalse();
+    });
+
+    test('stops after the first refused key instead of querying every term', function (int $status, array $body, string $errorType) {
+        Http::fake([
+            '*opportunities/v2/search*' => Http::response($body, $status),
+        ]);
+
+        $fetcher = new SamMultiNaicsFetcher;
+
+        $params = [
+            'posted_from' => '01/01/2025',
+            'posted_to' => '01/31/2025',
+            'notice_type_codes' => ['o'],
+        ];
+
+        $result = $fetcher->fetchAll(['111111', '222222'], $params, 'c94b240c-1ac0-4a1e-b0c3-000000000000', ['53']);
+
+        Http::assertSentCount(1);
+
+        expect($result['results'])->toHaveCount(1)
+            ->and($result['results'][0]['error_type'])->toBe($errorType)
+            ->and($fetcher->getSummary($result)['failed_terms'])->toBe(1)
+            ->and($fetcher->getFailedNaics($result)[0]['error'])->toContain('Request Public API Key');
+    })->with([
+        'old-format key (400)' => [400, ['detail' => 'Validation failure', 'status' => 400], 'api_key_format'],
+        'invalid key (401)' => [401, ['errorCode' => '401 UNAUTHORIZED', 'errorMessage' => 'Invalid API Key'], 'authentication'],
+    ]);
+
+    test('keeps going after an ordinary 400 that is not about the key', function () {
+        Http::fake([
+            '*opportunities/v2/search*' => Http::response(['detail' => 'Validation failure', 'status' => 400], 400),
+        ]);
+
+        $fetcher = new SamMultiNaicsFetcher;
+
+        $params = [
+            'posted_from' => '01/01/2025',
+            'posted_to' => '01/31/2025',
+            'notice_type_codes' => ['o'],
+        ];
+
+        $result = $fetcher->fetchAll(['111111', '222222'], $params, 'SAM-c94b240c-1ac0-4a1e-b0c3-000000000000');
+
+        Http::assertSentCount(2);
+
+        expect($result['results'])->toHaveCount(2)
+            ->and($result['results'][0]['error_type'])->toBe('bad_request');
     });
 });
 
@@ -429,7 +476,7 @@ describe('failed NAICS extraction', function () {
         Http::fake([
             '*opportunities/v2/search*' => Http::sequence()
                 ->push(['totalRecords' => 1, 'opportunitiesData' => []], 200) // 111111 success
-                ->push('Unauthorized', 401) // 222222 fail
+                ->push('Forbidden', 403) // 222222 fail
                 ->push('Server Error', 500), // 333333 fail
         ]);
 
@@ -447,7 +494,7 @@ describe('failed NAICS extraction', function () {
 
         expect($failed)->toHaveCount(2)
             ->and($failed[0]['naics'])->toBe('222222')
-            ->and($failed[0]['status_code'])->toBe(401)
+            ->and($failed[0]['status_code'])->toBe(403)
             ->and($failed[1]['naics'])->toBe('333333')
             ->and($failed[1]['status_code'])->toBe(500);
     });

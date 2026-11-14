@@ -58,6 +58,18 @@ it('alerts when every NAICS query errors', function () {
     Notification::assertSentOnDemand(SamFetchFailedNotification::class);
 });
 
+it('alerts with the remedy when SAM.gov refuses the API key', function () {
+    Notification::fake();
+    Http::fake(['*' => Http::response(['errorCode' => '401 UNAUTHORIZED', 'errorMessage' => 'Invalid API Key'], 401)]);
+
+    runFetchJob();
+
+    Notification::assertSentOnDemand(
+        SamFetchFailedNotification::class,
+        fn ($notification) => str_contains($notification->reason, 'Request Public API Key')
+    );
+});
+
 it('stays silent when the fetch succeeds with zero opportunities', function () {
     Notification::fake();
 

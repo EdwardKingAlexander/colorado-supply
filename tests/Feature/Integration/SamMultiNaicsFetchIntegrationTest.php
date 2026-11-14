@@ -282,10 +282,12 @@ describe('partial success scenario', function () {
 
 describe('complete failure scenario', function () {
     test('returns failure response when all NAICS queries fail', function () {
+        // A server error, not a refused key: a refused key stops the run after
+        // the first term (covered in SamMultiNaicsFetcherTest).
         Http::fake([
             '*ncode=*' => Http::response([
-                'error' => 'Invalid API key',
-            ], 401),
+                'error' => 'Internal Server Error',
+            ], 500),
         ]);
 
         $tool = new FetchSamOpportunitiesTool;

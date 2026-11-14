@@ -159,6 +159,19 @@ class SamMultiNaicsFetcher
                 }
 
                 $results[] = $result;
+
+                // A refused key fails every term the same way: stop instead of
+                // spending ~100 more requests (and minutes) on the same answer.
+                if (in_array($result['error_type'] ?? null, SamApiClient::CREDENTIAL_ERROR_TYPES, true)) {
+                    Log::warning('SAM.gov fetch stopped: API key refused', [
+                        'service' => 'SamMultiNaicsFetcher',
+                        'term' => $term,
+                        'error_type' => $result['error_type'],
+                        'terms_skipped' => $totalTerms - $index - 1,
+                    ]);
+
+                    break;
+                }
             }
 
             // Add delay between requests (except after last one)
@@ -206,6 +219,7 @@ class SamMultiNaicsFetcher
         $statusCode = $result['status_code'] ?? null;
 
         return match ($statusCode) {
+            400 => 'bad_request',
             429 => 'rate_limit',
             401 => 'authentication',
             404 => 'endpoint_not_found',

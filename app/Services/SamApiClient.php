@@ -24,7 +24,7 @@ class SamApiClient
      * Fallback base URL, used only if config is missing.
      *
      * @see config('services.sam.base_url') for the authoritative value and the
-     *      reason it no longer points at api.sam.gov.
+     *      history of the two hosts.
      */
     protected const API_BASE_URL = 'https://sam.gov/api/prod/opportunities/v2/search';
 
@@ -76,9 +76,32 @@ class SamApiClient
     protected const DEFAULT_MAX_PAGES = 10;
 
     /**
+     * What to tell the operator when SAM.gov refuses the API key.
+     */
+    public const KEY_REMEDY = 'Issue a new key at SAM.gov (Profile → Account Details → Request Public API Key) and update SAM_API_KEY.';
+
+    /**
+     * Error types that are identical for every search term, so a fetch can stop at the first one.
+     */
+    public const CREDENTIAL_ERROR_TYPES = ['api_key_format', 'authentication'];
+
+    /**
      * Search dimension of the request in flight: 'naics' sends `ncode`, 'psc' sends `ccode`.
      */
     protected string $dimension = 'naics';
+
+    /**
+     * Whether a key has the format SAM.gov currently accepts.
+     *
+     * SAM.gov began rejecting old bare-UUID keys with a 400 "Validation failure"
+     * before authenticating them (seen 2026-11-13; undocumented by GSA). Keys
+     * issued since look like "SAM-<uuid>". Inferred from behaviour, so callers
+     * use this to explain failures, never to block a request.
+     */
+    public static function hasCurrentKeyFormat(string $apiKey): bool
+    {
+        return str_starts_with($apiKey, 'SAM-');
+    }
 
     /**
      * Fetch opportunities from SAM.gov v2 API for a single search term.
@@ -250,7 +273,7 @@ class SamApiClient
 
                 // Handle other HTTP errors
                 if (! $response->successful()) {
-                    return $this->buildErrorResponse($naicsCode, $response);
+                    return $this->buildErrorResponse($naicsCode, $response, $apiKey);
                 }
 
                 // Parse and validate response
@@ -275,9 +298,10 @@ class SamApiClient
      * Disambiguate SAM.gov's two very different 404s.
      *
      * GSA documents 404 as "no data" for the opportunities endpoint, so an
-     * empty result set legitimately arrives as a 404 with a JSON body. But the
-     * api.sam.gov gateway outage that began around 2026-07-09 also answered
-     * every path with 404 — with a zero-length body.
+     * empty result set legitimately arrives as a 404 with a JSON body. But
+     * since around 2026-07-09 api.sam.gov also answers an old-format key with
+     * a 404 — with a zero-length body (first taken for a gateway outage; see
+     * config/services.php).
      *
      * Treating both as fatal reports "no matching opportunities" as a total
      * system failure. Treating both as success hides a real outage behind a
@@ -441,14 +465,25 @@ class SamApiClient
      *
      * @param  string  $naicsCode  NAICS code
      * @param  Response  $response  HTTP response
+     * @param  string|null  $apiKey  Key that was sent, used only to explain a 400 (never logged)
      * @return array Error response
      */
-    protected function buildErrorResponse(string $naicsCode, $response): array
+    protected function buildErrorResponse(string $naicsCode, $response, ?string $apiKey = null): array
     {
         $statusCode = $response->status();
         $errorCategory = $this->categorizeHttpError($statusCode);
         $responseBody = $response->body();
         $headers = $response->headers();
+
+        // SAM.gov's own explanation: `detail` on 400s, `errorMessage` on 401s.
+        $json = $response->json();
+        $samDetail = is_array($json) ? (string) ($json['detail'] ?? $json['errorMessage'] ?? '') : '';
+
+        // An old-format key gets a 400 "Validation failure" rather than a 401.
+        if ($statusCode === 400 && $samDetail === 'Validation failure'
+            && $apiKey !== null && ! self::hasCurrentKeyFormat($apiKey)) {
+            $errorCategory = 'api_key_format';
+        }
 
         Log::warning('SAM.gov API returned error status', [
             'service' => 'SamApiClient',
@@ -461,12 +496,14 @@ class SamApiClient
         ]);
 
         // Build user-friendly error message based on status code
-        $errorMessage = match ($statusCode) {
-            401 => 'Authentication failed - check SAM.gov API key',
-            403 => 'Access forbidden - API key may lack permissions',
-            404 => 'API endpoint not found',
-            429 => 'Rate limit exceeded - too many requests',
-            500, 502, 503, 504 => 'SAM.gov server error - try again later',
+        $errorMessage = match (true) {
+            $errorCategory === 'api_key_format' => 'SAM.gov rejected the API key format (old-style key). '.self::KEY_REMEDY,
+            $statusCode === 400 => 'SAM.gov rejected the request'.($samDetail !== '' ? ': '.substr($samDetail, 0, 200) : ''),
+            $statusCode === 401 => 'SAM.gov refused the API key (invalid or expired). '.self::KEY_REMEDY,
+            $statusCode === 403 => 'Access forbidden - API key may lack permissions',
+            $statusCode === 404 => 'API endpoint not found',
+            $statusCode === 429 => 'Rate limit exceeded - too many requests',
+            in_array($statusCode, [500, 502, 503, 504], true) => 'SAM.gov server error - try again later',
             default => 'SAM.gov API request failed',
         };
 
@@ -489,6 +526,7 @@ class SamApiClient
     protected function categorizeHttpError(int $statusCode): string
     {
         return match (true) {
+            $statusCode === 400 => 'bad_request',
             $statusCode === 401 => 'authentication',
             $statusCode === 404 => 'endpoint_not_found',
             $statusCode >= 500 => 'server_error',
@@ -505,17 +543,19 @@ class SamApiClient
      */
     protected function buildNetworkErrorResponse(string $naicsCode, ConnectionException $e): array
     {
+        $message = $this->redactApiKey($e->getMessage());
+
         Log::warning('SAM.gov network error', [
             'service' => 'SamApiClient',
             'naics' => $naicsCode,
-            'error' => $e->getMessage(),
+            'error' => $message,
             'error_category' => 'network_error',
         ]);
 
         return [
             'success' => false,
             'naics' => $naicsCode,
-            'error' => 'Network error: '.$e->getMessage(),
+            'error' => 'Network error: '.$message,
             'status_code' => null,
             'error_type' => 'network_error',
             'response_body' => null,
@@ -531,10 +571,12 @@ class SamApiClient
      */
     protected function buildUnexpectedErrorResponse(string $naicsCode, \Exception $e): array
     {
+        $message = $this->redactApiKey($e->getMessage());
+
         Log::error('Unexpected exception in SAM.gov query', [
             'service' => 'SamApiClient',
             'naics' => $naicsCode,
-            'error' => $e->getMessage(),
+            'error' => $message,
             'error_category' => 'unexpected_exception',
             'exception_class' => get_class($e),
         ]);
@@ -542,11 +584,21 @@ class SamApiClient
         return [
             'success' => false,
             'naics' => $naicsCode,
-            'error' => 'Unexpected error: '.$e->getMessage(),
+            'error' => 'Unexpected error: '.$message,
             'status_code' => null,
             'error_type' => 'unexpected_exception',
             'response_body' => null,
         ];
+    }
+
+    /**
+     * Strip the key from exception text. cURL errors quote the full request
+     * URL, key included, and these messages reach the log, the panel and the
+     * failure alert email.
+     */
+    protected function redactApiKey(string $message): string
+    {
+        return (string) preg_replace('/(api_key=)[^&\s"\']+/i', '$1***', $message);
     }
 
     /**

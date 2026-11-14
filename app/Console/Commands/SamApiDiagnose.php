@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Services\SamApiClient;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -33,6 +34,7 @@ class SamApiDiagnose extends Command
             'api_key_present' => $apiKey !== '',
             'api_key_length' => strlen($apiKey),
             'api_key_shape' => $this->describeKeyShape($apiKey),
+            'api_key_current_format' => SamApiClient::hasCurrentKeyFormat($apiKey),
             'probes' => [],
         ];
 
@@ -139,16 +141,19 @@ class SamApiDiagnose extends Command
             ];
         }
 
-        // The signature of the 2026-07-09 gateway outage.
+        // The 2026-07-09 signature: api.sam.gov refusing an old-format key
+        // (first diagnosed as a gateway outage).
         if ($status === 404 && $withKey['body_length'] === 0) {
             $controlUp = ($control['ok'] ?? false) && ($control['status'] ?? 0) < 400;
 
             return [
                 'healthy' => false,
                 'summary' => 'Endpoint unreachable (empty-bodied 404)',
-                'detail' => $controlUp
-                    ? 'sam.gov itself responds, so this is not a local network fault. The endpoint has moved or its gateway is misrouting. Try setting SAM_API_BASE_URL to an alternate host.'
-                    : 'sam.gov is also unreachable — check this host\'s network connectivity first.',
+                'detail' => match (true) {
+                    ! $controlUp => 'sam.gov is also unreachable — check this host\'s network connectivity first.',
+                    ! $report['api_key_current_format'] => 'api.sam.gov answers old-format keys this way. '.SamApiClient::KEY_REMEDY,
+                    default => 'sam.gov itself responds, so this is not a local network fault. The endpoint has moved or its gateway is misrouting. Try setting SAM_API_BASE_URL to an alternate host.',
+                },
             ];
         }
 
@@ -164,18 +169,31 @@ class SamApiDiagnose extends Command
             return [
                 'healthy' => false,
                 'summary' => 'Credential rejected (HTTP '.$status.')',
-                'detail' => 'The route is alive but the API key was refused. Check or rotate SAM_API_KEY.',
+                'detail' => 'The route is alive but the API key was refused (invalid or expired). '.SamApiClient::KEY_REMEDY,
             ];
         }
 
-        $keylessDiffers = ($withoutKey['status'] ?? null) !== $status;
+        // Keyless and keyed requests can share a status but not a body: SAM.gov
+        // answers both with 400, "api_key is not present" vs "Validation failure".
+        // Comparing status alone blamed the route when the key was the problem.
+        $keylessDiffers = ($withoutKey['status'] ?? null) !== $status
+            || ($withoutKey['body_excerpt'] ?? null) !== ($withKey['body_excerpt'] ?? null);
+
+        if ($status === 400 && $keylessDiffers && ! $report['api_key_current_format']) {
+            return [
+                'healthy' => false,
+                'summary' => 'API key rejected (old key format)',
+                'detail' => 'SAM.gov now refuses keys that do not start with "SAM-". '.SamApiClient::KEY_REMEDY,
+            ];
+        }
 
         return [
             'healthy' => false,
             'summary' => 'Unexpected HTTP '.$status,
-            'detail' => $keylessDiffers
-                ? 'A keyless request returned HTTP '.($withoutKey['status'] ?? 'n/a').', so the route exists and the failure is request-specific.'
-                : 'A keyless request returned the same status, suggesting the route itself is the problem rather than the credential.',
+            'detail' => ($keylessDiffers
+                ? 'A keyless request was answered differently, so the route exists and the failure is request-specific.'
+                : 'A keyless request was answered identically, suggesting the route itself is the problem rather than the credential.')
+                .' Response: '.($withKey['body_excerpt'] ?? ''),
         ];
     }
 
@@ -227,8 +245,12 @@ class SamApiDiagnose extends Command
             return 'missing';
         }
 
+        if (SamApiClient::hasCurrentKeyFormat($key)) {
+            return 'SAM- prefixed (current SAM.gov format)';
+        }
+
         if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $key)) {
-            return 'UUID (SAM.gov system account style)';
+            return 'bare UUID (old format, rejected by SAM.gov since late 2026)';
         }
 
         if (preg_match('/^[A-Za-z0-9]{40}$/', $key)) {
